@@ -1,6 +1,7 @@
 import { BarChart, TrendingUp, Users, Target, Shield } from 'lucide-react';
 import { GameState } from '../types/game';
 import { calculateVotingIntention } from '../utils/electionSystem';
+import { Tooltip, TooltipContent } from './Tooltip';
 
 interface VotingIntentionPanelProps {
   gameState: GameState;
@@ -50,22 +51,30 @@ export function VotingIntentionPanel({ gameState }: VotingIntentionPanelProps) {
         )}
 
         <div className="grid grid-cols-2 gap-4 text-sm">
-          <div className="flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-blue-500" />
-            <span>Popularidad: {gameState.popularity.toFixed(2)}%</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Users className="w-4 h-4 text-green-500" />
-            <span>Apoyo sectorial: {gameState.popularidadGrupos.toFixed(2)}%</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Target className="w-4 h-4 text-purple-500" />
-            <span>Objetivos: {((gameState.completedObjectives.length / gameState.objectives.length) * 100).toFixed(2)}%</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-yellow-500" />
-            <span>Estabilidad: {gameState.consecutiveLowPopularity === 0 && gameState.consecutiveNegativeBudget === 0 ? '100.00%' : '0.00%'}</span>
-          </div>
+          <Tooltip content={<TooltipContent value="Peso: 35%" label="de la intención de voto" detail="Promedio de popularidad de los últimos 4 turnos. Es el factor más importante." />}>
+            <div className="flex items-center gap-2 cursor-help">
+              <TrendingUp className="w-4 h-4 text-blue-500" />
+              <span>Popularidad: {gameState.popularity.toFixed(1)}%</span>
+            </div>
+          </Tooltip>
+          <Tooltip content={<TooltipContent value="Peso: 25%" label="de la intención de voto" detail="Promedio del apoyo de todos los grupos de interés. Refleja tu relación con los sectores." />}>
+            <div className="flex items-center gap-2 cursor-help">
+              <Users className="w-4 h-4 text-green-500" />
+              <span>Grupos: {gameState.popularidadGrupos.toFixed(1)}%</span>
+            </div>
+          </Tooltip>
+          <Tooltip content={<TooltipContent value="Peso: 15%" label="de la intención de voto" detail="Proporción de objetivos del mandato ya completados." />}>
+            <div className="flex items-center gap-2 cursor-help">
+              <Target className="w-4 h-4 text-purple-500" />
+              <span>Objetivos: {((gameState.completedObjectives.length / Math.max(1, gameState.objectives.length)) * 100).toFixed(0)}%</span>
+            </div>
+          </Tooltip>
+          <Tooltip content={<TooltipContent value="Peso: 5%" label="de la intención de voto" detail="Bonus binario: 100% si no hay crisis de popularidad ni déficit. 0% si los hay." />}>
+            <div className="flex items-center gap-2 cursor-help">
+              <Shield className="w-4 h-4 text-yellow-500" />
+              <span>Estabilidad: {gameState.consecutiveLowPopularity === 0 && gameState.consecutiveNegativeBudget === 0 ? '100%' : '0%'}</span>
+            </div>
+          </Tooltip>
         </div>
       </div>
     </div>

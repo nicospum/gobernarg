@@ -1,6 +1,7 @@
 import { Trophy, BarChart, TrendingUp, Users, Target, Shield } from 'lucide-react';
 import { ElectionResults } from '../types/game';
 import { IMAGES } from '../utils/imageAssets';
+import { Tooltip, TooltipContent } from './Tooltip';
 
 interface ElectionResultsModalProps {
   result: ElectionResults;
@@ -33,44 +34,52 @@ export function ElectionResultsModal({ result, onClose }: ElectionResultsModalPr
         <div className="p-6">
           <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-gray-900">
             <BarChart className="w-6 h-6" />
-            Análisis Electoral
+            Desglose del resultado
           </h3>
 
           <div className="grid grid-cols-2 gap-6 mb-6">
             <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <TrendingUp className="w-5 h-5 text-blue-500" />
-                <div>
-                  <p className="text-sm text-gray-600">Impacto de Popularidad</p>
-                  <p className="font-bold text-lg text-gray-900">{details.popularityImpact.toFixed(1)}%</p>
+              <Tooltip content={<TooltipContent value="Peso: 35%" label="Popularidad" detail="Promedio de los últimos 4 turnos. El factor más determinante." />}>
+                <div className="flex items-center gap-3 cursor-help">
+                  <TrendingUp className="w-5 h-5 text-blue-500" />
+                  <div>
+                    <p className="text-sm text-gray-600">Popularidad</p>
+                    <p className="font-bold text-lg text-gray-900">{details.popularityImpact.toFixed(1)}%</p>
+                  </div>
                 </div>
-              </div>
+              </Tooltip>
 
-              <div className="flex items-center gap-3">
-                <Users className="w-5 h-5 text-green-500" />
-                <div>
-                  <p className="text-sm text-gray-600">Apoyo de Grupos</p>
-                  <p className="font-bold text-lg text-gray-900">{details.groupsSupport.toFixed(1)}%</p>
+              <Tooltip content={<TooltipContent value="Peso: 25%" label="Apoyo de grupos" detail="Promedio del apoyo de todos los sectores y grupos de interés." />}>
+                <div className="flex items-center gap-3 cursor-help">
+                  <Users className="w-5 h-5 text-green-500" />
+                  <div>
+                    <p className="text-sm text-gray-600">Apoyo de Grupos</p>
+                    <p className="font-bold text-lg text-gray-900">{details.groupsSupport.toFixed(1)}%</p>
+                  </div>
                 </div>
-              </div>
+              </Tooltip>
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <Target className="w-5 h-5 text-purple-500" />
-                <div>
-                  <p className="text-sm text-gray-600">Objetivos Cumplidos</p>
-                  <p className="font-bold text-lg text-gray-900">{details.completedObjectivesImpact.toFixed(1)}%</p>
+              <Tooltip content={<TooltipContent value="Peso: 15%" label="Objetivos" detail="Proporción de objetivos del mandato ya completados." />}>
+                <div className="flex items-center gap-3 cursor-help">
+                  <Target className="w-5 h-5 text-purple-500" />
+                  <div>
+                    <p className="text-sm text-gray-600">Objetivos</p>
+                    <p className="font-bold text-lg text-gray-900">{details.completedObjectivesImpact.toFixed(1)}%</p>
+                  </div>
                 </div>
-              </div>
+              </Tooltip>
 
-              <div className="flex items-center gap-3">
-                <Shield className="w-5 h-5 text-yellow-500" />
-                <div>
-                  <p className="text-sm text-gray-600">Estabilidad</p>
-                  <p className="font-bold text-lg text-gray-900">{details.stabilityBonus.toFixed(1)}%</p>
+              <Tooltip content={<TooltipContent value="Peso: 5%" label="Estabilidad" detail="100% si no tuviste crisis de popularidad ni déficit consecutivos. 0% si los tuviste." />}>
+                <div className="flex items-center gap-3 cursor-help">
+                  <Shield className="w-5 h-5 text-yellow-500" />
+                  <div>
+                    <p className="text-sm text-gray-600">Estabilidad</p>
+                    <p className="font-bold text-lg text-gray-900">{details.stabilityBonus.toFixed(1)}%</p>
+                  </div>
                 </div>
-              </div>
+              </Tooltip>
             </div>
           </div>
 

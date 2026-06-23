@@ -2,6 +2,7 @@ import { Calendar, Flag } from 'lucide-react';
 import { GameState } from '../types/game';
 import { POLITICAL_CALENDAR } from '../data/calendar';
 import { IMAGES } from '../utils/imageAssets';
+import { Tooltip, TooltipContent } from './Tooltip';
 
 interface PoliticalCalendarWidgetProps {
   gameState: GameState;
@@ -36,6 +37,8 @@ export function PoliticalCalendarWidget({ gameState }: PoliticalCalendarWidgetPr
       <div className="p-4">
         {gameState.legislativeSupport !== null && (
           <div className="mb-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
+            <Tooltip content={<TooltipContent label={`Apoyo legislativo: ${gameState.legislativeSupport.toFixed(1)}%`} detail="≥ 45% mayoría aplastante (reformas -1 acción) | ≥ 38% quorum propio | ≥ 35% paridad | < 35% hostil (+2 acciones). Se define en elecciones de medio término (Año 2)." />}>
+              <div className="cursor-help">
             <div className="flex items-center justify-between">
               <span className="text-sm text-slate-600">Apoyo legislativo actual</span>
               <span className="font-bold text-slate-800">{gameState.legislativeSupport.toFixed(1)}%</span>
@@ -46,6 +49,8 @@ export function PoliticalCalendarWidget({ gameState }: PoliticalCalendarWidgetPr
                 style={{ width: `${Math.min(100, Math.max(0, gameState.legislativeSupport))}%` }}
               />
             </div>
+              </div>
+            </Tooltip>
           </div>
         )}
 

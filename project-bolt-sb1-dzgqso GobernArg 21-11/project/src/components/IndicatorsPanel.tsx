@@ -1,6 +1,7 @@
 import { TrendingUp, TrendingDown, AlertTriangle, BarChart } from 'lucide-react';
 import { GameState } from '../types/game';
 import { AxisBar } from './AxisBar';
+import { Tooltip, TooltipContent } from './Tooltip';
 
 interface IndicatorsPanelProps {
   gameState: GameState;
@@ -36,7 +37,8 @@ export function IndicatorsPanel({ gameState }: IndicatorsPanelProps) {
 
       <div className="space-y-4">
         {/* Popularidad */}
-        <div className="relative">
+        <Tooltip content={<TooltipContent label={`Popularidad: ${Math.round(gameState.popularity)}%`} detail="< 20% crítico | < 40% bajo | < 70% medio | < 90% alto | ≥ 90% excelente. Si baja del umbral de tu cargo por 2 turnos consecutivos, perdés." />}>
+          <div className="relative cursor-help">
           <div className="flex justify-between mb-1">
             <span className="text-sm font-medium text-gray-700">Popularidad</span>
             <span className="text-sm font-medium text-gray-700">{Math.round(gameState.popularity)}%</span>
@@ -52,10 +54,12 @@ export function IndicatorsPanel({ gameState }: IndicatorsPanelProps) {
               <AlertTriangle className="w-4 h-4 text-red-500" />
             </div>
           )}
-        </div>
+          </div>
+        </Tooltip>
 
         {/* Estabilidad */}
-        <div className="relative">
+        <Tooltip content={<TooltipContent label={`Estabilidad: ${Math.round(gameState.stability)}%`} detail="< 20% crítico | < 40% bajo | < 70% medio | < 90% alto. Estabilidad baja + popularidad baja puede llevar a impeachment o golpe." />}>
+        <div className="relative cursor-help">
           <div className="flex justify-between mb-1">
             <span className="text-sm font-medium text-gray-700">Estabilidad</span>
             <span className="text-sm font-medium text-gray-700">{Math.round(gameState.stability)}%</span>
@@ -72,9 +76,11 @@ export function IndicatorsPanel({ gameState }: IndicatorsPanelProps) {
             </div>
           )}
         </div>
+        </Tooltip>
 
         {/* Presupuesto */}
-        <div className="relative">
+        <Tooltip content={<TooltipContent label={`Presupuesto: $${gameState.budget.toLocaleString()}M`} detail="< $0 crítico | < $500M bajo | < $1500M medio | < $3000M alto | ≥ $3000M excelente. Presupuesto negativo 2 turnos consecutivos = derrota." />}>
+        <div className="relative cursor-help">
           <div className="flex justify-between mb-1">
             <span className="text-sm font-medium text-gray-700">Presupuesto</span>
             <span className="text-sm font-medium text-gray-700">${gameState.budget.toLocaleString()}M</span>
@@ -98,6 +104,7 @@ export function IndicatorsPanel({ gameState }: IndicatorsPanelProps) {
             </div>
           )}
         </div>
+        </Tooltip>
 
         {/* Histórico */}
         <div className="mt-6">
@@ -117,6 +124,8 @@ export function IndicatorsPanel({ gameState }: IndicatorsPanelProps) {
         {/* Perfil Ideológico */}
         <div className="mt-6">
           <h3 className="text-sm font-medium text-gray-700 mb-2">Perfil Ideológico</h3>
+          <Tooltip content={<TooltipContent label="Estilo de liderazgo" detail="Refleja la orientación acumulada de tus políticas. Se mueve con cada acción. A ±80 tiene efectos mecánicos." />}>
+            <div className="cursor-help">
           <AxisBar
             value={gameState.radicalConciliadorAxis}
             labelLo="Radical"
@@ -138,6 +147,8 @@ export function IndicatorsPanel({ gameState }: IndicatorsPanelProps) {
             loColor="bg-orange-500"
             hiColor="bg-green-500"
           />
+            </div>
+          </Tooltip>
         </div>
       </div>
     </div>
