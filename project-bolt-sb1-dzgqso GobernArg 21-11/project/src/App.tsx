@@ -6,6 +6,7 @@ import { AdvisorPanel } from './components/AdvisorPanel';
 import { InterestGroupsPanel } from './components/InterestGroupsPanel';
 import { TurnSummaryModal } from './components/TurnSummaryModal';
 import { WelcomeModal } from './components/WelcomeModal';
+import { SpecialAbilitiesPanel } from './components/SpecialAbilitiesPanel';
 import { LegacyScreen } from './components/LegacyScreen';
 import { GameOverModal } from './components/GameOverModal';
 import { ReelectionChoiceModal } from './components/ReelectionChoiceModal';
