@@ -17,6 +17,7 @@ import { PendingEffectsPanel } from './components/PendingEffectsPanel';
 import { ActiveBenefits } from './components/ActiveBenefits';
 import { EventModal } from './components/EventModal';
 import { ElectionResultsModal } from './components/ElectionResultsModal';
+import { GameLog } from './components/GameLog';
 import { MidtermStrategyModal } from './components/MidtermStrategyModal';
 import { PoliticalCalendarWidget } from './components/PoliticalCalendarWidget';
 import { NotificationCenter } from './components/NotificationCenter';
@@ -50,6 +51,7 @@ function App() {
   const [isAdminMode, setIsAdminMode] = useState<boolean | null>(null);
   const [pendingEvents, setPendingEvents] = useState<GameEvent[]>([]);
   const [showMidtermStrategy, setShowMidtermStrategy] = useState(false);
+  const [showGameLog, setShowGameLog] = useState(false);
 
   const handleStart = (isAdmin: boolean) => {
     setIsAdminMode(isAdmin);
@@ -199,6 +201,12 @@ function App() {
 
           <div className="space-y-4">
             <ActiveBenefits gameState={gameState} />
+            <button
+              onClick={() => setShowGameLog(true)}
+              className="w-full text-left bg-white rounded-lg shadow-lg p-3 hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium text-gray-700"
+            >
+              📋 Historial de gestión
+            </button>
             <IndicatorsPanel gameState={gameState} />
             <VotingIntentionPanel gameState={gameState} />
             <ObjectivesPanel gameState={gameState} />
@@ -266,6 +274,10 @@ function App() {
           gameState={gameState}
           onRestart={handleRestart}
         />
+      )}
+
+      {showGameLog && (
+        <GameLog gameState={gameState} onClose={() => setShowGameLog(false)} />
       )}
 
       {gameState.isAdminMode && gameStarted && <AdminDebugPanel gameState={gameState} />}
