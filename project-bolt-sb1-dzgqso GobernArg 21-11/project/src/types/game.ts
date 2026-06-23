@@ -212,6 +212,26 @@ export interface MidtermStrategyEffect {
   description: string;
 }
 
+// Fase 4: Dificultad y derrotas
+export type Difficulty = 'easy' | 'normal' | 'hard' | 'legend';
+export type DefeatReason = 'low_popularity' | 'negative_budget' | 'impeachment' | 'institutional_coup' | 'hyperinflation' | 'election_loss';
+
+export interface GroupAgendaItem {
+  id: string;
+  groupId: string;
+  demand: string;
+  deadline: number;
+  satisfied: boolean;
+  penaltyApplied: boolean;
+}
+
+export interface GroupMood {
+  groupId: string;
+  mood: 'contento' | 'neutral' | 'disconforme' | 'enojado' | 'radicalizado';
+  ignoredTurns: number;
+  lastSatisfiedTurn: number;
+}
+
 export interface CareerMilestone {
   position: Position;
   term: number;
@@ -471,4 +491,15 @@ export interface GameState {
   midtermStrategy: MidtermStrategy | null;
   pendingMidtermStrategy: boolean;
   availableMidtermStrategies: MidtermStrategy[];
+  // Fase 4: Profundidad
+  difficulty: Difficulty;
+  radicalConciliadorAxis: number;
+  populistaTecnicoAxis: number;
+  cerradoConvocanteAxis: number;
+  groupAgendas: GroupAgendaItem[];
+  groupMoods: GroupMood[];
+  abilityCooldowns: Record<string, number>;
+  impeachmentConsecutiveTurns: number;
+  coupConsecutiveTurns: number;
+  defeatReason: DefeatReason | null;
 }

@@ -10,21 +10,27 @@ import type {
   LegislativeResults,
   CalendarEvent,
   Notification,
-  ActionCategory
+  ActionCategory,
+  Difficulty
 } from '../types/game';
 import type { GameEvent } from '../systems/events/types';
 import { actionCategories } from '../data/actionCategories';
 import { interestGroups } from '../data/interestGroups';
+import { ARCHETYPE_ABILITIES } from '../data/specialAbilities';
 import { getAllEvents } from '../data/events';
 import { getCalendarEventForTurn } from '../data/calendar';
 import { oppositionEvents, overconfidenceEvents } from '../data/events/legislativeConsequences';
 import { calculateAvailableActions } from '../utils/actionCalculator';
 import { calculateActionEffects, processPendingEffects, getDefaultCooldown } from '../utils/actionEffects';
 import { calculatePopularidad } from '../utils/popularidad';
-import { updateObjectives, getPositionObjectives, checkDefeatConditions } from '../utils/victoryConditions';
+import { updateObjectives, getPositionObjectives, checkDefeatConditions, checkAllDefeatConditions } from '../utils/victoryConditions';
 import { calculateInteractionCost, calculateSupportGain } from '../utils/interactionCosts';
 import { applyCrossGroupEffects } from '../utils/crossGroupEffects';
 import { MIDTERM_STRATEGY_EFFECTS } from '../data/midtermStrategies';
+import { getDifficultyModifiers } from './difficultyEngine';
+import { calculateLegitimacyChange } from './legitimacyEngine';
+import { applyAxisShift } from './axisEngine';
+import { generateGroupAgendas, updateGroupMoods, applyGroupSatisfactionPenalty } from './groupAgendaEngine';
 import {
   processElectionResults,
   processElectionResultsForOption,
@@ -127,7 +133,18 @@ export function getInitialGameState(): GameState {
     // Fase 3: Estrategia y política
     midtermStrategy: null,
     pendingMidtermStrategy: false,
-    availableMidtermStrategies: []
+    availableMidtermStrategies: [],
+    // Fase 4: Profundidad
+    difficulty: 'normal',
+    radicalConciliadorAxis: 0,
+    populistaTecnicoAxis: 0,
+    cerradoConvocanteAxis: 0,
+    groupAgendas: [],
+    groupMoods: [],
+    abilityCooldowns: {},
+    impeachmentConsecutiveTurns: 0,
+    coupConsecutiveTurns: 0,
+    defeatReason: null
   };
 }
 
@@ -145,7 +162,8 @@ export function createNewGame(
   archetype: Archetype,
   governorName: string,
   isAdminMode: boolean,
-  avatar: string
+  avatar: string,
+  difficulty: Difficulty = 'normal'
 ): GameState {
   const base = getInitialGameState();
   const groupRelations: Record<string, number> = {};
@@ -182,7 +200,17 @@ export function createNewGame(
     pendingElectionOptions: [],
     objectives: getPositionObjectives(position),
     groupRelations,
-    interestGroups: cloneInterestGroups()
+    interestGroups: cloneInterestGroups(),
+    // Fase 4
+    difficulty,
+    groupMoods: (interestGroups ?? []).flatMap(g =>
+      g.subgroups.map(sg => ({
+        groupId: sg.id,
+        mood: 'neutral' as const,
+        ignoredTurns: 0,
+        lastSatisfiedTurn: 0,
+      }))
+    )
   };
 
   state.historicalPopularity = [state.popularity];
@@ -693,6 +721,10 @@ export function processEndTurn(gameState: GameState): TurnResult {
       state.debtCount = Math.min(3, (state.debtCount || 0) + 1);
       state.debtServiceRatio = state.debtCount * 0.10;
     }
+    // Fase 4: Aplicar legitimidad y ejes contradictorios
+    const legitChange = calculateLegitimacyChange(action, state);
+    state.legitimacy = clampValue(state.legitimacy + legitChange);
+    state = applyAxisShift(action, state);
   });
 
   // 1.5. Fase 3: Aplicar impactos cruzados entre grupos antagónicos
@@ -743,8 +775,11 @@ export function processEndTurn(gameState: GameState): TurnResult {
     presidente: 10
   };
   const naturalDecay = POPULARITY_DECAY[state.position] ?? 5;
-  state.popularity = Math.max(0, state.popularity - naturalDecay);
-  totalPopularityChange -= naturalDecay;
+  // Fase 4: Modificador de dificultad
+  const difficultyMods = getDifficultyModifiers(state.difficulty);
+  const adjustedDecay = naturalDecay * difficultyMods.popularityDecayMultiplier;
+  state.popularity = Math.max(0, state.popularity - adjustedDecay);
+  totalPopularityChange -= adjustedDecay;
 
   // 4. Eventos aleatorios y crisis
   const triggeredEvents = resolveRandomEvents(state);
@@ -813,6 +848,19 @@ export function processEndTurn(gameState: GameState): TurnResult {
 
   // 7.2 Aplicar inflación por emisión monetaria (Fase 2)
   state = processInflation(state);
+
+  // 7.3 Fase 4: Agendas y estados de ánimo de grupos
+  state = updateGroupMoods(state);
+  const newAgendas = generateGroupAgendas(state);
+  state.groupAgendas = [...state.groupAgendas, ...newAgendas];
+  state = applyGroupSatisfactionPenalty(state);
+
+  // 7.4 Fase 4: Decrementar cooldowns de habilidades
+  const updatedAbilityCooldowns: Record<string, number> = {};
+  for (const [id, cd] of Object.entries(state.abilityCooldowns)) {
+    if (cd > 1) updatedAbilityCooldowns[id] = cd - 1;
+  }
+  state.abilityCooldowns = updatedAbilityCooldowns;
 
   // 8. Recalcular popularidad y acciones
   state = recalcState(state);
@@ -940,15 +988,24 @@ function checkDefeat(state: GameState): GameState {
   state.consecutiveLowPopularity = consecutiveLowPopularity;
   state.consecutiveNegativeBudget = consecutiveNegativeBudget;
 
-  if (checkDefeatConditions(state)) {
-    state.gameOver = true;
-    state.victorious = false;
+  // Fase 4: Tracking de impeachment y golpe
+  if (state.popularity < 10 && state.stability < 20) {
+    state.impeachmentConsecutiveTurns += 1;
+  } else {
+    state.impeachmentConsecutiveTurns = 0;
+  }
+  if (state.stability < 10 && (state.legislativeSupport ?? 100) < 25) {
+    state.coupConsecutiveTurns += 1;
+  } else {
+    state.coupConsecutiveTurns = 0;
   }
 
-  // Fase 2: Derrota por hiperinflación
-  if (state.moneyPrintingCount >= 7) {
+  // Fase 4: Verificar todas las vías de derrota
+  const defeatResult = checkAllDefeatConditions(state);
+  if (defeatResult.defeated) {
     state.gameOver = true;
     state.victorious = false;
+    state.defeatReason = defeatResult.reason;
   }
 
   return state;
@@ -1216,4 +1273,57 @@ function processInflation(state: GameState): GameState {
     }
   }
   return state;
+}
+
+// ============================================================
+// Fase 4: Habilidad especial de arquetipo
+// ============================================================
+
+export function useSpecialAbility(state: GameState): GameState {
+  const ability = ARCHETYPE_ABILITIES[state.archetype];
+  if (!ability) return state;
+
+  const cd = state.abilityCooldowns[ability.id] ?? 0;
+  if (cd > 0) return state;
+
+  const actionCost = ability.cost.actions ?? 0;
+  if (state.actions < actionCost) return state;
+  if (ability.cost.budget && state.budget < ability.cost.budget) return state;
+
+  const newState = { ...state };
+
+  if (ability.effects.popularityChange) {
+    newState.popularity = clampValue(newState.popularity + ability.effects.popularityChange);
+  }
+  if (ability.effects.budgetChange) {
+    newState.budget += ability.effects.budgetChange;
+  }
+  if (ability.effects.stabilityChange) {
+    newState.stability = clampValue(newState.stability + ability.effects.stabilityChange);
+  }
+  if (ability.effects.legitimacyChange) {
+    newState.legitimacy = clampValue(newState.legitimacy + ability.effects.legitimacyChange);
+  }
+
+  ability.effects.groupEffects?.forEach(ge => {
+    newState.groupRelations[ge.groupId] = clampValue(
+      (newState.groupRelations[ge.groupId] ?? 50) + ge.supportChange
+    );
+  });
+
+  newState.actions -= actionCost;
+  if (ability.cost.budget) newState.budget -= ability.cost.budget;
+  if (ability.cost.popularity) {
+    newState.popularity = clampValue(newState.popularity + ability.cost.popularity);
+  }
+  if (ability.cost.legitimacy) {
+    newState.legitimacy = clampValue(newState.legitimacy + ability.cost.legitimacy);
+  }
+
+  newState.abilityCooldowns = {
+    ...newState.abilityCooldowns,
+    [ability.id]: ability.cooldown,
+  };
+
+  return newState;
 }
