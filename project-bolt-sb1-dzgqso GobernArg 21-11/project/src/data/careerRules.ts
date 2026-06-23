@@ -46,7 +46,7 @@ export function getOptionDescription(option: ElectionOption): string {
   }
 }
 
-export function getNextPosition(option: ElectionOption): Position {
+export function getNextPosition(option: ElectionOption, currentPosition?: Position): Position {
   switch (option) {
     case 'promote-governor':
       return 'gobernador';
@@ -54,6 +54,6 @@ export function getNextPosition(option: ElectionOption): Position {
       return 'presidente';
     case 'reelection':
     default:
-      return 'intendente';
+      return currentPosition || 'intendente';
   }
 }

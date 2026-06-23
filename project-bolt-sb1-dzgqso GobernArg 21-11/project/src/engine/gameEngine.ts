@@ -1154,7 +1154,7 @@ export function resolvePendingElection(gameState: GameState, option: ElectionOpt
 
   // Victoria: definir nuevo cargo/mandato
   const previousPosition = state.position;
-  const nextPosition = getNextPosition(option);
+  const nextPosition = getNextPosition(option, state.position);
   const isPromotion = nextPosition !== previousPosition;
 
   if (isPromotion) {
