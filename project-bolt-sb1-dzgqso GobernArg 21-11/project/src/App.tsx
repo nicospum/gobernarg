@@ -16,10 +16,11 @@ import { ObjectivesPanel } from './components/ObjectivesPanel';
 import { PendingEffectsPanel } from './components/PendingEffectsPanel';
 import { EventModal } from './components/EventModal';
 import { ElectionResultsModal } from './components/ElectionResultsModal';
+import { MidtermStrategyModal } from './components/MidtermStrategyModal';
 import { PoliticalCalendarWidget } from './components/PoliticalCalendarWidget';
 import { NotificationCenter } from './components/NotificationCenter';
 
-import type { Position, Archetype, AdvisorWithStatus, InteractionType, TurnSummary } from './types/game';
+import type { Position, Archetype, AdvisorWithStatus, InteractionType, TurnSummary, MidtermStrategy } from './types/game';
 import type { ElectionOption } from './data/careerRules';
 import type { GameEvent } from './systems/events/types';
 import {
@@ -35,7 +36,8 @@ import {
   markAllNotificationsRead,
   dismissNotification,
   useSpecialAbility,
-  satisfyGroupDemand
+  satisfyGroupDemand,
+  triggerMidtermStrategy
 } from './engine/gameEngine';
 
 function App() {
@@ -46,6 +48,7 @@ function App() {
   const [turnSummary, setTurnSummary] = useState<TurnSummary | null>(null);
   const [isAdminMode, setIsAdminMode] = useState<boolean | null>(null);
   const [pendingEvents, setPendingEvents] = useState<GameEvent[]>([]);
+  const [showMidtermStrategy, setShowMidtermStrategy] = useState(false);
 
   const handleStart = (isAdmin: boolean) => {
     setIsAdminMode(isAdmin);
@@ -76,6 +79,11 @@ function App() {
     setGameState(prev => satisfyGroupDemand(prev, agendaId));
   };
 
+  const handleSelectMidtermStrategy = (strategy: MidtermStrategy) => {
+    setGameState(prev => triggerMidtermStrategy(prev, strategy));
+    setShowMidtermStrategy(false);
+  };
+
   const handleInteraction = (subgroupId: string, type: InteractionType) => {
     setGameState(prev => applyInteraction(prev, subgroupId, type));
   };
@@ -92,8 +100,13 @@ function App() {
     const result = processEndTurn(gameState);
     setGameState(result.state);
 
+    // Si hay estrategia pendiente, mostrar modal
+    if (result.state.pendingMidtermStrategy) {
+      setShowMidtermStrategy(true);
+    }
+
     // No mostramos el resumen si el turno terminó en elección pendiente o fin de juego
-    if (!result.state.pendingElection && !result.state.gameOver) {
+    if (!result.state.pendingElection && !result.state.gameOver && !result.state.pendingMidtermStrategy) {
       setTurnSummary(result.summary);
       setShowTurnSummary(true);
     }
@@ -235,6 +248,14 @@ function App() {
         <GameOverModal
           gameState={gameState}
           onRestart={handleRestart}
+        />
+      )}
+
+      {showMidtermStrategy && gameState.availableMidtermStrategies.length > 0 && (
+        <MidtermStrategyModal
+          availableStrategies={gameState.availableMidtermStrategies}
+          gameState={gameState}
+          onSelect={handleSelectMidtermStrategy}
         />
       )}
 

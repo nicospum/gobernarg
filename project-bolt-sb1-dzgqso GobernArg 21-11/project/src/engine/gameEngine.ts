@@ -11,7 +11,8 @@ import type {
   CalendarEvent,
   Notification,
   ActionCategory,
-  Difficulty
+  Difficulty,
+  MidtermStrategy
 } from '../types/game';
 import type { GameEvent } from '../systems/events/types';
 import { actionCategories } from '../data/actionCategories';
@@ -134,6 +135,7 @@ export function getInitialGameState(): GameState {
     midtermStrategy: null,
     pendingMidtermStrategy: false,
     availableMidtermStrategies: [],
+    audazTurnsCount: 0,
     // Fase 4: Profundidad
     difficulty: 'normal',
     radicalConciliadorAxis: 0,
@@ -552,6 +554,18 @@ export function processCalendarEvents(state: GameState): GameState {
     });
   }
 
+  if (event.id === 'definicion-estrategia') {
+    state.availableMidtermStrategies = filterAvailableMidtermStrategies(state);
+    state.pendingMidtermStrategy = true;
+    state = addNotification(state, {
+      type: 'event',
+      category: 'political',
+      title: event.title,
+      message: event.description,
+      importance: 'high'
+    });
+  }
+
   return state;
 }
 
@@ -721,6 +735,23 @@ export function processEndTurn(gameState: GameState): TurnResult {
   let state: GameState = { ...gameState };
   const events: string[] = [];
 
+  // Bloquear avance si hay estrategia midterm pendiente
+  if (state.pendingMidtermStrategy) {
+    return {
+      state,
+      summary: {
+        year: state.year,
+        quarter: state.turn,
+        events: ['Definición de estrategia post-legislativa pendiente.'],
+        popularityChange: 0,
+        budgetChange: 0,
+        inflationEvent: { triggered: false, count: state.moneyPrintingCount },
+        immediateEffects: { popularityChange: 0, budgetChange: 0 }
+      },
+      triggeredEvents: []
+    };
+  }
+
   // 0. Procesar eventos de calendario político
   state = processCalendarEvents(state);
 
@@ -815,8 +846,19 @@ export function processEndTurn(gameState: GameState): TurnResult {
     const strategyEffect = MIDTERM_STRATEGY_EFFECTS[state.midtermStrategy];
     state.stability = clampValue(state.stability + strategyEffect.stabilityPerTurn);
     state.popularity = clampValue(state.popularity + strategyEffect.popularityPerTurn);
-    if (state.midtermStrategy === 'jugada_audaz' && state.turn >= 3) {
-      state.midtermStrategy = 'negociar';
+    if (state.midtermStrategy === 'jugada_audaz') {
+      state.audazTurnsCount = (state.audazTurnsCount ?? 0) + 1;
+      if (state.audazTurnsCount >= 2) {
+        state.midtermStrategy = 'negociar';
+        state.audazTurnsCount = 0;
+        state = addNotification(state, {
+          type: 'warning',
+          category: 'political',
+          title: 'Fin de la Jugada Audaz',
+          message: 'Los efectos de tu movida arriesgada se agotaron. Ahora deberás negociar.',
+          importance: 'high'
+        });
+      }
     }
     if (state.midtermStrategy === 'abrirse') {
       state.groupRelations['aliados'] = Math.max(0, (state.groupRelations['aliados'] || 70) - 2);
@@ -1427,4 +1469,38 @@ export function satisfyGroupDemand(state: GameState, agendaId: string): GameStat
   });
 
   return newState;
+}
+
+// ============================================================
+// Fase 3: Estrategias post-legislativas
+// ============================================================
+
+export function filterAvailableMidtermStrategies(state: GameState): MidtermStrategy[] {
+  const available: MidtermStrategy[] = ['negociar'];
+  const support = state.legislativeSupport ?? 0;
+
+  if (support > 42) {
+    available.push('acelerar');
+  }
+
+  const highSupportGroups = Object.values(state.groupRelations).filter(v => v > 50).length;
+  if (highSupportGroups >= 3) {
+    available.push('abrirse');
+  }
+
+  if (state.archetype === 'comunicador' || state.archetype === 'politico' || state.popularity > 65) {
+    available.push('jugada_audaz');
+  }
+
+  return available;
+}
+
+export function triggerMidtermStrategy(state: GameState, strategy: MidtermStrategy): GameState {
+  return {
+    ...state,
+    midtermStrategy: strategy,
+    pendingMidtermStrategy: false,
+    availableMidtermStrategies: [],
+    audazTurnsCount: 0,
+  };
 }

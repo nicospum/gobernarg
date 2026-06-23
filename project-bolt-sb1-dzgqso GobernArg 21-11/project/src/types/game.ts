@@ -502,4 +502,5 @@ export interface GameState {
   impeachmentConsecutiveTurns: number;
   coupConsecutiveTurns: number;
   defeatReason: DefeatReason | null;
+  audazTurnsCount: number;
 }
