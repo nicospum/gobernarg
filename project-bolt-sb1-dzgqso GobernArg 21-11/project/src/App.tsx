@@ -179,6 +179,8 @@ function App() {
         gameState={gameState}
         availableActions={gameState.actions}
         onRestart={handleRestart}
+        onEndTurn={handleEndTurn}
+        canEndTurn={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
       />
 
       <main className="container mx-auto p-4">
@@ -187,9 +189,13 @@ function App() {
             <ControlPanel
               gameState={gameState}
               onActionSelect={handleActionSelect}
-              onEndTurn={handleEndTurn}
               canTakeAction={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
+            />
+
+            <SpecialAbilitiesPanel
+              gameState={gameState}
               onUseAbility={handleUseSpecialAbility}
+              disabled={!(gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection)}
             />
 
             {gameState.pendingEffects.length > 0 && (

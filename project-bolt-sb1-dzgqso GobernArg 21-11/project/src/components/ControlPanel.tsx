@@ -1,21 +1,18 @@
 import { useState } from 'react';
-import { ArrowRight, LayoutGrid } from 'lucide-react';
+import { LayoutGrid } from 'lucide-react';
 import { GameState, GameAction } from '../types/game';
 import { ActionCard } from './ActionCard';
 import { getAvailableActionsForState } from '../engine/gameEngine';
 import { calculateActionEffects } from '../utils/actionEffects';
 import { THUMBNAIL_CATEGORIES } from '../utils/iconThumbnails';
-import { SpecialAbilitiesPanel } from './SpecialAbilitiesPanel';
 
 interface ControlPanelProps {
   gameState: GameState;
   onActionSelect: (actionId: string) => void;
-  onEndTurn: () => void;
   canTakeAction: boolean;
-  onUseAbility?: () => void;
 }
 
-export function ControlPanel({ gameState, onActionSelect, onEndTurn, canTakeAction, onUseAbility }: ControlPanelProps) {
+export function ControlPanel({ gameState, onActionSelect, canTakeAction }: ControlPanelProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('todas');
   const actions = getAvailableActionsForState(gameState);
 
@@ -124,26 +121,6 @@ export function ControlPanel({ gameState, onActionSelect, onEndTurn, canTakeActi
             </div>
           )}
         </div>
-      </div>
-
-      <div className="flex justify-center">
-        {onUseAbility && (
-          <div className="w-full max-w-md mb-4">
-            <SpecialAbilitiesPanel
-              gameState={gameState}
-              onUseAbility={onUseAbility}
-              disabled={!canTakeAction}
-            />
-          </div>
-        )}
-        <button
-          onClick={onEndTurn}
-          disabled={gameState.gameOver}
-          className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-8 py-3 rounded-lg flex items-center gap-2 transition-colors"
-        >
-          <span>Finalizar Turno</span>
-          <ArrowRight className="w-5 h-5" />
-        </button>
       </div>
     </div>
   );
