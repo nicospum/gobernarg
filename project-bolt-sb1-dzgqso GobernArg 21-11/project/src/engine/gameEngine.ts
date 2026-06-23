@@ -839,7 +839,16 @@ export function processEndTurn(gameState: GameState): TurnResult {
   const baseIncome = POSITION_INCOME[state.position];
   const maintenance = POSITION_MAINTENANCE[state.position];
   const debtMultiplier = 1 - (state.debtServiceRatio || 0);
-  const effectiveIncome = Math.round(baseIncome * debtMultiplier);
+  let effectiveIncome = Math.round(baseIncome * debtMultiplier);
+
+  // Sprint 2: Aplicar modificadores de ingreso por efectos diferidos activos
+  const activeIncomeMods = state.pendingEffects
+    .filter(pe => pe.activationTurn >= state.turn && pe.incomeModifier)
+    .reduce((sum, pe) => sum + (pe.incomeModifier ?? 0), 0);
+  if (activeIncomeMods > 0) {
+    effectiveIncome = Math.round(effectiveIncome * (1 + activeIncomeMods));
+  }
+
   const netIncome = effectiveIncome - maintenance;
   state.budget += netIncome;
   totalBudgetChange += netIncome;

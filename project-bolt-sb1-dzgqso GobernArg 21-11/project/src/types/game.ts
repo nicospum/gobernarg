@@ -293,6 +293,11 @@ export interface PendingEffect {
   type?: string;
   duration?: number;
   conditions?: Record<string, unknown>;
+  // Sprint 2: efectos económicos diferidos
+  incomeModifier?: number;    // ej: 0.10 = +10% ingresos por turno
+  costReductionCategory?: string;  // categoría de acciones con descuento
+  costReductionPercent?: number;   // ej: 0.20 = -20% costo
+  stabilityChange?: number;   // cambio directo en estabilidad
 }
 
 export interface ScheduledEvent {

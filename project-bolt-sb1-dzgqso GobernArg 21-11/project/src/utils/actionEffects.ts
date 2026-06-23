@@ -33,9 +33,20 @@ export function calculateActionEffects(
 
   // Efectos inmediatos (factor global para suavizar el impacto de popularidad)
   const POPULARITY_GLOBAL_FACTOR = 0.40; // Fase 1: reducido de 0.55 a 0.40
+
+  // Sprint 2: Verificar reducción de costos por efectos diferidos activos
+  let costMultiplier = 1;
+  const activeReductions = gameState.pendingEffects
+    .filter(pe => pe.costReductionCategory && pe.activationTurn >= gameState.turn);
+  for (const reduction of activeReductions) {
+    if (reduction.costReductionCategory === action.category) {
+      costMultiplier = Math.min(costMultiplier, 1 - (reduction.costReductionPercent ?? 0));
+    }
+  }
+
   const immediateEffects = {
     popularityChange: effectivePopularityChange * archetypeMultiplier * advisorMultiplier * POPULARITY_GLOBAL_FACTOR * diminishingFactor,
-    budgetChange: action.budgetChange * diminishingFactor,
+    budgetChange: action.budgetChange * diminishingFactor * costMultiplier,
     stabilityChange: (action.multiEffects?.stabilityChange ?? 0) * diminishingFactor,
     legitimacyChange: (action.multiEffects?.legitimacyChange ?? 0) * diminishingFactor,
     votingIntentionChange: (action.multiEffects?.votingIntentionChange ?? 0) * diminishingFactor,
@@ -196,6 +207,12 @@ export function processPendingEffects(gameState: GameState): GameState {
     if (effect.popularityChange) {
       updatedState.popularity = Math.max(0, Math.min(100, 
         updatedState.popularity + effect.popularityChange
+      ));
+    }
+
+    if (effect.stabilityChange) {
+      updatedState.stability = Math.max(0, Math.min(100,
+        (updatedState.stability ?? 50) + effect.stabilityChange
       ));
     }
 

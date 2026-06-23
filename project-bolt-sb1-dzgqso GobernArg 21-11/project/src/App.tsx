@@ -14,6 +14,7 @@ import { IndicatorsPanel } from './components/IndicatorsPanel';
 import { VotingIntentionPanel } from './components/VotingIntentionPanel';
 import { ObjectivesPanel } from './components/ObjectivesPanel';
 import { PendingEffectsPanel } from './components/PendingEffectsPanel';
+import { ActiveBenefits } from './components/ActiveBenefits';
 import { EventModal } from './components/EventModal';
 import { ElectionResultsModal } from './components/ElectionResultsModal';
 import { MidtermStrategyModal } from './components/MidtermStrategyModal';
@@ -197,6 +198,7 @@ function App() {
           </div>
 
           <div className="space-y-4">
+            <ActiveBenefits gameState={gameState} />
             <IndicatorsPanel gameState={gameState} />
             <VotingIntentionPanel gameState={gameState} />
             <ObjectivesPanel gameState={gameState} />

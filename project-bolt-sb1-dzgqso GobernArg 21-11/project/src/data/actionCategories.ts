@@ -76,7 +76,12 @@ export const actionCategories: ActionCategoryData[] = [
         budgetChange: 250,
         category: 'economia',
         requirements: { minBudget: 100 },
-        availableForPositions: ['gobernador', 'presidente']
+        availableForPositions: ['gobernador', 'presidente'],
+        futureEffects: [
+          { delay: 2, budgetChange: 50, popularityChange: 0 },
+          { delay: 3, budgetChange: 50, popularityChange: 0 },
+          { delay: 4, budgetChange: 50, popularityChange: 0 }
+        ]
       },
       {
         id: 'subsidios_industriales',
@@ -127,12 +132,17 @@ export const actionCategories: ActionCategoryData[] = [
       {
         id: 'fomento_emprendimiento',
         title: 'Fomento al Emprendimiento',
-        description: 'Apoyo a nuevos emprendedores',
+        description: 'Apoyo a nuevos emprendedores. Genera ingresos fiscales a largo plazo.',
         icon: Lightbulb,
         popularityChange: 12,
         budgetChange: -200,
         category: 'economia',
-        requirements: { minBudget: 200 }
+        requirements: { minBudget: 200 },
+        futureEffects: [
+          { delay: 4, budgetChange: 30, popularityChange: 0 },
+          { delay: 5, budgetChange: 30, popularityChange: 0 },
+          { delay: 6, budgetChange: 30, popularityChange: 0 }
+        ]
       },
       {
         id: 'aumento_salarial',
@@ -423,13 +433,18 @@ export const actionCategories: ActionCategoryData[] = [
       {
         id: 'estudio_factibilidad',
         title: 'Estudio de factibilidad',
-        description: 'Evaluación técnica y económica preliminar de obras de infraestructura.',
+        description: 'Evaluación técnica y económica preliminar de obras de infraestructura. Reduce el costo de futuras obras.',
         icon: ClipboardList,
         popularityChange: 2,
         budgetChange: -80,
         category: 'infraestructura',
         requirements: { minBudget: 80 },
-        cooldown: 2
+        cooldown: 2,
+        futureEffects: [{
+          delay: 1,
+          budgetChange: -15,
+          popularityChange: 0
+        }]
       }
     ]
   },
