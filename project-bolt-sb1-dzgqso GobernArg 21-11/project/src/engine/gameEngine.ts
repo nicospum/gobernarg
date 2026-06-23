@@ -1484,7 +1484,7 @@ export function satisfyGroupDemand(state: GameState, agendaId: string): GameStat
   const agenda = state.groupAgendas?.find(a => a.id === agendaId);
   if (!agenda || agenda.satisfied) return state;
 
-  const newState = { ...state };
+  let newState = { ...state };
 
   // Marcar como satisfecha
   newState.groupAgendas = (state.groupAgendas || []).map(a =>
