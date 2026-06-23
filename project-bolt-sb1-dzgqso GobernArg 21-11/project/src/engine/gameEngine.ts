@@ -646,6 +646,61 @@ function addWarningNotifications(state: GameState): GameState {
     });
   }
 
+  // Ejes contradictorios extremos
+  if (state.radicalConciliadorAxis <= -80) {
+    state = addNotification(state, {
+      type: 'warning',
+      category: 'political',
+      title: 'Gobierno radicalizado',
+      message: 'Tus políticas se inclinan fuertemente hacia posiciones radicales. Los sectores moderados se están distanciando.',
+      importance: 'high'
+    });
+  } else if (state.radicalConciliadorAxis >= 80) {
+    state = addNotification(state, {
+      type: 'warning',
+      category: 'political',
+      title: 'Conciliación excesiva',
+      message: 'Tu gobierno es extremadamente conciliador. Los sectores que esperan firmeza están perdiendo la paciencia.',
+      importance: 'high'
+    });
+  }
+
+  if (state.populistaTecnicoAxis <= -80) {
+    state = addNotification(state, {
+      type: 'warning',
+      category: 'political',
+      title: 'Populismo extremo',
+      message: 'Tus decisiones son puramente populares pero carecen de sustento técnico. Los mercados y organismos internacionales lo notan.',
+      importance: 'high'
+    });
+  } else if (state.populistaTecnicoAxis >= 80) {
+    state = addNotification(state, {
+      type: 'warning',
+      category: 'political',
+      title: 'Tecnocracia distante',
+      message: 'Tu enfoque puramente técnico te está alejando de las demandas populares y la calle.',
+      importance: 'medium'
+    });
+  }
+
+  if (state.cerradoConvocanteAxis <= -80) {
+    state = addNotification(state, {
+      type: 'warning',
+      category: 'political',
+      title: 'Aislamiento político',
+      message: 'Tu gestión cerrada genera descontento en todos los sectores. Convocá al diálogo antes de que sea tarde.',
+      importance: 'high'
+    });
+  } else if (state.cerradoConvocanteAxis >= 80) {
+    state = addNotification(state, {
+      type: 'warning',
+      category: 'political',
+      title: 'Apertura total',
+      message: 'Tu extrema apertura al diálogo puede ser percibida como falta de rumbo. Definí una posición clara.',
+      importance: 'medium'
+    });
+  }
+
   return state;
 }
 
@@ -1149,6 +1204,7 @@ export function resolvePendingElection(gameState: GameState, option: ElectionOpt
   if (!results.victory) {
     state.gameOver = true;
     state.victorious = false;
+    state.defeatReason = 'election_loss';
     return recalcState(state);
   }
 

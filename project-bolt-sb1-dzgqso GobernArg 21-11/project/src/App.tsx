@@ -7,6 +7,7 @@ import { InterestGroupsPanel } from './components/InterestGroupsPanel';
 import { TurnSummaryModal } from './components/TurnSummaryModal';
 import { WelcomeModal } from './components/WelcomeModal';
 import { LegacyScreen } from './components/LegacyScreen';
+import { GameOverModal } from './components/GameOverModal';
 import { ReelectionChoiceModal } from './components/ReelectionChoiceModal';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { IndicatorsPanel } from './components/IndicatorsPanel';
@@ -221,6 +222,13 @@ function App() {
         <ElectionResultsModal
           result={gameState.electionResults}
           onClose={handleCloseElectionResults}
+        />
+      )}
+
+      {gameState.gameOver && !gameState.victorious && (
+        <GameOverModal
+          gameState={gameState}
+          onRestart={handleRestart}
         />
       )}
 

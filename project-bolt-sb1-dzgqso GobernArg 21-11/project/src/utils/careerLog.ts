@@ -1,4 +1,4 @@
-import { GameState, CareerMilestone, TurnLogEntry } from '../types/game';
+import { GameState, CareerMilestone, TurnLogEntry, DefeatReason } from '../types/game';
 
 export function generateLegacyText(gameState: GameState): string {
   const { governorName, careerHistory, turnLog } = gameState;
@@ -57,8 +57,17 @@ export function generateLegacyText(gameState: GameState): string {
   // Victoria o derrota final
   const lastMilestone = careerHistory[careerHistory.length - 1];
   if (gameState.gameOver && !gameState.victorious) {
+    const narratives: Partial<Record<DefeatReason, string>> = {
+      low_popularity: `Finalmente, la popularidad de ${name} se desplomó a niveles insostenibles, forzando su salida del poder.`,
+      negative_budget: `El déficit fiscal crónico terminó con el gobierno de ${name}, que no pudo mantener las cuentas públicas en orden.`,
+      impeachment: `El Congreso destituyó a ${name} mediante un juicio político que puso fin a su mandato de forma abrupta.`,
+      institutional_coup: `Las instituciones colapsaron bajo la gestión de ${name}, que fue removido del poder en un golpe institucional.`,
+      hyperinflation: `La economía argentina colapsó en una hiperinflación desatada por la emisión descontrolada durante la gestión de ${name}.`,
+      election_loss: `Finalmente, en las urnas, el pueblo decidió un cambio de rumbo. ${name} perdió las elecciones con el ${lastMilestone.votesPercentage.toFixed(1)}% de los votos, cerrando así su ciclo en el poder.`,
+    };
     paragraphs.push(
-      `Finalmente, en ${2026 + (careerHistory.length - 1) * 4 + 3}, ${name} perdió las elecciones con el ${lastMilestone.votesPercentage.toFixed(1)}% de los votos, cerrando así su paso por el ejecutivo.`
+      narratives[gameState.defeatReason ?? 'election_loss'] ??
+      `${name} perdió las elecciones con el ${lastMilestone.votesPercentage.toFixed(1)}% de los votos, cerrando así su paso por el ejecutivo.`
     );
   } else if (gameState.position === 'presidente' && gameState.term >= 2) {
     paragraphs.push(

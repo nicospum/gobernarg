@@ -1,7 +1,9 @@
 import { RotateCcw, Trophy, Skull, ScrollText } from 'lucide-react';
-import { GameState } from '../types/game';
+import { GameState, DefeatReason } from '../types/game';
 import { generateLegacyText, generateLegacyStats, getRecentCrises, getRecentProjects } from '../utils/careerLog';
 import { IMAGES } from '../utils/imageAssets';
+import { DEFEAT_REASON_CONFIG } from '../data/defeatReasons';
+import { AxisBar } from './AxisBar';
 
 interface LegacyScreenProps {
   gameState: GameState;
@@ -10,6 +12,8 @@ interface LegacyScreenProps {
 
 export function LegacyScreen({ gameState, onRestart }: LegacyScreenProps) {
   const isVictory = gameState.victorious;
+  const reason = gameState.defeatReason;
+  const defeatConfig = !isVictory && reason ? DEFEAT_REASON_CONFIG[reason] : null;
   const legacyText = generateLegacyText(gameState);
   const stats = generateLegacyStats(gameState);
   const recentCrises = getRecentCrises(gameState);
@@ -42,6 +46,12 @@ export function LegacyScreen({ gameState, onRestart }: LegacyScreenProps) {
             <p className="text-white/90 mt-1">
               {isVictivityMessage(gameState)}
             </p>
+            {defeatConfig && (
+              <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-900/60 text-sm text-white/90 border border-red-700/50">
+                <Skull className="w-4 h-4" />
+                {defeatConfig.title}
+              </div>
+            )}
           </div>
         </div>
 
@@ -67,6 +77,37 @@ export function LegacyScreen({ gameState, onRestart }: LegacyScreenProps) {
                   <p className="text-sm text-blue-700">{stat.label}</p>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Perfil ideológico */}
+          <div className="mb-8">
+            <h3 className="text-xl font-bold mb-3 text-gray-900">Perfil ideológico de tu gestión</h3>
+            <div className="bg-purple-50 rounded-xl p-5 border border-purple-200">
+              <AxisBar
+                value={gameState.radicalConciliadorAxis}
+                labelLo="Radical"
+                labelHi="Conciliador"
+                loColor="bg-red-500"
+                hiColor="bg-blue-500"
+              />
+              <AxisBar
+                value={gameState.populistaTecnicoAxis}
+                labelLo="Populista"
+                labelHi="Técnico"
+                loColor="bg-purple-500"
+                hiColor="bg-teal-500"
+              />
+              <AxisBar
+                value={gameState.cerradoConvocanteAxis}
+                labelLo="Cerrado"
+                labelHi="Convocante"
+                loColor="bg-orange-500"
+                hiColor="bg-green-500"
+              />
+              <p className="text-xs text-gray-500 mt-2 italic">
+                Estos valores reflejan la orientación acumulada de tus políticas a lo largo de toda tu carrera.
+              </p>
             </div>
           </div>
 

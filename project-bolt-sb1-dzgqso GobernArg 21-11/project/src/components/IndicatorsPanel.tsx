@@ -1,5 +1,6 @@
 import { TrendingUp, TrendingDown, AlertTriangle, BarChart } from 'lucide-react';
 import { GameState } from '../types/game';
+import { AxisBar } from './AxisBar';
 
 interface IndicatorsPanelProps {
   gameState: GameState;
@@ -111,6 +112,32 @@ export function IndicatorsPanel({ gameState }: IndicatorsPanelProps) {
               />
             ))}
           </div>
+        </div>
+
+        {/* Perfil Ideológico */}
+        <div className="mt-6">
+          <h3 className="text-sm font-medium text-gray-700 mb-2">Perfil Ideológico</h3>
+          <AxisBar
+            value={gameState.radicalConciliadorAxis}
+            labelLo="Radical"
+            labelHi="Conciliador"
+            loColor="bg-red-500"
+            hiColor="bg-blue-500"
+          />
+          <AxisBar
+            value={gameState.populistaTecnicoAxis}
+            labelLo="Populista"
+            labelHi="Técnico"
+            loColor="bg-purple-500"
+            hiColor="bg-teal-500"
+          />
+          <AxisBar
+            value={gameState.cerradoConvocanteAxis}
+            labelLo="Cerrado"
+            labelHi="Convocante"
+            loColor="bg-orange-500"
+            hiColor="bg-green-500"
+          />
         </div>
       </div>
     </div>

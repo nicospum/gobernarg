@@ -1,17 +1,32 @@
-import { Trophy, AlertOctagon } from 'lucide-react';
-import { GameState } from '../types/game';
+import { Trophy, AlertOctagon, TrendingDown, Wallet, Gavel, Swords, Flame, Vote } from 'lucide-react';
+import { GameState, DefeatReason } from '../types/game';
 import { IMAGES } from '../utils/imageAssets';
+import { DEFEAT_REASON_CONFIG } from '../data/defeatReasons';
 
 interface GameOverModalProps {
   gameState: GameState;
   onRestart: () => void;
 }
 
+const DEFEAT_ICONS: Record<DefeatReason, typeof Trophy> = {
+  low_popularity: TrendingDown,
+  negative_budget: Wallet,
+  impeachment: Gavel,
+  institutional_coup: Swords,
+  hyperinflation: Flame,
+  election_loss: Vote,
+};
+
 export function GameOverModal({ gameState, onRestart }: GameOverModalProps) {
   const isVictory = gameState.victorious;
+  const reason = gameState.defeatReason;
+  const defeatConfig = !isVictory && reason ? DEFEAT_REASON_CONFIG[reason] : null;
+
   const backgroundImage = isVictory
     ? IMAGES.ui.shieldEmblemPremium
     : IMAGES.events.socialProtest;
+
+  const DefeatIcon = !isVictory && reason ? DEFEAT_ICONS[reason] : null;
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
@@ -38,11 +53,22 @@ export function GameOverModal({ gameState, onRestart }: GameOverModalProps) {
             </>
           ) : (
             <>
-              <AlertOctagon className="w-16 h-16 text-red-400 mx-auto mb-4" />
-              <h2 className="text-4xl font-bold text-red-400 mb-2">Fin del Juego</h2>
-              <p className="text-lg text-white/90 mb-8">
-                Tu gestión ha llegado a su fin. El pueblo demanda un cambio.
+              {DefeatIcon ? (
+                <DefeatIcon className="w-16 h-16 text-red-400 mx-auto mb-4" />
+              ) : (
+                <AlertOctagon className="w-16 h-16 text-red-400 mx-auto mb-4" />
+              )}
+              <h2 className="text-4xl font-bold text-red-400 mb-2">
+                {defeatConfig?.title ?? 'Fin del Juego'}
+              </h2>
+              <p className="text-lg text-white/90 mb-4">
+                {defeatConfig?.description ?? 'Tu gestión ha llegado a su fin. El pueblo demanda un cambio.'}
               </p>
+              {defeatConfig?.advice && (
+                <div className="bg-white/10 backdrop-blur rounded-xl p-4 mb-6 border border-white/20 inline-block text-left max-w-md">
+                  <p className="text-sm text-white/80 italic">💡 Consejo: {defeatConfig.advice}</p>
+                </div>
+              )}
             </>
           )}
 
