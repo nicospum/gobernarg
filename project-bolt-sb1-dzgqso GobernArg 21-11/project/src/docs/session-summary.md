@@ -1,111 +1,130 @@
 # Estado del proyecto — GobernArg V2
 
-> Última actualización: 23 de junio de 2026
+> Última actualización: 23 de junio de 2026 — Fase 2 completada
 
 ---
 
-## Lo que se hizo en esta sesión
+## Lo que se hizo en la Fase 2 (segunda sesión)
 
-### 1. Documentación y análisis
-- `src/docs/difficulty-analysis.md` — Diagnóstico completo de por qué el juego era fácil y plan de 4 fases
-- `src/docs/future-engine-features.md` — Ya existía, se usó como referencia para features futuras
-- `src/docs/roadmap.md` — Ya existía, roadmap visual y de contenido
-- `src/docs/phase-1-plan.md` — Plan detallado línea por línea de la Fase 1
+### 🔴 Bugfixes críticos (post-Sprint 4 Fase 1)
+- **Crash al cumplir demanda:** `satisfyGroupDemand` tenía `const newState` reasignado → cambiado a `let`
+- **Derrota prematura (1 turno en vez de 2):** `checkAllDefeatConditions` sumaba `+1` redundante
+- **Corrupción de estado React:** mutación in-place de `groupRelations` → deep clone en `processEndTurn`
+- **Campos stale post-reelección:** `resolvePendingElection` no reseteaba 15 campos → ahora los resetea todos
+- **ErrorBoundary:** captura crashes y muestra pantalla amigable en vez de pantalla blanca
+- Blindaje defensivo en `satisfyGroupDemand`: optional chaining y fallbacks
 
-### 2. Fase 1 — Balance y diferenciación por cargo
-- Acciones base por cargo: intendente 3, gobernador 2, presidente 1
-- Desgaste de popularidad por cargo: -5/-7/-10 por turno
-- 25+ acciones restringidas por cargo (intendente sin préstamos, sin diplomacia exterior)
-- Umbrales de derrota por cargo: pop <20/25/30% × 2 turnos
-- `reunión` ya no es gratis (cuesta 10)
-- Intendente: 4 reelecciones máximas
-- Promoción más difícil (-15 gob, -40 pres)
+### 🟢 Sprint 1 — Tooltips y Claridad Visual
+- **Nuevo:** `Tooltip.tsx` — componente reutilizable con Tailwind (hover)
+- **Nuevo:** `ErrorBoundary.tsx` — pantalla de error amigable
+- Tooltips numéricos en: ActionCard (flechas → valor real, $ → monto), IndicatorsPanel (thresholds de barras), VotingIntentionPanel (pesos electorales), ElectionResultsModal (desglose), PoliticalCalendarWidget (apoyo legislativo), AxisBars (explicación de ejes)
+- `main.tsx` envuelto con ErrorBoundary
 
-### 3. Fase 2 — Memoria y consecuencias
-- Rendimientos decrecientes: `factor = 0.80^usos`. 5+ usos invierte el efecto
-- Inflación real: 3+ emisiones → penalización, 5+ → crisis, 7+ → game over
-- Servicio de deuda: cada préstamo reduce ingreso 10%, máx 3
-- Cooldowns en acciones: 1-8 turnos
-- Efectos multidimensionales: stability, legitimacy, votingIntention
-- Consecuencias diferidas automáticas en acciones grandes
+### 🟡 Sprint 2 — Efectos Diferidos y Recompensas Estratégicas
+- **Nuevo:** `ActiveBenefits.tsx` — panel de beneficios activos en sidebar
+- Nuevos campos en `PendingEffect`: `incomeModifier`, `costReductionCategory`, `costReductionPercent`, `stabilityChange`
+- `processEndTurn`: aplica `incomeModifiers` activos al calcular ingresos
+- `calculateActionEffects`: aplica `costReduction` a acciones de categoría matching
+- `processPendingEffects`: soporta `stabilityChange` al activarse
+- `futureEffects` agregados a: estudio_factibilidad, mejorar_recaudacion, fomento_emprendimiento
 
-### 4. Fase 3 — Estrategia y política
-- Árbol de desbloqueo con prerequisites (requiredActions, minLegislativeSupport, minGroupSupport)
-- Matriz de antagonismos entre grupos (aplicación automática cada turno)
-- Estrategias post-legislativas (acelerar, negociar, abrirse, jugada_audaz)
-- Penalización progresiva de ascenso (más reelecciones = menos penalización)
-- Nueva acción: estudio_factibilidad
+### 🟠 Sprint 3 — Profundización de Interacciones con Grupos
+- **Reunión:** pausa demandas del grupo por 2 turnos
+- **Negociar:** genera demanda concreta en 1-2 turnos, deadline 4 turnos
+- **Conceder:** bloquea demandas 4 turnos (1 año) + +15 apoyo
+- Nuevos campos: `demandPausedUntil`, `negotiationPending`
+- `resolvePendingNegotiations`: genera demandas cuando vence el plazo de negociación
+- `generateGroupAgendas`: respeta `demandPausedUntil`
 
-### 5. Fase 4 — Profundidad total
-- Legitimidad como recurso (se gana con comunicación, se pierde con decretos)
-- Ejes contradictorios (radical↔conciliador, populista↔técnico, cerrado↔convocante)
-- Grupos con agendas, demandas, estados de ánimo y radicalización
-- 4 dificultades: Easy, Normal, Hard, Legend (Ironman)
-- 5 vías de derrota: popularidad, déficit, impeachment, golpe, hiperinflación
-- 4 habilidades especiales de arquetipos con cooldown
+### 🔴 Sprint 4 — Arquetipos, Ejes y Contenido
+- **Habilidades pasivas por arquetipo** (`ARCHETYPE_PASSIVES`):
+  - Político: +10% retención voto, reuniones aliados gratis
+  - Empresario: +20% income economía, +1 préstamo extra
+  - Sindicalista: reuniones sindicatos/populares gratis, +1 acción base
+  - Comunicador: -30% impacto eventos negativos, ×1.1 en popularidad
+- **Ejes contradictorios con efectos mecánicos** (`getAxisModifiers`):
+  - ±80 en cada eje modifica costos, efectividad, estabilidad y relaciones grupales
 
-### 6. Bugfixes críticos
-- `getNextPosition('reelection')` devolvía 'intendente' siempre → arreglado
-- Popularidad siempre 100% (fórmula incorrecta) → arreglado
-- Ganar sin hacer nada (recalcState borraba el desgaste) → arreglado
+### 🟢 Sprint 5+6 — GameLog y Documentación
+- **Nuevo:** `GameLog.tsx` — historial de gestión con línea de tiempo (modal)
+- Botón "Historial de gestión" en sidebar
+- **Nuevo:** `docs/mecanicas-del-juego.md` — manual completo en castellano explicando todas las mecánicas, variables, reglas y estrategia
+- **Nuevo:** `referencias/` — capturas de pantalla para referencia visual
 
 ---
 
-## Commits
+## Commits de la Fase 2
 
 ```
-9c883a7 fix: 3 bugs críticos (cargo, popularidad, idle-win)
-6a92b68 feat: Fase 4 - El poder se gasta
-754fec7 feat: Fase 3 - Gobernar es elegir qué perder
-fb8e656 feat: Fase 2 - Las decisiones tienen memoria
-b20d483 feat: Fase 1 - Balance y diferenciación por cargo
-7739e99 docs: planes detallados de implementación Fases 1-4
-335fdd5 docs: agregar 7 mecánicas nuevas al análisis de dificultad
-177f7a5 Initial commit: GobernArg V2 project baseline
+4b07c82 docs: capturas de referencia para mejoras visuales
+9ebb484 fix: 'Assignment to constant variable' en satisfyGroupDemand
+cf16bf3 fix: blindaje defensivo en satisfyGroupDemand contra crashes
+4192cf9 feat: Sprint 5+6 - GameLog, Documentación y Balance Final
+8b56f1b feat: Sprint 4 - Arquetipos, Ejes y Contenido
+0758503 feat: Sprint 3 - Profundización de Interacciones con Grupos
+ba85ae0 feat: Sprint 2 - Efectos Diferidos y Recompensas Estratégicas
+340fe42 feat: Sprint 1 - Tooltips y Claridad Visual
 ```
+
+---
+
+## Archivos creados en la Fase 2
+
+| Archivo | Propósito |
+|---------|-----------|
+| `src/components/Tooltip.tsx` | Sistema de tooltips reutilizable con hover |
+| `src/components/ErrorBoundary.tsx` | Captura errores, evita pantalla blanca |
+| `src/components/ActiveBenefits.tsx` | Panel de beneficios diferidos activos |
+| `src/components/GameLog.tsx` | Historial de gestión (timeline) |
+| `src/docs/mecanicas-del-juego.md` | Manual completo en lenguaje natural |
+
+## Archivos modificados en la Fase 2
+
+| Archivo | Cambios principales |
+|---------|-------------------|
+| `src/main.tsx` | ErrorBoundary wrapper |
+| `src/App.tsx` | ActiveBenefits, GameLog, try/catch en satisfyDemand |
+| `src/types/game.ts` | incomeModifier, costReduction, stabilityChange, demandPausedUntil, negotiationPending |
+| `src/engine/gameEngine.ts` | incomeModifiers en ingresos, applyInteraction (reunión/negociar/conceder), satisfyGroupDemand blindado |
+| `src/utils/actionEffects.ts` | costReduction en calculateActionEffects, stabilityChange en processPendingEffects |
+| `src/utils/victoryConditions.ts` | Fix +1 redundante en checkAllDefeatConditions |
+| `src/engine/groupAgendaEngine.ts` | demandPausedUntil, resolvePendingNegotiations, fix mutación in-place |
+| `src/engine/axisEngine.ts` | getAxisModifiers con efectos mecánicos reales |
+| `src/data/actionCategories.ts` | futureEffects en 3 acciones |
+| `src/data/specialAbilities.ts` | ARCHETYPE_PASSIVES con 8 pasivas |
+| `src/components/ActionCard.tsx` | Tooltips en flechas, $, badges |
+| `src/components/IndicatorsPanel.tsx` | Tooltips en barras y ejes |
+| `src/components/VotingIntentionPanel.tsx` | Tooltips con pesos electorales |
+| `src/components/ElectionResultsModal.tsx` | Tooltips en desglose |
+| `src/components/PoliticalCalendarWidget.tsx` | Tooltip en apoyo legislativo |
+| `src/components/ObjectivesPanel.tsx` | Fix countdown 3→2 turnos |
+| `src/components/GameOverModal.tsx` | defeatReason + consejos |
+| `src/components/LegacyScreen.tsx` | Badge derrota + perfil ideológico |
+| `src/utils/careerLog.ts` | Texto narrativo por defeatReason |
 
 ---
 
 ## Próximos pasos
 
-### 🔴 Urgente — Conectar UI a las mecánicas nuevas
-Muchas mecánicas están implementadas en el motor pero no tienen interfaz:
+### 🔴 Urgente — Visual y experiencia
+- Mejorar la presentación visual general (layout, colores, jerarquía de información)
+- Íconos faltantes: 2 arquetipos, 14 grupos, 7 eventos nuevos (~23 piezas)
+- Revisar los mocks de referencia en `referencias/`
 
-| Feature | Archivo de motor | UI necesaria |
-|---|---|---|
-| Selector de dificultad | `difficultyEngine.ts` | Pantalla de inicio / `createNewGame` |
-| Habilidades de arquetipos | `useSpecialAbility()` en `gameEngine.ts` | `SpecialAbilitiesPanel.tsx` |
-| Estrategia post-legislativa | `midtermStrategies.ts` | `MidtermStrategyModal.tsx` |
-| Agendas de grupos | `groupAgendaEngine.ts` | Panel de demandas en UI |
-| Ejes contradictorios | `axisEngine.ts` | Indicador en pantalla de legado |
-| Razón de derrota | `defeatReason` | `GameOverModal` / `LegacyScreen` |
+### 🟡 Balance
+- El juego volvió a ser fácil. Ajustar: desgaste de popularidad, ingresos por cargo, costos de acciones
+- Diferenciar ingreso neto de presidente vs gobernador (hoy ambos +150M)
 
-### 🟡 Balance — Ajustar dificultad
-El juego ahora es "muy difícil". Ajustar constantes:
-
-| Qué | Dónde | Actual | Sugerido |
-|---|---|---|---|
-| Desgaste popularidad | `gameEngine.ts` | 5/7/10 | 3/5/7 |
-| Acciones base | `actionCalculator.ts` | 3/2/1 | 4/3/2 |
-| Peso grupos en pop | `popularidad.ts` | 40% | 30% |
-| Costo reunión | `interactionCosts.ts` | 10 | 5 |
-
-### 🟢 Contenido — Más acciones, eventos, assets
-- Ampliar banco de acciones con prerequisitos más interesantes
-- Más eventos aleatorios y crisis
-- 43 imágenes pendientes según `image-needs.md` (arquetipos, grupos, categorías, eventos, fondos)
-- Música y sonidos
-
-### 🟢 Pulido
-- Pantalla de elecciones con mapa de Argentina
-- Modo campaña: ascender Intendente → Gobernador → Presidente
-- Logros desbloqueables
-- Tutorial interactivo
-- Responsive design
+### 🟢 Contenido pendiente del plan
+- 10 nuevas acciones (reforma laboral, desregulación, etc.)
+- 7 nuevos eventos (escándalo, conflicto sindical, boom exportador, etc.)
+- Sistema de sucesión partidaria
+- Pesos electorales diferenciados por grupo
+- Ventaja del oficialismo escalonada
 
 ---
 
-## Archivos creados en esta sesión
+## Archivos creados en la Fase 1 (sesión anterior)
 
 | Archivo | Propósito |
 |---|---|
