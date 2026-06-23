@@ -1,0 +1,69 @@
+SISTEMA DE ASESORES
+
+1. CARACTERÍSTICAS BÁSICAS
+Cada asesor tiene:
+- Nombre y especialidad
+- Nivel de influencia (1-10)
+- Bonificación de acciones (+1 o +2)
+- Efecto en popularidad
+- Costo de contratación
+- Habilidades especiales
+
+2. ESPECIALIDADES DISPONIBLES
+a) Economista
+- Bonificación: +2 acciones
+- Influencia: 8
+- Costo: 300M
+- Efecto popularidad: -5%
+- Especialidad: Política monetaria
+
+b) Comunicador Social
+- Bonificación: +1 acción
+- Influencia: 9
+- Costo: 250M
+- Efecto popularidad: +10%
+- Especialidad: Manejo de medios
+
+c) Experto en Infraestructura
+- Bonificación: +2 acciones
+- Influencia: 7
+- Costo: 400M
+- Efecto popularidad: +5%
+- Especialidad: Obras públicas
+
+d) Especialista Social
+- Bonificación: +1 acción
+- Influencia: 8
+- Costo: 200M
+- Efecto popularidad: +15%
+- Especialidad: Programas sociales
+
+3. SISTEMA DE GESTIÓN
+- Máximo 2 asesores simultáneos
+- Contratación/despido usa 1 acción
+- Sistema de activación/desactivación
+- Períodos de inactividad
+
+4. EFECTOS EN EL JUEGO
+a) Bonificaciones Directas
+- Acciones adicionales por turno
+- Modificadores de popularidad
+- Reducción de costos en su área
+
+b) Efectos Especiales
+- Desbloqueo de acciones especiales
+- Mejora de relaciones con grupos
+- Prevención de crisis
+- Bonificaciones específicas
+
+5. COSTOS Y MANTENIMIENTO
+- Costo inicial de contratación
+- Sin costos de mantenimiento
+- Período mínimo de servicio
+- Penalizaciones por despido
+
+6. ESTRATEGIAS DE USO
+- Combinaciones efectivas
+- Timing de contratación
+- Rotación estratégica
+- Especialización vs versatilidad

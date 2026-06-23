@@ -1,0 +1,63 @@
+DOCUMENTACIÓN DE ATRIBUTOS DEL SISTEMA
+
+1. POLICY ATTRIBUTES (Atributos de Acciones Políticas)
+
+Atributos Base:
+- id: string - Identificador único de la acción
+- title: string - Título visible de la acción
+- description: string - Descripción detallada de la acción
+- icon: LucideIcon - Ícono visual de la acción
+- category: string - Categoría a la que pertenece (economía, social, etc.)
+- popularityChange: number - Impacto inmediato en la popularidad general
+- budgetChange: number - Costo o beneficio presupuestario inmediato
+- requirements: object - Requisitos para poder ejecutar la acción
+  - minBudget: number - Presupuesto mínimo necesario
+  - minPopularity: number (opcional) - Popularidad mínima necesaria
+
+Atributos Pendientes:
+- type: string - FALTA DEFINIR - Tipo específico de acción para efectos especiales
+- duration: number - FALTA DEFINIR - Duración en turnos de los efectos
+- cooldown: number - FALTA DEFINIR - Turnos necesarios para volver a usar
+- groupEffects: object - FALTA DEFINIR - Efectos específicos en grupos de interés
+- archetypeMultipliers: object - FALTA DEFINIR - Multiplicadores según arquetipo del jugador
+- positionRequirements: object - FALTA DEFINIR - Requisitos según cargo político
+- unlockConditions: object - FALTA DEFINIR - Condiciones para desbloquear la acción
+- chainedActions: array - FALTA DEFINIR - Acciones que se desbloquean al usar esta
+- crisis: object - FALTA DEFINIR - Posibles crisis que puede generar
+- opportunities: object - FALTA DEFINIR - Oportunidades que puede generar
+
+2. FACTION ATTRIBUTES (Atributos de Subgrupos)
+
+Atributos Base:
+- id: string - Identificador único del subgrupo
+- name: string - Nombre visible del subgrupo
+- description: string - Descripción detallada del subgrupo
+- influence: number (1-10) - Poder de influencia en el sistema
+- popularity: number (1-3) - Impacto en popularidad general
+- interests: string[] - Lista de intereses principales
+- demands: string[] - Lista de demandas actuales
+- icon: LucideIcon - Ícono visual del subgrupo
+- baseSupport: number (0-100) - Nivel base de apoyo inicial
+- supportMultiplier: number - Multiplicador de efectos de apoyo
+- resourceDemand: number - Recursos necesarios para satisfacer demandas
+- satisfactionLevel: number (0-100) - Nivel actual de satisfacción
+- lastInteractionEffect: number - Efecto de la última interacción
+
+Atributos Pendientes:
+- oppositionLevel: number - FALTA DEFINIR - Nivel de oposición al gobierno
+- allianceStrength: number - FALTA DEFINIR - Fuerza de la alianza si son aliados
+- eventTriggers: object - FALTA DEFINIR - Eventos que puede desencadenar
+- specialAbilities: array - FALTA DEFINIR - Habilidades especiales del grupo
+- relationshipNetwork: object - FALTA DEFINIR - Relaciones con otros grupos
+- economicPower: number - FALTA DEFINIR - Poder económico del grupo
+- socialInfluence: number - FALTA DEFINIR - Influencia en la sociedad
+- mediaPower: number - FALTA DEFINIR - Capacidad de influencia mediática
+- crisisResponse: object - FALTA DEFINIR - Comportamiento durante crisis
+- longTermMemory: object - FALTA DEFINIR - Memoria de acciones pasadas
+
+NOTAS:
+- Los valores numéricos están normalizados según sus escalas específicas
+- Los multiplicadores base están equilibrados alrededor de 1.0
+- Los atributos pendientes serán implementados en futuras actualizaciones
+- Cada atributo contribuye al sistema de cálculo de efectos global
+- Los valores iniciales están balanceados para gameplay equilibrado

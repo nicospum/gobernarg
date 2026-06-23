@@ -1,0 +1,45 @@
+SISTEMA DE ELECCIONES
+
+1. TEMPORALIDAD
+- Ocurren al final del mandato (Año 4, Turno 4)
+- Proceso automático al finalizar último turno
+- Resultado determina victoria/derrota
+
+2. REQUISITOS DE VICTORIA
+- Mínimo 45% de intención de voto
+- Factores múltiples de evaluación
+- Sin posibilidad de campaña especial
+- Resultado basado en gestión completa
+
+3. FACTORES DE EVALUACIÓN
+a) Popularidad General (35%)
+- Promedio últimos 4 turnos
+- Tendencia de crecimiento
+- Estabilidad del indicador
+
+b) Apoyo Sectorial (25%)
+- Relación con grupos de interés
+- Balance entre sectores
+- Conflictos resueltos
+
+c) Objetivos Cumplidos (15%)
+- Cantidad de objetivos completados
+- Relevancia de los objetivos
+- Timing de cumplimiento
+
+d) Estabilidad Gubernamental (5%)
+- Ausencia de crisis graves
+- Manejo presupuestario
+- Estabilidad política
+
+4. PRESENTACIÓN DE RESULTADOS
+- Porcentaje final de votos
+- Desglose por factores
+- Análisis detallado
+- Mensaje de victoria/derrota
+
+5. MODO ADMIN
+- Visualización de intención de voto
+- Seguimiento de factores
+- Análisis en tiempo real
+- Herramientas de desarrollo

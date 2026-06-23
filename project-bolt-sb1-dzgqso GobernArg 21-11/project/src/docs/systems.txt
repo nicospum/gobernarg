@@ -1,0 +1,144 @@
+SISTEMAS IMPLEMENTADOS
+
+1. SISTEMA DE ACCIONES POLÍTICAS
+- Gestión completa de acciones por categoría
+- Efectos inmediatos y diferidos
+- Integración con sistema de asesores
+- Cálculo de efectos basado en múltiples factores
+- Visualización mejorada de costos y beneficios
+- Desselección de acciones implementada
+- Sistema de cooldown y bloqueos
+
+2. SISTEMA DE SUBGRUPOS ESPECÍFICOS
+- Interacción mediante reunión, negociación y concesión
+- Sistema de cooldown implementado (2 turnos)
+- Efectos en popularidad y presupuesto
+- Visualización de relaciones y estados
+- Bloqueo de interacciones post-selección
+- Indicadores visuales de estado
+
+3. SISTEMA DE ASESORES
+- Contratación y despido
+- Efectos en acciones y relaciones
+- Sistema de activación/desactivación
+- Bonificaciones específicas por especialidad
+- Límite de 2 asesores simultáneos
+- Costos de contratación variables
+
+4. SISTEMA DE TURNOS
+- Gestión de efectos diferidos
+- Calendario de eventos
+- Procesamiento de acciones
+- Actualización de estado global
+- Eventos programados y aleatorios
+- Sistema de prioridades
+
+5. SISTEMA DE NOTIFICACIONES
+- Priorización por importancia
+- Categorización detallada
+- Sistema de alertas críticas
+- Gestión de notificaciones agrupadas
+- Histórico de notificaciones
+- Filtros y búsqueda
+
+6. SISTEMA DE INDICADORES
+- Indicadores específicos por cargo
+- Indicadores ocultos
+- Visualización de tendencias
+- Alertas y advertencias
+- Histórico de valores
+- Predicciones
+
+7. SISTEMA DE ELECCIONES
+- Cálculo de intención de voto
+- Factores múltiples de evaluación
+- Resultados detallados
+- Consecuencias implementadas
+- Elecciones de medio término
+- Requisitos de victoria
+
+8. SISTEMA DE ARQUETIPOS
+- Bonificaciones iniciales
+- Modificadores específicos
+- Habilidades especiales
+- Integración con otros sistemas
+- Efectos en relaciones
+- Cooldowns de habilidades
+
+9. SISTEMA DE EVENTOS
+- Eventos ponderados
+- Condiciones de activación
+- Efectos en múltiples sistemas
+- Gestión de crisis
+- Probabilidades dinámicas
+- Consecuencias a largo plazo
+
+10. SISTEMA DE EFECTOS
+- Procesamiento de efectos inmediatos
+- Gestión de efectos diferidos
+- Acumulación de efectos
+- Visualización de cambios
+- Efectos condicionales
+- Efectos en cadena
+
+SUGERENCIAS DE MEJORA
+
+1. Sistema de Acciones Políticas
+- Implementar sistema de desbloqueo progresivo
+- Añadir efectos en cadena
+- Mejorar feedback visual
+- Implementar acciones especiales por cargo
+
+2. Sistema de Subgrupos
+- Añadir relaciones entre subgrupos
+- Implementar eventos específicos
+- Mejorar sistema de demandas
+- Añadir conflictos entre grupos
+
+3. Sistema de Asesores
+- Añadir especialidades adicionales
+- Implementar sistema de desarrollo
+- Mejorar efectos a largo plazo
+- Sistema de lealtad
+
+4. Sistema de Turnos
+- Mejorar visualización del calendario
+- Añadir eventos especiales
+- Implementar sistema de predicciones
+- Efectos climáticos/estacionales
+
+5. Sistema de Notificaciones
+- Mejorar agrupación de notificaciones
+- Añadir filtros avanzados
+- Implementar sistema de recordatorios
+- Notificaciones programadas
+
+6. Sistema de Indicadores
+- Añadir más indicadores específicos
+- Mejorar visualización de tendencias
+- Implementar predicciones
+- Indicadores compuestos
+
+7. Sistema de Elecciones
+- Añadir eventos de campaña
+- Mejorar sistema de debates
+- Implementar encuestas detalladas
+- Factores externos
+
+8. Sistema de Arquetipos
+- Añadir más habilidades especiales
+- Implementar sistema de progresión
+- Mejorar balance de ventajas
+- Arquetipos desbloqueables
+
+9. Sistema de Eventos
+- Añadir más variedad de eventos
+- Mejorar sistema de crisis
+- Implementar eventos en cadena
+- Eventos específicos por región
+
+10. Sistema de Efectos
+- Mejorar visualización de efectos
+- Implementar efectos condicionales
+- Añadir efectos permanentes
+- Efectos basados en tiempo

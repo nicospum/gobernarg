@@ -1,0 +1,27 @@
+PENDIENTE DE IMPLEMENTACIÓN
+
+1. MEJORAS PLANIFICADAS
+- Sistema de eventos dinámicos más complejo
+- Mecánicas específicas por cargo
+- Sistema de crisis
+- Eventos especiales por arquetipo
+- Logros y desbloqueos
+
+2. CARACTERÍSTICAS FUTURAS
+- Guardado/carga de partida
+- Tutorial interactivo
+- Estadísticas detalladas
+- Modo campaña
+- Desafíos especiales
+
+3. BALANCEO
+- Ajuste de valores económicos
+- Equilibrio de popularidad
+- Dificultad por cargo
+- Impacto de decisiones
+
+4. CONTENIDO ADICIONAL
+- Nuevos asesores
+- Eventos históricos
+- Escenarios predefinidos
+- Condiciones especiales de victoria

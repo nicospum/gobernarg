@@ -1,0 +1,35 @@
+INTERFAZ DE USUARIO
+
+1. BARRA SUPERIOR
+- Acciones disponibles
+- Popularidad actual (redondeada sin decimales)
+- Presupuesto
+- Año y turno actual
+- Acceso a documentación
+
+2. PANEL PRINCIPAL
+- Acciones Políticas
+  * Filtrado por categorías
+  * Visualización de costos y efectos
+  * Sistema de selección
+- Panel de Objetivos
+  * Progreso visible
+  * Recompensas
+  * Estado actual
+
+3. PANEL LATERAL
+- Grupos de Interés
+  * Estado de relaciones
+  * Opciones de interacción
+  * Cooldowns
+- Sistema de Asesores
+  * Contratación
+  * Despido
+  * Estado actual
+
+4. MODO ADMIN
+- Panel de Intención de Voto
+  * Porcentaje actual
+  * Factores de influencia
+  * Indicadores detallados
+- Activación en pantalla inicial

@@ -1,0 +1,24 @@
+SISTEMAS DE FEEDBACK
+
+1. INDICADORES VISUALES
+- Popularidad: Flechas (1-3)
+- Presupuesto: Símbolos de dinero
+  * 1 símbolo = 100M
+  * Medio símbolo = <100M
+- Progreso de objetivos
+- Estado de relaciones
+
+2. RESUMEN DE TURNO
+- Eventos ocurridos
+- Cambios en popularidad
+- Impacto presupuestario
+- Efectos especiales
+
+3. RESULTADOS ELECTORALES
+- Porcentaje de votos
+- Análisis detallado
+  * Gestión y popularidad
+  * Apoyo sectorial
+  * Objetivos cumplidos
+  * Bonus de estabilidad
+- Mensaje de victoria/derrota

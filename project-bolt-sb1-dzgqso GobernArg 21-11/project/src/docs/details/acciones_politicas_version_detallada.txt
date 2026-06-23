@@ -1,0 +1,285 @@
+SISTEMA DE ACCIONES POLÍTICAS - IMPLEMENTACIÓN TÉCNICA DETALLADA
+
+1. ESTRUCTURA DE DATOS
+```typescript
+interface GameAction {
+  id: string;              // Identificador único para tracking
+  title: string;           // Título mostrado en UI
+  description: string;     // Descripción detallada
+  icon: LucideIcon;        // Ícono de Lucide React
+  category: string;        // Categoría para filtrado
+  popularityChange: number; // Impacto en popularidad
+  budgetChange: number;    // Impacto presupuestario
+  requirements: {
+    minBudget: number;     // Presupuesto mínimo necesario
+    minPopularity?: number; // Popularidad mínima opcional
+  }
+}
+```
+
+2. PROCESAMIENTO DE ACCIONES
+a) Selección de Acción
+```typescript
+function handleActionSelect(actionId: string) {
+  if (gameState.actions <= 0) return; // Verifica acciones disponibles
+  if (gameState.selectedActions.includes(actionId)) return; // Evita duplicados
+  
+  setGameState(prev => ({
+    ...prev,
+    selectedActions: [...prev.selectedActions, actionId],
+    actions: prev.actions - 1
+  }));
+}
+```
+
+b) Cálculo de Efectos
+```typescript
+function calculateActionEffects(action: GameAction, gameState: GameState) {
+  let popularityEffect = action.popularityChange;
+  let budgetEffect = action.budgetChange;
+
+  // Multiplicadores por arquetipo
+  const archetypeMultiplier = {
+    politico: action.category === 'diplomacia' ? 1.2 : 1.0,
+    empresario: action.category === 'economia' ? 1.3 : 0.9,
+    sindicalista: action.category === 'social' ? 1.3 : 0.9,
+    comunicador: 1.1
+  }[gameState.archetype];
+
+  popularityEffect *= archetypeMultiplier;
+
+  // Efectos de asesores activos
+  gameState.advisors.forEach(advisor => {
+    if (advisor.isActive && advisor.specialty.toLowerCase().includes(action.category)) {
+      popularityEffect *= 1.2;
+      budgetEffect *= 0.9;
+    }
+  });
+
+  return { popularityEffect, budgetEffect };
+}
+```
+
+3. SISTEMA DE DISPONIBILIDAD
+```typescript
+function isActionAvailable(action: GameAction, gameState: GameState): boolean {
+  // Verificaciones básicas
+  if (gameState.budget < action.requirements.minBudget) return false;
+  if (action.requirements.minPopularity && 
+      gameState.popularity < action.requirements.minPopularity) return false;
+
+  // Verificación de cooldowns
+  const lastUse = gameState.actionHistory[action.id];
+  if (lastUse && lastUse.cooldown > 0) return false;
+
+  // Verificación de requisitos especiales
+  return checkSpecialRequirements(action, gameState);
+}
+```
+
+4. IMPACTO EN GRUPOS DE INTERÉS
+```typescript
+function calculateGroupEffects(action: GameAction, gameState: GameState) {
+  const effects = [];
+  
+  gameState.interestGroups.forEach(group => {
+    group.subgroups.forEach(subgroup => {
+      // Verifica si la acción afecta intereses del subgrupo
+      const matchesInterests = subgroup.interests.some(
+        interest => action.description.toLowerCase().includes(interest.toLowerCase())
+      );
+
+      if (matchesInterests) {
+        const effect = {
+          groupId: group.id,
+          subgroupId: subgroup.id,
+          supportChange: action.popularityChange * (subgroup.influence / 10)
+        };
+        effects.push(effect);
+      }
+    });
+  });
+
+  return effects;
+}
+```
+
+5. EVENTOS Y CRISIS
+```typescript
+function checkActionConsequences(action: GameAction, gameState: GameState) {
+  const consequences = [];
+  
+  // Verificar umbrales críticos
+  if (action.budgetChange < -500) {
+    consequences.push({
+      type: 'CRISIS_RISK',
+      probability: 0.3,
+      effect: 'ECONOMIC_CRISIS'
+    });
+  }
+
+  // Verificar conflictos entre grupos
+  const groupEffects = calculateGroupEffects(action, gameState);
+  if (groupEffects.some(effect => effect.supportChange < -10)) {
+    consequences.push({
+      type: 'PROTEST_RISK',
+      probability: 0.4,
+      effect: 'SOCIAL_UNREST'
+    });
+  }
+
+  return consequences;
+}
+```
+
+6. SISTEMA DE RECOMPENSAS
+```typescript
+function calculateActionRewards(action: GameAction, gameState: GameState) {
+  const baseReward = {
+    popularity: action.popularityChange,
+    budget: action.budgetChange
+  };
+
+  // Bonificaciones por combos
+  const actionCategory = action.category;
+  const categoryActions = gameState.selectedActions.filter(
+    a => a.category === actionCategory
+  ).length;
+
+  if (categoryActions >= 3) {
+    baseReward.popularity *= 1.2; // Bonus por especialización
+  }
+
+  // Bonificaciones por objetivos
+  gameState.objectives.forEach(objective => {
+    if (objective.requiredActions.includes(action.id)) {
+      baseReward.popularity *= 1.1;
+      baseReward.budget *= 1.1;
+    }
+  });
+
+  return baseReward;
+}
+```
+
+7. INTERFAZ DE USUARIO
+```typescript
+// Componente ActionCard
+function ActionCard({ action, onSelect, disabled, isSelected }) {
+  const effects = useMemo(() => 
+    calculateActionEffects(action, gameState), 
+    [action, gameState]
+  );
+
+  return (
+    <button
+      onClick={() => onSelect(action.id)}
+      disabled={disabled || isSelected}
+      className={`
+        ${isSelected ? 'bg-blue-100' : 'bg-white'}
+        ${disabled ? 'opacity-50' : 'hover:bg-blue-50'}
+      `}
+    >
+      <div className="flex items-start gap-3">
+        <action.icon className="w-5 h-5" />
+        <div>
+          <h3>{action.title}</h3>
+          <p>{action.description}</p>
+          <div className="grid grid-cols-2">
+            <PopularityIndicator value={effects.popularityEffect} />
+            <BudgetIndicator value={effects.budgetEffect} />
+          </div>
+        </div>
+      </div>
+    </button>
+  );
+}
+```
+
+8. PERSISTENCIA Y TRACKING
+```typescript
+interface ActionHistory {
+  [actionId: string]: {
+    usedAt: number[];        // Turnos de uso
+    totalUses: number;       // Veces usada
+    averageEffect: number;   // Efecto promedio
+    successRate: number;     // Tasa de éxito
+    cooldown: number;        // Turnos restantes de cooldown
+  }
+}
+
+function updateActionHistory(action: GameAction, effect: ActionEffect) {
+  setGameState(prev => ({
+    ...prev,
+    actionHistory: {
+      ...prev.actionHistory,
+      [action.id]: {
+        usedAt: [...prev.actionHistory[action.id]?.usedAt || [], prev.turn],
+        totalUses: (prev.actionHistory[action.id]?.totalUses || 0) + 1,
+        averageEffect: calculateNewAverage(
+          prev.actionHistory[action.id]?.averageEffect,
+          effect.popularityEffect
+        ),
+        successRate: calculateSuccessRate(
+          prev.actionHistory[action.id]?.successRate,
+          effect.popularityEffect > 0
+        ),
+        cooldown: action.cooldown || 0
+      }
+    }
+  }));
+}
+```
+
+9. OPTIMIZACIÓN DE RENDIMIENTO
+```typescript
+// Memoización de cálculos costosos
+const availableActions = useMemo(() => 
+  generatePossibleActions(gameState),
+  [gameState.budget, gameState.popularity, gameState.selectedActions]
+);
+
+// Batch updates para efectos múltiples
+function executeAction(action: GameAction) {
+  const effects = calculateActionEffects(action, gameState);
+  const groupEffects = calculateGroupEffects(action, gameState);
+  const consequences = checkActionConsequences(action, gameState);
+  
+  // Batch update
+  setGameState(prev => ({
+    ...prev,
+    budget: prev.budget + effects.budgetEffect,
+    popularity: prev.popularity + effects.popularityEffect,
+    groupRelations: updateGroupRelations(prev.groupRelations, groupEffects),
+    pendingEvents: [...prev.pendingEvents, ...consequences],
+    selectedActions: [...prev.selectedActions, action.id],
+    actions: prev.actions - 1
+  }));
+}
+```
+
+10. DEBUGGING Y DESARROLLO
+```typescript
+// Sistema de logs para desarrollo
+const actionLogger = {
+  logAction: (action: GameAction, effects: ActionEffect) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.group(`Action Executed: ${action.title}`);
+      console.log('Effects:', effects);
+      console.log('State:', gameState);
+      console.groupEnd();
+    }
+  }
+};
+
+// Herramientas de desarrollo
+if (gameState.isAdminMode) {
+  // Mostrar información adicional
+  console.table(availableActions.map(action => ({
+    id: action.id,
+    popularity: calculateActionEffects(action, gameState).popularityEffect,
+    budget: calculateActionEffects(action, gameState).budgetEffect,
+    available: isActionAvailable(action, gameState)
+  })));
+}
+```

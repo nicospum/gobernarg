@@ -1,0 +1,10 @@
+Cambios realizados en el archivo turnSummary.ts:
+
+1. Definición de tipos:
+   - Se definieron los tipos `GameState` y `TurnSummary` directamente en el archivo para resolver errores de importación.
+
+2. Corrección de errores de tipado:
+   - Se especificaron tipos para los parámetros `actionId` y `action` en las funciones correspondientes.
+
+3. Eliminación de importaciones innecesarias:
+   - Se eliminaron las importaciones de `GameState` y `TurnSummary` desde `../types/game` para resolver errores de linter. 

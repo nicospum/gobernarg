@@ -1,0 +1,80 @@
+MECÁNICAS PRINCIPALES DEL JUEGO
+
+1. SISTEMA DE CARGOS
+- Tres niveles: Intendente, Gobernador, Presidente
+- Cada cargo tiene acceso a diferentes acciones y recursos
+- Afecta multiplicadores de popularidad y presupuesto
+- Objetivos específicos por cargo
+- Diferentes desafíos y complejidad
+
+2. SISTEMA DE ARQUETIPOS
+- Político: +2 acciones por turno, bonificación en diplomacia
+- Empresario: +1 acción, capital inicial 2000M, bonificación económica
+- Sindicalista: +1 acción, mejor relación con sindicatos, bonificación social
+- Comunicador: Popularidad inicial 70%, mejor manejo de crisis
+- Cada arquetipo tiene habilidades especiales únicas
+- Modificadores específicos por categoría de acción
+- Bonificaciones en relaciones con grupos específicos
+
+3. SISTEMA DE TURNOS
+- 4 turnos por año (trimestres)
+- 4 años de mandato (16 turnos totales)
+- Acciones base: 5 por turno
+- Modificadores de acciones:
+  * Arquetipo del jugador
+  * Asesores activos
+  * Nivel de popularidad
+  * Presupuesto disponible
+- Sistema de efectos diferidos
+- Calendario de eventos programados
+- Gestión de efectos pendientes
+
+4. RECURSOS PRINCIPALES
+a) Popularidad (0-100%)
+- Fórmula: PopularidadTotal = (PopularidadGrupos * 0.6) + (PopularidadPolitica * 0.4)
+- Afecta acciones disponibles:
+  * >75%: +1 acción
+  * <25%: +2 acciones
+- Influye en intención de voto
+- Afecta probabilidad de eventos
+- Modifica efectividad de acciones
+
+b) Presupuesto
+- Medido en millones (M)
+- Sin límite superior
+- Puede ser negativo
+- Afecta disponibilidad de acciones
+- Influye en estabilidad
+- Modifica relaciones con grupos
+
+c) Estabilidad
+- Rango 0-100%
+- Afecta probabilidad de crisis
+- Influye en efectividad de acciones
+- Modifica apoyo de grupos
+- Factor en elecciones
+
+5. SISTEMA ELECTORAL
+- Elecciones de medio término (turno 8)
+- Elecciones ejecutivas (turno 16)
+- Factores de votación:
+  * Popularidad (35%)
+  * Estabilidad (25%)
+  * Presupuesto (20%)
+  * Apoyo de grupos (20%)
+- Mínimo 45% para victoria
+- Modo Admin muestra intención de voto en tiempo real
+
+6. INTEGRACIÓN DE SISTEMAS
+- Cada acción afecta múltiples sistemas
+- Efectos en cadena entre sistemas
+- Retroalimentación entre indicadores
+- Consecuencias a largo plazo
+- Eventos dinámicos basados en estado del juego
+
+7. SISTEMA DE DIFICULTAD
+- Varía según cargo elegido
+- Afectado por arquetipo seleccionado
+- Modifica probabilidad de eventos
+- Ajusta requisitos de victoria
+- Influye en efectividad de acciones

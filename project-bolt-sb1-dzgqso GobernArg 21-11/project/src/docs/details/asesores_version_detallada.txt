@@ -1,0 +1,325 @@
+SISTEMA DE ASESORES - IMPLEMENTACIÓN TÉCNICA DETALLADA
+
+1. ESTRUCTURA DE DATOS
+```typescript
+interface Advisor {
+  id: string;              // Identificador único
+  name: string;            // Nombre completo
+  specialty: string;       // Área de especialización
+  bonusActions: number;    // Acciones extra por turno
+  influence: number;       // Influencia (1-10)
+  cost: number;           // Costo de contratación
+  description: string;     // Descripción detallada
+  popularityEffect: number; // Efecto en popularidad
+}
+
+interface AdvisorWithStatus extends Advisor {
+  isActive: boolean;       // Estado actual
+  turnsInactive: number;   // Turnos restantes inactivo
+}
+
+interface AdvisorState {
+  advisors: AdvisorWithStatus[];
+  maxAdvisors: number;     // Límite de asesores (2)
+  advisorActionUsed: boolean; // Control de acción por turno
+}
+```
+
+2. SISTEMA DE GESTIÓN
+```typescript
+function handleHireAdvisor(advisor: Advisor, gameState: GameState): HireResult {
+  // Verificar límites y recursos
+  if (gameState.advisors.length >= 2) {
+    return { success: false, reason: 'MAX_ADVISORS_REACHED' };
+  }
+  
+  if (gameState.budget < advisor.cost) {
+    return { success: false, reason: 'INSUFFICIENT_FUNDS' };
+  }
+
+  if (gameState.advisorActionUsed) {
+    return { success: false, reason: 'ACTION_ALREADY_USED' };
+  }
+
+  // Procesar contratación
+  const newAdvisor: AdvisorWithStatus = {
+    ...advisor,
+    isActive: true,
+    turnsInactive: 0
+  };
+
+  setGameState(prev => ({
+    ...prev,
+    advisors: [...prev.advisors, newAdvisor],
+    budget: prev.budget - advisor.cost,
+    advisorActionUsed: true
+  }));
+
+  return { success: true };
+}
+
+function handleDismissAdvisor(advisorId: string, gameState: GameState): DismissResult {
+  if (gameState.advisorActionUsed) {
+    return { success: false, reason: 'ACTION_ALREADY_USED' };
+  }
+
+  setGameState(prev => ({
+    ...prev,
+    advisors: prev.advisors.filter(a => a.id !== advisorId),
+    advisorActionUsed: true
+  }));
+
+  return { success: true };
+}
+```
+
+3. SISTEMA DE EFECTOS
+```typescript
+function calculateAdvisorEffects(gameState: GameState): AdvisorEffects {
+  const effects = {
+    bonusActions: 0,
+    popularityModifier: 1.0,
+    budgetModifier: 1.0,
+    specialEffects: []
+  };
+
+  gameState.advisors.forEach(advisor => {
+    if (!advisor.isActive) return;
+
+    // Acciones bonus
+    effects.bonusActions += advisor.bonusActions;
+
+    // Efecto en popularidad
+    effects.popularityModifier += (advisor.popularityEffect / 100);
+
+    // Efectos especiales por especialidad
+    const specialEffect = calculateSpecialEffect(advisor, gameState);
+    if (specialEffect) {
+      effects.specialEffects.push(specialEffect);
+    }
+  });
+
+  return effects;
+}
+
+function calculateSpecialEffect(
+  advisor: AdvisorWithStatus,
+  gameState: GameState
+): SpecialEffect | null {
+  switch (advisor.specialty.toLowerCase()) {
+    case 'economista':
+      return {
+        type: 'ECONOMIC_BONUS',
+        value: 0.2, // 20% mejor rendimiento económico
+        condition: 'action.category === "economia"'
+      };
+    case 'comunicador social':
+      return {
+        type: 'CRISIS_PREVENTION',
+        value: 0.3, // 30% menos probabilidad de crisis
+        condition: 'event.type === "crisis"'
+      };
+    // ... más especialidades
+    default:
+      return null;
+  }
+}
+```
+
+4. SISTEMA DE ACTIVACIÓN/DESACTIVACIÓN
+```typescript
+function updateAdvisorStatus(gameState: GameState): GameState {
+  const updatedAdvisors = gameState.advisors.map(advisor => {
+    if (!advisor.isActive && advisor.turnsInactive > 0) {
+      return {
+        ...advisor,
+        turnsInactive: advisor.turnsInactive - 1,
+        isActive: advisor.turnsInactive === 1
+      };
+    }
+    return advisor;
+  });
+
+  return {
+    ...gameState,
+    advisors: updatedAdvisors
+  };
+}
+
+function deactivateAdvisor(
+  advisorId: string,
+  gameState: GameState,
+  turns: number = 2
+): void {
+  setGameState(prev => ({
+    ...prev,
+    advisors: prev.advisors.map(advisor =>
+      advisor.id === advisorId
+        ? {
+            ...advisor,
+            isActive: false,
+            turnsInactive: turns
+          }
+        : advisor
+    )
+  }));
+}
+```
+
+5. INTERFAZ DE USUARIO
+```typescript
+function AdvisorPanel({ gameState, onHire, onDismiss }) {
+  const canHire = !gameState.advisorActionUsed && 
+                  gameState.advisors.length < 2;
+  
+  const canDismiss = !gameState.advisorActionUsed && 
+                     gameState.advisors.length > 0;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <h2>Asesores ({gameState.advisors.length}/2)</h2>
+        <div className="flex gap-2">
+          {canHire && (
+            <button onClick={onHire}>
+              Contratar Asesor
+            </button>
+          )}
+          {canDismiss && (
+            <button onClick={onDismiss}>
+              Despedir Asesor
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="grid gap-4">
+        {gameState.advisors.map(advisor => (
+          <AdvisorCard
+            key={advisor.id}
+            advisor={advisor}
+            onDismiss={() => onDismiss(advisor.id)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+6. SISTEMA DE SELECCIÓN
+```typescript
+function AdvisorSelectionModal({ 
+  onClose, 
+  onHire, 
+  maxSelections 
+}: AdvisorSelectionModalProps) {
+  const [selectedAdvisors, setSelectedAdvisors] = useState<Advisor[]>([]);
+  
+  const handleSelect = (advisor: Advisor) => {
+    if (selectedAdvisors.find(a => a.id === advisor.id)) {
+      setSelectedAdvisors(prev => 
+        prev.filter(a => a.id !== advisor.id)
+      );
+    } else if (selectedAdvisors.length < maxSelections) {
+      setSelectedAdvisors(prev => [...prev, advisor]);
+    }
+  };
+
+  const totalCost = selectedAdvisors.reduce(
+    (sum, advisor) => sum + advisor.cost, 
+    0
+  );
+
+  return (
+    <Modal onClose={onClose}>
+      <div className="grid grid-cols-2 gap-4">
+        {availableAdvisors.map(advisor => (
+          <AdvisorOption
+            key={advisor.id}
+            advisor={advisor}
+            onSelect={() => handleSelect(advisor)}
+            isSelected={selectedAdvisors.includes(advisor)}
+          />
+        ))}
+      </div>
+      
+      <div className="mt-4">
+        <p>Costo total: ${totalCost}M</p>
+        <button
+          onClick={() => onHire(selectedAdvisors)}
+          disabled={selectedAdvisors.length === 0}
+        >
+          Contratar Seleccionados
+        </button>
+      </div>
+    </Modal>
+  );
+}
+```
+
+7. OPTIMIZACIÓN Y CACHÉ
+```typescript
+// Memoización de efectos
+const advisorEffects = useMemo(
+  () => calculateAdvisorEffects(gameState),
+  [gameState.advisors]
+);
+
+// Caché de asesores disponibles
+const availableAdvisorsCache = new Map<string, Advisor[]>();
+
+function getAvailableAdvisors(gameState: GameState): Advisor[] {
+  const cacheKey = `${gameState.position}_${gameState.archetype}`;
+  
+  if (availableAdvisorsCache.has(cacheKey)) {
+    return availableAdvisorsCache.get(cacheKey)!;
+  }
+
+  const filtered = filterAdvisorsByRequirements(
+    availableAdvisors,
+    gameState
+  );
+  
+  availableAdvisorsCache.set(cacheKey, filtered);
+  return filtered;
+}
+```
+
+8. SISTEMA DE DESARROLLO
+```typescript
+// Herramientas de desarrollo
+if (gameState.isAdminMode) {
+  console.group('Advisor System Debug');
+  console.log('Active Advisors:', 
+    gameState.advisors.filter(a => a.isActive)
+  );
+  console.log('Total Bonus Actions:', 
+    calculateAdvisorEffects(gameState).bonusActions
+  );
+  console.log('Popularity Modifier:', 
+    calculateAdvisorEffects(gameState).popularityModifier
+  );
+  console.groupEnd();
+}
+
+// Sistema de logs
+const advisorLogger = {
+  logHire: (advisor: Advisor) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Advisor Hired: ${advisor.name}`);
+      console.log('Specialty:', advisor.specialty);
+      console.log('Cost:', advisor.cost);
+    }
+  },
+  
+  logDismiss: (advisor: AdvisorWithStatus) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Advisor Dismissed: ${advisor.name}`);
+      console.log('Active Duration:', 
+        calculateActiveDuration(advisor)
+      );
+    }
+  }
+};
+```

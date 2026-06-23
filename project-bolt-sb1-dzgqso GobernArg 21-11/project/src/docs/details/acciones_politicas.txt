@@ -1,0 +1,90 @@
+SISTEMA DE ACCIONES POLÍTICAS
+
+1. ESTRUCTURA BÁSICA
+Cada acción política tiene:
+- ID único
+- Título descriptivo
+- Descripción detallada
+- Categoría
+- Ícono visual
+- Costo presupuestario
+- Impacto en popularidad
+- Requisitos de ejecución
+
+2. CATEGORÍAS
+a) Economía
+- Emisión monetaria
+- Reforma impositiva
+- Control de precios
+- Incentivos a la exportación
+- Préstamos y financiamiento
+- Atracción de inversiones
+
+b) Social
+- Programas de vivienda
+- Educación
+- Salud
+- Empleo
+- Asistencia social
+- Inclusión digital
+
+c) Infraestructura
+- Transporte público
+- Energías renovables
+- Hospitales
+- Comunicaciones
+- Obras viales
+- Servicios básicos
+
+d) Diplomacia
+- Acuerdos sindicales
+- Alianzas políticas
+- Tratados comerciales
+- Cooperación internacional
+- Mediación de conflictos
+
+e) Seguridad
+- Seguridad ciudadana
+- Lucha contra el narcotráfico
+- Programas de prevención
+- Fortalecimiento judicial
+- Vigilancia
+
+f) Cultura
+- Programas culturales
+- Festivales
+- Patrimonio histórico
+- Bibliotecas
+- Centros culturales
+
+3. SISTEMA DE COSTOS
+- Costos variables según impacto
+- Rangos de costos por categoría:
+  * Bajo: 100-200M
+  * Medio: 200-400M
+  * Alto: 400-800M
+  * Muy alto: >800M
+
+4. IMPACTO EN POPULARIDAD
+- Efectos inmediatos:
+  * Bajo: 5-10%
+  * Medio: 10-15%
+  * Alto: 15-20%
+  * Muy alto: >20%
+- Multiplicadores según:
+  * Arquetipo del jugador
+  * Cargo actual
+  * Asesores activos
+
+5. REQUISITOS Y LIMITACIONES
+- Presupuesto mínimo necesario
+- Popularidad mínima (algunas acciones)
+- Asesores específicos (algunas acciones)
+- Cooldowns entre usos
+- Límites por turno
+
+6. EFECTOS SECUNDARIOS
+- Impacto en grupos de interés
+- Desbloqueo de nuevas acciones
+- Efectos a largo plazo
+- Posibles crisis o eventos

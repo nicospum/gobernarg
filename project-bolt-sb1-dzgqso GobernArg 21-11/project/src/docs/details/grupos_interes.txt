@@ -1,0 +1,71 @@
+SISTEMA DE GRUPOS DE INTERÉS
+
+1. ESTRUCTURA DE GRUPOS
+a) Sectores Económicos
+- Empresarios (Influencia: 8)
+- Sector Agrícola (Influencia: 7)
+- Sector Financiero (Influencia: 9)
+- Sindicatos (Influencia: 8)
+
+b) Grupos Sociales
+- Clase Media (Influencia: 7)
+- Sectores Populares (Influencia: 6)
+- Clase Alta (Influencia: 8)
+- Minorías Étnicas (Influencia: 5)
+- ONGs (Influencia: 6)
+
+c) Movimientos Sociales
+- Ambientalistas (Influencia: 6)
+- Feministas (Influencia: 7)
+- Estudiantiles (Influencia: 5)
+- Cooperativas (Influencia: 5)
+
+d) Partidos Políticos
+- Aliados (Influencia: 8)
+- Opositores (Influencia: 7)
+
+e) Colectivos Específicos
+- Artistas (Influencia: 5)
+- Deportistas (Influencia: 6)
+- Académicos (Influencia: 7)
+
+2. SISTEMA DE INTERACCIONES
+a) Tipos de Interacción
+- Reunión
+  * +5 apoyo
+  * Sin costo presupuestario
+  * Cooldown: 2 turnos
+
+- Negociar
+  * +10 apoyo
+  * Costo: 100M
+  * Cooldown: 2 turnos
+
+- Conceder
+  * +15 apoyo
+  * Costo: 200M
+  * Cooldown: 2 turnos
+
+b) Limitaciones
+- Una interacción por grupo por turno
+- Período de enfriamiento entre interacciones
+- Costos presupuestarios
+- Requiere acciones disponibles
+
+3. SISTEMA DE APOYO
+- Base inicial: 40-60%
+- Modificadores por arquetipo
+- Impacto en popularidad general
+- Efectos en intención de voto
+
+4. DEMANDAS Y CONFLICTOS
+- Demandas específicas por grupo
+- Conflictos entre grupos
+- Eventos especiales
+- Crisis sectoriales
+
+5. INFLUENCIA EN EL JUEGO
+- Popularidad general
+- Intención de voto
+- Desbloqueo de acciones
+- Eventos especiales

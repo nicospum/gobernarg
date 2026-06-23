@@ -1,0 +1,56 @@
+SISTEMA DE INTENCIÓN DE VOTO
+
+1. ESTRUCTURA BÁSICA
+- Rango: 0-100%
+- Actualización por turno
+- Visible solo en modo Admin
+- Victoria requiere >45%
+
+2. FACTORES DE CÁLCULO
+a) Popularidad (35%)
+- Promedio últimos 4 turnos
+- Tendencia de crecimiento
+- Estabilidad del indicador
+- Impacto inmediato de acciones
+
+b) Apoyo de Grupos (25%)
+- Nivel de apoyo por grupo
+- Ponderación por influencia
+- Balance entre sectores
+- Conflictos activos
+
+c) Objetivos Cumplidos (15%)
+- Porcentaje de completitud
+- Relevancia de objetivos
+- Timing de cumplimiento
+- Impacto social
+
+d) Estabilidad (5%)
+- Crisis evitadas
+- Manejo presupuestario
+- Estabilidad política
+- Conflictos resueltos
+
+3. VISUALIZACIÓN (MODO ADMIN)
+- Porcentaje actual
+- Desglose de factores
+- Tendencias históricas
+- Alertas y predicciones
+
+4. EVENTOS ESPECIALES
+- Impacto de crisis
+- Efecto de escándalos
+- Logros significativos
+- Acontecimientos externos
+
+5. ESTRATEGIAS DE MEJORA
+- Balance de acciones
+- Gestión de grupos
+- Cumplimiento de objetivos
+- Manejo de crisis
+
+6. MODO JUGADOR
+- Oculto hasta elecciones
+- Sin información directa
+- Feedback indirecto
+- Resultados finales

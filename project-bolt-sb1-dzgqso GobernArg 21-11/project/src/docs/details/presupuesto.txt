@@ -1,0 +1,54 @@
+SISTEMA DE PRESUPUESTO
+
+1. ESTRUCTURA BÁSICA
+- Medido en millones (M)
+- Valor inicial según arquetipo:
+  * Empresario: 2000M
+  * Otros: 1000M
+- Sin límite máximo
+- Puede ser negativo
+
+2. FUENTES DE INGRESO
+a) Base por Cargo
+- Intendente: +200M/turno
+- Gobernador: +300M/turno
+- Presidente: +500M/turno
+
+b) Acciones Específicas
+- Reforma impositiva
+- Préstamos
+- Inversiones
+- Emisión monetaria
+
+3. GASTOS
+a) Acciones Políticas
+- Bajo: 100-200M
+- Medio: 200-400M
+- Alto: 400-800M
+- Muy alto: >800M
+
+b) Interacciones con Grupos
+- Negociar: 100M
+- Conceder: 200M
+
+c) Asesores
+- Costo único de contratación
+- Sin mantenimiento mensual
+
+4. SISTEMA DE CONTROL
+- Seguimiento histórico
+- Alertas de déficit
+- Límites de endeudamiento
+- Consecuencias de déficit
+
+5. IMPACTO EN EL JUEGO
+- Limita acciones disponibles
+- Afecta intención de voto
+- Influye en relaciones
+- Genera eventos especiales
+
+6. ESTRATEGIAS DE GESTIÓN
+- Balance ingreso/gasto
+- Priorización de gastos
+- Manejo de crisis
+- Planificación a largo plazo

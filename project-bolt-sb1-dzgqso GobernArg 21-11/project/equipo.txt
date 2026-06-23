@@ -1,0 +1,125 @@
+GobernArg - Documentación Interna
+
+1. MECÁNICAS PRINCIPALES
+
+a) Sistema de Cargos
+- Tres niveles: Intendente, Gobernador, Presidente
+- Cada cargo tiene acceso a diferentes acciones y recursos
+- Afecta multiplicadores de popularidad y presupuesto
+
+b) Sistema de Arquetipos
+- Político: +2 acciones por turno
+- Empresario: +1 acción, capital inicial mayor (2000M vs 1000M)
+- Sindicalista: +1 acción, mejor relación con sindicatos
+- Comunicador: Popularidad inicial mayor (70% vs 50%)
+
+c) Sistema de Turnos
+- 4 turnos por año
+- Cada turno permite múltiples acciones (base: 5 acciones)
+- Acciones disponibles varían según:
+  * Arquetipo del jugador
+  * Asesores activos
+  * Nivel de popularidad
+  * Presupuesto disponible
+
+d) Recursos Principales
+- Popularidad (0-100%)
+  * PopularidadTotal = (PopularidadGrupos * 0.6) + (PopularidadPolitica * 0.4)
+  * Afecta número de acciones disponibles
+  * >75%: +1 acción
+  * <25%: +2 acciones
+- Presupuesto
+  * Medido en millones
+  * Limita acciones disponibles
+  * Algunas acciones generan ingresos
+
+2. SISTEMAS IMPLEMENTADOS
+
+a) Sistema de Asesores
+- Máximo 2 asesores simultáneos
+- Cada asesor proporciona:
+  * Bonificación de acciones
+  * Efectos en popularidad
+  * Influencia específica
+- Costos variables
+- Sistema de activación/desactivación
+- Turnos de inactividad
+
+b) Sistema de Acciones Políticas
+- Categorías:
+  * Economía
+  * Social
+  * Infraestructura
+  * Diplomacia
+  * Seguridad
+  * Cultura
+- Cada acción tiene:
+  * Costo presupuestario
+  * Impacto en popularidad
+  * Requisitos específicos
+  * Efectos visuales (iconos)
+
+c) Sistema de Grupos de Interés
+- Interacciones:
+  * Reunión (+5 apoyo)
+  * Negociar (+10 apoyo, -100M)
+  * Conceder (+15 apoyo, -200M)
+- Grupos principales:
+  * Sectores Económicos
+  * Grupos Sociales
+  * Movimientos Sociales
+  * Partidos Políticos
+  * Colectivos Específicos
+
+d) Sistema de Eventos
+- Eventos aleatorios por turno
+- Impactos en:
+  * Popularidad
+  * Presupuesto
+  * Relaciones con grupos
+
+3. INTERFAZ DE USUARIO
+
+a) Barra Superior
+- Acciones disponibles
+- Popularidad actual
+- Presupuesto
+- Año y turno actual
+
+b) Panel Principal
+- Acciones Políticas
+  * Filtrado por categorías
+  * Visualización de costos y efectos
+  * Sistema de selección
+
+c) Panel Lateral
+- Grupos de Interés
+- Sistema de Asesores
+  * Contratación
+  * Despido
+  * Estado actual
+
+4. SISTEMAS DE FEEDBACK
+
+a) Indicadores Visuales
+- Popularidad: Flechas (1-3)
+- Presupuesto: Símbolos de dinero
+  * 1 símbolo = 100M
+  * Medio símbolo = <100M
+
+b) Resumen de Turno
+- Eventos ocurridos
+- Cambios en popularidad
+- Impacto presupuestario
+- Efectos especiales
+
+5. PENDIENTE DE IMPLEMENTACIÓN
+
+- Sistema completo de atributos para acciones políticas
+- Mecánicas específicas por cargo
+- Sistema de eventos dinámicos
+- Condiciones de victoria/derrota
+- Guardado/carga de partida
+- Tutorial interactivo
+- Estadísticas detalladas
+- Logros y desbloqueos

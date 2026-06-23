@@ -1,0 +1,51 @@
+SISTEMA DE POPULARIDAD
+
+1. ESTRUCTURA BÁSICA
+- Rango: 0-100%
+- Valor inicial según arquetipo:
+  * Comunicador: 70%
+  * Otros: 50%
+- Actualización por turno
+- Dos decimales de precisión
+
+2. COMPONENTES
+a) Popularidad de Grupos (60%)
+- Apoyo sectorial
+- Relaciones con grupos
+- Demandas satisfechas
+- Conflictos resueltos
+
+b) Popularidad Política (40%)
+- Acciones ejecutadas
+- Objetivos cumplidos
+- Manejo de crisis
+- Estabilidad general
+
+3. MODIFICADORES
+a) Por Arquetipo
+- Político: x1.2 efectos diplomáticos
+- Empresario: x1.3 efectos económicos
+- Sindicalista: x1.3 efectos sociales
+- Comunicador: x1.1 todos los efectos
+
+b) Por Cargo
+- Intendente: x1.0
+- Gobernador: x1.2
+- Presidente: x1.5
+
+4. IMPACTO EN EL JUEGO
+a) Acciones Disponibles
+- >75%: +1 acción
+- <25%: +2 acciones
+
+b) Otros Efectos
+- Desbloqueo de acciones
+- Costos de interacción
+- Eventos especiales
+- Intención de voto
+
+5. EVENTOS Y CRISIS
+- Impacto de eventos aleatorios
+- Efecto de crisis
+- Recuperación gradual
+- Umbrales críticos
