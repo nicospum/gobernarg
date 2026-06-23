@@ -508,4 +508,7 @@ export interface GameState {
   coupConsecutiveTurns: number;
   defeatReason: DefeatReason | null;
   audazTurnsCount: number;
+  // Sprint 3: Interacciones con grupos
+  demandPausedUntil: Record<string, number>;
+  negotiationPending: Record<string, number>;
 }

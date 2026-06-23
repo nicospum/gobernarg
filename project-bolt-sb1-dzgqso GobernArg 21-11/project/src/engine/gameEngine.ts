@@ -31,7 +31,7 @@ import { MIDTERM_STRATEGY_EFFECTS } from '../data/midtermStrategies';
 import { getDifficultyModifiers } from './difficultyEngine';
 import { calculateLegitimacyChange } from './legitimacyEngine';
 import { applyAxisShift } from './axisEngine';
-import { generateGroupAgendas, updateGroupMoods, applyGroupSatisfactionPenalty } from './groupAgendaEngine';
+import { generateGroupAgendas, updateGroupMoods, applyGroupSatisfactionPenalty, resolvePendingNegotiations } from './groupAgendaEngine';
 import {
   processElectionResults,
   processElectionResultsForOption,
@@ -136,6 +136,8 @@ export function getInitialGameState(): GameState {
     pendingMidtermStrategy: false,
     availableMidtermStrategies: [],
     audazTurnsCount: 0,
+    demandPausedUntil: {},
+    negotiationPending: {},
     // Fase 4: Profundidad
     difficulty: 'normal',
     radicalConciliadorAxis: 0,
@@ -331,6 +333,22 @@ export function applyInteraction(
 
   const supportGain = calculateSupportGain(type, subgroup.influence);
 
+  // Sprint 3: Efectos diferenciados por tipo de interacción
+  const newDemandPausedUntil = { ...gameState.demandPausedUntil };
+  const newNegotiationPending = { ...gameState.negotiationPending };
+
+  if (type === 'reunion') {
+    // Reunión: pausa demandas 2 turnos
+    newDemandPausedUntil[subgroupId] = gameState.turn + 2;
+  } else if (type === 'negociar') {
+    // Negociar: genera demanda en 1-2 turnos
+    const resolveTurn = gameState.turn + 1 + Math.floor(Math.random() * 2);
+    newNegotiationPending[subgroupId] = resolveTurn;
+  } else if (type === 'conceder') {
+    // Conceder: bloquea demandas 4 turnos (1 año)
+    newDemandPausedUntil[subgroupId] = gameState.turn + 4;
+  }
+
   return {
     ...gameState,
     actions: gameState.actions - 1,
@@ -345,7 +363,9 @@ export function applyInteraction(
         lastInteraction: type,
         turnsLeft: 2
       }
-    }
+    },
+    demandPausedUntil: newDemandPausedUntil,
+    negotiationPending: newNegotiationPending,
   };
 }
 
@@ -962,6 +982,7 @@ export function processEndTurn(gameState: GameState): TurnResult {
 
   // 7.3 Fase 4: Agendas y estados de ánimo de grupos
   state = updateGroupMoods(state);
+  state = resolvePendingNegotiations(state);
   const newAgendas = generateGroupAgendas(state);
   state.groupAgendas = [...state.groupAgendas, ...newAgendas];
   state = applyGroupSatisfactionPenalty(state);

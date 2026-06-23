@@ -23,6 +23,10 @@ export function generateGroupAgendas(state: GameState): GroupAgendaItem[] {
     );
     if (hasActiveAgenda) continue;
 
+    // Sprint 3: Respetar pausa de demandas
+    const pausedUntil = state.demandPausedUntil?.[sg.id] ?? 0;
+    if (state.turn < pausedUntil) continue;
+
     const mood = state.groupMoods.find(m => m.groupId === sg.id);
     const ignoreBonus = (mood?.ignoredTurns ?? 0) * 0.1;
     const prob = Math.min(0.8, 0.3 + ignoreBonus);
@@ -70,4 +74,34 @@ export function applyGroupSatisfactionPenalty(state: GameState): GameState {
     return agenda;
   });
   return { ...state, groupAgendas: updatedAgendas, groupRelations: newGroupRelations };
+}
+
+// Sprint 3: Resolver negociaciones pendientes
+export function resolvePendingNegotiations(state: GameState): GameState {
+  const agendas: import('../types/game').GroupAgendaItem[] = [];
+  const newNegotiationPending = { ...state.negotiationPending };
+
+  for (const [subgroupId, resolveTurn] of Object.entries(state.negotiationPending)) {
+    if (state.turn >= resolveTurn) {
+      const templates = AGENDA_TEMPLATES[subgroupId];
+      if (templates && templates.length > 0) {
+        const demand = templates[Math.floor(Math.random() * templates.length)];
+        agendas.push({
+          id: `${subgroupId}_negotiated_${state.year}_${state.turn}`,
+          groupId: subgroupId,
+          demand,
+          deadline: state.turn + 4,
+          satisfied: false,
+          penaltyApplied: false
+        });
+      }
+      delete newNegotiationPending[subgroupId];
+    }
+  }
+
+  return {
+    ...state,
+    groupAgendas: [...state.groupAgendas, ...agendas],
+    negotiationPending: newNegotiationPending,
+  };
 }
