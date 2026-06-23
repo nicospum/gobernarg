@@ -1481,26 +1481,26 @@ export function useSpecialAbility(state: GameState): GameState {
 // ============================================================
 
 export function satisfyGroupDemand(state: GameState, agendaId: string): GameState {
-  const agenda = state.groupAgendas.find(a => a.id === agendaId);
+  const agenda = state.groupAgendas?.find(a => a.id === agendaId);
   if (!agenda || agenda.satisfied) return state;
 
   const newState = { ...state };
 
   // Marcar como satisfecha
-  newState.groupAgendas = state.groupAgendas.map(a =>
+  newState.groupAgendas = (state.groupAgendas || []).map(a =>
     a.id === agendaId ? { ...a, satisfied: true } : a
   );
 
   // +10 apoyo al grupo
-  if (agenda.groupId in newState.groupRelations) {
+  if (agenda.groupId in (newState.groupRelations || {})) {
     newState.groupRelations = {
       ...state.groupRelations,
-      [agenda.groupId]: clampValue((state.groupRelations[agenda.groupId] ?? 50) + 10),
+      [agenda.groupId]: clampValue((state.groupRelations?.[agenda.groupId] ?? 50) + 10),
     };
   }
 
   // Resetear mood del grupo
-  newState.groupMoods = state.groupMoods.map(m =>
+  newState.groupMoods = (state.groupMoods || []).map(m =>
     m.groupId === agenda.groupId
       ? { ...m, mood: 'contento' as const, lastSatisfiedTurn: state.turn, ignoredTurns: 0 }
       : m

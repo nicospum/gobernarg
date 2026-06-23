@@ -79,7 +79,14 @@ function App() {
   };
 
   const handleSatisfyDemand = (agendaId: string) => {
-    setGameState(prev => satisfyGroupDemand(prev, agendaId));
+    try {
+      setGameState(prev => {
+        if (!prev || !prev.groupAgendas) return prev;
+        return satisfyGroupDemand(prev, agendaId);
+      });
+    } catch (err) {
+      console.error('[GobernArg] Error en satisfyGroupDemand:', err);
+    }
   };
 
   const handleSelectMidtermStrategy = (strategy: MidtermStrategy) => {
