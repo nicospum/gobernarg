@@ -87,3 +87,34 @@ export const ARCHETYPE_ABILITIES: Record<Archetype, SpecialAbility> = {
     }
   }
 };
+
+// Sprint 4: Habilidades pasivas por arquetipo
+export interface ArchetypePassive {
+  name: string;
+  description: string;
+  incomeBonus?: number;           // multiplicador de ingresos (ej: 0.20 = +20%)
+  electionRetention?: number;     // bonus de retención de voto (ej: 0.10 = +10%)
+  freeInteractionGroups?: string[]; // grupos con interacción gratis
+  eventResilience?: number;       // reduce impacto de eventos negativos (ej: 0.30 = -30%)
+  extraActions?: number;          // acciones base extra
+  extraLoans?: number;            // préstamos extra permitidos
+}
+
+export const ARCHETYPE_PASSIVES: Record<import('../types/game').Archetype, ArchetypePassive[]> = {
+  politico: [
+    { name: 'Oficialismo', description: '+10% retención de voto en reelección', electionRetention: 0.10 },
+    { name: 'Constructor de alianzas', description: 'Reuniones con aliados no cuestan acción', freeInteractionGroups: ['aliados'] },
+  ],
+  empresario: [
+    { name: 'Eficiencia económica', description: 'Acciones de economía generan +20% presupuesto', incomeBonus: 0.20 },
+    { name: 'Red de contactos', description: 'Puede tomar 1 préstamo extra (máx 4)', extraLoans: 1 },
+  ],
+  sindicalista: [
+    { name: 'Base movilizada', description: 'Reuniones con sindicatos y sectores populares no cuestan acción', freeInteractionGroups: ['sindicatos', 'sectores-populares'] },
+    { name: 'Piso de contención', description: '+1 acción base por apoyo popular', extraActions: 1 },
+  ],
+  comunicador: [
+    { name: 'Blindaje mediático', description: 'Eventos negativos tienen -30% impacto en popularidad', eventResilience: 0.30 },
+    { name: 'Agenda setting', description: 'Todas las acciones rinden ×1.1 en popularidad (ya implementado en actionEffects)', incomeBonus: 0 },
+  ],
+};

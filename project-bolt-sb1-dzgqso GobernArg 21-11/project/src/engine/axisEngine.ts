@@ -31,3 +31,41 @@ export function applyAxisShift(action: GameAction, state: GameState): GameState 
     cerradoConvocanteAxis: clampAxis(state.cerradoConvocanteAxis + shift.cerradoConvocante),
   };
 }
+
+// Sprint 4: Efectos mecánicos de ejes extremos
+export interface AxisModifiers {
+  actionCostModifier?: Partial<Record<string, number>>;  // categoría → costo extra
+  effectivenessMultiplier?: Partial<Record<string, number>>; // categoría → multiplicador
+  stabilityModifier?: number;
+  groupRelationsModifier?: number;
+}
+
+export function getAxisModifiers(state: { radicalConciliadorAxis: number; populistaTecnicoAxis: number; cerradoConvocanteAxis: number }): AxisModifiers {
+  const mods: AxisModifiers = {};
+
+  if (state.radicalConciliadorAxis <= -80) {
+    mods.effectivenessMultiplier = { ...mods.effectivenessMultiplier, seguridad: 1.10 };
+    mods.effectivenessMultiplier = { ...mods.effectivenessMultiplier, diplomacia: 0.85 };
+  } else if (state.radicalConciliadorAxis >= 80) {
+    mods.actionCostModifier = { ...mods.actionCostModifier, cultura: -1, diplomacia: -1 };
+    mods.actionCostModifier = { ...mods.actionCostModifier, seguridad: 1 };
+  }
+
+  if (state.populistaTecnicoAxis <= -80) {
+    mods.actionCostModifier = { ...mods.actionCostModifier, social: -1 };
+    mods.effectivenessMultiplier = { ...mods.effectivenessMultiplier, social: 1.20 };
+  } else if (state.populistaTecnicoAxis >= 80) {
+    mods.effectivenessMultiplier = { ...mods.effectivenessMultiplier, economia: 1.20 };
+    mods.effectivenessMultiplier = { ...mods.effectivenessMultiplier, social: 0.90 };
+  }
+
+  if (state.cerradoConvocanteAxis <= -80) {
+    mods.stabilityModifier = 5;
+    mods.groupRelationsModifier = -10;
+  } else if (state.cerradoConvocanteAxis >= 80) {
+    mods.groupRelationsModifier = 10;
+    mods.stabilityModifier = -5;
+  }
+
+  return mods;
+}
