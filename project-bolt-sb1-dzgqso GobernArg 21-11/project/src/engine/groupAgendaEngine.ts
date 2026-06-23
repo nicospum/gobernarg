@@ -60,13 +60,14 @@ export function updateGroupMoods(state: GameState): GameState {
 }
 
 export function applyGroupSatisfactionPenalty(state: GameState): GameState {
+  const newGroupRelations = { ...state.groupRelations };
   const updatedAgendas = state.groupAgendas.map(agenda => {
     if (agenda.satisfied || agenda.penaltyApplied) return agenda;
     if (state.turn >= agenda.deadline) {
-      state.groupRelations[agenda.groupId] = Math.max(0, (state.groupRelations[agenda.groupId] ?? 50) - 8);
+      newGroupRelations[agenda.groupId] = Math.max(0, (newGroupRelations[agenda.groupId] ?? 50) - 8);
       return { ...agenda, penaltyApplied: true };
     }
     return agenda;
   });
-  return { ...state, groupAgendas: updatedAgendas };
+  return { ...state, groupAgendas: updatedAgendas, groupRelations: newGroupRelations };
 }

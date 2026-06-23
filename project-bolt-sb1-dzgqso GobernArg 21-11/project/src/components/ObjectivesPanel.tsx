@@ -22,8 +22,8 @@ export function ObjectivesPanel({ gameState }: ObjectivesPanelProps) {
             <div className="flex items-center gap-2 text-red-600 bg-red-50 p-3 rounded-lg">
               <AlertTriangle className="w-5 h-5" />
               <span>
-                ¡Popularidad crítica! {3 - consecutiveLowPopularity} {
-                  3 - consecutiveLowPopularity === 1 ? 'turno' : 'turnos'
+                ¡Popularidad crítica! {2 - consecutiveLowPopularity} {
+                  2 - consecutiveLowPopularity === 1 ? 'turno' : 'turnos'
                 } para mejorar
               </span>
             </div>
@@ -32,8 +32,8 @@ export function ObjectivesPanel({ gameState }: ObjectivesPanelProps) {
             <div className="flex items-center gap-2 text-red-600 bg-red-50 p-3 rounded-lg">
               <AlertTriangle className="w-5 h-5" />
               <span>
-                ¡Presupuesto negativo! {3 - consecutiveNegativeBudget} {
-                  3 - consecutiveNegativeBudget === 1 ? 'turno' : 'turnos'
+                ¡Presupuesto negativo! {2 - consecutiveNegativeBudget} {
+                  2 - consecutiveNegativeBudget === 1 ? 'turno' : 'turnos'
                 } para recuperar
               </span>
             </div>

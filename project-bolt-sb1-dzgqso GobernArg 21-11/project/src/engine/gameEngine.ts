@@ -732,7 +732,12 @@ function addEventNotifications(state: GameState, triggeredEvents: GameEvent[]): 
 }
 
 export function processEndTurn(gameState: GameState): TurnResult {
-  let state: GameState = { ...gameState };
+  let state: GameState = {
+    ...gameState,
+    groupRelations: { ...gameState.groupRelations },
+    groupAgendas: gameState.groupAgendas.map(a => ({ ...a })),
+    groupMoods: gameState.groupMoods.map(m => ({ ...m })),
+  };
   const events: string[] = [];
 
   // Bloquear avance si hay estrategia midterm pendiente
@@ -1295,6 +1300,21 @@ export function resolvePendingElection(gameState: GameState, option: ElectionOpt
   state.moneyPrintingCount = 0;
   state.consecutiveLowPopularity = 0;
   state.consecutiveNegativeBudget = 0;
+  // Reset de features del mandato anterior
+  state.groupAgendas = [];
+  state.groupMoods = [];
+  state.actionUsageCount = {};
+  state.actionCooldowns = {};
+  state.debtCount = 0;
+  state.debtServiceRatio = 0;
+  state.completedObjectives = [];
+  state.midtermStrategy = null;
+  state.pendingMidtermStrategy = false;
+  state.availableMidtermStrategies = [];
+  state.audazTurnsCount = 0;
+  state.abilityCooldowns = {};
+  state.impeachmentConsecutiveTurns = 0;
+  state.coupConsecutiveTurns = 0;
 
   return recalcState(state);
 }

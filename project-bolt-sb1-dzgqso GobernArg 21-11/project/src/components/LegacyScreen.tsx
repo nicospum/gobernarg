@@ -152,7 +152,16 @@ export function LegacyScreen({ gameState, onRestart }: LegacyScreenProps) {
 }
 
 function isVictivityMessage(gameState: GameState): string {
-  if (!gameState.victorious) return 'El pueblo eligió un nuevo rumbo.';
+  if (!gameState.victorious) {
+    const reason = gameState.defeatReason;
+    if (reason === 'low_popularity') return 'La popularidad se desplomó a niveles insostenibles.';
+    if (reason === 'negative_budget') return 'El déficit fiscal colapsó las cuentas públicas.';
+    if (reason === 'impeachment') return 'El Congreso te removió del cargo.';
+    if (reason === 'institutional_coup') return 'Las instituciones quebraron bajo tu mandato.';
+    if (reason === 'hyperinflation') return 'La economía se destruyó por la inflación.';
+    if (reason === 'election_loss') return 'El pueblo eligió un nuevo rumbo en las urnas.';
+    return 'Tu gestión ha llegado a su fin.';
+  }
   if (gameState.position === 'presidente' && gameState.term >= 2) {
     return 'Completaste dos mandatos presidenciales y cerraste una carrera histórica.';
   }

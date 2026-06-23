@@ -48,26 +48,26 @@ export interface DefeatResult {
 export function checkAllDefeatConditions(state: GameState): DefeatResult {
   const popThreshold = DEFEAT_CONDITIONS.LOW_POPULARITY_THRESHOLD[state.position] ?? 20;
 
-  // 1. Popularidad baja
-  if (state.popularity < popThreshold && state.consecutiveLowPopularity + 1 >= DEFEAT_CONDITIONS.LOW_POPULARITY_TURNS) {
+  // 1. Popularidad baja (ya incrementado en checkDefeat)
+  if (state.popularity < popThreshold && state.consecutiveLowPopularity >= DEFEAT_CONDITIONS.LOW_POPULARITY_TURNS) {
     return { defeated: true, reason: 'low_popularity', message: 'Tu popularidad se desplomó y perdiste todo apoyo político.' };
   }
 
-  // 2. Presupuesto negativo
-  if (state.budget < 0 && state.consecutiveNegativeBudget + 1 >= DEFEAT_CONDITIONS.NEGATIVE_BUDGET_TURNS) {
+  // 2. Presupuesto negativo (ya incrementado en checkDefeat)
+  if (state.budget < 0 && state.consecutiveNegativeBudget >= DEFEAT_CONDITIONS.NEGATIVE_BUDGET_TURNS) {
     return { defeated: true, reason: 'negative_budget', message: 'El déficit fiscal se volvió insostenible.' };
   }
 
   // 3. Impeachment: pop < 10% + estabilidad < 20% × 2 turnos
   if (state.popularity < 10 && state.stability < 20) {
-    if ((state.impeachmentConsecutiveTurns ?? 0) + 1 >= 2) {
+    if ((state.impeachmentConsecutiveTurns ?? 0) >= 2) {
       return { defeated: true, reason: 'impeachment', message: 'El Congreso inició un juicio político. Fuiste destituido.' };
     }
   }
 
   // 4. Golpe institucional: estabilidad < 10% + legislativeSupport < 25% × 3 turnos
   if (state.stability < 10 && (state.legislativeSupport ?? 100) < 25) {
-    if ((state.coupConsecutiveTurns ?? 0) + 1 >= 3) {
+    if ((state.coupConsecutiveTurns ?? 0) >= 3) {
       return { defeated: true, reason: 'institutional_coup', message: 'Las instituciones colapsaron. Un golpe te removió del poder.' };
     }
   }
