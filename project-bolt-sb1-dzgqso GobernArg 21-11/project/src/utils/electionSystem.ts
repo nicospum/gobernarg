@@ -8,6 +8,7 @@ import {
   getNextPosition
 } from '../data/careerRules';
 import type { ElectionOption } from '../data/careerRules';
+import { calculatePromotionPenalty } from './ascensionPenalty';
 
 export type { ElectionOption };
 export { getOptionLabel, getOptionDescription, getNextPosition };
@@ -70,13 +71,18 @@ export function calculateVotingIntentionForOption(
   const base = calculateVotingIntention(gameState);
   const difficulty = PROMOTION_DIFFICULTY[option];
 
-  // Desde intendente directo a presidente: penalización extra
-  let extraPenalty = 0;
-  if (option === 'promote-president' && gameState.position === 'intendente') {
-    extraPenalty = -15;
+  // Fase 3: Penalización por ascenso según mandatos completados
+  let ascensionMultiplier = 1.0;
+  if (option === 'promote-governor' && gameState.position === 'intendente') {
+    const completed = gameState.termsByPosition?.['intendente'] || 0;
+    ascensionMultiplier = 1 - calculatePromotionPenalty('intendente', 'gobernador', completed);
+  } else if (option === 'promote-president' && gameState.position !== 'presidente') {
+    const completed = gameState.termsByPosition?.[gameState.position] || 0;
+    ascensionMultiplier = 1 - calculatePromotionPenalty(gameState.position, 'presidente', completed);
   }
 
-  return Math.min(100, Math.max(0, base + difficulty + extraPenalty));
+  const adjusted = (base + difficulty) * ascensionMultiplier;
+  return Math.min(100, Math.max(0, adjusted));
 }
 
 export function processElectionResultsForOption(

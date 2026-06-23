@@ -23,6 +23,8 @@ import { calculateActionEffects, processPendingEffects, getDefaultCooldown } fro
 import { calculatePopularidad } from '../utils/popularidad';
 import { updateObjectives, getPositionObjectives, checkDefeatConditions } from '../utils/victoryConditions';
 import { calculateInteractionCost, calculateSupportGain } from '../utils/interactionCosts';
+import { applyCrossGroupEffects } from '../utils/crossGroupEffects';
+import { MIDTERM_STRATEGY_EFFECTS } from '../data/midtermStrategies';
 import {
   processElectionResults,
   processElectionResultsForOption,
@@ -121,7 +123,11 @@ export function getInitialGameState(): GameState {
     actionCooldowns: {},
     debtCount: 0,
     debtServiceRatio: 0,
-    legitimacy: 60
+    legitimacy: 60,
+    // Fase 3: Estrategia y política
+    midtermStrategy: null,
+    pendingMidtermStrategy: false,
+    availableMidtermStrategies: []
   };
 }
 
@@ -217,6 +223,27 @@ export function getAvailableActionsForState(gameState: GameState): GameAction[] 
       if (action.availableForPositions && !action.availableForPositions.includes(gameState.position)) return false;
       // Fase 2: filtrar por cooldown
       if ((gameState.actionCooldowns[action.id] || 0) > 0) return false;
+      // Fase 3: filtrar por prerequisites
+      if (action.prerequisites) {
+        if (action.prerequisites.requiredActions) {
+          const allDone = action.prerequisites.requiredActions.every(
+            reqId => gameState.completedActions.includes(reqId)
+          );
+          if (!allDone) return false;
+        }
+        if (action.prerequisites.minLegislativeSupport !== undefined) {
+          if ((gameState.legislativeSupport ?? 0) < action.prerequisites.minLegislativeSupport) return false;
+        }
+        if (action.prerequisites.minLegitimacy !== undefined) {
+          if ((gameState.legitimacy ?? 50) < action.prerequisites.minLegitimacy) return false;
+        }
+        if (action.prerequisites.minGroupSupport) {
+          const meets = Object.entries(action.prerequisites.minGroupSupport).every(
+            ([groupId, min]) => (gameState.groupRelations[groupId] || 0) >= min
+          );
+          if (!meets) return false;
+        }
+      }
       if (gameState.budget < action.requirements.minBudget) return false;
       if (action.requirements.minPopularity && gameState.popularity < action.requirements.minPopularity) return false;
       return true;
@@ -668,6 +695,20 @@ export function processEndTurn(gameState: GameState): TurnResult {
     }
   });
 
+  // 1.5. Fase 3: Aplicar impactos cruzados entre grupos antagónicos
+  const groupChanges: Record<string, number> = {};
+  state.selectedActions.forEach(actionId => {
+    const action = findActionById(actionId);
+    if (!action) return;
+    const effect = calculateActionEffects(action, state);
+    effect.immediateEffects.groupEffects.forEach(ge => {
+      groupChanges[ge.groupId] = (groupChanges[ge.groupId] || 0) + ge.supportChange;
+    });
+  });
+  if (Object.keys(groupChanges).length > 0) {
+    state = applyCrossGroupEffects(state, groupChanges);
+  }
+
   // 2. Procesar efectos pendientes que activan este turno
   state = processPendingEffects(state);
 
@@ -681,6 +722,19 @@ export function processEndTurn(gameState: GameState): TurnResult {
   totalBudgetChange += netIncome;
   const debtNote = state.debtServiceRatio > 0 ? ` (servicio de deuda: -${Math.round(state.debtServiceRatio * 100)}%)` : '';
   events.push(`Ingresos fiscales: +$${effectiveIncome}M • Gastos de gobierno: -$${maintenance}M${debtNote}`);
+
+  // 3.5. Fase 3: Aplicar efectos pasivos de la estrategia post-legislativa
+  if (state.midtermStrategy && state.year >= 3) {
+    const strategyEffect = MIDTERM_STRATEGY_EFFECTS[state.midtermStrategy];
+    state.stability = clampValue(state.stability + strategyEffect.stabilityPerTurn);
+    state.popularity = clampValue(state.popularity + strategyEffect.popularityPerTurn);
+    if (state.midtermStrategy === 'jugada_audaz' && state.turn >= 3) {
+      state.midtermStrategy = 'negociar';
+    }
+    if (state.midtermStrategy === 'abrirse') {
+      state.groupRelations['aliados'] = Math.max(0, (state.groupRelations['aliados'] || 70) - 2);
+    }
+  }
 
   // 4. Desgaste natural de popularidad (inercia política, por cargo)
   const POPULARITY_DECAY: Record<Position, number> = {

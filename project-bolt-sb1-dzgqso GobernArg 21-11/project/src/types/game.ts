@@ -72,6 +72,13 @@ export interface GameAction {
   isLoan?: boolean;
   /** Factor de rendimiento decreciente. default 0.80 (pierde 20% cada uso repetido) */
   diminishingFactor?: number;
+  /** Prerrequisitos de desbloqueo (Fase 3). Diferente de requirements (que son de ejecución). */
+  prerequisites?: {
+    requiredActions?: string[];
+    minLegislativeSupport?: number;
+    minLegitimacy?: number;
+    minGroupSupport?: Record<string, number>;
+  };
 }
 
 export interface ActionCategoryData {
@@ -192,6 +199,18 @@ export interface ElectionResults {
 // Carrera política y registro histórico
 // =====================
 export type CareerMilestoneType = 'initial' | 'reelection' | 'promotion';
+
+// Fase 3: Estrategias post-legislativas
+export type MidtermStrategy = 'acelerar' | 'negociar' | 'abrirse' | 'jugada_audaz';
+
+export interface MidtermStrategyEffect {
+  actionMultiplier: number;
+  actionCostModifier: number;
+  stabilityPerTurn: number;
+  popularityPerTurn: number;
+  riskLevel: 'low' | 'medium' | 'high' | 'extreme';
+  description: string;
+}
 
 export interface CareerMilestone {
   position: Position;
@@ -448,4 +467,8 @@ export interface GameState {
   debtCount: number;
   debtServiceRatio: number;
   legitimacy: number;
+  // Fase 3: Estrategia y política
+  midtermStrategy: MidtermStrategy | null;
+  pendingMidtermStrategy: boolean;
+  availableMidtermStrategies: MidtermStrategy[];
 }

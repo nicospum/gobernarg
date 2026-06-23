@@ -10,6 +10,7 @@ import {
   Calculator,
   Camera,
   CircleDollarSign,
+  ClipboardList,
   Construction,
   Cpu,
   Droplet,
@@ -96,7 +97,11 @@ export const actionCategories: ActionCategoryData[] = [
         budgetChange: 400,
         category: 'economia',
         requirements: { minBudget: 200 },
-        availableForPositions: ['gobernador', 'presidente']
+        availableForPositions: ['gobernador', 'presidente'],
+        prerequisites: {
+          requiredActions: ['mejorar_recaudacion'],
+          minLegislativeSupport: 45
+        }
       },
       {
         id: 'incentivos_exportacion',
@@ -414,6 +419,17 @@ export const actionCategories: ActionCategoryData[] = [
         category: 'infraestructura',
         requirements: { minBudget: 450 },
         availableForPositions: ['gobernador', 'presidente']
+      },
+      {
+        id: 'estudio_factibilidad',
+        title: 'Estudio de factibilidad',
+        description: 'Evaluación técnica y económica preliminar de obras de infraestructura.',
+        icon: ClipboardList,
+        popularityChange: 2,
+        budgetChange: -80,
+        category: 'infraestructura',
+        requirements: { minBudget: 80 },
+        cooldown: 2
       }
     ]
   },
@@ -452,7 +468,10 @@ export const actionCategories: ActionCategoryData[] = [
         budgetChange: -300,
         category: 'diplomacia',
         requirements: { minBudget: 300 },
-        availableForPositions: ['presidente']
+        availableForPositions: ['presidente'],
+        prerequisites: {
+          minGroupSupport: { empresarios: 60 }
+        }
       },
       {
         id: 'cooperacion_internacional',
