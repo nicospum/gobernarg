@@ -4,6 +4,9 @@ interface ActionEffect {
   immediateEffects: {
     popularityChange: number;
     budgetChange: number;
+    stabilityChange: number;
+    legitimacyChange: number;
+    votingIntentionChange: number;
     groupEffects: {
       groupId: string;
       supportChange: number;
@@ -20,11 +23,22 @@ export function calculateActionEffects(
   const archetypeMultiplier = getArchetypeMultiplier(gameState.archetype, action);
   const advisorMultiplier = calculateAdvisorMultiplier(action, gameState.advisors);
 
+  // Rendimientos decrecientes (Fase 2)
+  const usageCount = gameState.actionUsageCount[action.id] || 0;
+  const diminishingFactor = Math.pow(action.diminishingFactor ?? 0.80, usageCount);
+  // Si se usó 5+ veces y la acción originalmente daba popularidad positiva, se invierte
+  const effectivePopularityChange = usageCount >= 5 && action.popularityChange > 0
+    ? -Math.abs(action.popularityChange)
+    : action.popularityChange;
+
   // Efectos inmediatos (factor global para suavizar el impacto de popularidad)
-  const POPULARITY_GLOBAL_FACTOR = 0.55;
+  const POPULARITY_GLOBAL_FACTOR = 0.40; // Fase 1: reducido de 0.55 a 0.40
   const immediateEffects = {
-    popularityChange: action.popularityChange * archetypeMultiplier * advisorMultiplier * POPULARITY_GLOBAL_FACTOR,
-    budgetChange: action.budgetChange,
+    popularityChange: effectivePopularityChange * archetypeMultiplier * advisorMultiplier * POPULARITY_GLOBAL_FACTOR * diminishingFactor,
+    budgetChange: action.budgetChange * diminishingFactor,
+    stabilityChange: (action.multiEffects?.stabilityChange ?? 0) * diminishingFactor,
+    legitimacyChange: (action.multiEffects?.legitimacyChange ?? 0) * diminishingFactor,
+    votingIntentionChange: (action.multiEffects?.votingIntentionChange ?? 0) * diminishingFactor,
     groupEffects: calculateGroupEffects(action, gameState)
   };
 
@@ -91,18 +105,50 @@ function calculateGroupEffects(action: GameAction, gameState: GameState) {
 }
 
 function generatePendingEffects(action: GameAction, gameState: GameState): PendingEffect[] {
-  if (!action.futureEffects) return [];
+  const effects: PendingEffect[] = [];
 
-  return action.futureEffects.map(effect => ({
-    id: `${action.id}_${gameState.turn + effect.delay}`,
-    activationTurn: gameState.turn + effect.delay,
-    budgetChange: effect.budgetChange,
-    popularityChange: effect.popularityChange,
-    groupEffects: effect.groupEffects
-  }));
+  // Efectos diferidos explícitos
+  if (action.futureEffects) {
+    effects.push(...action.futureEffects.map(effect => ({
+      id: `${action.id}_${gameState.turn + effect.delay}`,
+      activationTurn: gameState.turn + effect.delay,
+      budgetChange: effect.budgetChange,
+      popularityChange: effect.popularityChange,
+      groupEffects: effect.groupEffects
+    })));
+  }
+
+  // Fase 2: Toda acción grande (>=|200| presupuesto) genera mantenimiento diferido
+  if (Math.abs(action.budgetChange) >= 200) {
+    const delay = 2 + Math.floor(Math.random() * 3); // 2-4 turnos
+    const maintenanceCost = Math.round(Math.abs(action.budgetChange) * 0.15); // 15%
+    effects.push({
+      id: `${action.id}_maintenance_${gameState.turn + delay}`,
+      activationTurn: gameState.turn + delay,
+      budgetChange: -maintenanceCost,
+      popularityChange: -2
+    });
+  }
+
+  return effects;
+}
+
+/** Calcula el cooldown por defecto si la acción no tiene uno explícito */
+export function getDefaultCooldown(action: GameAction): number {
+  if (action.cooldown !== undefined) return action.cooldown;
+
+  const absBudget = Math.abs(action.budgetChange);
+  if (action.isLoan || action.id === 'emitir_dinero') return 8;
+  if (absBudget > 500) return 6;
+  if (absBudget >= 200) return 3;
+  return 1;
 }
 
 export function isActionAvailable(action: GameAction, gameState: GameState): boolean {
+  // Verificar cooldown (Fase 2)
+  const cooldownRemaining = gameState.actionCooldowns[action.id] || 0;
+  if (cooldownRemaining > 0) return false;
+
   // Verificar presupuesto mínimo
   if (gameState.budget < action.requirements.minBudget) return false;
 

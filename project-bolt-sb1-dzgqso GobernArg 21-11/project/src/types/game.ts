@@ -62,6 +62,16 @@ export interface GameAction {
   isReform?: boolean;  // si es una reforma grande, se ve afectada por apoyo legislativo
   /** Cargos para los que está disponible esta acción. undefined = disponible para todos. */
   availableForPositions?: Position[];
+  /** Efectos multidimensionales (Fase 2) */
+  multiEffects?: {
+    stabilityChange?: number;
+    legitimacyChange?: number;
+    votingIntentionChange?: number;
+  };
+  /** Si esta acción es un préstamo (afecta debtCount) */
+  isLoan?: boolean;
+  /** Factor de rendimiento decreciente. default 0.80 (pierde 20% cada uso repetido) */
+  diminishingFactor?: number;
 }
 
 export interface ActionCategoryData {
@@ -432,4 +442,10 @@ export interface GameState {
   interestGroups?: InterestGroup[];
   unlockedActions?: string[];
   notifications: Notification[];
+  // Fase 2: Memoria de decisiones
+  actionUsageCount: Record<string, number>;
+  actionCooldowns: Record<string, number>;
+  debtCount: number;
+  debtServiceRatio: number;
+  legitimacy: number;
 }

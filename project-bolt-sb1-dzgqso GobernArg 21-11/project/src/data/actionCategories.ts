@@ -57,7 +57,14 @@ export const actionCategories: ActionCategoryData[] = [
         budgetChange: 150,
         category: 'economia',
         requirements: { minBudget: 0 },
-        availableForPositions: ['presidente']
+        availableForPositions: ['presidente'],
+        cooldown: 4,
+        diminishingFactor: 0.65,
+        multiEffects: {
+          stabilityChange: -3,
+          legitimacyChange: -5,
+          votingIntentionChange: -2
+        }
       },
       {
         id: 'mejorar_recaudacion',
@@ -153,6 +160,13 @@ export const actionCategories: ActionCategoryData[] = [
         category: 'economia',
         requirements: { minBudget: 0 },
         availableForPositions: ['presidente'],
+        cooldown: 8,
+        diminishingFactor: 0.90,
+        isLoan: true,
+        multiEffects: {
+          stabilityChange: 5,
+          legitimacyChange: -8
+        },
         futureEffects: [{ delay: 4, budgetChange: -100, popularityChange: -3 }]
       },
       {
@@ -165,6 +179,12 @@ export const actionCategories: ActionCategoryData[] = [
         category: 'economia',
         requirements: { minBudget: 0 },
         availableForPositions: ['gobernador', 'presidente'],
+        cooldown: 8,
+        diminishingFactor: 0.90,
+        isLoan: true,
+        multiEffects: {
+          legitimacyChange: -5
+        },
         futureEffects: [{ delay: 3, budgetChange: -75, popularityChange: -2 }]
       },
       {
@@ -492,7 +512,15 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 20,
         budgetChange: -400,
         category: 'seguridad',
-        requirements: { minBudget: 400 }
+        requirements: { minBudget: 400 },
+        cooldown: 3,
+        diminishingFactor: 0.85,
+        multiEffects: {
+          stabilityChange: 10,
+          legitimacyChange: 5,
+          votingIntentionChange: 3
+        },
+        futureEffects: [{ delay: 3, budgetChange: -80, popularityChange: -2 }]
       },
       {
         id: 'lucha_narcotrafico',

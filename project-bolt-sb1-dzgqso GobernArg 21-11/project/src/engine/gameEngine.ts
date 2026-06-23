@@ -19,7 +19,7 @@ import { getAllEvents } from '../data/events';
 import { getCalendarEventForTurn } from '../data/calendar';
 import { oppositionEvents, overconfidenceEvents } from '../data/events/legislativeConsequences';
 import { calculateAvailableActions } from '../utils/actionCalculator';
-import { calculateActionEffects, processPendingEffects } from '../utils/actionEffects';
+import { calculateActionEffects, processPendingEffects, getDefaultCooldown } from '../utils/actionEffects';
 import { calculatePopularidad } from '../utils/popularidad';
 import { updateObjectives, getPositionObjectives, checkDefeatConditions } from '../utils/victoryConditions';
 import { calculateInteractionCost, calculateSupportGain } from '../utils/interactionCosts';
@@ -115,7 +115,13 @@ export function getInitialGameState(): GameState {
     scheduledEvents: [],
     interestGroups,
     unlockedActions: getAllActionIds(),
-    notifications: []
+    notifications: [],
+    // Fase 2: Memoria de decisiones
+    actionUsageCount: {},
+    actionCooldowns: {},
+    debtCount: 0,
+    debtServiceRatio: 0,
+    legitimacy: 60
   };
 }
 
@@ -207,6 +213,10 @@ export function getAvailableActionsForState(gameState: GameState): GameAction[] 
     .flatMap(category => category.actions)
     .filter(action => {
       if (excluded.includes(action.id)) return false;
+      // Fase 1: filtrar por cargo
+      if (action.availableForPositions && !action.availableForPositions.includes(gameState.position)) return false;
+      // Fase 2: filtrar por cooldown
+      if ((gameState.actionCooldowns[action.id] || 0) > 0) return false;
       if (gameState.budget < action.requirements.minBudget) return false;
       if (action.requirements.minPopularity && gameState.popularity < action.requirements.minPopularity) return false;
       return true;
@@ -622,6 +632,11 @@ export function processEndTurn(gameState: GameState): TurnResult {
     state.budget += effect.immediateEffects.budgetChange;
     state.popularity += effect.immediateEffects.popularityChange;
 
+    // Fase 2: Aplicar efectos multidimensionales
+    state.stability = clampValue(state.stability + effect.immediateEffects.stabilityChange);
+    state.legitimacy = clampValue(state.legitimacy + effect.immediateEffects.legitimacyChange);
+    state.votingIntention = clampValue(state.votingIntention + effect.immediateEffects.votingIntentionChange);
+
     effect.immediateEffects.groupEffects.forEach(ge => {
       state.groupRelations[ge.groupId] = Math.min(100, Math.max(0,
         (state.groupRelations[ge.groupId] || 0) + ge.supportChange
@@ -642,17 +657,30 @@ export function processEndTurn(gameState: GameState): TurnResult {
     if (actionId === 'emitir_dinero') {
       state.moneyPrintingCount += 1;
     }
+
+    // Fase 2: Tracking de uso, cooldowns y deuda
+    state.actionUsageCount[actionId] = (state.actionUsageCount[actionId] || 0) + 1;
+    const cooldown = action.cooldown ?? getDefaultCooldown(action);
+    state.actionCooldowns[actionId] = cooldown;
+    if (action.isLoan) {
+      state.debtCount = Math.min(3, (state.debtCount || 0) + 1);
+      state.debtServiceRatio = state.debtCount * 0.10;
+    }
   });
 
   // 2. Procesar efectos pendientes que activan este turno
   state = processPendingEffects(state);
 
-  // 3. Ingreso base por cargo y gastos fijos de gobierno
-  const income = POSITION_INCOME[state.position];
+  // 3. Ingreso base por cargo y gastos fijos de gobierno (con servicio de deuda Fase 2)
+  const baseIncome = POSITION_INCOME[state.position];
   const maintenance = POSITION_MAINTENANCE[state.position];
-  state.budget += income - maintenance;
-  totalBudgetChange += income - maintenance;
-  events.push(`Ingresos fiscales: +$${income}M • Gastos de gobierno: -$${maintenance}M`);
+  const debtMultiplier = 1 - (state.debtServiceRatio || 0);
+  const effectiveIncome = Math.round(baseIncome * debtMultiplier);
+  const netIncome = effectiveIncome - maintenance;
+  state.budget += netIncome;
+  totalBudgetChange += netIncome;
+  const debtNote = state.debtServiceRatio > 0 ? ` (servicio de deuda: -${Math.round(state.debtServiceRatio * 100)}%)` : '';
+  events.push(`Ingresos fiscales: +$${effectiveIncome}M • Gastos de gobierno: -$${maintenance}M${debtNote}`);
 
   // 4. Desgaste natural de popularidad (inercia política, por cargo)
   const POPULARITY_DECAY: Record<Position, number> = {
@@ -725,6 +753,12 @@ export function processEndTurn(gameState: GameState): TurnResult {
     }
   }
   state.interactionHistory = updatedHistory;
+
+  // 7.1 Actualizar cooldowns de acciones (Fase 2)
+  state = updateActionCooldowns(state);
+
+  // 7.2 Aplicar inflación por emisión monetaria (Fase 2)
+  state = processInflation(state);
 
   // 8. Recalcular popularidad y acciones
   state = recalcState(state);
@@ -836,7 +870,8 @@ function checkDefeat(state: GameState): GameState {
   let consecutiveLowPopularity = state.consecutiveLowPopularity;
   let consecutiveNegativeBudget = state.consecutiveNegativeBudget;
 
-  if (state.popularity < 15) {
+  const popThreshold = DEFEAT_POP_THRESHOLD[state.position] ?? 20;
+  if (state.popularity < popThreshold) {
     consecutiveLowPopularity += 1;
   } else {
     consecutiveLowPopularity = 0;
@@ -856,8 +891,20 @@ function checkDefeat(state: GameState): GameState {
     state.victorious = false;
   }
 
+  // Fase 2: Derrota por hiperinflación
+  if (state.moneyPrintingCount >= 7) {
+    state.gameOver = true;
+    state.victorious = false;
+  }
+
   return state;
 }
+
+const DEFEAT_POP_THRESHOLD: Record<Position, number> = {
+  intendente: 20,
+  gobernador: 25,
+  presidente: 30
+};
 
 function checkElectionOrVictory(state: GameState, eventsLog: string[]): GameState {
   if (state.gameOver) return state;
@@ -1064,5 +1111,55 @@ export function finalizePresidentialCareer(gameState: GameState): GameState {
   state = recordElectionOutcome(state, 'reelection', state.votingIntention, true);
   state.gameOver = true;
   state.victorious = true;
+  return state;
+}
+
+// ============================================================
+// Fase 2: Funciones nuevas — Memoria de decisiones
+// ============================================================
+
+function clampValue(value: number, min = 0, max = 100): number {
+  return Math.min(max, Math.max(min, value));
+}
+
+/** Decrementa cooldowns de acciones en 1 cada turno, elimina los que llegan a 0 */
+function updateActionCooldowns(state: GameState): GameState {
+  const updated: Record<string, number> = {};
+  for (const [actionId, turns] of Object.entries(state.actionCooldowns)) {
+    if (turns > 1) {
+      updated[actionId] = turns - 1;
+    }
+  }
+  return { ...state, actionCooldowns: updated };
+}
+
+/** Aplica inflación real por emisión monetaria excesiva */
+function processInflation(state: GameState): GameState {
+  const count = state.moneyPrintingCount;
+  if (count >= 5) {
+    // Crisis inflacionaria: -20 popularidad, -300 presupuesto
+    state.popularity = Math.max(0, state.popularity - 20);
+    state.budget -= 300;
+    state = addNotification(state, {
+      type: 'crisis',
+      category: 'economic',
+      title: 'Crisis inflacionaria',
+      message: `La emisión descontrolada (${count} emisiones) provocó una crisis de inflación.`,
+      importance: 'critical'
+    });
+  } else if (count >= 3) {
+    // Inflación moderada: -5 popularidad/turno, -50 presupuesto/turno
+    state.popularity = Math.max(0, state.popularity - 5);
+    state.budget -= 50;
+    if (count === 3) {
+      state = addNotification(state, {
+        type: 'warning',
+        category: 'economic',
+        title: 'Presión inflacionaria',
+        message: `La emisión monetaria recurrente (${count} emisiones) está generando inflación.`,
+        importance: 'high'
+      });
+    }
+  }
   return state;
 }
