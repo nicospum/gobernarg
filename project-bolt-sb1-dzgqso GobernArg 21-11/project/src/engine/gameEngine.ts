@@ -1383,3 +1383,48 @@ export function useSpecialAbility(state: GameState): GameState {
 
   return newState;
 }
+
+// ============================================================
+// Fase 4: Satisfacer demandas de grupos de interés
+// ============================================================
+
+export function satisfyGroupDemand(state: GameState, agendaId: string): GameState {
+  const agenda = state.groupAgendas.find(a => a.id === agendaId);
+  if (!agenda || agenda.satisfied) return state;
+
+  const newState = { ...state };
+
+  // Marcar como satisfecha
+  newState.groupAgendas = state.groupAgendas.map(a =>
+    a.id === agendaId ? { ...a, satisfied: true } : a
+  );
+
+  // +10 apoyo al grupo
+  if (agenda.groupId in newState.groupRelations) {
+    newState.groupRelations = {
+      ...state.groupRelations,
+      [agenda.groupId]: clampValue((state.groupRelations[agenda.groupId] ?? 50) + 10),
+    };
+  }
+
+  // Resetear mood del grupo
+  newState.groupMoods = state.groupMoods.map(m =>
+    m.groupId === agenda.groupId
+      ? { ...m, mood: 'contento' as const, lastSatisfiedTurn: state.turn, ignoredTurns: 0 }
+      : m
+  );
+
+  // +2 popularidad general
+  newState.popularity = clampValue(newState.popularity + 2);
+
+  // Notificación
+  newState = addNotification(newState, {
+    type: 'success',
+    category: 'social',
+    title: 'Demanda satisfecha',
+    message: `Has respondido a la demanda del grupo: "${agenda.demand}".`,
+    importance: 'success',
+  });
+
+  return newState;
+}

@@ -34,7 +34,8 @@ import {
   resolvePendingElection,
   markAllNotificationsRead,
   dismissNotification,
-  useSpecialAbility
+  useSpecialAbility,
+  satisfyGroupDemand
 } from './engine/gameEngine';
 
 function App() {
@@ -69,6 +70,10 @@ function App() {
 
   const handleUseSpecialAbility = () => {
     setGameState(prev => useSpecialAbility(prev));
+  };
+
+  const handleSatisfyDemand = (agendaId: string) => {
+    setGameState(prev => satisfyGroupDemand(prev, agendaId));
   };
 
   const handleInteraction = (subgroupId: string, type: InteractionType) => {
@@ -186,6 +191,7 @@ function App() {
             <InterestGroupsPanel
               gameState={gameState}
               onInteraction={handleInteraction}
+              onSatisfyDemand={handleSatisfyDemand}
             />
             <AdvisorPanel
               gameState={gameState}

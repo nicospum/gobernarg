@@ -4,10 +4,14 @@ import { GameState, InteractionType } from '../types/game';
 import { interestGroups } from '../data/interestGroups';
 import { calculateInteractionCost } from '../utils/interactionCosts';
 import { THUMBNAIL_GROUPS } from '../utils/iconThumbnails';
+import { SupportBar } from './SupportBar';
+import { SubgroupMoodBadge } from './SubgroupMoodBadge';
+import { AgendaItem } from './AgendaItem';
 
 interface InterestGroupsPanelProps {
   gameState: GameState;
   onInteraction: (subgroupId: string, type: InteractionType) => void;
+  onSatisfyDemand?: (agendaId: string) => void;
 }
 
 const interactionConfig = {
@@ -37,7 +41,7 @@ const interactionConfig = {
   }
 };
 
-export function InterestGroupsPanel({ gameState, onInteraction }: InterestGroupsPanelProps) {
+export function InterestGroupsPanel({ gameState, onInteraction, onSatisfyDemand }: InterestGroupsPanelProps) {
   const [openGroups, setOpenGroups] = useState<string[]>([]);
 
   const toggleGroup = (groupId: string) => {
@@ -113,6 +117,31 @@ export function InterestGroupsPanel({ gameState, onInteraction }: InterestGroups
                         <span className="text-sm font-medium">{subgroup.influence}</span>
                       </div>
                     </div>
+
+                    {/* Support & Mood */}
+                    <div className="flex flex-col gap-1.5 mb-3">
+                      <SupportBar value={gameState.groupRelations[subgroup.id] ?? subgroup.baseSupport} />
+                      {(() => {
+                        const mood = gameState.groupMoods.find(m => m.groupId === subgroup.id);
+                        return mood ? <SubgroupMoodBadge mood={mood.mood} /> : null;
+                      })()}
+                    </div>
+
+                    {/* Agendas activas */}
+                    {onSatisfyDemand && (
+                      <div className="mb-3">
+                        {gameState.groupAgendas
+                          .filter(a => a.groupId === subgroup.id)
+                          .map(agenda => (
+                            <AgendaItem
+                              key={agenda.id}
+                              agenda={agenda}
+                              turnsLeft={agenda.deadline - gameState.turn}
+                              onSatisfy={onSatisfyDemand}
+                            />
+                          ))}
+                      </div>
+                    )}
 
                     <div className="flex flex-wrap gap-2">
                       {(Object.keys(interactionConfig) as InteractionType[]).map((type) => {
