@@ -32,7 +32,8 @@ import {
   applyEventChoice,
   resolvePendingElection,
   markAllNotificationsRead,
-  dismissNotification
+  dismissNotification,
+  useSpecialAbility
 } from './engine/gameEngine';
 
 function App() {
@@ -63,6 +64,10 @@ function App() {
 
   const handleActionSelect = (actionId: string) => {
     setGameState(prev => toggleActionSelection(prev, actionId));
+  };
+
+  const handleUseSpecialAbility = () => {
+    setGameState(prev => useSpecialAbility(prev));
   };
 
   const handleInteraction = (subgroupId: string, type: InteractionType) => {
@@ -155,6 +160,7 @@ function App() {
               onActionSelect={handleActionSelect}
               onEndTurn={handleEndTurn}
               canTakeAction={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
+              onUseAbility={handleUseSpecialAbility}
             />
 
             {gameState.pendingEffects.length > 0 && (

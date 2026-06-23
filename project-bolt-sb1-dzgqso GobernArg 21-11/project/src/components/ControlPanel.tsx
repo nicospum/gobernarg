@@ -5,15 +5,17 @@ import { ActionCard } from './ActionCard';
 import { getAvailableActionsForState } from '../engine/gameEngine';
 import { calculateActionEffects } from '../utils/actionEffects';
 import { THUMBNAIL_CATEGORIES } from '../utils/iconThumbnails';
+import { SpecialAbilitiesPanel } from './SpecialAbilitiesPanel';
 
 interface ControlPanelProps {
   gameState: GameState;
   onActionSelect: (actionId: string) => void;
   onEndTurn: () => void;
   canTakeAction: boolean;
+  onUseAbility?: () => void;
 }
 
-export function ControlPanel({ gameState, onActionSelect, onEndTurn, canTakeAction }: ControlPanelProps) {
+export function ControlPanel({ gameState, onActionSelect, onEndTurn, canTakeAction, onUseAbility }: ControlPanelProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('todas');
   const actions = getAvailableActionsForState(gameState);
 
@@ -125,6 +127,15 @@ export function ControlPanel({ gameState, onActionSelect, onEndTurn, canTakeActi
       </div>
 
       <div className="flex justify-center">
+        {onUseAbility && (
+          <div className="w-full max-w-md mb-4">
+            <SpecialAbilitiesPanel
+              gameState={gameState}
+              onUseAbility={onUseAbility}
+              disabled={!canTakeAction}
+            />
+          </div>
+        )}
         <button
           onClick={onEndTurn}
           disabled={gameState.gameOver}
