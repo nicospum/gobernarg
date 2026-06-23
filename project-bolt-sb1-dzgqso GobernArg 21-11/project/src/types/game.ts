@@ -60,6 +60,8 @@ export interface GameAction {
   cooldown?: number;
   actionCost?: number; // coste en puntos de acción (por defecto 1)
   isReform?: boolean;  // si es una reforma grande, se ve afectada por apoyo legislativo
+  /** Cargos para los que está disponible esta acción. undefined = disponible para todos. */
+  availableForPositions?: Position[];
 }
 
 export interface ActionCategoryData {

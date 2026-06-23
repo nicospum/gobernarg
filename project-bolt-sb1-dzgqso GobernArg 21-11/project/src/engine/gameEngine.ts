@@ -32,19 +32,19 @@ import { MAX_TERMS, ElectionOption, getNextPosition } from '../data/careerRules'
 
 // Constantes de balance
 const POSITION_INCOME: Record<Position, number> = {
-  intendente: 250,
-  gobernador: 400,
-  presidente: 600
+  intendente: 200,
+  gobernador: 350,
+  presidente: 500
 };
 
 const POSITION_MAINTENANCE: Record<Position, number> = {
-  intendente: 100,
-  gobernador: 175,
-  presidente: 300
+  intendente: 120,
+  gobernador: 200,
+  presidente: 350
 };
 
 const POSITION_STARTING_BUDGET: Record<Position, number> = {
-  intendente: 1000,
+  intendente: 800,
   gobernador: 2000,
   presidente: 3500
 };
@@ -654,8 +654,13 @@ export function processEndTurn(gameState: GameState): TurnResult {
   totalBudgetChange += income - maintenance;
   events.push(`Ingresos fiscales: +$${income}M • Gastos de gobierno: -$${maintenance}M`);
 
-  // 4. Desgaste natural de popularidad (inercia política)
-  const naturalDecay = 3;
+  // 4. Desgaste natural de popularidad (inercia política, por cargo)
+  const POPULARITY_DECAY: Record<Position, number> = {
+    intendente: 5,
+    gobernador: 7,
+    presidente: 10
+  };
+  const naturalDecay = POPULARITY_DECAY[state.position] ?? 5;
   state.popularity = Math.max(0, state.popularity - naturalDecay);
   totalPopularityChange -= naturalDecay;
 

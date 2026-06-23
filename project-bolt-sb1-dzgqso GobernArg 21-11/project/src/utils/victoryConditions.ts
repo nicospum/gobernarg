@@ -1,9 +1,13 @@
 import { GameState, Objective } from '../types/game';
 
 const DEFEAT_CONDITIONS = {
-  LOW_POPULARITY_THRESHOLD: 15,
-  LOW_POPULARITY_TURNS: 3,
-  NEGATIVE_BUDGET_TURNS: 3
+  LOW_POPULARITY_THRESHOLD: {
+    intendente: 20,
+    gobernador: 25,
+    presidente: 30
+  } as Record<string, number>,
+  LOW_POPULARITY_TURNS: 2,
+  NEGATIVE_BUDGET_TURNS: 2
 };
 
 export function checkVictoryConditions(gameState: GameState): boolean {
@@ -15,8 +19,10 @@ export function checkVictoryConditions(gameState: GameState): boolean {
 }
 
 export function checkDefeatConditions(gameState: GameState): boolean {
+  const popThreshold = DEFEAT_CONDITIONS.LOW_POPULARITY_THRESHOLD[gameState.position] ?? 20;
+  
   // Check for consecutive low popularity
-  if (gameState.popularity < DEFEAT_CONDITIONS.LOW_POPULARITY_THRESHOLD) {
+  if (gameState.popularity < popThreshold) {
     if (gameState.consecutiveLowPopularity + 1 >= DEFEAT_CONDITIONS.LOW_POPULARITY_TURNS) {
       return true;
     }

@@ -1,7 +1,7 @@
 import { InteractionType } from '../types/game';
 
 const BASE_COSTS = {
-  reunion: 0,
+  reunion: 10,
   negociar: 25,
   conceder: 50
 };

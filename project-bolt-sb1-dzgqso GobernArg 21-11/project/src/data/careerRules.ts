@@ -1,7 +1,7 @@
 import { Position } from '../types/game';
 
 export const MAX_TERMS: Record<Position, number> = {
-  intendente: 2,
+  intendente: 4,
   gobernador: 2,
   presidente: 2
 };
@@ -10,8 +10,8 @@ export type ElectionOption = 'reelection' | 'promote-governor' | 'promote-presid
 
 export const PROMOTION_DIFFICULTY: Record<ElectionOption, number> = {
   reelection: 5,
-  'promote-governor': -10,
-  'promote-president': -25
+  'promote-governor': -15,
+  'promote-president': -40
 };
 
 export const PROMOTION_MIN_POPULARITY: Record<ElectionOption, number> = {

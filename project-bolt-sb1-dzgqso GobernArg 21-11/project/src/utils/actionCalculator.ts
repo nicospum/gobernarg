@@ -1,11 +1,17 @@
 import { GameState } from '../types/game';
 
 export function calculateAvailableActions(gameState: GameState): number {
-  let baseActions = 5; // Base number of actions
+  // Acciones base por cargo (Fase 1)
+  const POSITION_BASE_ACTIONS: Record<string, number> = {
+    intendente: 3,
+    gobernador: 2,
+    presidente: 1
+  };
+  let baseActions = POSITION_BASE_ACTIONS[gameState.position] ?? 3;
 
   // Archetype bonus
   if (gameState.archetype === 'politico') {
-    baseActions += 2;
+    baseActions += 1;
   } else if (gameState.archetype === 'empresario' || gameState.archetype === 'sindicalista') {
     baseActions += 1;
   }
@@ -17,11 +23,9 @@ export function calculateAvailableActions(gameState: GameState): number {
   
   baseActions += advisorBonus;
 
-  // Popularity-based bonus
+  // Popularity-based bonus (solo bonus por alta popularidad; sin bonus por baja)
   if (gameState.popularity >= 75) {
     baseActions += 1;
-  } else if (gameState.popularity < 25) {
-    baseActions += 2;
   }
 
   return baseActions;

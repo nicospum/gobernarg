@@ -53,20 +53,22 @@ export const actionCategories: ActionCategoryData[] = [
         title: 'Emitir Dinero',
         description: 'Aumentar la masa monetaria para financiar gastos',
         icon: Banknote,
-        popularityChange: 5,
-        budgetChange: 200,
+        popularityChange: 3,
+        budgetChange: 150,
         category: 'economia',
-        requirements: { minBudget: 0 }
+        requirements: { minBudget: 0 },
+        availableForPositions: ['presidente']
       },
       {
         id: 'mejorar_recaudacion',
         title: 'Mejorar Recaudación',
         description: 'Optimizar el sistema de recaudación de impuestos',
         icon: Receipt,
-        popularityChange: -5,
+        popularityChange: -8,
         budgetChange: 250,
         category: 'economia',
-        requirements: { minBudget: 100 }
+        requirements: { minBudget: 100 },
+        availableForPositions: ['gobernador', 'presidente']
       },
       {
         id: 'subsidios_industriales',
@@ -86,7 +88,8 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: -10,
         budgetChange: 400,
         category: 'economia',
-        requirements: { minBudget: 200 }
+        requirements: { minBudget: 200 },
+        availableForPositions: ['gobernador', 'presidente']
       },
       {
         id: 'incentivos_exportacion',
@@ -96,7 +99,8 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 8,
         budgetChange: -250,
         category: 'economia',
-        requirements: { minBudget: 250 }
+        requirements: { minBudget: 250 },
+        availableForPositions: ['gobernador', 'presidente']
       },
       {
         id: 'control_precios',
@@ -126,14 +130,15 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 20,
         budgetChange: -400,
         category: 'economia',
-        requirements: { minBudget: 400 }
+        requirements: { minBudget: 400 },
+        availableForPositions: ['gobernador', 'presidente']
       },
       {
         id: 'reduccion_gasto',
         title: 'Reducción del Gasto Público',
         description: 'Optimizar el gasto estatal',
         icon: TrendingDown,
-        popularityChange: -15,
+        popularityChange: -20,
         budgetChange: 300,
         category: 'economia',
         requirements: { minBudget: 0 }
@@ -146,7 +151,9 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: -5,
         budgetChange: 800,
         category: 'economia',
-        requirements: { minBudget: 0 }
+        requirements: { minBudget: 0 },
+        availableForPositions: ['presidente'],
+        futureEffects: [{ delay: 4, budgetChange: -100, popularityChange: -3 }]
       },
       {
         id: 'prestamo_local',
@@ -156,7 +163,9 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: -3,
         budgetChange: 500,
         category: 'economia',
-        requirements: { minBudget: 0 }
+        requirements: { minBudget: 0 },
+        availableForPositions: ['gobernador', 'presidente'],
+        futureEffects: [{ delay: 3, budgetChange: -75, popularityChange: -2 }]
       },
       {
         id: 'atraccion_inversiones',
@@ -166,7 +175,8 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 10,
         budgetChange: -200,
         category: 'economia',
-        requirements: { minBudget: 200 }
+        requirements: { minBudget: 200 },
+        availableForPositions: ['gobernador', 'presidente']
       }
     ]
   },
@@ -298,7 +308,8 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 12,
         budgetChange: -500,
         category: 'infraestructura',
-        requirements: { minBudget: 500 }
+        requirements: { minBudget: 500 },
+        availableForPositions: ['gobernador', 'presidente']
       },
       {
         id: 'construccion_hospitales',
@@ -308,7 +319,8 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 20,
         budgetChange: -600,
         category: 'infraestructura',
-        requirements: { minBudget: 600 }
+        requirements: { minBudget: 600 },
+        availableForPositions: ['gobernador', 'presidente']
       },
       {
         id: 'viviendas_rurales',
@@ -328,7 +340,8 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 10,
         budgetChange: -700,
         category: 'infraestructura',
-        requirements: { minBudget: 700 }
+        requirements: { minBudget: 700 },
+        availableForPositions: ['presidente']
       },
       {
         id: 'red_comunicaciones',
@@ -338,7 +351,8 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 12,
         budgetChange: -400,
         category: 'infraestructura',
-        requirements: { minBudget: 400 }
+        requirements: { minBudget: 400 },
+        availableForPositions: ['gobernador', 'presidente']
       },
       {
         id: 'reforestacion',
@@ -378,7 +392,8 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 15,
         budgetChange: -450,
         category: 'infraestructura',
-        requirements: { minBudget: 450 }
+        requirements: { minBudget: 450 },
+        availableForPositions: ['gobernador', 'presidente']
       }
     ]
   },
@@ -394,7 +409,8 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 15,
         budgetChange: -200,
         category: 'diplomacia',
-        requirements: { minBudget: 200 }
+        requirements: { minBudget: 200 },
+        availableForPositions: ['intendente', 'gobernador', 'presidente']
       },
       {
         id: 'alianza_politica',
@@ -404,7 +420,8 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 10,
         budgetChange: -150,
         category: 'diplomacia',
-        requirements: { minBudget: 150 }
+        requirements: { minBudget: 150 },
+        availableForPositions: ['intendente', 'gobernador', 'presidente']
       },
       {
         id: 'tratado_comercio',
@@ -414,7 +431,8 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 8,
         budgetChange: -300,
         category: 'diplomacia',
-        requirements: { minBudget: 300 }
+        requirements: { minBudget: 300 },
+        availableForPositions: ['presidente']
       },
       {
         id: 'cooperacion_internacional',
@@ -424,7 +442,8 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 12,
         budgetChange: -250,
         category: 'diplomacia',
-        requirements: { minBudget: 250 }
+        requirements: { minBudget: 250 },
+        availableForPositions: ['gobernador', 'presidente']
       },
       {
         id: 'acuerdo_ambiental',
@@ -434,7 +453,8 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 15,
         budgetChange: -200,
         category: 'diplomacia',
-        requirements: { minBudget: 200 }
+        requirements: { minBudget: 200 },
+        availableForPositions: ['gobernador', 'presidente']
       },
       {
         id: 'participacion_cumbres',
@@ -444,7 +464,8 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 8,
         budgetChange: -150,
         category: 'diplomacia',
-        requirements: { minBudget: 150 }
+        requirements: { minBudget: 150 },
+        availableForPositions: ['presidente']
       },
       {
         id: 'mediacion_conflictos',
@@ -454,7 +475,8 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 10,
         budgetChange: -200,
         category: 'diplomacia',
-        requirements: { minBudget: 200 }
+        requirements: { minBudget: 200 },
+        availableForPositions: ['gobernador', 'presidente']
       }
     ]
   },
@@ -480,7 +502,8 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 15,
         budgetChange: -500,
         category: 'seguridad',
-        requirements: { minBudget: 500 }
+        requirements: { minBudget: 500 },
+        availableForPositions: ['gobernador', 'presidente']
       },
       {
         id: 'programa_desarme',
@@ -500,7 +523,8 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 10,
         budgetChange: -400,
         category: 'seguridad',
-        requirements: { minBudget: 400 }
+        requirements: { minBudget: 400 },
+        availableForPositions: ['gobernador', 'presidente']
       },
       {
         id: 'sistema_vigilancia',
@@ -510,7 +534,8 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 15,
         budgetChange: -350,
         category: 'seguridad',
-        requirements: { minBudget: 350 }
+        requirements: { minBudget: 350 },
+        availableForPositions: ['gobernador', 'presidente']
       },
       {
         id: 'policia_proximidad',

@@ -12,7 +12,8 @@ export function generatePossibleActions(gameState: GameState): GameAction[] {
                               gameState.popularity >= action.requirements.minPopularity;
     
     // Verificar si la acción está disponible para el cargo actual
-    const isAvailableForPosition = true; // Por ahora todas están disponibles, después implementaremos la lógica por cargo
+    const isAvailableForPosition = !action.availableForPositions || 
+      action.availableForPositions.includes(gameState.position);
     
     return meetsMinBudget && meetsMinPopularity && isAvailableForPosition;
   });
