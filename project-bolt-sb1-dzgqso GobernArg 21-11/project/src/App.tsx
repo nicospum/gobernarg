@@ -183,7 +183,7 @@ function App() {
         availableActions={gameState.actions}
         onRestart={handleRestart}
         onEndTurn={handleEndTurn}
-        canEndTurn={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
+        canEndTurn={!gameState.gameOver && !gameState.pendingElection}
       />
 
       <main className="container mx-auto p-4 space-y-4">

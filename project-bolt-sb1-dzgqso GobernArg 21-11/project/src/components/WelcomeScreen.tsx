@@ -44,7 +44,7 @@ export function WelcomeScreen({ onStart }: { onStart: (isAdmin: boolean) => void
           >
             <Shield className="w-8 h-8 text-white" />
             <div>
-              <h3 className="font-bold text-white text-lg">Modo Normal</h3>
+              <h3 className="font-display font-bold text-white text-lg uppercase tracking-wide">Modo Normal</h3>
               <p className="text-sm text-white/80">Gestioná con las reglas del juego.</p>
             </div>
           </button>
@@ -59,7 +59,7 @@ export function WelcomeScreen({ onStart }: { onStart: (isAdmin: boolean) => void
           >
             <Wrench className="w-8 h-8 text-white" />
             <div>
-              <h3 className="font-bold text-white text-lg">Modo Admin</h3>
+              <h3 className="font-display font-bold text-white text-lg uppercase tracking-wide">Modo Admin</h3>
               <p className="text-sm text-white/80">Panel de debug y pruebas internas.</p>
             </div>
           </button>
@@ -68,7 +68,7 @@ export function WelcomeScreen({ onStart }: { onStart: (isAdmin: boolean) => void
         <button
           onClick={handleStart}
           disabled={!selectedMode}
-          className="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-400 disabled:bg-white/20 disabled:cursor-not-allowed text-slate-900 font-bold px-10 py-4 rounded-xl transition-colors shadow-lg text-lg"
+          className="inline-flex items-center gap-2 bg-accent hover:bg-accent/90 disabled:bg-white/20 disabled:text-white/40 disabled:cursor-not-allowed text-accent-foreground font-display font-bold px-10 py-4 rounded-xl transition-colors shadow-lg text-lg uppercase tracking-wide"
         >
           <Play className="w-5 h-5" />
           Empezar

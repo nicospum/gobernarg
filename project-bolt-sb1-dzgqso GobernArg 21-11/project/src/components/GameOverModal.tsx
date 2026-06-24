@@ -2,6 +2,7 @@ import { Trophy, AlertOctagon, TrendingDown, Wallet, Gavel, Swords, Flame, Vote 
 import { GameState, DefeatReason } from '../types/game';
 import { IMAGES } from '../utils/imageAssets';
 import { DEFEAT_REASON_CONFIG } from '../data/defeatReasons';
+import { fmtBudget } from '@/lib/format';
 
 interface GameOverModalProps {
   gameState: GameState;
@@ -22,32 +23,32 @@ export function GameOverModal({ gameState, onRestart }: GameOverModalProps) {
   const reason = gameState.defeatReason;
   const defeatConfig = !isVictory && reason ? DEFEAT_REASON_CONFIG[reason] : null;
 
-  const backgroundImage = isVictory
-    ? IMAGES.ui.shieldEmblemPremium
-    : IMAGES.events.socialProtest;
-
+  const backgroundImage = isVictory ? IMAGES.ui.shieldEmblemPremium : IMAGES.events.socialProtest;
   const DefeatIcon = !isVictory && reason ? DEFEAT_ICONS[reason] : null;
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="relative w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl">
-        {/* Fondo temático */}
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="relative w-full max-w-2xl rounded-xl overflow-hidden shadow-2xl border border-border">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${backgroundImage})` }}
         />
-        <div className={`absolute inset-0 ${
-          isVictory
-            ? 'bg-gradient-to-t from-yellow-900/95 via-slate-900/70 to-slate-900/40'
-            : 'bg-gradient-to-t from-red-900/95 via-slate-900/70 to-slate-900/40'
-        }`} />
+        <div
+          className={`absolute inset-0 ${
+            isVictory
+              ? 'bg-gradient-to-t from-[#0B1829]/98 via-[#0B1829]/80 to-[#0B1829]/60'
+              : 'bg-gradient-to-t from-[#0B1829]/98 via-red-950/70 to-[#0B1829]/60'
+          }`}
+        />
 
-        <div className="relative z-10 p-8 md:p-10 text-white text-center">
+        <div className="relative z-10 p-8 md:p-10 text-foreground text-center">
           {isVictory ? (
             <>
-              <Trophy className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
-              <h2 className="text-4xl font-bold text-yellow-400 mb-2">¡Victoria!</h2>
-              <p className="text-lg text-white/90 mb-8">
+              <Trophy className="w-16 h-16 text-accent mx-auto mb-4" />
+              <h2 className="font-display text-4xl font-bold text-accent mb-2 uppercase tracking-wide">
+                ¡Victoria!
+              </h2>
+              <p className="text-lg text-foreground/85 mb-8">
                 Has completado tu gestión con éxito. ¡El pueblo te aclama!
               </p>
             </>
@@ -58,40 +59,51 @@ export function GameOverModal({ gameState, onRestart }: GameOverModalProps) {
               ) : (
                 <AlertOctagon className="w-16 h-16 text-red-400 mx-auto mb-4" />
               )}
-              <h2 className="text-4xl font-bold text-red-400 mb-2">
+              <h2 className="font-display text-4xl font-bold text-red-400 mb-2 uppercase tracking-wide">
                 {defeatConfig?.title ?? 'Fin del Juego'}
               </h2>
-              <p className="text-lg text-white/90 mb-4">
-                {defeatConfig?.description ?? 'Tu gestión ha llegado a su fin. El pueblo demanda un cambio.'}
+              <p className="text-lg text-foreground/85 mb-4">
+                {defeatConfig?.description ??
+                  'Tu gestión ha llegado a su fin. El pueblo demanda un cambio.'}
               </p>
               {defeatConfig?.advice && (
-                <div className="bg-white/10 backdrop-blur rounded-xl p-4 mb-6 border border-white/20 inline-block text-left max-w-md">
-                  <p className="text-sm text-white/80 italic">💡 Consejo: {defeatConfig.advice}</p>
+                <div className="bg-white/8 backdrop-blur rounded-xl p-4 mb-6 border border-border inline-block text-left max-w-md">
+                  <p className="text-sm text-foreground/80 italic">
+                    Consejo: {defeatConfig.advice}
+                  </p>
                 </div>
               )}
             </>
           )}
 
-          <div className="bg-white/10 backdrop-blur rounded-xl p-6 mb-8 border border-white/20">
-            <h3 className="text-xl font-bold mb-4">Resumen Final</h3>
+          <div className="bg-white/8 backdrop-blur rounded-xl p-6 mb-8 border border-border">
+            <h3 className="font-display text-xl font-bold uppercase tracking-wide mb-4">
+              Resumen Final
+            </h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-white/80">Popularidad Final</p>
-                <p className="text-3xl font-bold">{Math.round(gameState.popularity)}%</p>
+                <p className="text-foreground/70 text-[12px] uppercase tracking-wide">
+                  Popularidad Final
+                </p>
+                <p className="font-mono text-3xl font-bold">
+                  {Math.round(gameState.popularity)}%
+                </p>
               </div>
               <div>
-                <p className="text-white/80">Presupuesto Final</p>
-                <p className="text-3xl font-bold">${Math.round(gameState.budget)}M</p>
+                <p className="text-foreground/70 text-[12px] uppercase tracking-wide">
+                  Presupuesto Final
+                </p>
+                <p className="font-mono text-3xl font-bold">{fmtBudget(gameState.budget)}</p>
               </div>
             </div>
           </div>
 
           <button
             onClick={onRestart}
-            className={`px-8 py-3 rounded-xl text-white font-bold transition-colors shadow-lg ${
+            className={`px-8 py-3 rounded font-display font-bold uppercase tracking-wide transition-colors shadow-lg ${
               isVictory
-                ? 'bg-yellow-500 hover:bg-yellow-400 text-slate-900'
-                : 'bg-blue-600 hover:bg-blue-500'
+                ? 'bg-accent hover:bg-accent/90 text-accent-foreground'
+                : 'bg-primary hover:bg-primary/90 text-primary-foreground'
             }`}
           >
             Comenzar Nueva Partida

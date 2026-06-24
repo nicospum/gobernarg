@@ -84,11 +84,11 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
         </div>
 
         <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 md:p-10 shadow-2xl border border-white/10">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">Creá tu gobernante</h1>
+          <h1 className="font-display text-3xl md:text-4xl font-bold mb-2 uppercase tracking-wide">Creá tu gobernante</h1>
           <p className="text-white/80 mb-8">Definí quién va a ocupar el ejecutivo y con qué perfil.</p>
 
           <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-3">Nombre del gobernante</h2>
+            <h2 className="font-display text-xl font-semibold mb-3 uppercase tracking-wide">Nombre del gobernante</h2>
             <input
               type="text"
               value={governorName}
@@ -104,7 +104,7 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
             )}
           </div>
 
-          <h2 className="text-xl font-semibold mb-4">Elegí el Cargo</h2>
+          <h2 className="font-display text-xl font-semibold mb-4 uppercase tracking-wide">Elegí el Cargo</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
             {positions.map((pos) => (
               <button
@@ -112,7 +112,7 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
                 onClick={() => setPosition(pos.id)}
                 className={`text-left p-5 rounded-xl border-2 transition-all ${
                   position === pos.id
-                    ? 'bg-white/20 border-white shadow-lg'
+                    ? 'bg-white/15 border-accent shadow-lg'
                     : 'bg-white/5 border-white/20 hover:bg-white/10 hover:border-white/40'
                 }`}
               >
@@ -124,7 +124,7 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
             ))}
           </div>
 
-          <h2 className="text-xl font-semibold mb-4">Elegí tu Perfil</h2>
+          <h2 className="font-display text-xl font-semibold mb-4 uppercase tracking-wide">Elegí tu Perfil</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
             {archetypes.map((arch) => (
               <button
@@ -132,7 +132,7 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
                 onClick={() => setArchetype(arch.id)}
                 className={`flex flex-col items-center text-center p-5 rounded-xl border-2 transition-all ${
                   archetype === arch.id
-                    ? 'bg-white/20 border-white shadow-lg scale-[1.02]'
+                    ? 'bg-white/15 border-accent shadow-lg scale-[1.02]'
                     : 'bg-white/5 border-white/20 hover:bg-white/10 hover:border-white/40'
                 }`}
               >
@@ -149,7 +149,7 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
             ))}
           </div>
 
-          <h2 className="text-xl font-semibold mb-4">Elegí tu Avatar</h2>
+          <h2 className="font-display text-xl font-semibold mb-4 uppercase tracking-wide">Elegí tu Avatar</h2>
           <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-3 mb-10">
             {AVATARS.map((av) => (
               <button
@@ -157,7 +157,7 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
                 onClick={() => setAvatar(av.src)}
                 className={`flex flex-col items-center p-2 rounded-xl border-2 transition-all ${
                   avatar === av.src
-                    ? 'bg-white/20 border-white shadow-lg scale-[1.05]'
+                    ? 'bg-white/15 border-accent shadow-lg scale-[1.05]'
                     : 'bg-white/5 border-white/20 hover:bg-white/10 hover:border-white/40'
                 }`}
               >
@@ -173,10 +173,10 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
 
           <button
             onClick={handleSubmit}
-            className={`w-full font-bold py-4 px-6 rounded-xl transition-colors text-lg ${
+            className={`w-full font-display font-bold py-4 px-6 rounded-xl transition-colors text-lg uppercase tracking-wide ${
               !governorName.trim()
-                ? 'bg-white/20 cursor-not-allowed'
-                : 'bg-yellow-500 hover:bg-yellow-400 text-slate-900'
+                ? 'bg-white/15 text-white/50 cursor-not-allowed'
+                : 'bg-accent hover:bg-accent/90 text-accent-foreground shadow-lg'
             }`}
             disabled={!governorName.trim()}
           >
