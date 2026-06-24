@@ -73,12 +73,12 @@ export function AdvisorSelectionModal({ onClose, onHire, maxSelections, gameStat
   const availableForHire = availableAdvisors.filter(isAdvisorAvailable);
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg w-full max-w-4xl max-h-[80vh] overflow-hidden">
-        <div className="p-4 bg-blue-900 text-white flex justify-between items-center">
-          <h2 className="text-xl font-bold">Contratar Asesores</h2>
-          <button onClick={onClose} className="p-1 hover:bg-blue-800 rounded">
-            <X className="w-6 h-6" />
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-card border border-border rounded-xl w-full max-w-4xl max-h-[85vh] overflow-hidden shadow-2xl">
+        <div className="px-5 py-4 border-b border-border flex justify-between items-center">
+          <h2 className="font-display text-xl font-bold uppercase tracking-wide text-foreground">Contratar Asesores</h2>
+          <button onClick={onClose} className="p-1 text-muted-foreground hover:text-foreground rounded transition-colors">
+            <X className="w-5 h-5" />
           </button>
         </div>
 
@@ -96,10 +96,10 @@ export function AdvisorSelectionModal({ onClose, onHire, maxSelections, gameStat
                   disabled={!isSelected && selectedAdvisors.length >= maxSelections}
                   className={`p-4 border rounded-lg text-left transition-all ${
                     isSelected
-                      ? 'border-blue-500 bg-blue-50'
+                      ? 'border-primary bg-primary/10'
                       : selectedAdvisors.length >= maxSelections
-                      ? 'border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed'
-                      : 'border-gray-200 hover:border-blue-300'
+                      ? 'border-border bg-card opacity-50 cursor-not-allowed'
+                      : 'border-border bg-card hover:border-primary/40 hover:bg-white/3'
                   }`}
                 >
                   <div className="flex justify-between items-start gap-3">
@@ -117,8 +117,8 @@ export function AdvisorSelectionModal({ onClose, onHire, maxSelections, gameStat
                             <span className="text-sm font-medium">Nivel {advisor.level}</span>
                           </div>
                         </div>
-                        <p className="text-sm text-gray-600">{advisor.specialty}</p>
-                        <p className="text-sm text-gray-500 mt-1">{advisor.description}</p>
+                        <p className="text-sm text-foreground/70">{advisor.specialty}</p>
+                        <p className="text-sm text-muted-foreground mt-1">{advisor.description}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-1 text-yellow-500 flex-shrink-0">
@@ -129,14 +129,14 @@ export function AdvisorSelectionModal({ onClose, onHire, maxSelections, gameStat
                   
                   <div className="mt-2 space-y-2">
                     <div className="flex gap-4 text-sm">
-                      <span className="text-blue-600">+{advisor.bonusActions} acciones</span>
-                      <div className="flex items-center gap-1 text-green-600">
+                      <span className="text-primary">+{advisor.bonusActions} acciones</span>
+                      <div className="flex items-center gap-1 text-emerald-400">
                         <span>Popularidad</span>
                         {popularityIndicators.map((indicator, index) => (
                           <span key={index}>{indicator}</span>
                         ))}
                       </div>
-                      <div className="flex items-center gap-1 text-red-600">
+                      <div className="flex items-center gap-1 text-red-400">
                         <span>Costo</span>
                         {budgetIndicators.map((indicator, index) => (
                           <span key={index}>{indicator}</span>
@@ -166,11 +166,11 @@ export function AdvisorSelectionModal({ onClose, onHire, maxSelections, gameStat
           </div>
         </div>
 
-        <div className="p-4 border-t bg-gray-50">
+        <div className="px-5 py-4 border-t border-border">
           <div className="flex justify-between items-center">
             <div className="text-sm">
-              <p>Asesores seleccionados: {selectedAdvisors.length}/{maxSelections}</p>
-              <div className="flex items-center gap-1 text-red-600">
+              <p className="text-foreground">Asesores seleccionados: {selectedAdvisors.length}/{maxSelections}</p>
+              <div className={`flex items-center gap-1 ${canAfford ? 'text-muted-foreground' : 'text-red-400'}`}>
                 <span>Costo total: ${totalCost}M</span>
                 {!canAfford && (
                   <span className="text-xs">(Presupuesto insuficiente)</span>
@@ -180,7 +180,7 @@ export function AdvisorSelectionModal({ onClose, onHire, maxSelections, gameStat
             <button
               onClick={handleHire}
               disabled={selectedAdvisors.length === 0 || !canAfford}
-              className="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg transition-colors"
+              className="bg-primary hover:bg-primary/90 disabled:bg-white/5 disabled:text-muted-foreground disabled:cursor-not-allowed text-primary-foreground px-6 py-2 rounded font-display font-bold uppercase tracking-wide text-sm transition-colors"
             >
               Contratar Seleccionados
             </button>

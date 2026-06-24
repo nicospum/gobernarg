@@ -16,12 +16,12 @@ export function AdvisorDismissModal({ onClose, onDismiss, advisors }: AdvisorDis
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg w-full max-w-4xl max-h-[80vh] overflow-hidden">
-        <div className="p-4 bg-red-900 text-white flex justify-between items-center">
-          <h2 className="text-xl font-bold">Despedir Asesor</h2>
-          <button onClick={onClose} className="p-1 hover:bg-red-800 rounded">
-            <X className="w-6 h-6" />
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-card border border-border rounded-xl w-full max-w-4xl max-h-[85vh] overflow-hidden shadow-2xl">
+        <div className="px-5 py-4 border-b border-border flex justify-between items-center">
+          <h2 className="font-display text-xl font-bold uppercase tracking-wide text-destructive">Despedir Asesor</h2>
+          <button onClick={onClose} className="p-1 text-muted-foreground hover:text-foreground rounded transition-colors">
+            <X className="w-5 h-5" />
           </button>
         </div>
 
@@ -36,20 +36,20 @@ export function AdvisorDismissModal({ onClose, onDismiss, advisors }: AdvisorDis
                   onClick={() => handleAdvisorSelect(advisor)}
                   className={`p-4 border rounded-lg text-left transition-all ${
                     isSelected
-                      ? 'border-red-500 bg-red-50'
-                      : 'border-gray-200 hover:border-red-300'
+                      ? 'border-destructive bg-destructive/10'
+                      : 'border-border bg-card hover:border-destructive/40 hover:bg-white/3'
                   }`}
                 >
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="font-semibold">{advisor.name}</h3>
-                      <p className="text-sm text-gray-600">{advisor.specialty}</p>
-                      <p className="text-sm text-gray-500 mt-1">{advisor.description}</p>
+                      <p className="text-sm text-foreground/70">{advisor.specialty}</p>
+                      <p className="text-sm text-muted-foreground mt-1">{advisor.description}</p>
                       <p className="text-sm mt-1">
                         {advisor.isActive ? (
-                          <span className="text-green-600">Activo</span>
+                          <span className="text-emerald-400">Activo</span>
                         ) : (
-                          <span className="text-gray-600">
+                          <span className="text-muted-foreground">
                             Inactivo por {advisor.turnsInactive} {advisor.turnsInactive === 1 ? 'turno' : 'turnos'}
                           </span>
                         )}
@@ -66,15 +66,15 @@ export function AdvisorDismissModal({ onClose, onDismiss, advisors }: AdvisorDis
           </div>
         </div>
 
-        <div className="p-4 border-t bg-gray-50">
+        <div className="px-5 py-4 border-t border-border">
           <div className="flex justify-between items-center">
             <div className="text-sm">
-              <p>Asesor seleccionado: {selectedAdvisor?.name || 'Ninguno'}</p>
+              <p className="text-foreground">Asesor seleccionado: {selectedAdvisor?.name || 'Ninguno'}</p>
             </div>
             <button
               onClick={() => selectedAdvisor && onDismiss(selectedAdvisor)}
               disabled={!selectedAdvisor}
-              className="bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg transition-colors"
+              className="bg-destructive hover:bg-destructive/90 disabled:bg-white/5 disabled:text-muted-foreground disabled:cursor-not-allowed text-destructive-foreground px-6 py-2 rounded font-display font-bold uppercase tracking-wide text-sm transition-colors"
             >
               Expulsar Asesor
             </button>

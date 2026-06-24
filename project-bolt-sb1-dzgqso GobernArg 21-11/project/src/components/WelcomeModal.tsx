@@ -31,8 +31,8 @@ export function WelcomeModal({ governorName, position, onStart }: WelcomeModalPr
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="relative w-full max-w-3xl rounded-2xl overflow-hidden shadow-2xl">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="relative w-full max-w-3xl rounded-xl overflow-hidden shadow-2xl border border-border">
         {/* Imagen de fondo según cargo */}
         <div
           className="absolute inset-0 bg-cover bg-center"
@@ -47,7 +47,7 @@ export function WelcomeModal({ governorName, position, onStart }: WelcomeModalPr
             className="h-16 md:h-20 mx-auto mb-6 bg-white/90 rounded-xl px-4 py-2"
           />
 
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 drop-shadow-lg">
+          <h2 className="font-display text-3xl md:text-4xl font-bold mb-4 drop-shadow-lg uppercase tracking-wide">
             ¡Felicitaciones, {governorName}!
           </h2>
 
@@ -68,7 +68,7 @@ export function WelcomeModal({ governorName, position, onStart }: WelcomeModalPr
 
           <button
             onClick={onStart}
-            className="bg-green-500 hover:bg-green-400 text-slate-900 px-10 py-3 rounded-xl text-lg font-bold transition-colors shadow-lg"
+            className="bg-accent hover:bg-accent/90 text-accent-foreground px-10 py-3 rounded-xl text-lg font-bold transition-colors shadow-lg font-display uppercase tracking-wide"
           >
             Entendido
           </button>

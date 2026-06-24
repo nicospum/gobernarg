@@ -16,6 +16,8 @@ import { VotingIntentionPanel } from './components/VotingIntentionPanel';
 import { ObjectivesPanel } from './components/ObjectivesPanel';
 import { PendingEffectsPanel } from './components/PendingEffectsPanel';
 import { ActiveBenefits } from './components/ActiveBenefits';
+import { InformesPanel } from './components/InformesPanel';
+import { RightSidebar } from './components/RightSidebar';
 import { EventModal } from './components/EventModal';
 import { ElectionResultsModal } from './components/ElectionResultsModal';
 import { GameLog } from './components/GameLog';
@@ -175,7 +177,7 @@ function App() {
   const currentEvent = pendingEvents[0] || null;
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-background text-foreground">
       <GameHeader
         gameState={gameState}
         availableActions={gameState.actions}
@@ -184,7 +186,10 @@ function App() {
         canEndTurn={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
       />
 
-      <main className="container mx-auto p-4">
+      <main className="container mx-auto p-4 space-y-4">
+        {/* Indicadores horizontales arriba */}
+        <IndicatorsPanel gameState={gameState} />
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2 space-y-4">
             <ControlPanel
@@ -206,6 +211,13 @@ function App() {
               />
             )}
 
+            {gameState.pendingEffects.length > 0 && (
+              <InformesPanel
+                effects={gameState.pendingEffects}
+                currentTurn={gameState.turn}
+              />
+            )}
+
             <NotificationCenter
               gameState={gameState}
               onMarkRead={() => setGameState(prev => markAllNotificationsRead(prev))}
@@ -214,22 +226,19 @@ function App() {
           </div>
 
           <div className="space-y-4">
-            <ActiveBenefits gameState={gameState} />
-            <button
-              onClick={() => setShowGameLog(true)}
-              className="w-full text-left bg-white rounded-lg shadow-lg p-3 hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm font-medium text-gray-700"
-            >
-              📋 Historial de gestión
-            </button>
-            <IndicatorsPanel gameState={gameState} />
-            <VotingIntentionPanel gameState={gameState} />
-            <ObjectivesPanel gameState={gameState} />
-            <PoliticalCalendarWidget gameState={gameState} />
-            <InterestGroupsPanel
+            <RightSidebar
               gameState={gameState}
               onInteraction={handleInteraction}
               onSatisfyDemand={handleSatisfyDemand}
             />
+            <ActiveBenefits gameState={gameState} />
+            <button
+              onClick={() => setShowGameLog(true)}
+              className="w-full text-left bg-card border border-border rounded-lg p-3 hover:bg-white/3 transition-colors flex items-center gap-2 text-sm font-medium text-foreground/80"
+            >
+              <span className="inline-flex w-5 h-5 items-center justify-center rounded bg-primary/15 text-primary font-bold text-[11px]">L</span>
+              Historial de gestión
+            </button>
             <AdvisorPanel
               gameState={gameState}
               onHireAdvisor={handleHireAdvisor}

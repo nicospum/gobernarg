@@ -4,6 +4,13 @@ interface TooltipProps {
   content: ReactNode;
   position?: 'top' | 'bottom' | 'left' | 'right';
   children: ReactNode;
+  /**
+   * Si true, el wrapper ocupa todo el ancho (block w-full).
+   * Necesario cuando el Tooltip envuelve contenido que tiene `flex justify-between`
+   * o cuando varios Tooltips se apilan verticalmente (space-y).
+   * Default false: wrapper inline-flex (alrededor de chips/spans/iconos).
+   */
+  block?: boolean;
 }
 
 const positionStyles = {
@@ -13,9 +20,9 @@ const positionStyles = {
   right: 'left-full top-1/2 -translate-y-1/2 ml-2',
 };
 
-export function Tooltip({ content, position = 'top', children }: TooltipProps) {
+export function Tooltip({ content, position = 'top', children, block = false }: TooltipProps) {
   return (
-    <div className="relative inline-flex group">
+    <div className={`relative group ${block ? 'block w-full' : 'inline-flex'}`}>
       {children}
       <div
         className={`absolute z-50 hidden group-hover:block pointer-events-none ${positionStyles[position]}`}
