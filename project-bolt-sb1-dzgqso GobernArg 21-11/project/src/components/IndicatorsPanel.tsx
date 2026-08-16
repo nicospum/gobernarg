@@ -2,7 +2,6 @@ import { Info, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { GameState } from '../types/game';
 import { Tooltip as LegacyTooltip, TooltipContent } from './Tooltip';
 import { InfoTooltip } from './InfoTooltip';
-import { AxisBar } from './AxisBar';
 import { getValueRisk, riskColor, riskLabel, type Risk } from '@/lib/risk';
 
 interface IndicatorsPanelProps {
@@ -240,50 +239,6 @@ export function IndicatorsPanel({ gameState }: IndicatorsPanelProps) {
           />
         ))}
       </div>
-
-      {/* Perfil ideológico (lo dejo por ahora — se puede mover/limpiar en Fase 4) */}
-      {(gameState.radicalConciliadorAxis !== undefined ||
-        gameState.populistaTecnicoAxis !== undefined ||
-        gameState.cerradoConvocanteAxis !== undefined) && (
-        <div className="rounded-lg border border-border bg-card p-3">
-          <h3 className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold mb-2">
-            Perfil ideológico
-          </h3>
-          <LegacyTooltip
-            block
-            content={
-              <TooltipContent
-                label="Estilo de liderazgo"
-                detail="Refleja la orientación acumulada de tus políticas. Se mueve con cada acción. A ±80 tiene efectos mecánicos."
-              />
-            }
-          >
-            <div className="cursor-help space-y-1.5">
-              <AxisBar
-                value={gameState.radicalConciliadorAxis}
-                labelLo="Radical"
-                labelHi="Conciliador"
-                loColor="bg-red-500"
-                hiColor="bg-blue-500"
-              />
-              <AxisBar
-                value={gameState.populistaTecnicoAxis}
-                labelLo="Populista"
-                labelHi="Técnico"
-                loColor="bg-purple-500"
-                hiColor="bg-teal-500"
-              />
-              <AxisBar
-                value={gameState.cerradoConvocanteAxis}
-                labelLo="Cerrado"
-                labelHi="Convocante"
-                loColor="bg-orange-500"
-                hiColor="bg-green-500"
-              />
-            </div>
-          </LegacyTooltip>
-        </div>
-      )}
     </section>
   );
 }
