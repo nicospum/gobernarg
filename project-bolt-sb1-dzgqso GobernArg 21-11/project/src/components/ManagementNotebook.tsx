@@ -9,14 +9,12 @@ import {
   Calendar,
   TrendingUp,
   DollarSign,
-  Building2,
   ScrollText,
-  ChevronRight,
   Activity,
 } from 'lucide-react';
 import type { GameState, GroupAgendaItem, PendingEffect } from '../types/game';
 import { actionDefinitions } from '../data/actionRegistry';
-import { FIXED_GROUPS, SUBGROUP_TO_GROUP } from '@/lib/groups-mapping';
+import { FIXED_GROUPS } from '@/lib/groups-mapping';
 
 interface ManagementNotebookProps {
   gameState: GameState;
@@ -165,7 +163,7 @@ function CompromisosSection({ gameState }: { gameState: GameState }) {
 
 // ─── Section 2: Efectos Diferidos Activos ───────────────────────────────
 
-function describeDeferredEffect(pe: PendingEffect, currentTurn: number): string {
+function describeDeferredEffect(pe: PendingEffect): string {
   const parts: string[] = [];
   if (pe.incomeModifier) {
     parts.push(`+${Math.round(pe.incomeModifier * 100)}% ingresos`);
@@ -225,11 +223,6 @@ function EfectosDiferidosSection({ gameState }: { gameState: GameState }) {
               </h4>
               {pending.map((pe) => {
                 const turnsUntil = pe.activationTurn - gameState.turn;
-                const positive =
-                  (pe.incomeModifier ?? 0) > 0 ||
-                  (pe.popularityChange ?? 0) > 0 ||
-                  (pe.budgetChange ?? 0) > 0;
-                const iconCls = positive ? 'text-emerald-400' : 'text-red-400';
                 return (
                   <div
                     key={pe.id}
@@ -238,7 +231,7 @@ function EfectosDiferidosSection({ gameState }: { gameState: GameState }) {
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <div className="font-display font-semibold text-[11px] text-foreground leading-tight">
-                          {describeDeferredEffect(pe, gameState.turn)}
+                          {describeDeferredEffect(pe)}
                         </div>
                         {pe.source && (
                           <div className="text-[9px] text-muted-foreground mt-0.5 truncate">
@@ -264,11 +257,6 @@ function EfectosDiferidosSection({ gameState }: { gameState: GameState }) {
                 </h4>
               )}
               {active.map((pe) => {
-                const positive =
-                  (pe.incomeModifier ?? 0) > 0 ||
-                  (pe.popularityChange ?? 0) > 0 ||
-                  (pe.budgetChange ?? 0) > 0;
-                const iconCls = positive ? 'text-emerald-400' : 'text-red-400';
                 return (
                   <div
                     key={pe.id}
@@ -277,7 +265,7 @@ function EfectosDiferidosSection({ gameState }: { gameState: GameState }) {
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
                         <div className="font-display font-semibold text-[11px] text-foreground leading-tight">
-                          {describeDeferredEffect(pe, gameState.turn)}
+                          {describeDeferredEffect(pe)}
                         </div>
                         {pe.source && (
                           <div className="text-[9px] text-muted-foreground mt-0.5 truncate">

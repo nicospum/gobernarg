@@ -1,8 +1,5 @@
 import type { GameState } from '../types/game';
-import {
-  processElectionResultsForOption,
-  getAvailableElectionOptions
-} from '../utils/electionSystem';
+import { processElectionResultsForOption } from '../utils/electionSystem';
 import { ElectionOption, getNextPosition } from '../data/careerRules';
 import { getPositionObjectives, checkVictoryConditions } from '../utils/victoryConditions';
 import { recalcState, POSITION_STARTING_BUDGET } from './engineShared';

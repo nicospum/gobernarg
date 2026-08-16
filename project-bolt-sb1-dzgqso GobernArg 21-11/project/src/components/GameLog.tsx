@@ -1,4 +1,4 @@
-import { ScrollText, TrendingUp, DollarSign, Shield, AlertTriangle, Zap } from 'lucide-react';
+import { ScrollText, TrendingUp, DollarSign, AlertTriangle } from 'lucide-react';
 import { GameState } from '../types/game';
 
 interface GameLogProps {

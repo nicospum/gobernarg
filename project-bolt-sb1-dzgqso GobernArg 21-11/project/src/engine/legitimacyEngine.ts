@@ -1,7 +1,7 @@
 import { GameState, GameAction } from '../types/game';
 
 /** Calcula el cambio de legitimidad generado por una acción */
-export function calculateLegitimacyChange(action: GameAction, state: GameState): number {
+export function calculateLegitimacyChange(action: GameAction, _state: GameState): number {
   let change = 0;
 
   // GANANCIAS

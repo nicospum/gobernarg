@@ -1,4 +1,4 @@
-import { GameState, ElectionResults, Position } from '../types/game';
+import { GameState, ElectionResults } from '../types/game';
 import {
   MAX_TERMS,
   PROMOTION_DIFFICULTY,

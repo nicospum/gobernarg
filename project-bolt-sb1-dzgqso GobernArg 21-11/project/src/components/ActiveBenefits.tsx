@@ -1,4 +1,4 @@
-import { TrendingUp, Building2, GraduationCap, Shield, Clock } from 'lucide-react';
+import { TrendingUp, Building2, Shield, Clock } from 'lucide-react';
 import { GameState } from '../types/game';
 
 interface ActiveBenefitsProps {

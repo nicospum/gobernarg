@@ -1,4 +1,5 @@
 import type { LucideIcon } from 'lucide-react';
+import type { ElectionOption } from '../data/careerRules';
 
 // =====================
 // Cargos y arquetipos

@@ -1,6 +1,5 @@
 import type {
   GameState,
-  GameAction,
   Position,
   TurnSummary,
   TurnLogEntry,
@@ -191,7 +190,7 @@ function checkDefeat(state: GameState): GameState {
 // Verificación de elecciones
 // ===========================
 
-function checkElectionOrVictory(state: GameState, eventsLog: string[]): GameState {
+function checkElectionOrVictory(state: GameState): GameState {
   if (state.gameOver) return state;
 
   // Elección de medio término: consecuencias legislativas ya se procesan en resolveLegislativeConsequences.
@@ -240,7 +239,7 @@ function processInflation(state: GameState): GameState {
     state.budget -= 300;
     state = addNotification(state, {
       type: 'crisis',
-      category: 'economic',
+      category: 'economy',
       title: 'Crisis inflacionaria',
       message: `La emisión descontrolada (${count} emisiones) provocó una crisis de inflación.`,
       importance: 'critical'
@@ -252,7 +251,7 @@ function processInflation(state: GameState): GameState {
     if (count === 3) {
       state = addNotification(state, {
         type: 'warning',
-        category: 'economic',
+        category: 'economy',
         title: 'Presión inflacionaria',
         message: `La emisión monetaria recurrente (${count} emisiones) está generando inflación.`,
         importance: 'high'
@@ -528,7 +527,7 @@ export function processEndTurn(gameState: GameState): import('./engineShared').T
   state = addWarningNotifications(state);
 
   // 9.2 Verificar elecciones de medio término y victoria/derrota general
-  state = checkElectionOrVictory(state, events);
+  state = checkElectionOrVictory(state);
 
   // 10. Actualizar objetivos y recompensas
   const previouslyCompleted = new Set(state.completedObjectives.map(o => o.id));

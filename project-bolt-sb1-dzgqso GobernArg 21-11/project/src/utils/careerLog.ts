@@ -1,4 +1,4 @@
-import { GameState, CareerMilestone, TurnLogEntry, DefeatReason } from '../types/game';
+import { GameState, DefeatReason } from '../types/game';
 
 export function generateLegacyText(gameState: GameState): string {
   const { governorName, careerHistory, turnLog } = gameState;

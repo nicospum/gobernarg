@@ -1,4 +1,4 @@
-import { GameState, GameAction, PendingEffect, ActionCategory, AdvisorWithStatus, MidtermStrategy } from '../types/game';
+import { GameState, GameAction, PendingEffect, ActionCategory, AdvisorWithStatus } from '../types/game';
 import { MIDTERM_STRATEGY_EFFECTS } from '../data/midtermStrategies';
 
 interface ActionEffect {

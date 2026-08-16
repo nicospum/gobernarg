@@ -8,7 +8,6 @@ import type {
 } from '../types/game';
 import { calculatePopularidad } from '../utils/popularidad';
 import { calculateAvailableActions } from '../utils/actionCalculator';
-import { interestGroups } from '../data/interestGroups';
 
 // ===========================
 // Constantes de balance
