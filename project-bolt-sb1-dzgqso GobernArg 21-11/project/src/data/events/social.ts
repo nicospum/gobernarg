@@ -27,7 +27,7 @@ export const socialEvents: GameEvent[] = [
           immediate: [
             { type: 'immediate', target: 'budget', value: -300 },
             { type: 'immediate', target: 'popularity', value: 20 },
-            { type: 'immediate', target: 'group_estudiantes', value: 25 }
+            { type: 'immediate', target: 'estudiantiles', value: 25 }
           ]
         },
         probability: 0.8
@@ -39,7 +39,7 @@ export const socialEvents: GameEvent[] = [
           immediate: [
             { type: 'immediate', target: 'budget', value: -100 },
             { type: 'immediate', target: 'popularity', value: -5 },
-            { type: 'immediate', target: 'group_estudiantes', value: -10 }
+            { type: 'immediate', target: 'estudiantiles', value: -10 }
           ]
         },
         probability: 0.4

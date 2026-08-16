@@ -1,4 +1,5 @@
-import { GameState, GameAction, PendingEffect } from '../types/game';
+import { GameState, GameAction, PendingEffect, ActionCategory, AdvisorWithStatus, MidtermStrategy } from '../types/game';
+import { MIDTERM_STRATEGY_EFFECTS } from '../data/midtermStrategies';
 
 interface ActionEffect {
   immediateEffects: {
@@ -23,6 +24,11 @@ export function calculateActionEffects(
   const archetypeMultiplier = getArchetypeMultiplier(gameState.archetype, action);
   const advisorMultiplier = calculateAdvisorMultiplier(action, gameState.advisors);
 
+  // Fase 3: Multiplicador de estrategia post-legislativa
+  const strategyMultiplier = gameState.midtermStrategy && gameState.year >= 3
+    ? MIDTERM_STRATEGY_EFFECTS[gameState.midtermStrategy].actionMultiplier
+    : 1.0;
+
   // Rendimientos decrecientes (Fase 2)
   const usageCount = gameState.actionUsageCount[action.id] || 0;
   const diminishingFactor = Math.pow(action.diminishingFactor ?? 0.80, usageCount);
@@ -45,7 +51,7 @@ export function calculateActionEffects(
   }
 
   const immediateEffects = {
-    popularityChange: effectivePopularityChange * archetypeMultiplier * advisorMultiplier * POPULARITY_GLOBAL_FACTOR * diminishingFactor,
+    popularityChange: effectivePopularityChange * archetypeMultiplier * advisorMultiplier * strategyMultiplier * POPULARITY_GLOBAL_FACTOR * diminishingFactor,
     budgetChange: action.budgetChange * diminishingFactor * costMultiplier,
     stabilityChange: (action.multiEffects?.stabilityChange ?? 0) * diminishingFactor,
     legitimacyChange: (action.multiEffects?.legitimacyChange ?? 0) * diminishingFactor,
@@ -81,11 +87,29 @@ function getArchetypeMultiplier(archetype: string, action: GameAction): number {
   }
 }
 
-function calculateAdvisorMultiplier(action: GameAction, advisors: any[]): number {
+// Mapping: especialidad de asesor → categorías de acción que beneficia
+const ADVISOR_SPECIALTY_CATEGORY_MAP: Record<string, ActionCategory[]> = {
+  'economista': ['economia'],
+  'comunicación social': ['cultura', 'social', 'diplomacia'],
+  'comunicacion social': ['cultura', 'social', 'diplomacia'],
+  'seguridad': ['seguridad'],
+  'relaciones internacionales': ['diplomacia'],
+  'infraestructura': ['infraestructura'],
+  'educación': ['educacion'],
+  'educacion': ['educacion'],
+  'tecnología': ['tecnologia'],
+  'tecnologia': ['tecnologia'],
+  'turismo': ['turismo'],
+};
+
+function calculateAdvisorMultiplier(action: GameAction, advisors: AdvisorWithStatus[]): number {
   let multiplier = 1.0;
 
   advisors.forEach(advisor => {
-    if (advisor.isActive && advisor.specialty.toLowerCase().includes(action.category)) {
+    if (!advisor.isActive) return;
+    const specialtyKey = advisor.specialty.toLowerCase().trim();
+    const mappedCategories = ADVISOR_SPECIALTY_CATEGORY_MAP[specialtyKey];
+    if (mappedCategories && mappedCategories.includes(action.category)) {
       multiplier *= 1.2;
     }
   });
@@ -138,6 +162,41 @@ function generatePendingEffects(action: GameAction, gameState: GameState): Pendi
       activationTurn: gameState.turn + delay,
       budgetChange: -maintenanceCost,
       popularityChange: -2
+    });
+  }
+
+  // TASK 2A-1: Acciones de infraestructura → incomeModifier positivo diferido
+  // Activa en 3 turnos, dura 3 turnos
+  if (action.category === 'infraestructura') {
+    effects.push({
+      id: `${action.id}_infra_income_${gameState.turn + 3}`,
+      activationTurn: gameState.turn + 3,
+      incomeModifier: 0.10,
+      duration: 3,
+      description: `Beneficio económico por obras de infraestructura: +10% ingresos por 3 turnos`
+    });
+  }
+
+  // TASK 2A-2: Acciones de diplomacia → posibilidad de eventos futuros
+  if (action.category === 'diplomacia') {
+    effects.push({
+      id: `${action.id}_diplo_event_${gameState.turn + 2}`,
+      activationTurn: gameState.turn + 2,
+      type: 'diplomatic_event',
+      description: `Posibilidad de eventos diplomáticos futuros por ${action.title}`
+    });
+  }
+
+  // TASK 2A-3: Estudio de factibilidad → reducción de costos de infraestructura
+  // Activa en turn+1, dura 6 turnos
+  if (action.id === 'estudio_factibilidad') {
+    effects.push({
+      id: `${action.id}_cost_reduction_${gameState.turn + 1}`,
+      activationTurn: gameState.turn + 1,
+      costReductionCategory: 'infraestructura',
+      costReductionPercent: 0.20,
+      duration: 6,
+      description: `Estudio de factibilidad: -20% costo en acciones de infraestructura por 6 turnos`
     });
   }
 

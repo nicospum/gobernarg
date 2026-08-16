@@ -11,12 +11,12 @@ export type ElectionOption = 'reelection' | 'promote-governor' | 'promote-presid
 export const PROMOTION_DIFFICULTY: Record<ElectionOption, number> = {
   reelection: 5,
   'promote-governor': -15,
-  'promote-president': -40
+  'promote-president': -25
 };
 
 export const PROMOTION_MIN_POPULARITY: Record<ElectionOption, number> = {
   reelection: 0,
-  'promote-governor': 0,
+  'promote-governor': 45,
   'promote-president': 75
 };
 

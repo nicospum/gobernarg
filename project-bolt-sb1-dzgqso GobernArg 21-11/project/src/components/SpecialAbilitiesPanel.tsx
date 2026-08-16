@@ -17,7 +17,7 @@ import { fmtBudget } from '@/lib/format';
 
 interface SpecialAbilitiesPanelProps {
   gameState: GameState;
-  onUseAbility: () => void;
+  onUseAbility: (abilityId: string) => void;
   disabled: boolean;
 }
 
@@ -40,8 +40,7 @@ const ARCHETYPE_ACCENT: Record<Archetype, string> = {
  * Hoy hay 1 por arquetipo. El componente está preparado para múltiples (carrusel Embla).
  */
 function getAbilitiesFor(archetype: Archetype): SpecialAbility[] {
-  const ability = ARCHETYPE_ABILITIES[archetype];
-  return ability ? [ability] : [];
+  return ARCHETYPE_ABILITIES[archetype] ?? [];
 }
 
 function buildEffectsList(ability: SpecialAbility): string[] {
@@ -72,7 +71,7 @@ interface AbilityCardProps {
   ability: SpecialAbility;
   archetype: Archetype;
   gameState: GameState;
-  onUseAbility: () => void;
+  onUseAbility: (abilityId: string) => void;
   disabled: boolean;
 }
 
@@ -189,7 +188,7 @@ function AbilityCard({ ability, archetype, gameState, onUseAbility, disabled }: 
       )}
 
       <button
-        onClick={onUseAbility}
+        onClick={() => onUseAbility(ability.id)}
         disabled={!canUse}
         className={`w-full inline-flex items-center justify-center gap-2 py-2 rounded font-display text-[12px] font-bold uppercase tracking-wide transition-all ${
           canUse

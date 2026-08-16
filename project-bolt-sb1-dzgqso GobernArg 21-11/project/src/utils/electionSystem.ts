@@ -9,6 +9,7 @@ import {
 } from '../data/careerRules';
 import type { ElectionOption } from '../data/careerRules';
 import { calculatePromotionPenalty } from './ascensionPenalty';
+import { interestGroups } from '../data/interestGroups';
 
 export type { ElectionOption };
 export { getOptionLabel, getOptionDescription, getNextPosition };
@@ -145,9 +146,26 @@ function calculateBudgetImpact(gameState: GameState): number {
 }
 
 function calculateGroupsSupport(gameState: GameState): number {
-  const groupScores = Object.values(gameState.groupRelations);
+  const groupScores = Object.entries(gameState.groupRelations);
   if (groupScores.length === 0) return 50;
-  return groupScores.reduce((a, b) => a + b, 0) / groupScores.length;
+
+  // Build a map of subgroup id -> influence from interestGroups
+  const influenceMap: Record<string, number> = {};
+  for (const group of interestGroups) {
+    for (const subgroup of group.subgroups) {
+      influenceMap[subgroup.id] = subgroup.influence;
+    }
+  }
+
+  let weightedSum = 0;
+  let totalInfluence = 0;
+  for (const [groupId, support] of groupScores) {
+    const influence = influenceMap[groupId] || 5; // fallback to 5 if unknown
+    weightedSum += support * influence;
+    totalInfluence += influence;
+  }
+
+  return totalInfluence > 0 ? weightedSum / totalInfluence : 50;
 }
 
 function calculateObjectivesImpact(gameState: GameState): number {
@@ -158,10 +176,7 @@ function calculateObjectivesImpact(gameState: GameState): number {
 }
 
 function calculateStabilityBonus(gameState: GameState): number {
-  if (gameState.consecutiveLowPopularity > 0 || gameState.consecutiveNegativeBudget > 0) {
-    return 0;
-  }
-  return 100;
+  return gameState.stability;
 }
 
 export function updateGameStateForElections(gameState: GameState): GameState {

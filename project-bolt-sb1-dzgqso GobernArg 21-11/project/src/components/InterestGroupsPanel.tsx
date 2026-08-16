@@ -146,7 +146,7 @@ export function InterestGroupsPanel({ gameState, onInteraction, onSatisfyDemand 
                     <div className="flex flex-wrap gap-2">
                       {(Object.keys(interactionConfig) as InteractionType[]).map((type) => {
                         const config = interactionConfig[type];
-                        const cost = calculateInteractionCost(type, subgroup.influence);
+                        const cost = calculateInteractionCost(type, subgroup, gameState);
                         const status = getInteractionStatus(subgroup.id, type);
                         const disabled = gameState.budget < cost || gameState.actions <= 0 || status.isDisabled;
                         const Icon = config.icon;

@@ -9,9 +9,12 @@ import {
   DollarSign,
   Flag,
   Check,
+  ThumbsUp,
+  ThumbsDown,
 } from 'lucide-react';
 import { GameAction, GameState } from '../types/game';
 import { Tooltip, TooltipContent } from './Tooltip';
+import { InfoTooltip } from './InfoTooltip';
 import { getActionRisk, riskColor, riskLabel } from '@/lib/risk';
 import {
   fmtBudget,
@@ -20,7 +23,8 @@ import {
   getBlockReason,
   getRecReason,
 } from '@/lib/format';
-import { CATEGORY_ICONS, CATEGORY_LABELS } from '@/lib/icons';
+import { CATEGORY_STYLES } from '@/data/categoryStyles';
+import { actionDefinitions, type ActionDefinition } from '@/data/actionRegistry';
 
 interface ActionCardProps {
   action: GameAction;
@@ -89,8 +93,8 @@ export function ActionCard({ action, gameState, onSelect, disabled, isSelected }
   const risk = getActionRisk(action, gameState);
   const immediate = formatImmediateEffect(action);
   const future = formatFutureEffect(action);
-  const CategoryIcon = CATEGORY_ICONS[action.category];
-  const categoryLabel = CATEGORY_LABELS[action.category];
+  const categoryStyle = CATEGORY_STYLES[action.category];
+  const CategoryIcon = categoryStyle.icon;
   const actionCost = action.actionCost ?? 1;
   const costLabel =
     action.budgetChange < 0
@@ -99,7 +103,63 @@ export function ActionCard({ action, gameState, onSelect, disabled, isSelected }
         ? `+${fmtBudget(action.budgetChange)}`
         : 'Gratis';
 
+  // Look up registry definition for affected groups
+  const definition: ActionDefinition | undefined = actionDefinitions.find((d) => d.id === action.id);
+
   return (
+    <InfoTooltip
+      content={
+        <div className="flex flex-col gap-1.5 max-w-[240px]">
+          {/* Grupos afectados */}
+          {definition?.affectedGroups && (
+            <div>
+              <div className="font-semibold text-[11px] mb-0.5">Grupos afectados</div>
+              {definition.affectedGroups.supports.length > 0 && (
+                <div className="flex items-start gap-1 text-[10px]">
+                  <ThumbsUp size={10} className="text-emerald-400 mt-0.5 shrink-0" />
+                  <span className="text-emerald-300">
+                    Apoyan: {definition.affectedGroups.supports.join(', ')}
+                  </span>
+                </div>
+              )}
+              {definition.affectedGroups.opposes.length > 0 && (
+                <div className="flex items-start gap-1 text-[10px]">
+                  <ThumbsDown size={10} className="text-red-400 mt-0.5 shrink-0" />
+                  <span className="text-red-300">
+                    Se oponen: {definition.affectedGroups.opposes.join(', ')}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+          {/* Efectos diferidos */}
+          {action.futureEffects && action.futureEffects.length > 0 && (
+            <div>
+              <div className="font-semibold text-[11px] mb-0.5">Efectos diferidos</div>
+              {action.futureEffects.map((f, i) => (
+                <div key={i} className="text-[10px] text-muted-foreground">
+                  Turno +{f.delay}:{' '}
+                  {f.budgetChange ? `${f.budgetChange > 0 ? '+' : '−'}${fmtBudget(Math.abs(f.budgetChange))} ` : ''}
+                  {f.popularityChange ? `${f.popularityChange > 0 ? '+' : ''}${f.popularityChange}% pop.` : ''}
+                  {!f.budgetChange && !f.popularityChange ? 'Efecto diferido' : ''}
+                </div>
+              ))}
+            </div>
+          )}
+          {/* Costo real */}
+          <div>
+            <div className="font-semibold text-[11px] mb-0.5">Costo real</div>
+            <div className="text-[10px] text-muted-foreground">
+              {action.budgetChange !== 0
+                ? `${action.budgetChange > 0 ? '+' : '−'}${fmtBudget(Math.abs(action.budgetChange))}`
+                : 'Sin costo'}
+              {actionCost > 0 ? ` • ${actionCost} acc.` : ''}
+              {action.cooldown ? ` • CD ${action.cooldown}t` : ''}
+            </div>
+          </div>
+        </div>
+      }
+    >
     <div
       role="button"
       tabIndex={isBlocked ? -1 : 0}
@@ -110,12 +170,14 @@ export function ActionCard({ action, gameState, onSelect, disabled, isSelected }
           onSelect();
         }
       }}
-      className={`relative flex flex-col gap-2 rounded-lg border p-3.5 transition-all duration-150 ${
+      className={`relative flex flex-col gap-2 rounded-lg border border-l-4 p-3.5 transition-all duration-150 ${
+        isBlocked ? 'opacity-60 cursor-not-allowed' : ''
+      } ${
         isSelected
           ? 'border-primary bg-primary/10 ring-1 ring-primary/40'
           : isBlocked
-            ? 'border-border bg-card opacity-60 cursor-not-allowed'
-            : 'border-border bg-card hover:border-white/20 hover:bg-white/3 cursor-pointer'
+            ? `${categoryStyle.borderColor} border border-border bg-card`
+            : `${categoryStyle.borderColor} border border-border bg-card hover:border-white/20 hover:bg-white/3 cursor-pointer`
       }`}
     >
       {/* Status badge */}
@@ -128,9 +190,9 @@ export function ActionCard({ action, gameState, onSelect, disabled, isSelected }
       {/* Header: category + title */}
       <div className="pr-14">
         <div className="flex items-center gap-1.5 mb-0.5">
-          <CategoryIcon size={12} className="text-muted-foreground" />
-          <span className="text-[9px] text-muted-foreground uppercase tracking-widest">
-            {categoryLabel}
+          <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-semibold uppercase tracking-widest border ${categoryStyle.color} ${categoryStyle.bgColor} ${categoryStyle.borderColor}`}>
+            <CategoryIcon size={10} />
+            {categoryStyle.label}
           </span>
           {action.isReform && (
             <span className="text-[8px] text-purple-300 bg-purple-400/10 border border-purple-400/20 px-1 py-0 rounded uppercase tracking-wide font-semibold">
@@ -214,5 +276,6 @@ export function ActionCard({ action, gameState, onSelect, disabled, isSelected }
         )}
       </div>
     </div>
+    </InfoTooltip>
   );
 }

@@ -25,7 +25,8 @@ export const interestGroups: InterestGroup[] = [
         resourceDemand: 300,
         satisfactionLevel: 50,
         lastInteractionEffect: 0,
-        icon: Briefcase
+        icon: Briefcase,
+        demandActionIds: ['reduccion_gasto', 'incentivos_exportacion', 'reforma_impositiva']
       },
       {
         id: 'sector-agricola',
@@ -40,7 +41,8 @@ export const interestGroups: InterestGroup[] = [
         resourceDemand: 250,
         satisfactionLevel: 50,
         lastInteractionEffect: 0,
-        icon: Wheat
+        icon: Wheat,
+        demandActionIds: ['subsidios_industriales', 'viviendas_rurales', 'infraestructura_vial']
       },
       {
         id: 'sector-financiero',
@@ -55,7 +57,8 @@ export const interestGroups: InterestGroup[] = [
         resourceDemand: 400,
         satisfactionLevel: 50,
         lastInteractionEffect: 0,
-        icon: Landmark
+        icon: Landmark,
+        demandActionIds: ['prestamo_local', 'control_precios', 'mejorar_recaudacion']
       },
       {
         id: 'sindicatos',
@@ -70,7 +73,8 @@ export const interestGroups: InterestGroup[] = [
         resourceDemand: 350,
         satisfactionLevel: 50,
         lastInteractionEffect: 0,
-        icon: Users
+        icon: Users,
+        demandActionIds: ['aumento_salarial', 'acuerdo_sindical', 'cobertura_social']
       }
     ]
   },
@@ -91,7 +95,8 @@ export const interestGroups: InterestGroup[] = [
         resourceDemand: 200,
         satisfactionLevel: 50,
         lastInteractionEffect: 0,
-        icon: Home
+        icon: Home,
+        demandActionIds: ['programa_educativo', 'seguridad_ciudadana', 'transporte_publico']
       },
       {
         id: 'sectores-populares',
@@ -106,7 +111,8 @@ export const interestGroups: InterestGroup[] = [
         resourceDemand: 150,
         satisfactionLevel: 50,
         lastInteractionEffect: 0,
-        icon: UserCircle2
+        icon: UserCircle2,
+        demandActionIds: ['plan_viviendas', 'programa_alimentario', 'cobertura_social']
       },
       {
         id: 'clase-alta',
@@ -121,7 +127,8 @@ export const interestGroups: InterestGroup[] = [
         resourceDemand: 450,
         satisfactionLevel: 50,
         lastInteractionEffect: 0,
-        icon: Building2
+        icon: Building2,
+        demandActionIds: ['reduccion_gasto', 'reforma_impositiva', 'atraccion_inversiones']
       },
       {
         id: 'minorias-etnicas',
@@ -136,7 +143,8 @@ export const interestGroups: InterestGroup[] = [
         resourceDemand: 100,
         satisfactionLevel: 50,
         lastInteractionEffect: 0,
-        icon: Users2
+        icon: Users2,
+        demandActionIds: ['alfabetizacion', 'igualdad_genero', 'plan_viviendas']
       },
       {
         id: 'ongs',
@@ -151,7 +159,8 @@ export const interestGroups: InterestGroup[] = [
         resourceDemand: 150,
         satisfactionLevel: 50,
         lastInteractionEffect: 0,
-        icon: Building
+        icon: Building,
+        demandActionIds: ['fortalecimiento_justicia', 'programa_cultural', 'alfabetizacion']
       }
     ]
   },
@@ -172,7 +181,8 @@ export const interestGroups: InterestGroup[] = [
         resourceDemand: 200,
         satisfactionLevel: 50,
         lastInteractionEffect: 0,
-        icon: TreePine
+        icon: TreePine,
+        demandActionIds: ['reforestacion', 'energia_renovable', 'acuerdo_ambiental']
       },
       {
         id: 'feministas',
@@ -187,7 +197,8 @@ export const interestGroups: InterestGroup[] = [
         resourceDemand: 250,
         satisfactionLevel: 50,
         lastInteractionEffect: 0,
-        icon: HeartHandshake
+        icon: HeartHandshake,
+        demandActionIds: ['igualdad_genero', 'programa_educativo', 'fortalecimiento_justicia']
       },
       {
         id: 'estudiantiles',
@@ -202,7 +213,8 @@ export const interestGroups: InterestGroup[] = [
         resourceDemand: 150,
         satisfactionLevel: 50,
         lastInteractionEffect: 0,
-        icon: GraduationCap
+        icon: GraduationCap,
+        demandActionIds: ['programa_educativo', 'promover_educacion', 'red_bibliotecas']
       },
       {
         id: 'cooperativas',
@@ -217,7 +229,8 @@ export const interestGroups: InterestGroup[] = [
         resourceDemand: 100,
         satisfactionLevel: 50,
         lastInteractionEffect: 0,
-        icon: HandHeart
+        icon: HandHeart,
+        demandActionIds: ['fomento_emprendimiento', 'subsidios_industriales', 'plan_viviendas']
       }
     ]
   },
@@ -238,7 +251,8 @@ export const interestGroups: InterestGroup[] = [
         resourceDemand: 400,
         satisfactionLevel: 50,
         lastInteractionEffect: 0,
-        icon: Handshake
+        icon: Handshake,
+        demandActionIds: ['alianza_politica', 'acuerdo_sindical', 'participacion_cumbres']
       },
       {
         id: 'opositores',
@@ -253,7 +267,8 @@ export const interestGroups: InterestGroup[] = [
         resourceDemand: 300,
         satisfactionLevel: 50,
         lastInteractionEffect: 0,
-        icon: AlertOctagon
+        icon: AlertOctagon,
+        demandActionIds: ['fortalecimiento_justicia', 'reduccion_gasto', 'control_precios']
       }
     ]
   },
@@ -274,7 +289,8 @@ export const interestGroups: InterestGroup[] = [
         resourceDemand: 150,
         satisfactionLevel: 50,
         lastInteractionEffect: 0,
-        icon: Palette
+        icon: Palette,
+        demandActionIds: ['programa_cultural', 'festival_arte', 'centros_culturales']
       },
       {
         id: 'deportistas',
@@ -289,7 +305,8 @@ export const interestGroups: InterestGroup[] = [
         resourceDemand: 200,
         satisfactionLevel: 50,
         lastInteractionEffect: 0,
-        icon: Trophy
+        icon: Trophy,
+        demandActionIds: ['programa_educativo', 'infraestructura_vial', 'transporte_publico']
       },
       {
         id: 'academicos',
@@ -304,7 +321,8 @@ export const interestGroups: InterestGroup[] = [
         resourceDemand: 250,
         satisfactionLevel: 50,
         lastInteractionEffect: 0,
-        icon: School
+        icon: School,
+        demandActionIds: ['promover_educacion', 'desarrollar_tecnologia', 'red_bibliotecas']
       }
     ]
   }

@@ -4,7 +4,7 @@ import { GameState, GameAction, ActionCategory } from '../types/game';
 import { ActionCard } from './ActionCard';
 import { getAvailableActionsForState } from '../engine/gameEngine';
 import { calculateActionEffects } from '../utils/actionEffects';
-import { CATEGORY_ICONS, CATEGORY_LABELS, PRIMARY_CATEGORIES } from '@/lib/icons';
+import { CATEGORY_STYLES, ALL_CATEGORIES } from '@/data/categoryStyles';
 import { fmtBudgetDelta } from '@/lib/format';
 
 interface ControlPanelProps {
@@ -99,21 +99,21 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
           <LayoutGrid size={12} />
           Todas
         </button>
-        {PRIMARY_CATEGORIES.map((category) => {
-          const Icon = CATEGORY_ICONS[category];
-          const label = CATEGORY_LABELS[category];
+        {ALL_CATEGORIES.map((category) => {
+          const style = CATEGORY_STYLES[category];
+          const Icon = style.icon;
           return (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded text-[11px] font-semibold transition-all whitespace-nowrap ${
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded text-[11px] font-semibold transition-all whitespace-nowrap border ${
                 selectedCategory === category
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+                  ? `border-transparent text-white ${style.bgColor.replace('/15', '/50')}`
+                  : `text-muted-foreground hover:text-foreground hover:bg-white/5 border-transparent`
               }`}
             >
-              <Icon size={12} />
-              {label}
+              <Icon size={12} className={selectedCategory === category ? 'text-white' : style.color} />
+              {style.label}
             </button>
           );
         })}

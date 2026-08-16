@@ -1,6 +1,7 @@
 import { Info, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { GameState } from '../types/game';
 import { Tooltip as LegacyTooltip, TooltipContent } from './Tooltip';
+import { InfoTooltip } from './InfoTooltip';
 import { AxisBar } from './AxisBar';
 import { getValueRisk, riskColor, riskLabel, type Risk } from '@/lib/risk';
 
@@ -95,53 +96,73 @@ function IndicatorCardView({
     ? { bajo: 'Bajo', medio: 'Moderado', alto: 'Alto', critico: 'Crítico' }[risk]
     : riskLabel(risk);
 
+  const trendText = trend > 0 ? `+${trend}` : trend < 0 ? `${trend}` : 'Sin cambios';
+
   return (
-    <div className="flex-1 min-w-0 rounded-lg border border-border bg-card px-3.5 py-2.5">
-      {/* Header: label + trend */}
-      <div className="flex items-center justify-between mb-1.5">
-        <LegacyTooltip content={<TooltipContent label={card.label} detail={card.tooltipDetail} />}>
-          <span className="text-[10px] text-muted-foreground uppercase tracking-widest cursor-help font-semibold flex items-center gap-1">
+    <InfoTooltip
+      content={
+        <div className="flex flex-col gap-1">
+          <div className="font-semibold text-xs">{card.label}</div>
+          <div className="text-[11px] text-muted-foreground">
+            Valor: {Math.round(card.value)}
+            {card.unit} / {card.max}
+            {card.unit}
+          </div>
+          <div className="text-[11px] text-muted-foreground">
+            Tendencia:{' '}
+            <span className={trend > 0 ? 'text-emerald-400' : trend < 0 ? 'text-red-400' : ''}>
+              {trendText}
+            </span>
+          </div>
+          <div className="text-[10px] text-muted-foreground/70">{card.tooltipDetail}</div>
+        </div>
+      }
+    >
+      <div className="flex-1 min-w-0 rounded-lg border border-border bg-card px-3.5 py-2.5 cursor-help">
+        {/* Header: label + trend */}
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold flex items-center gap-1">
             {card.label}
             <Info size={9} className="opacity-50" />
           </span>
-        </LegacyTooltip>
-        <TrendChip value={trend} />
-      </div>
+          <TrendChip value={trend} />
+        </div>
 
-      {/* Value + unit */}
-      <div className="flex items-baseline gap-1 mb-2">
-        <span className={`font-mono text-2xl font-bold leading-none ${riskColor(risk)}`}>
-          {Math.round(card.value)}
-        </span>
-        <span className="text-[11px] text-muted-foreground">{card.unit}</span>
-      </div>
+        {/* Value + unit */}
+        <div className="flex items-baseline gap-1 mb-2">
+          <span className={`font-mono text-2xl font-bold leading-none ${riskColor(risk)}`}>
+            {Math.round(card.value)}
+          </span>
+          <span className="text-[11px] text-muted-foreground">{card.unit}</span>
+        </div>
 
-      {/* Bar with target marker */}
-      <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-white/10">
-        <div
-          className={`absolute inset-y-0 left-0 rounded-full transition-all duration-500 ${riskColor(risk, 'bg')}`}
-          style={{ width: `${pct}%` }}
-        />
-        {card.target > 0 && (
+        {/* Bar with target marker */}
+        <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-white/10">
           <div
-            className="absolute inset-y-0 w-px bg-white/60"
-            style={{ left: `${targetPct}%` }}
-            title={`Target: ${card.target}`}
+            className={`absolute inset-y-0 left-0 rounded-full transition-all duration-500 ${riskColor(risk, 'bg')}`}
+            style={{ width: `${pct}%` }}
           />
-        )}
-      </div>
+          {card.target > 0 && (
+            <div
+              className="absolute inset-y-0 w-px bg-white/60"
+              style={{ left: `${targetPct}%` }}
+              title={`Target: ${card.target}`}
+            />
+          )}
+        </div>
 
-      {/* Footer: target + risk label */}
-      <div className="flex items-center justify-between mt-1.5">
-        <span className="text-[9px] text-muted-foreground">
-          Target: {card.target}
-          {card.unit}
-        </span>
-        <span className={`text-[9px] font-semibold uppercase tracking-wide ${riskColor(risk)}`}>
-          {displayLabel}
-        </span>
+        {/* Footer: target + risk label */}
+        <div className="flex items-center justify-between mt-1.5">
+          <span className="text-[9px] text-muted-foreground">
+            Target: {card.target}
+            {card.unit}
+          </span>
+          <span className={`text-[9px] font-semibold uppercase tracking-wide ${riskColor(risk)}`}>
+            {displayLabel}
+          </span>
+        </div>
       </div>
-    </div>
+    </InfoTooltip>
   );
 }
 

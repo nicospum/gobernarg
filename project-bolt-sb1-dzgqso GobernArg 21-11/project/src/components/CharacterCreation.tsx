@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { User, Briefcase, Users, Radio } from 'lucide-react';
+import { User, Briefcase, Users, Radio, Info } from 'lucide-react';
 import { Archetype, Position } from '../types/game';
 import { IMAGES, getPositionBackground } from '../utils/imageAssets';
 import { THUMBNAIL_ARCHETYPES } from '../utils/iconThumbnails';
+import { ARCHETYPE_PASSIVES } from '../data/specialAbilities';
+import { InfoTooltip } from './InfoTooltip';
 
 interface CharacterCreationProps {
   onComplete: (position: Position, archetype: Archetype, governorName: string, isAdminMode: boolean, avatar: string) => void;
@@ -126,27 +128,54 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
 
           <h2 className="font-display text-xl font-semibold mb-4 uppercase tracking-wide">Elegí tu Perfil</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-            {archetypes.map((arch) => (
-              <button
-                key={arch.id}
-                onClick={() => setArchetype(arch.id)}
-                className={`flex flex-col items-center text-center p-5 rounded-xl border-2 transition-all ${
-                  archetype === arch.id
-                    ? 'bg-white/15 border-accent shadow-lg scale-[1.02]'
-                    : 'bg-white/5 border-white/20 hover:bg-white/10 hover:border-white/40'
-                }`}
-              >
-                <img
-                  src={THUMBNAIL_ARCHETYPES[arch.id] || THUMBNAIL_ARCHETYPES.politico}
-                  alt={arch.title}
-                  className="w-16 h-16 rounded-full object-cover bg-white/20 p-1 mb-3"
-                />
-                <arch.icon className="w-5 h-5 mb-1 opacity-80" />
-                <h3 className="font-bold">{arch.title}</h3>
-                <p className="text-xs opacity-75 mt-1">{arch.bonus}</p>
-                <p className="text-xs opacity-90 mt-2">{arch.description}</p>
-              </button>
-            ))}
+            {archetypes.map((arch) => {
+              const passives = ARCHETYPE_PASSIVES[arch.id] ?? [];
+              return (
+                <InfoTooltip
+                  key={arch.id}
+                  side="bottom"
+                  content={
+                    <div className="flex flex-col gap-1.5">
+                      <div className="font-semibold text-xs">{arch.title}</div>
+                      <div className="text-[10px] text-muted-foreground">{arch.description}</div>
+                      {passives.length > 0 && (
+                        <div>
+                          <div className="font-semibold text-[11px] mt-0.5 mb-0.5">Pasivas activas</div>
+                          {passives.map((p, i) => (
+                            <div key={i} className="flex items-start gap-1 text-[10px]">
+                              <Info size={10} className="text-blue-400 mt-0.5 shrink-0" />
+                              <span>
+                                <span className="text-white">{p.name}</span>
+                                <span className="text-muted-foreground"> — {p.description}</span>
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  }
+                >
+                  <button
+                    onClick={() => setArchetype(arch.id)}
+                    className={`flex flex-col items-center text-center p-5 rounded-xl border-2 transition-all ${
+                      archetype === arch.id
+                        ? 'bg-white/15 border-accent shadow-lg scale-[1.02]'
+                        : 'bg-white/5 border-white/20 hover:bg-white/10 hover:border-white/40'
+                    }`}
+                  >
+                    <img
+                      src={THUMBNAIL_ARCHETYPES[arch.id] || THUMBNAIL_ARCHETYPES.politico}
+                      alt={arch.title}
+                      className="w-16 h-16 rounded-full object-cover bg-white/20 p-1 mb-3"
+                    />
+                    <arch.icon className="w-5 h-5 mb-1 opacity-80" />
+                    <h3 className="font-bold">{arch.title}</h3>
+                    <p className="text-xs opacity-75 mt-1">{arch.bonus}</p>
+                    <p className="text-xs opacity-90 mt-2">{arch.description}</p>
+                  </button>
+                </InfoTooltip>
+              );
+            })}
           </div>
 
           <h2 className="font-display text-xl font-semibold mb-4 uppercase tracking-wide">Elegí tu Avatar</h2>

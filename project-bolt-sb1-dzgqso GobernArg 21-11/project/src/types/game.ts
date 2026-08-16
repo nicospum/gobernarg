@@ -134,6 +134,8 @@ export interface Subgroup {
   satisfactionLevel: number;
   lastInteractionEffect: number;
   support?: number;
+  /** IDs de acciones del registry que este grupo puede demandar al negociar */
+  demandActionIds: string[];
 }
 
 export interface InterestGroup {
@@ -511,4 +513,12 @@ export interface GameState {
   // Sprint 3: Interacciones con grupos
   demandPausedUntil: Record<string, number>;
   negotiationPending: Record<string, number>;
+  /** Bonos de apoyo temporales por reunirse. key = subgroupId, value = { bonus, expiresAt, actionMultiplier } */
+  temporarySupportBonuses: Record<string, { bonus: number; expiresAt: number; actionMultiplier?: number }>;
+  // Internos para motores (no persistidos)
+  _archetypeIncomeBonus?: number;
+  _archetypeExtraLoans?: number;
+  _archetypeElectionRetention?: number;
+  _archetypeEventResilience?: number;
+  _archetypeFreeInteractions?: string[];
 }

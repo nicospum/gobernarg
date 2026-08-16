@@ -12,8 +12,8 @@ export function calculatePromotionPenalty(
 ): number {
   const PENALTIES: Record<string, number[]> = {
     'intendente->gobernador': [0.25, 0.15, 0.08, 0.03],
-    'intendente->presidente':  [0.40, 0.30, 0.20, 0.12],
-    'gobernador->presidente':  [0.20, 0.12, 0.05],
+    'intendente->presidente':  [0.30, 0.30, 0.20, 0.12],
+    'gobernador->presidente':  [0.15, 0.12, 0.05],
   };
 
   const key = `${from}->${to}`;

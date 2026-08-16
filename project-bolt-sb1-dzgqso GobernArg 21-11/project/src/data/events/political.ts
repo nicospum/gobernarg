@@ -11,7 +11,7 @@ export const politicalEvents: GameEvent[] = [
     conditions: {
       minPopularity: 45,
       minStability: 50,
-      requiredGroups: ['partidos'],
+      requiredGroups: ['aliados'],
       probability: 0.25,
       turnRange: { min: 3, max: 16 }
     },
@@ -29,7 +29,7 @@ export const politicalEvents: GameEvent[] = [
           immediate: [
             { type: 'immediate', target: 'popularity', value: 15 },
             { type: 'immediate', target: 'stability', value: 10 },
-            { type: 'immediate', target: 'group_partidos', value: 20 }
+            { type: 'immediate', target: 'opositores', value: 20 }
           ]
         },
         probability: 0.8
@@ -41,7 +41,7 @@ export const politicalEvents: GameEvent[] = [
           immediate: [
             { type: 'immediate', target: 'popularity', value: -5 },
             { type: 'immediate', target: 'stability', value: -5 },
-            { type: 'immediate', target: 'group_partidos', value: -10 }
+            { type: 'immediate', target: 'opositores', value: -10 }
           ]
         },
         probability: 0.6
@@ -77,7 +77,7 @@ export const politicalEvents: GameEvent[] = [
           immediate: [
             { type: 'immediate', target: 'budget', value: -200 },
             { type: 'immediate', target: 'stability', value: 15 },
-            { type: 'immediate', target: 'group_partidos', value: 10 }
+            { type: 'immediate', target: 'aliados', value: 10 }
           ]
         },
         probability: 0.7
@@ -89,7 +89,7 @@ export const politicalEvents: GameEvent[] = [
           immediate: [
             { type: 'immediate', target: 'popularity', value: -10 },
             { type: 'immediate', target: 'stability', value: -15 },
-            { type: 'immediate', target: 'group_partidos', value: -20 }
+            { type: 'immediate', target: 'opositores', value: -20 }
           ]
         },
         probability: 0.4

@@ -24,6 +24,7 @@ import { GameLog } from './components/GameLog';
 import { MidtermStrategyModal } from './components/MidtermStrategyModal';
 import { PoliticalCalendarWidget } from './components/PoliticalCalendarWidget';
 import { NotificationCenter } from './components/NotificationCenter';
+import { ManagementNotebook } from './components/ManagementNotebook';
 
 import type { Position, Archetype, AdvisorWithStatus, InteractionType, TurnSummary, MidtermStrategy } from './types/game';
 import type { ElectionOption } from './data/careerRules';
@@ -55,6 +56,7 @@ function App() {
   const [pendingEvents, setPendingEvents] = useState<GameEvent[]>([]);
   const [showMidtermStrategy, setShowMidtermStrategy] = useState(false);
   const [showGameLog, setShowGameLog] = useState(false);
+  const [showNotebook, setShowNotebook] = useState(false);
 
   const handleStart = (isAdmin: boolean) => {
     setIsAdminMode(isAdmin);
@@ -77,8 +79,8 @@ function App() {
     setGameState(prev => toggleActionSelection(prev, actionId));
   };
 
-  const handleUseSpecialAbility = () => {
-    setGameState(prev => useSpecialAbility(prev));
+  const handleUseSpecialAbility = (abilityId: string) => {
+    setGameState(prev => useSpecialAbility(prev, abilityId));
   };
 
   const handleSatisfyDemand = (agendaId: string) => {
@@ -239,6 +241,13 @@ function App() {
               <span className="inline-flex w-5 h-5 items-center justify-center rounded bg-primary/15 text-primary font-bold text-[11px]">L</span>
               Historial de gestión
             </button>
+            <button
+              onClick={() => setShowNotebook(true)}
+              className="w-full text-left bg-card border border-border rounded-lg p-3 hover:bg-white/3 transition-colors flex items-center gap-2 text-sm font-medium text-foreground/80"
+            >
+              <span className="inline-flex w-5 h-5 items-center justify-center rounded bg-blue-400/15 text-blue-400 font-bold text-[11px]">C</span>
+              Cuaderno de gestión
+            </button>
             <AdvisorPanel
               gameState={gameState}
               onHireAdvisor={handleHireAdvisor}
@@ -301,6 +310,10 @@ function App() {
 
       {showGameLog && (
         <GameLog gameState={gameState} onClose={() => setShowGameLog(false)} />
+      )}
+
+      {showNotebook && (
+        <ManagementNotebook gameState={gameState} onClose={() => setShowNotebook(false)} />
       )}
 
       {gameState.isAdminMode && gameStarted && <AdminDebugPanel gameState={gameState} />}

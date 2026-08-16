@@ -54,7 +54,7 @@ export const actionCategories: ActionCategoryData[] = [
         title: 'Emitir Dinero',
         description: 'Aumentar la masa monetaria para financiar gastos',
         icon: Banknote,
-        popularityChange: 3,
+        popularityChange: -3,
         budgetChange: 150,
         category: 'economia',
         requirements: { minBudget: 0 },
