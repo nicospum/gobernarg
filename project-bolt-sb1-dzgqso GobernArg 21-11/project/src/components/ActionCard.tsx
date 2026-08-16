@@ -94,7 +94,6 @@ export function ActionCard({ action, gameState, onSelect, disabled, isSelected }
   const immediate = formatImmediateEffect(action);
   const future = formatFutureEffect(action);
   const categoryStyle = CATEGORY_STYLES[action.category];
-  const CategoryIcon = categoryStyle.icon;
   const actionCost = action.actionCost ?? 1;
   const costLabel =
     action.budgetChange < 0
@@ -191,7 +190,7 @@ export function ActionCard({ action, gameState, onSelect, disabled, isSelected }
       <div className="pr-14">
         <div className="flex items-center gap-1.5 mb-0.5">
           <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-semibold uppercase tracking-widest border ${categoryStyle.color} ${categoryStyle.bgColor} ${categoryStyle.borderColor}`}>
-            <CategoryIcon size={10} />
+            <img src={categoryStyle.imageSrc} alt={categoryStyle.label} className="w-3 h-3 object-contain" />
             {categoryStyle.label}
           </span>
           {action.isReform && (

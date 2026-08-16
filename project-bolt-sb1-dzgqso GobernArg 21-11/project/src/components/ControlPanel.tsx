@@ -101,7 +101,6 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
         </button>
         {ALL_CATEGORIES.map((category) => {
           const style = CATEGORY_STYLES[category];
-          const Icon = style.icon;
           return (
             <button
               key={category}
@@ -112,7 +111,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
                   : `text-muted-foreground hover:text-foreground hover:bg-white/5 border-transparent`
               }`}
             >
-              <Icon size={12} className={selectedCategory === category ? 'text-white' : style.color} />
+              <img src={style.imageSrc} alt={style.label} className="w-3 h-3 object-contain" />
               {style.label}
             </button>
           );
