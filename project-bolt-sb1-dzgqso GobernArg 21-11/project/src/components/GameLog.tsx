@@ -29,7 +29,7 @@ export function GameLog({ gameState, onClose }: GameLogProps) {
                 <div key={i} className="border-l-2 border-blue-300 pl-4 pb-4">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">
-                      A{entry.year} T{entry.quarter}
+                      A{entry.year} T{entry.turn}
                     </span>
                     <span className="text-xs text-gray-500 capitalize">{entry.position}</span>
                   </div>
@@ -59,10 +59,10 @@ export function GameLog({ gameState, onClose }: GameLogProps) {
                     )}
                   </div>
 
-                  {entry.eventsTriggered.length > 0 && (
+                  {entry.events.length > 0 && (
                     <div className="mt-1 flex items-center gap-1 text-xs text-orange-600">
                       <AlertTriangle className="w-3 h-3" />
-                      {entry.eventsTriggered.join(', ')}
+                      {entry.events.join(', ')}
                     </div>
                   )}
                 </div>

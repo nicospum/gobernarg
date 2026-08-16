@@ -188,11 +188,11 @@ function App() {
         canEndTurn={!gameState.gameOver && !gameState.pendingElection}
       />
 
-      <main className="container mx-auto p-4 space-y-4">
+      <main className="container mx-auto p-4 h-[calc(100vh-3.5rem)] overflow-y-auto">
         {/* Indicadores horizontales arriba */}
         <IndicatorsPanel gameState={gameState} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
           <div className="lg:col-span-2 space-y-4">
             <ControlPanel
               gameState={gameState}
@@ -234,20 +234,22 @@ function App() {
               onSatisfyDemand={handleSatisfyDemand}
             />
             <ActiveBenefits gameState={gameState} />
-            <button
-              onClick={() => setShowGameLog(true)}
-              className="w-full text-left bg-card border border-border rounded-lg p-3 hover:bg-white/3 transition-colors flex items-center gap-2 text-sm font-medium text-foreground/80"
-            >
-              <span className="inline-flex w-5 h-5 items-center justify-center rounded bg-primary/15 text-primary font-bold text-[11px]">L</span>
-              Historial de gestión
-            </button>
-            <button
-              onClick={() => setShowNotebook(true)}
-              className="w-full text-left bg-card border border-border rounded-lg p-3 hover:bg-white/3 transition-colors flex items-center gap-2 text-sm font-medium text-foreground/80"
-            >
-              <span className="inline-flex w-5 h-5 items-center justify-center rounded bg-blue-400/15 text-blue-400 font-bold text-[11px]">C</span>
-              Cuaderno de gestión
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowGameLog(true)}
+                className="flex-1 text-left bg-card border border-border rounded-lg p-3 hover:bg-white/3 transition-colors flex items-center gap-2 text-sm font-medium text-foreground/80"
+              >
+                <span className="inline-flex w-5 h-5 items-center justify-center rounded bg-primary/15 text-primary font-bold text-[11px]">L</span>
+                Historial
+              </button>
+              <button
+                onClick={() => setShowNotebook(true)}
+                className="flex-1 text-left bg-card border border-border rounded-lg p-3 hover:bg-white/3 transition-colors flex items-center gap-2 text-sm font-medium text-foreground/80"
+              >
+                <span className="inline-flex w-5 h-5 items-center justify-center rounded bg-blue-400/15 text-blue-400 font-bold text-[11px]">C</span>
+                Cuaderno
+              </button>
+            </div>
             <AdvisorPanel
               gameState={gameState}
               onHireAdvisor={handleHireAdvisor}

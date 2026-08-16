@@ -16,7 +16,7 @@ interface ControlPanelProps {
 type TabValue = 'todas' | ActionCategory;
 
 export function ControlPanel({ gameState, onActionSelect, canTakeAction }: ControlPanelProps) {
-  const [selectedCategory, setSelectedCategory] = useState<TabValue>('todas');
+  const [selectedCategory, setSelectedCategory] = useState<TabValue>('economia');
   const actions = getAvailableActionsForState(gameState);
 
   const selectedActionData = gameState.selectedActions
@@ -119,7 +119,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
       </div>
 
       {/* Grid */}
-      <div className="flex-1 overflow-y-auto px-3 pb-3">
+      <div className="flex-1 overflow-y-auto px-3 pb-3 max-h-[520px]">
         {filteredActions.length === 0 ? (
           <div className="text-center py-10 text-[12px] text-muted-foreground">
             No hay acciones disponibles en esta categoría.
