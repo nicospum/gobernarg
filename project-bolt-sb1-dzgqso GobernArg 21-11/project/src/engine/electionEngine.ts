@@ -4,7 +4,7 @@ import {
   getAvailableElectionOptions
 } from '../utils/electionSystem';
 import { ElectionOption, getNextPosition } from '../data/careerRules';
-import { getPositionObjectives } from '../utils/victoryConditions';
+import { getPositionObjectives, checkVictoryConditions } from '../utils/victoryConditions';
 import { recalcState, POSITION_STARTING_BUDGET } from './engineShared';
 
 function recordElectionOutcome(
@@ -109,6 +109,6 @@ export function finalizePresidentialCareer(gameState: GameState): GameState {
   let state = { ...gameState };
   state = recordElectionOutcome(state, 'reelection', state.votingIntention, true);
   state.gameOver = true;
-  state.victorious = true;
+  state.victorious = checkVictoryConditions(state);
   return state;
 }

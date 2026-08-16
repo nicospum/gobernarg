@@ -36,8 +36,11 @@ function flattenSubgroups(state: GameState): SubgroupWithRelation[] {
   const list = state.interestGroups ?? [];
   for (const group of list) {
     for (const sg of group.subgroups) {
+      // Los partidos políticos (aliados/opositores) no forman parte de los
+      // grupos de interés del acordeón; se muestran en Situación Electoral.
+      const groupId = SUBGROUP_TO_GROUP[sg.id];
+      if (!groupId) continue;
       const relation = state.groupRelations[sg.id] ?? sg.baseSupport;
-      const groupId = SUBGROUP_TO_GROUP[sg.id] ?? 'medios-opinion-publica';
       all.push({ subgroup: sg, relation, groupName: group.name, groupId });
     }
   }

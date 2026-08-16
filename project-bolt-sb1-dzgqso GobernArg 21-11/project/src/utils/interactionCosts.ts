@@ -61,7 +61,7 @@ export function calculateInteractionCost(
 ): number {
   switch (interactionType) {
     case 'reunion':
-      return 0;
+      return 10;
     case 'negociar':
       return Math.round(group.influence * NEGOTIATE_COST_PER_INFLUENCE);
     case 'conceder':

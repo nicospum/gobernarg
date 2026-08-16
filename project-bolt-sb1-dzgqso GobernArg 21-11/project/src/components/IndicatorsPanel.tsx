@@ -1,8 +1,8 @@
-import { Info, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { Info, TrendingUp, TrendingDown, Minus, Wallet } from 'lucide-react';
 import { GameState } from '../types/game';
-import { Tooltip as LegacyTooltip, TooltipContent } from './Tooltip';
 import { InfoTooltip } from './InfoTooltip';
 import { getValueRisk, riskColor, riskLabel, type Risk } from '@/lib/risk';
+import { fmtBudget } from '@/lib/format';
 
 interface IndicatorsPanelProps {
   gameState: GameState;
@@ -50,16 +50,27 @@ function deriveConflictoSocial(state: GameState): number {
   return Math.min(100, Math.max(0, conflict));
 }
 
-/** Trend de popularidad: compara último valor histórico con el anterior. */
-function popularityTrend(state: GameState): number {
-  const hist = state.historicalPopularity;
-  if (!hist || hist.length < 2) return 0;
-  const last = hist[hist.length - 1];
-  const prev = hist[hist.length - 2];
-  return Math.round(last - prev);
+/** Tendencia de una serie histórica: último valor vs el anterior. null si no hay datos. */
+function seriesTrend(series: number[] | undefined): number | null {
+  if (!series || series.length < 2) return null;
+  return Math.round(series[series.length - 1] - series[series.length - 2]);
 }
 
-function TrendChip({ value }: { value: number }) {
+function trendLabel(trend: number | null): string {
+  if (trend === null) return 'Sin historial';
+  if (trend > 0) return `+${trend}`;
+  if (trend < 0) return `${trend}`;
+  return 'Sin cambios';
+}
+
+function TrendChip({ value }: { value: number | null }) {
+  if (value === null) {
+    return (
+      <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground/70 font-mono">
+        <Minus size={10} />—
+      </span>
+    );
+  }
   if (value === 0) {
     return (
       <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground font-mono">
@@ -86,7 +97,7 @@ function IndicatorCardView({
   trend,
 }: {
   card: IndicatorCard;
-  trend: number;
+  trend: number | null;
 }) {
   const risk = getValueRisk(card.value, card.max, card.inverseRisk);
   const pct = Math.min(100, Math.max(0, (card.value / card.max) * 100));
@@ -94,8 +105,6 @@ function IndicatorCardView({
   const displayLabel = card.inverseRisk
     ? { bajo: 'Bajo', medio: 'Moderado', alto: 'Alto', critico: 'Crítico' }[risk]
     : riskLabel(risk);
-
-  const trendText = trend > 0 ? `+${trend}` : trend < 0 ? `${trend}` : 'Sin cambios';
 
   return (
     <InfoTooltip
@@ -109,8 +118,8 @@ function IndicatorCardView({
           </div>
           <div className="text-[11px] text-muted-foreground">
             Tendencia:{' '}
-            <span className={trend > 0 ? 'text-emerald-400' : trend < 0 ? 'text-red-400' : ''}>
-              {trendText}
+            <span className={trend === null ? '' : trend > 0 ? 'text-emerald-400' : trend < 0 ? 'text-red-400' : ''}>
+              {trendLabel(trend)}
             </span>
           </div>
           <div className="text-[10px] text-muted-foreground/70">{card.tooltipDetail}</div>
@@ -165,9 +174,67 @@ function IndicatorCardView({
   );
 }
 
+function BudgetIndicatorCard({ budget, trend }: { budget: number; trend: number | null }) {
+  const healthy = budget >= 0;
+  const valueColor = healthy ? 'text-emerald-400' : 'text-red-400';
+
+  return (
+    <InfoTooltip
+      content={
+        <div className="flex flex-col gap-1">
+          <div className="font-semibold text-xs">Presupuesto</div>
+          <div className="text-[11px] text-muted-foreground">Saldo actual: {fmtBudget(budget)}</div>
+          <div className="text-[11px] text-muted-foreground">
+            Tendencia:{' '}
+            <span className={trend === null ? '' : trend > 0 ? 'text-emerald-400' : trend < 0 ? 'text-red-400' : ''}>
+              {trendLabel(trend)}
+            </span>
+          </div>
+          <div className="text-[10px] text-muted-foreground/70">
+            {healthy
+              ? 'Presupuesto en equilibrio o superávit.'
+              : 'Déficit sostenido (3 turnos consecutivos) puede derivar en crisis.'}
+          </div>
+        </div>
+      }
+    >
+      <div className="flex-1 min-w-0 rounded-lg border border-border bg-card px-3.5 py-2.5 cursor-help">
+        {/* Header: label + trend */}
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold flex items-center gap-1">
+            <Wallet size={10} className="opacity-60" />
+            Presupuesto
+            <Info size={9} className="opacity-50" />
+          </span>
+          <TrendChip value={trend} />
+        </div>
+
+        {/* Value */}
+        <div className="flex items-baseline gap-1 mb-2">
+          <span className={`font-mono text-2xl font-bold leading-none ${valueColor}`}>
+            {fmtBudget(budget)}
+          </span>
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-between mt-1.5">
+          <span className="text-[9px] text-muted-foreground">
+            {healthy ? 'Superávit / equilibrio' : 'Déficit'}
+          </span>
+          <span className={`text-[9px] font-semibold uppercase tracking-wide ${valueColor}`}>
+            {healthy ? 'Saludable' : 'Riesgo'}
+          </span>
+        </div>
+      </div>
+    </InfoTooltip>
+  );
+}
+
 export function IndicatorsPanel({ gameState }: IndicatorsPanelProps) {
   const thresholds = POSITION_THRESHOLDS[gameState.position] ?? POSITION_THRESHOLDS.intendente;
   const conflicto = deriveConflictoSocial(gameState);
+  const popTrend = seriesTrend(gameState.historicalPopularity);
+  const budgetTrend = seriesTrend(gameState.historicalBudget);
 
   const cards: IndicatorCard[] = [
     {
@@ -226,7 +293,13 @@ export function IndicatorsPanel({ gameState }: IndicatorsPanelProps) {
     },
   ];
 
-  const popTrend = popularityTrend(gameState);
+  const trends: Record<string, number | null> = {
+    popularidad: popTrend,
+    estabilidad: null,
+    legitimidad: null,
+    conflicto: null,
+    voto: null,
+  };
 
   return (
     <section className="space-y-3">
@@ -235,9 +308,10 @@ export function IndicatorsPanel({ gameState }: IndicatorsPanelProps) {
           <IndicatorCardView
             key={card.id}
             card={card}
-            trend={card.id === 'popularidad' ? popTrend : 0}
+            trend={trends[card.id] ?? null}
           />
         ))}
+        <BudgetIndicatorCard budget={gameState.budget} trend={budgetTrend} />
       </div>
     </section>
   );

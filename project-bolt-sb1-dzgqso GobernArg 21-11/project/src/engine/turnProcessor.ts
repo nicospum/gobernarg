@@ -425,9 +425,9 @@ export function processEndTurn(gameState: GameState): import('./engineShared').T
 
   // 4. Desgaste natural de popularidad (inercia política, por cargo)
   const POPULARITY_DECAY: Record<Position, number> = {
-    intendente: 3,
-    gobernador: 5,
-    presidente: 6
+    intendente: 5,
+    gobernador: 7,
+    presidente: 10
   };
   const naturalDecay = POPULARITY_DECAY[state.position] ?? 5;
   // Fase 4: Modificador de dificultad

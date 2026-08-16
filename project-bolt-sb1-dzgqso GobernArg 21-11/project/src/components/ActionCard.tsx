@@ -199,41 +199,41 @@ export function ActionCard({ action, gameState, onSelect, disabled, isSelected }
             </span>
           )}
         </div>
-        <h3 className="font-display font-semibold text-[14px] text-foreground leading-tight">
+        <h3 className="font-display font-bold text-base text-foreground leading-tight">
           {action.title}
         </h3>
       </div>
 
       {/* Costs */}
-      <div className="flex items-center gap-3 text-[11px] flex-wrap">
-        <span className="inline-flex items-center gap-1">
-          <DollarSign size={10} className="text-muted-foreground" />
+      <div className="flex items-center gap-2.5 flex-wrap">
+        <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-white/5 px-2 py-1">
+          <DollarSign size={12} className="text-muted-foreground" />
           <span
-            className={`font-mono font-semibold ${
+            className={`font-mono font-bold text-[13px] ${
               action.budgetChange > 0
                 ? 'text-emerald-400'
                 : action.budgetChange === 0
                   ? 'text-muted-foreground'
                   : isBlocked && blockReason?.startsWith('Presupuesto')
                     ? 'text-red-400'
-                    : 'text-foreground/70'
+                    : 'text-foreground/80'
             }`}
           >
             {costLabel}
           </span>
         </span>
         {actionCost > 0 && (
-          <span className="inline-flex items-center gap-1 text-muted-foreground">
-            <Flag size={9} />
-            <span className="font-mono">
+          <span className="inline-flex items-center gap-1.5 rounded-md border border-primary/30 bg-primary/15 px-2 py-1 text-primary">
+            <Flag size={12} />
+            <span className="font-mono font-bold text-[13px]">
               {actionCost} acc.
             </span>
           </span>
         )}
         {action.cooldown && action.cooldown > 0 && (
-          <span className="inline-flex items-center gap-1 text-muted-foreground">
-            <Clock size={9} />
-            <span className="font-mono text-[10px]">{action.cooldown}t cd</span>
+          <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-white/5 px-2 py-1 text-muted-foreground">
+            <Clock size={11} />
+            <span className="font-mono text-[11px]">{action.cooldown}t cd</span>
           </span>
         )}
       </div>

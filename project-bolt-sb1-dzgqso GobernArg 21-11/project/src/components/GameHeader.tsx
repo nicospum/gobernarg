@@ -7,6 +7,9 @@ import {
   ArrowRight,
   Shield,
   Activity,
+  TrendingUp,
+  TrendingDown,
+  Minus,
 } from 'lucide-react';
 import { GameState } from '../types/game';
 import { IMAGES } from '../utils/imageAssets';
@@ -29,6 +32,13 @@ const POSITION_LABEL: Record<string, string> = {
 
 const MAX_TURNS = 16;
 
+/** Tendencia de popularidad: compara el último valor histórico con el anterior. */
+function popularityTrend(state: GameState): number | null {
+  const hist = state.historicalPopularity;
+  if (!hist || hist.length < 2) return null;
+  return Math.round(hist[hist.length - 1] - hist[hist.length - 2]);
+}
+
 export function GameHeader({
   gameState,
   availableActions,
@@ -40,9 +50,10 @@ export function GameHeader({
   const stabilityRisk = getValueRisk(gameState.stability, 100);
   const absoluteTurn = (gameState.year - 1) * 4 + gameState.turn;
   const positionLabel = POSITION_LABEL[gameState.position] ?? gameState.position;
+  const popTrend = popularityTrend(gameState);
 
   return (
-    <header className="h-14 flex-none flex items-center px-4 gap-4 bg-card border-b border-border sticky top-0 z-50">
+    <header className="h-14 flex-none flex items-center px-5 gap-5 bg-card border-b border-border sticky top-0 z-50">
       {/* Logo */}
       <div className="flex items-center gap-2 flex-none">
         <img
@@ -78,14 +89,20 @@ export function GameHeader({
 
       <Separator />
 
-      {/* Turno + barra mini */}
-      <div className="flex items-center gap-2 flex-none">
+      {/* Año + trimestre destacados */}
+      <div className="flex items-center gap-2.5 flex-none">
         <Clock size={13} className="text-muted-foreground" />
         <div className="leading-tight">
-          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Turno</div>
-          <div className="font-mono text-[12px] font-bold text-foreground">
-            {absoluteTurn}
-            <span className="text-muted-foreground">/{MAX_TURNS}</span>
+          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Año</div>
+          <div className="font-display text-[15px] font-bold text-foreground leading-none">
+            {gameState.year}
+          </div>
+        </div>
+        <div className="w-px h-6 bg-border" />
+        <div className="leading-tight">
+          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Trimestre</div>
+          <div className="font-mono text-[14px] font-bold text-accent leading-none">
+            {gameState.turn}
           </div>
         </div>
         <div className="w-16 hidden md:block">
@@ -96,7 +113,7 @@ export function GameHeader({
             />
           </div>
           <div className="text-[9px] text-muted-foreground mt-0.5">
-            Año {gameState.year} · T{gameState.turn}
+            Turno {absoluteTurn}/{MAX_TURNS}
           </div>
         </div>
       </div>
@@ -131,11 +148,22 @@ export function GameHeader({
       <div className="hidden lg:flex items-center gap-2 flex-none">
         <Activity size={13} className="text-muted-foreground" />
         <div className="leading-tight">
-          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Popular.</div>
+          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Popularidad</div>
           <div className={`font-mono text-[12px] font-bold ${riskColor(popularityRisk)}`}>
             {Math.round(gameState.popularity)}%
           </div>
         </div>
+        {popTrend !== null && (
+          <span
+            className={`inline-flex items-center gap-0.5 font-mono text-[10px] ${
+              popTrend > 0 ? 'text-emerald-400' : popTrend < 0 ? 'text-red-400' : 'text-muted-foreground'
+            }`}
+            title={`Tendencia vs turno anterior: ${popTrend > 0 ? '+' : ''}${popTrend}`}
+          >
+            {popTrend > 0 ? <TrendingUp size={11} /> : popTrend < 0 ? <TrendingDown size={11} /> : <Minus size={11} />}
+            {popTrend !== 0 ? `${popTrend > 0 ? '+' : ''}${popTrend}` : '0'}
+          </span>
+        )}
       </div>
 
       <Separator className="hidden xl:block" />
@@ -144,7 +172,7 @@ export function GameHeader({
       <div className="hidden xl:flex items-center gap-2 flex-none">
         <Shield size={13} className="text-muted-foreground" />
         <div className="leading-tight">
-          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Estabil.</div>
+          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Estabilidad</div>
           <div className={`font-mono text-[12px] font-bold ${riskColor(stabilityRisk)}`}>
             {Math.round(gameState.stability)}
           </div>

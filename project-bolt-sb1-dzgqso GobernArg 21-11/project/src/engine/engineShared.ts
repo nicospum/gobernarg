@@ -23,7 +23,7 @@ export const POSITION_INCOME: Record<Position, number> = {
 export const POSITION_MAINTENANCE: Record<Position, number> = {
   intendente: 120,
   gobernador: 200,
-  presidente: 300
+  presidente: 350
 };
 
 export const POSITION_STARTING_BUDGET: Record<Position, number> = {
@@ -39,10 +39,12 @@ export const ARCHETYPE_STARTING_POPULARITY: Record<Archetype, number> = {
   comunicador: 70
 };
 
-// Acciones no disponibles según cargo
+// Acciones no disponibles según cargo.
+// Fase 1: la disponibilidad por cargo ahora se define en `availableForPositions`
+// de cada acción (ver actionRegistry), por lo que esta lista queda sin exclusiones adicionales.
 export const POSITION_ACTION_EXCLUSIONS: Record<Position, string[]> = {
-  intendente: ['tratado_comercio', 'cooperacion_internacional', 'participacion_cumbres', 'mediacion_conflictos'],
-  gobernador: ['participacion_cumbres', 'mediacion_conflictos'],
+  intendente: [],
+  gobernador: [],
   presidente: []
 };
 
