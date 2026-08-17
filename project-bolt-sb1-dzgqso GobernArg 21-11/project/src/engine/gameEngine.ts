@@ -69,7 +69,7 @@ export function getInitialGameState(): GameState {
   });
 
   const state: GameState = {
-    position: 'intendente',
+    position: 'presidente',
     archetype: 'politico',
     avatar: '',
     term: 1,
@@ -79,7 +79,7 @@ export function getInitialGameState(): GameState {
     popularity: 50,
     popularidadGrupos: 50,
     popularidadPolitica: 50,
-    budget: 1000,
+    budget: 3500,
     turn: 1,
     year: 1,
     actions: 5,
@@ -103,7 +103,7 @@ export function getInitialGameState(): GameState {
     legislativeResults: null,
     legislativeSupport: null,
     historicalPopularity: [50],
-    historicalBudget: [1000],
+    historicalBudget: [3500],
     completedActions: [],
     groupRelations,
     isAdminMode: false,
@@ -155,7 +155,7 @@ function cloneInterestGroups(): typeof interestGroups {
 }
 
 export function createNewGame(
-  position: Position,
+  position: Position = 'presidente',
   archetype: Archetype,
   governorName: string,
   isAdminMode: boolean,

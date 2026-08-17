@@ -45,28 +45,27 @@ import {
 function App() {
   const [gameState, setGameState] = useState(() => getInitialGameState());
   const [gameStarted, setGameStarted] = useState(false);
+  const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
   const [showWelcome, setShowWelcome] = useState(false);
   const [showTurnSummary, setShowTurnSummary] = useState(false);
   const [turnSummary, setTurnSummary] = useState<TurnSummary | null>(null);
-  const [isAdminMode, setIsAdminMode] = useState<boolean | null>(null);
   const [pendingEvents, setPendingEvents] = useState<GameEvent[]>([]);
   const [showMidtermStrategy, setShowMidtermStrategy] = useState(false);
   const [showGameLog, setShowGameLog] = useState(false);
   const [showNotebook, setShowNotebook] = useState(false);
 
-  const handleStart = (isAdmin: boolean) => {
-    setIsAdminMode(isAdmin);
+  const handleStart = (_isAdmin: boolean) => {
+    setShowWelcomeScreen(false);
   };
 
   const handleGameStart = (
     position: Position,
     archetype: Archetype,
     governorName: string,
-    adminMode: boolean,
     avatar: string
   ) => {
     if (!governorName.trim()) return;
-    const newState = createNewGame(position, archetype, governorName, adminMode, avatar);
+    const newState = createNewGame(position, archetype, governorName, false, avatar);
     setGameState(newState);
     setShowWelcome(true);
   };
@@ -152,7 +151,7 @@ function App() {
     setPendingEvents([]);
   };
 
-  if (isAdminMode === null) {
+  if (showWelcomeScreen) {
     return <WelcomeScreen onStart={handleStart} />;
   }
 
@@ -313,50 +312,6 @@ function App() {
       {showNotebook && (
         <ManagementNotebook gameState={gameState} onClose={() => setShowNotebook(false)} />
       )}
-
-      {gameState.isAdminMode && gameStarted && <AdminDebugPanel gameState={gameState} />}
-    </div>
-  );
-}
-
-function AdminDebugPanel({ gameState }: { gameState: ReturnType<typeof getInitialGameState> }) {
-  return (
-    <div className="fixed bottom-4 right-4 w-80 max-h-[60vh] overflow-y-auto bg-slate-900 text-slate-100 text-xs p-4 rounded-lg shadow-2xl z-40">
-      <h4 className="font-bold mb-2 uppercase tracking-wide text-slate-400">Modo Admin / Debug</h4>
-      <div className="space-y-2">
-        <p>Popularidad: {gameState.popularity.toFixed(2)}</p>
-        <p>Popularidad Grupos: {gameState.popularidadGrupos.toFixed(2)}</p>
-        <p>Popularidad Política: {gameState.popularidadPolitica.toFixed(2)}</p>
-        <p>Estabilidad: {gameState.stability.toFixed(2)}</p>
-        <p>Presupuesto: ${gameState.budget.toFixed(0)}M</p>
-        <p>Intención de voto: {gameState.votingIntention.toFixed(2)}%</p>
-        <p>Acciones base: {gameState.baseActions}</p>
-        <p>Emisiones acumuladas: {gameState.moneyPrintingCount}</p>
-        <p>Turnos baja popularidad: {gameState.consecutiveLowPopularity}</p>
-        <p>Turnos déficit: {gameState.consecutiveNegativeBudget}</p>
-        <p>Apoyo legislativo: {gameState.legislativeSupport?.toFixed(1) ?? 'N/A'}%</p>
-        <div>
-          <p className="font-semibold mt-2">Relaciones con grupos:</p>
-          <ul className="list-disc pl-4 space-y-0.5">
-            {Object.entries(gameState.groupRelations).map(([id, support]) => (
-              <li key={id}>{id}: {support.toFixed(1)}</li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <p className="font-semibold mt-2">Objetivos completados:</p>
-          <p>{gameState.completedObjectives.length} / {gameState.objectives.length}</p>
-        </div>
-        <div>
-          <p className="font-semibold mt-2">Últimas notificaciones:</p>
-          <ul className="list-disc pl-4 space-y-0.5">
-            {gameState.notifications.slice(0, 5).map(n => (
-              <li key={n.id}>[{n.importance}] {n.title}</li>
-            ))}
-            {gameState.notifications.length === 0 && <li>Sin notificaciones</li>}
-          </ul>
-        </div>
-      </div>
     </div>
   );
 }

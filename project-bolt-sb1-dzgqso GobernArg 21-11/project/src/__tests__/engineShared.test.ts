@@ -4,6 +4,7 @@ import {
   POSITION_MAINTENANCE,
   POSITION_STARTING_BUDGET
 } from '../engine/engineShared';
+import { getInitialGameState } from '../engine/gameEngine';
 
 describe('POSITION_INCOME', () => {
   it('define el ingreso por turno para cada cargo', () => {
@@ -68,5 +69,15 @@ describe('POSITION_STARTING_BUDGET', () => {
     expect(POSITION_STARTING_BUDGET.intendente).toBeGreaterThan(0);
     expect(POSITION_STARTING_BUDGET.gobernador).toBeGreaterThan(POSITION_STARTING_BUDGET.intendente);
     expect(POSITION_STARTING_BUDGET.presidente).toBeGreaterThan(POSITION_STARTING_BUDGET.gobernador);
+  });
+});
+
+describe('getInitialGameState - flujo solo presidente', () => {
+  it('arranca como presidente', () => {
+    expect(getInitialGameState().position).toBe('presidente');
+  });
+
+  it('arranca con el presupuesto inicial de presidente', () => {
+    expect(getInitialGameState().budget).toBe(POSITION_STARTING_BUDGET.presidente);
   });
 });

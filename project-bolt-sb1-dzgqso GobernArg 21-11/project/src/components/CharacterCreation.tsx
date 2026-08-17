@@ -7,7 +7,7 @@ import { ARCHETYPE_PASSIVES } from '../data/specialAbilities';
 import { InfoTooltip } from './InfoTooltip';
 
 interface CharacterCreationProps {
-  onComplete: (position: Position, archetype: Archetype, governorName: string, isAdminMode: boolean, avatar: string) => void;
+  onComplete: (position: Position, archetype: Archetype, governorName: string, avatar: string) => void;
 }
 
 const AVATARS = [
@@ -23,37 +23,19 @@ const AVATARS = [
 ];
 
 export function CharacterCreation({ onComplete }: CharacterCreationProps) {
-  const [position, setPosition] = useState<Position>('intendente');
+  const position: Position = 'presidente';
   const [archetype, setArchetype] = useState<Archetype>('politico');
   const [governorName, setGovernorName] = useState('');
   const [avatar, setAvatar] = useState<string>(AVATARS[0].src);
   const [showNameError, setShowNameError] = useState(false);
-  const [isAdminMode, setIsAdminMode] = useState(false);
 
   const handleSubmit = () => {
     if (!governorName.trim()) {
       setShowNameError(true);
       return;
     }
-    onComplete(position, archetype, governorName, isAdminMode, avatar);
+    onComplete(position, archetype, governorName, avatar);
   };
-
-  const getInitialBudget = (pos: Position) => {
-    switch (pos) {
-      case 'intendente':
-        return '250M';
-      case 'gobernador':
-        return '500M';
-      case 'presidente':
-        return '1,000M';
-    }
-  };
-
-  const positions: { id: Position; title: string; difficulty: string; description: string }[] = [
-    { id: 'intendente', title: 'Intendente', difficulty: 'Fácil', description: 'Gestión municipal cercana a la gente.' },
-    { id: 'gobernador', title: 'Gobernador', difficulty: 'Medio', description: 'Equilibrar provincia y Nación.' },
-    { id: 'presidente', title: 'Presidente', difficulty: 'Difícil', description: 'Liderar el país entre crisis y coaliciones.' },
-  ];
 
   const archetypes: { id: Archetype; icon: typeof User; title: string; bonus: string; description: string }[] = [
     { id: 'politico', icon: User, title: 'Político de Raza', bonus: '+2 acciones por turno', description: 'Experto en acuerdos y manejo institucional.' },
@@ -72,18 +54,7 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-blue-900/70 to-slate-900/90" />
 
       <div className="relative z-10 max-w-5xl mx-auto p-4 md:p-8">
-        <div className="flex justify-between items-center mb-6">
-          <img src={IMAGES.logo.primary} alt="Gobernarg" className="h-14 md:h-20 drop-shadow-lg" />
-          <label className="flex items-center gap-2 cursor-pointer bg-white/10 px-3 py-2 rounded-lg backdrop-blur">
-            <input
-              type="checkbox"
-              checked={isAdminMode}
-              onChange={(e) => setIsAdminMode(e.target.checked)}
-              className="w-4 h-4 rounded border-white/30 bg-white/20 checked:bg-blue-500"
-            />
-            <span className="text-sm opacity-90">Modo Admin</span>
-          </label>
-        </div>
+        <img src={IMAGES.logo.primary} alt="Gobernarg" className="h-14 md:h-20 drop-shadow-lg mb-6" />
 
         <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 md:p-10 shadow-2xl border border-white/10">
           <h1 className="font-display text-3xl md:text-4xl font-bold mb-2 uppercase tracking-wide">Creá tu gobernante</h1>
@@ -104,26 +75,6 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
             {showNameError && (
               <p className="text-red-300 mt-2">Debes ingresar un nombre para comenzar</p>
             )}
-          </div>
-
-          <h2 className="font-display text-xl font-semibold mb-4 uppercase tracking-wide">Elegí el Cargo</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-            {positions.map((pos) => (
-              <button
-                key={pos.id}
-                onClick={() => setPosition(pos.id)}
-                className={`text-left p-5 rounded-xl border-2 transition-all ${
-                  position === pos.id
-                    ? 'bg-white/15 border-accent shadow-lg'
-                    : 'bg-white/5 border-white/20 hover:bg-white/10 hover:border-white/40'
-                }`}
-              >
-                <h3 className="font-bold text-lg">{pos.title}</h3>
-                <p className="text-sm opacity-75 mb-2">Dificultad: {pos.difficulty}</p>
-                <p className="text-sm opacity-90">{pos.description}</p>
-                <p className="text-sm mt-3 font-medium">Presupuesto inicial: ${getInitialBudget(pos.id)}</p>
-              </button>
-            ))}
           </div>
 
           <h2 className="font-display text-xl font-semibold mb-4 uppercase tracking-wide">Elegí tu Perfil</h2>
