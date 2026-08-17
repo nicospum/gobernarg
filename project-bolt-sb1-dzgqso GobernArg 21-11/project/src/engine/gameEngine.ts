@@ -441,11 +441,11 @@ export function satisfyGroupDemand(state: GameState, agendaId: string): GameStat
     a.id === agendaId ? { ...a, satisfied: true } : a
   );
 
-  // +10 apoyo al grupo
+  // +5 apoyo al grupo (antes +10)
   if (agenda.groupId in (newState.groupRelations || {})) {
     newState.groupRelations = {
       ...state.groupRelations,
-      [agenda.groupId]: clampValue((state.groupRelations?.[agenda.groupId] ?? 50) + 10),
+      [agenda.groupId]: clampValue((state.groupRelations?.[agenda.groupId] ?? 50) + 5),
     };
   }
 
@@ -456,8 +456,8 @@ export function satisfyGroupDemand(state: GameState, agendaId: string): GameStat
       : m
   );
 
-  // +2 popularidad general
-  newState.popularity = clampValue(newState.popularity + 2);
+  // +1 popularidad general (antes +2)
+  newState.popularity = clampValue(newState.popularity + 1);
 
   // Notificación
   newState = addNotification(newState, {

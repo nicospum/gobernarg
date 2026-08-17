@@ -15,7 +15,20 @@ export function generateGroupAgendas(state: GameState): GroupAgendaItem[] {
   const newAgendas: GroupAgendaItem[] = [];
   const allSubgroups = (state.interestGroups ?? []).flatMap(g => g.subgroups);
 
+  // Regla de diseño: máx 2 demandas activas simultáneamente
+  const activeAgendaCount = state.groupAgendas.filter(
+    a => !a.satisfied && !a.penaltyApplied
+  ).length;
+  if (activeAgendaCount >= 2) return [];
+
+  // Regla de diseño: probabilidad base baja, las demandas son eventos raros
+  const BASE_PROBABILITY = 0.08;
+  const MAX_PROBABILITY = 0.25;
+
   for (const sg of allSubgroups) {
+    // Si ya llegamos al límite, parar
+    if (newAgendas.length + activeAgendaCount >= 2) break;
+
     // Determinar si el grupo usa demandActionIds (nuevo sistema) o templates (legacy)
     const useActionIds = sg.demandActionIds && sg.demandActionIds.length > 0;
     const templates = AGENDA_TEMPLATES[sg.id] ?? [];
@@ -31,8 +44,8 @@ export function generateGroupAgendas(state: GameState): GroupAgendaItem[] {
     if (state.turn < pausedUntil) continue;
 
     const mood = state.groupMoods.find(m => m.groupId === sg.id);
-    const ignoreBonus = (mood?.ignoredTurns ?? 0) * 0.1;
-    const prob = Math.min(0.8, 0.3 + ignoreBonus);
+    const ignoreBonus = (mood?.ignoredTurns ?? 0) * 0.05;
+    const prob = Math.min(MAX_PROBABILITY, BASE_PROBABILITY + ignoreBonus);
 
     if (Math.random() < prob) {
       // Obtener IDs de acciones ejecutadas en los últimos 3 turnos
