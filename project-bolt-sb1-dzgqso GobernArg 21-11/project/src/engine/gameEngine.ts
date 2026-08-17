@@ -9,6 +9,7 @@ import type {
 } from '../types/game';
 import { actionCategories } from '../data/actionCategories';
 import { interestGroups } from '../data/interestGroups';
+import { GROUP_ANTAGONISTS } from '../data/groupAntagonists';
 import { ARCHETYPE_ABILITIES } from '../data/specialAbilities';
 import { calculateInteractionCost, calculateSupportGain, getInteractionCommitment } from '../utils/interactionCosts';
 import { getPositionObjectives } from '../utils/victoryConditions';
@@ -442,10 +443,23 @@ export function satisfyGroupDemand(state: GameState, agendaId: string): GameStat
   );
 
   // +5 apoyo al grupo (antes +10)
+  const supportGain = 5;
   if (agenda.groupId in (newState.groupRelations || {})) {
     newState.groupRelations = {
       ...state.groupRelations,
-      [agenda.groupId]: clampValue((state.groupRelations?.[agenda.groupId] ?? 50) + 5),
+      [agenda.groupId]: clampValue((state.groupRelations?.[agenda.groupId] ?? 50) + supportGain),
+    };
+  }
+
+  // Impacto cruzado obligatorio: los antagonistas del grupo satisfecho pierden apoyo
+  const antagonists = GROUP_ANTAGONISTS[agenda.groupId] ?? {};
+  for (const [antagonistId, ratio] of Object.entries(antagonists)) {
+    const penalty = Math.round(supportGain * ratio);
+    if (penalty <= 0) continue;
+    const current = newState.groupRelations[antagonistId] ?? 50;
+    newState.groupRelations = {
+      ...newState.groupRelations,
+      [antagonistId]: clampValue(current - penalty),
     };
   }
 

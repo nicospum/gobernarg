@@ -167,4 +167,94 @@ describe('satisfyGroupDemand - recompensa reducida', () => {
     const result = satisfyGroupDemand(state, 'a1');
     expect(result.groupAgendas[0].satisfied).toBe(true);
   });
+
+  it('aplica impacto cruzado: satisfacer empresarios penaliza a sindicatos', () => {
+    const state = makeStateWithGroups({
+      groupRelations: { empresarios: 50, sindicatos: 50, 'sectores-populares': 50 },
+      groupAgendas: [
+        {
+          id: 'a1',
+          groupId: 'empresarios',
+          demand: 'test',
+          deadline: 99,
+          satisfied: false,
+          penaltyApplied: false,
+        },
+      ],
+    });
+
+    const result = satisfyGroupDemand(state, 'a1');
+
+    // Empresarios sube +5
+    expect(result.groupRelations['empresarios']).toBe(55);
+    // Sindicatos baja 5 × 0.5 = 2.5 → 3 (round)
+    expect(result.groupRelations['sindicatos']).toBe(47);
+    // Sectores populares baja 5 × 0.3 = 1.5 → 2 (round)
+    expect(result.groupRelations['sectores-populares']).toBe(48);
+  });
+
+  it('aplica impacto cruzado: satisfacer sindicatos penaliza a empresarios', () => {
+    const state = makeStateWithGroups({
+      groupRelations: { sindicatos: 50, empresarios: 50, 'clase-alta': 50 },
+      groupAgendas: [
+        {
+          id: 'a1',
+          groupId: 'sindicatos',
+          demand: 'test',
+          deadline: 99,
+          satisfied: false,
+          penaltyApplied: false,
+        },
+      ],
+    });
+
+    const result = satisfyGroupDemand(state, 'a1');
+
+    // Sindicatos sube +5
+    expect(result.groupRelations['sindicatos']).toBe(55);
+    // Empresarios baja 5 × 0.5 = 2.5 → 3
+    expect(result.groupRelations['empresarios']).toBe(47);
+    // Clase alta baja 5 × 0.4 = 2
+    expect(result.groupRelations['clase-alta']).toBe(48);
+  });
+
+  it('matemáticamente imposible subir todos los grupos: la suma neta es ≤ 0 en pares antagónicos', () => {
+    // Satisfacer demandas de empresarios y sindicatos alternadamente
+    // nunca puede subir AMBOS al mismo tiempo porque son antagonistas mutuos
+    const state = makeStateWithGroups({
+      groupRelations: { empresarios: 50, sindicatos: 50 },
+      groupAgendas: [
+        {
+          id: 'a1',
+          groupId: 'empresarios',
+          demand: 'test1',
+          deadline: 99,
+          satisfied: false,
+          penaltyApplied: false,
+        },
+        {
+          id: 'a2',
+          groupId: 'sindicatos',
+          demand: 'test2',
+          deadline: 99,
+          satisfied: false,
+          penaltyApplied: false,
+        },
+      ],
+    });
+
+    // Satisfacer empresarios: emp +5, sind -3 → emp 55, sind 47
+    let result = satisfyGroupDemand(state, 'a1');
+    expect(result.groupRelations['empresarios']).toBe(55);
+    expect(result.groupRelations['sindicatos']).toBe(47);
+
+    // Satisfacer sindicatos: sind +5, emp -3 → sind 52, emp 52
+    result = satisfyGroupDemand(result, 'a2');
+    expect(result.groupRelations['sindicatos']).toBe(52);
+    expect(result.groupRelations['empresarios']).toBe(52);
+
+    // Ambos terminan en 52, NO en 100. Es imposible maximizar ambos.
+    expect(result.groupRelations['empresarios']).toBeLessThan(100);
+    expect(result.groupRelations['sindicatos']).toBeLessThan(100);
+  });
 });
