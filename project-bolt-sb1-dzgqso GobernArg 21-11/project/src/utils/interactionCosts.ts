@@ -12,8 +12,8 @@ const CONCEDE_COST_PER_INFLUENCE = 45;
 
 /** Ganancia de apoyo base por tipo de interacción */
 const SUPPORT_GAINS: Record<InteractionType, number> = {
-  reunion: 5,
-  negociar: 8,
+  reunion: 2,
+  negociar: 4,
   conceder: 15,
 };
 

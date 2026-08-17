@@ -126,6 +126,8 @@ export function getInitialGameState(): GameState {
     demandPausedUntil: {},
     negotiationPending: {},
     temporarySupportBonuses: {},
+    concessionsThisTerm: 0,
+    interactionCountByGroup: {},
     // Fase 4: Profundidad
     difficulty: 'normal',
     radicalConciliadorAxis: 0,
@@ -227,6 +229,20 @@ export function applyInteraction(
     .find(sg => sg.id === subgroupId);
   if (!subgroup) return gameState;
 
+  // Regla de diseño: concesiones limitadas a 4 por mandato
+  if (type === 'conceder' && gameState.concessionsThisTerm >= 4) {
+    return gameState;
+  }
+
+  // Regla de diseño: concesión requiere trabajo previo con el grupo
+  // (al menos 1 reunión o 1 negociación en el mandato actual)
+  if (type === 'conceder') {
+    const prior = gameState.interactionCountByGroup[subgroupId] ?? { reuniones: 0, negociaciones: 0 };
+    if (prior.reuniones === 0 && prior.negociaciones === 0) {
+      return gameState;
+    }
+  }
+
   const budgetCost = calculateInteractionCost(type, subgroup, gameState);
   if (gameState.budget < budgetCost) return gameState;
 
@@ -237,6 +253,7 @@ export function applyInteraction(
   const newDemandPausedUntil = { ...gameState.demandPausedUntil };
   const newNegotiationPending = { ...gameState.negotiationPending };
   const newTemporarySupportBonuses = { ...gameState.temporarySupportBonuses };
+  const newGroupRelations = { ...gameState.groupRelations };
 
   // Aplicar el compromiso según el tipo de interacción
   if (commitment.temporarySupport) {
@@ -261,14 +278,35 @@ export function applyInteraction(
     newDemandPausedUntil[subgroupId] = gameState.turn + commitment.demandPause;
   }
 
+  // Aplicar ganancia de apoyo al grupo objetivo
+  newGroupRelations[subgroupId] = Math.min(
+    100,
+    Math.max(0, (newGroupRelations[subgroupId] || 0) + supportGain)
+  );
+
+  // Costo cruzado: conceder genera rechazo en otros grupos
+  if (type === 'conceder') {
+    const crossPenalty = Math.max(2, Math.round(subgroup.influence * 0.5));
+    for (const [otherId, relation] of Object.entries(newGroupRelations)) {
+      if (otherId === subgroupId) continue;
+      newGroupRelations[otherId] = Math.max(0, relation - crossPenalty);
+    }
+  }
+
+  // Actualizar contadores de interacción
+  const prevCount = gameState.interactionCountByGroup[subgroupId] ?? { reuniones: 0, negociaciones: 0 };
+  const newInteractionCount = { ...gameState.interactionCountByGroup };
+  if (type === 'reunion') {
+    newInteractionCount[subgroupId] = { ...prevCount, reuniones: prevCount.reuniones + 1 };
+  } else if (type === 'negociar') {
+    newInteractionCount[subgroupId] = { ...prevCount, negociaciones: prevCount.negociaciones + 1 };
+  }
+
   return {
     ...gameState,
     actions: gameState.actions - 1,
     budget: gameState.budget - budgetCost,
-    groupRelations: {
-      ...gameState.groupRelations,
-      [subgroupId]: Math.min(100, Math.max(0, (gameState.groupRelations[subgroupId] || 0) + supportGain))
-    },
+    groupRelations: newGroupRelations,
     interactionHistory: {
       ...gameState.interactionHistory,
       [subgroupId]: {
@@ -279,6 +317,8 @@ export function applyInteraction(
     demandPausedUntil: newDemandPausedUntil,
     negotiationPending: newNegotiationPending,
     temporarySupportBonuses: newTemporarySupportBonuses,
+    concessionsThisTerm: type === 'conceder' ? gameState.concessionsThisTerm + 1 : gameState.concessionsThisTerm,
+    interactionCountByGroup: newInteractionCount,
   };
 }
 

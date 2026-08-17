@@ -516,6 +516,10 @@ export interface GameState {
   negotiationPending: Record<string, number>;
   /** Bonos de apoyo temporales por reunirse. key = subgroupId, value = { bonus, expiresAt, actionMultiplier } */
   temporarySupportBonuses: Record<string, { bonus: number; expiresAt: number; actionMultiplier?: number }>;
+  /** Cantidad de concesiones otorgadas en el mandato actual (máx 4) */
+  concessionsThisTerm: number;
+  /** Historial de interacciones por grupo: cuántas reuniones/negociaciones hubo antes de una concesión */
+  interactionCountByGroup: Record<string, { reuniones: number; negociaciones: number }>;
   // Internos para motores (no persistidos)
   _archetypeIncomeBonus?: number;
   _archetypeExtraLoans?: number;

@@ -223,6 +223,9 @@ export const actionDefinitions: ActionDefinition[] = [
     category: 'economia',
     requirements: { minBudget: 0 },
     availableForPositions: ['presidente'],
+    prerequisites: {
+      requiredActions: ['mejorar_recaudacion']
+    },
     cooldown: 8,
     diminishingFactor: 0.90,
     isLoan: true,
@@ -458,6 +461,9 @@ export const actionDefinitions: ActionDefinition[] = [
     category: 'infraestructura',
     requirements: { minBudget: 500 },
     availableForPositions: ['gobernador', 'presidente'],
+    prerequisites: {
+      requiredActions: ['estudio_factibilidad']
+    },
     affectedGroups: {
       supports: ['ambientalistas', 'ongs', 'academicos'],
       opposes: ['empresarios']
@@ -474,6 +480,9 @@ export const actionDefinitions: ActionDefinition[] = [
     category: 'infraestructura',
     requirements: { minBudget: 600 },
     availableForPositions: ['gobernador', 'presidente'],
+    prerequisites: {
+      requiredActions: ['estudio_factibilidad']
+    },
     affectedGroups: {
       supports: ['sectores-populares', 'clase-media', 'sindicatos'],
       opposes: []
@@ -505,6 +514,9 @@ export const actionDefinitions: ActionDefinition[] = [
     category: 'infraestructura',
     requirements: { minBudget: 700 },
     availableForPositions: ['presidente'],
+    prerequisites: {
+      requiredActions: ['estudio_factibilidad', 'infraestructura_vial']
+    },
     affectedGroups: {
       supports: ['empresarios', 'clase-alta'],
       opposes: ['ambientalistas']
@@ -550,6 +562,9 @@ export const actionDefinitions: ActionDefinition[] = [
     budgetChange: -500,
     category: 'infraestructura',
     requirements: { minBudget: 500 },
+    prerequisites: {
+      requiredActions: ['estudio_factibilidad']
+    },
     affectedGroups: {
       supports: ['empresarios', 'sector-agricola', 'clase-media'],
       opposes: []
@@ -817,6 +832,9 @@ export const actionDefinitions: ActionDefinition[] = [
     category: 'seguridad',
     requirements: { minBudget: 500 },
     availableForPositions: ['gobernador', 'presidente'],
+    prerequisites: {
+      requiredActions: ['fortalecimiento_justicia']
+    },
     affectedGroups: {
       supports: ['clase-media', 'ongs', 'aliados'],
       opposes: ['sectores-populares']

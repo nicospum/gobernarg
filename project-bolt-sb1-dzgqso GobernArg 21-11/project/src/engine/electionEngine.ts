@@ -78,6 +78,8 @@ export function resolvePendingElection(gameState: GameState, option: ElectionOpt
   state.pendingEffects = [];
   state.scheduledEvents = [];
   state.interactionHistory = {};
+  state.concessionsThisTerm = 0;
+  state.interactionCountByGroup = {};
   state.advisors = [];
   state.advisorActionUsed = false;
   state.moneyPrintingCount = 0;
