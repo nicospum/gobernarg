@@ -435,7 +435,10 @@ export function satisfyGroupDemand(state: GameState, agendaId: string): GameStat
   const agenda = state.groupAgendas?.find(a => a.id === agendaId);
   if (!agenda || agenda.satisfied) return state;
 
-  let newState = { ...state };
+  // Regla de economía de acciones: satisfacer una demanda consume 1 acción
+  if (state.actions <= 0) return state;
+
+  let newState = { ...state, actions: state.actions - 1 };
 
   // Marcar como satisfecha
   newState.groupAgendas = (state.groupAgendas || []).map(a =>

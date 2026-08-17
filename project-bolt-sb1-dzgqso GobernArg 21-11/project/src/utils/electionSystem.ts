@@ -21,10 +21,11 @@ const ELECTION_CONSTANTS = {
   MIN_VOTES_TO_WIN: 45,
   WEIGHTS: {
     POPULARITY: 0.35,
-    BUDGET: 0.20,
-    GROUPS_SUPPORT: 0.25,
+    BUDGET: 0.15,
+    GROUPS_SUPPORT: 0.15,
     OBJECTIVES: 0.15,
-    STABILITY: 0.05
+    STABILITY: 0.05,
+    ACTIVITY: 0.15
   }
 };
 
@@ -117,13 +118,15 @@ export function calculateVotingIntention(gameState: GameState): number {
   const groupsSupport = calculateGroupsSupport(gameState);
   const objectivesImpact = calculateObjectivesImpact(gameState);
   const stabilityBonus = calculateStabilityBonus(gameState);
+  const activityImpact = calculateActivityImpact(gameState);
 
   const votingIntention = (
     (popularityImpact * ELECTION_CONSTANTS.WEIGHTS.POPULARITY) +
     (budgetImpact * ELECTION_CONSTANTS.WEIGHTS.BUDGET) +
     (groupsSupport * ELECTION_CONSTANTS.WEIGHTS.GROUPS_SUPPORT) +
     (objectivesImpact * ELECTION_CONSTANTS.WEIGHTS.OBJECTIVES) +
-    (stabilityBonus * ELECTION_CONSTANTS.WEIGHTS.STABILITY)
+    (stabilityBonus * ELECTION_CONSTANTS.WEIGHTS.STABILITY) +
+    (activityImpact * ELECTION_CONSTANTS.WEIGHTS.ACTIVITY)
   );
 
   return Math.min(100, Math.max(0, votingIntention));
@@ -177,6 +180,26 @@ function calculateObjectivesImpact(gameState: GameState): number {
 
 function calculateStabilityBonus(gameState: GameState): number {
   return gameState.stability;
+}
+
+/**
+ * Penalización por inacción.
+ * Mide cuántas acciones ejecutó el jugador durante el mandato actual
+ * comparado contra el mínimo esperado (1 acción por turno × 16 turnos).
+ * Un jugador pasivo que solo satisface demandas tendrá un score bajo.
+ */
+function calculateActivityImpact(gameState: GameState): number {
+  const expectedActions = ELECTION_CONSTANTS.TOTAL_TURNS; // 16 turnos, 1 acción mínima por turno
+  if (expectedActions <= 0) return 0;
+
+  const turnLog = gameState.turnLog ?? [];
+  const totalActionsTaken = turnLog.reduce(
+    (sum, entry) => sum + entry.actionsTaken.length,
+    0
+  );
+
+  // Cap en 100: hacer más de lo esperado no da bonus infinito
+  return Math.min(100, (totalActionsTaken / expectedActions) * 100);
 }
 
 export function updateGameStateForElections(gameState: GameState): GameState {

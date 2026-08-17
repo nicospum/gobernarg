@@ -257,4 +257,44 @@ describe('satisfyGroupDemand - recompensa reducida', () => {
     expect(result.groupRelations['empresarios']).toBeLessThan(100);
     expect(result.groupRelations['sindicatos']).toBeLessThan(100);
   });
+
+  it('satisfacer demanda consume 1 acción', () => {
+    const state = makeStateWithGroups({
+      actions: 3,
+      groupAgendas: [
+        {
+          id: 'a1',
+          groupId: 'empresarios',
+          demand: 'test',
+          deadline: 99,
+          satisfied: false,
+          penaltyApplied: false,
+        },
+      ],
+    });
+
+    const result = satisfyGroupDemand(state, 'a1');
+    expect(result.actions).toBe(2);
+  });
+
+  it('sin acciones disponibles NO puede satisfacer la demanda', () => {
+    const state = makeStateWithGroups({
+      actions: 0,
+      groupAgendas: [
+        {
+          id: 'a1',
+          groupId: 'empresarios',
+          demand: 'test',
+          deadline: 99,
+          satisfied: false,
+          penaltyApplied: false,
+        },
+      ],
+    });
+
+    const result = satisfyGroupDemand(state, 'a1');
+    // No se aplicó: misma referencia, no satisfecha
+    expect(result).toBe(state);
+    expect(result.groupAgendas[0].satisfied).toBe(false);
+  });
 });

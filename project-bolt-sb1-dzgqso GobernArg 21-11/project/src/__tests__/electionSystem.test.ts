@@ -21,6 +21,7 @@ function baseState(overrides: Partial<GameState> = {}): GameState {
     groupRelations: {},
     careerHistory: [],
     advisors: [],
+    turnLog: [],
     ...overrides,
   } as GameState;
 }
