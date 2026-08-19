@@ -8,6 +8,7 @@ import type {
 } from '../types/game';
 import { calculatePopularidad } from '../utils/popularidad';
 import { calculateAvailableActions } from '../utils/actionCalculator';
+import { calculateVotingIntention as calculateElectionVotingIntention } from '../utils/electionSystem';
 
 // ===========================
 // Constantes de balance
@@ -98,24 +99,6 @@ export function addNotification(
   };
 }
 
-function calculateVotingIntention(state: GameState): number {
-  const groupScores = Object.values(state.groupRelations);
-  const avgGroupSupport = groupScores.length > 0
-    ? groupScores.reduce((a, b) => a + b, 0) / groupScores.length
-    : 50;
-  const objectiveFactor = state.objectives.length > 0
-    ? (state.completedObjectives.length / state.objectives.length) * 100
-    : 0;
-  const value = (
-    state.popularity * 0.4 +
-    state.stability * 0.2 +
-    avgGroupSupport * 0.25 +
-    objectiveFactor * 0.1 +
-    (state.budget > 0 ? 5 : 0)
-  );
-  return Math.min(100, Math.max(0, value));
-}
-
 export function recalcState(state: GameState): GameState {
   const { popularidadTotal, popularidadGrupos, popularidadPolitica } = calculatePopularidad(state);
   state.popularity = popularidadTotal;
@@ -125,7 +108,8 @@ export function recalcState(state: GameState): GameState {
   state.baseActions = calculateAvailableActions({ ...state, actions: 0, selectedActions: [] });
   state.actions = state.baseActions;
 
-  state.votingIntention = calculateVotingIntention(state);
+  // Fuente única de intención de voto: electionSystem (misma que usan las elecciones y el panel)
+  state.votingIntention = calculateElectionVotingIntention(state);
   return state;
 }
 
