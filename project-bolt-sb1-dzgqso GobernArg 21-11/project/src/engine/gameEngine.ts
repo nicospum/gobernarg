@@ -110,7 +110,6 @@ export function getInitialGameState(): GameState {
     isAdminMode: false,
     stability: 50,
     pendingEffects: [],
-    scheduledEvents: [],
     interestGroups,
     unlockedActions: getAllActionIds(),
     notifications: [],
@@ -153,8 +152,19 @@ function getAllActionIds(): string[] {
 }
 
 function cloneInterestGroups(): typeof interestGroups {
-  // structuredClone no funciona con componentes React (símbolos)
-  return JSON.parse(JSON.stringify(interestGroups));
+  // JSON.parse(JSON.stringify()) pierde las funciones `icon` (LucideIcon) de los
+  // subgrupos y structuredClone no funciona con componentes React (símbolos).
+  // Clonación manual: copia campos por valor y preserva la referencia de `icon`.
+  return interestGroups.map(group => ({
+    ...group,
+    subgroups: group.subgroups.map(subgroup => ({
+      ...subgroup,
+      icon: subgroup.icon,
+      interests: [...subgroup.interests],
+      demands: [...subgroup.demands],
+      demandActionIds: [...subgroup.demandActionIds],
+    })),
+  }));
 }
 
 export function createNewGame(
@@ -218,7 +228,10 @@ export function createNewGame(
   state.baseActions = calculateAvailableActions({ ...state, actions: 0, selectedActions: [] });
   state.actions = state.baseActions;
 
-  return state;
+  // getInitialGameState() aplica las pasivas con 'politico' (valor por defecto),
+  // así que hay que re-aplicarlas con el arquetipo realmente elegido para que los
+  // acumuladores _archetype* (incomeBonus, extraActions, extraLoans, etc.) queden correctos.
+  return applyArchetypePassives(state);
 }
 
 export function applyInteraction(

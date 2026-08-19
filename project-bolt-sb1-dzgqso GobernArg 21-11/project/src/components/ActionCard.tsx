@@ -159,6 +159,7 @@ export function ActionCard({ action, gameState, onSelect, disabled, isSelected }
         </div>
       }
     >
+    {/* Acento izquierdo: solo el borde izquierdo lleva el color de categoría; el resto usa border-border */}
     <div
       role="button"
       tabIndex={isBlocked ? -1 : 0}
@@ -169,14 +170,14 @@ export function ActionCard({ action, gameState, onSelect, disabled, isSelected }
           onSelect();
         }
       }}
-      className={`relative flex flex-col gap-2 rounded-lg border border-l-4 p-3.5 transition-all duration-150 ${
+      className={`relative flex flex-col gap-2 rounded-lg border-l-4 border-y border-r p-3.5 transition-all duration-150 ${
         isBlocked ? 'opacity-60 cursor-not-allowed' : ''
       } ${
         isSelected
           ? 'border-primary bg-primary/10 ring-1 ring-primary/40'
           : isBlocked
-            ? `${categoryStyle.borderColor} border border-border bg-card`
-            : `${categoryStyle.borderColor} border border-border bg-card hover:border-white/20 hover:bg-white/3 cursor-pointer`
+            ? `${categoryStyle.borderColor} border-y-border border-r-border bg-card`
+            : `${categoryStyle.borderColor} border-y-border border-r-border bg-card hover:border-white/20 hover:bg-white/3 cursor-pointer`
       }`}
     >
       {/* Status badge */}

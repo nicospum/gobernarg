@@ -238,14 +238,6 @@ export const CATEGORY_ICONS: Record<string, string> = {
   tecnologia: IMAGES.icons.categories.technology,
 };
 
-// Mapeo de subgrupos de interés a iconos visuales
-export const GROUP_ICONS: Record<string, string> = {
-  sindicatos: IMAGES.icons.groups.workers,
-  empresarios: IMAGES.icons.groups.business,
-  'sector-agricola': IMAGES.icons.groups.agriculture,
-  medios: IMAGES.icons.groups.media,
-};
-
 // Imagen de evento según id (prioridad) o categoría/severidad (fallback)
 export function getEventImage(category: string, _severity: string, eventId?: string): string {
   // Mapeo por event.id (prioridad)
@@ -297,13 +289,6 @@ export function getAdvisorPortrait(specialty: string): string {
   if (lower.includes('salud')) return IMAGES.advisors.healthFemale;
   if (lower.includes('justicia')) return IMAGES.advisors.justiceMale;
   return IMAGES.advisors.economyMale;
-}
-
-import { THUMBNAIL_ARCHETYPES } from './iconThumbnails';
-
-// Avatar de arquetipo
-export function getArchetypeImage(archetype: string): string {
-  return THUMBNAIL_ARCHETYPES[archetype] || THUMBNAIL_ARCHETYPES.politico;
 }
 
 // Fondo sugerido según cargo

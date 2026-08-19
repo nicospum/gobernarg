@@ -125,7 +125,7 @@ export function EventModal({ event, onChoice, onClose }: EventModalProps) {
       <div className="w-full max-w-2xl rounded-xl shadow-2xl bg-card border border-border overflow-hidden">
         {/* ---------- Header image ---------- */}
         <div className="relative h-48 md:h-56">
-          <img src={eventImage} alt={event.title} className="w-full h-full object-cover" />
+          <img src={eventImage} alt={event.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-card via-card/60 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-4 text-foreground">
             <div className="flex items-start gap-3">

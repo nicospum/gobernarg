@@ -124,6 +124,9 @@ export const actionDefinitions: ActionDefinition[] = [
     category: 'economia',
     requirements: { minBudget: 200 },
     availableForPositions: ['gobernador', 'presidente'],
+    // NOTA (balance de datos): minLegislativeSupport: 45 puede ser imposible de
+    // alcanzar — legislativeSupport es null hasta el año 2 y queda fijo después.
+    // Se mantiene deliberadamente; NO cambiar el valor.
     prerequisites: {
       requiredActions: ['mejorar_recaudacion'],
       minLegislativeSupport: 45
@@ -1054,7 +1057,7 @@ export const actionDefinitions: ActionDefinition[] = [
     popularityChange: 10,
     budgetChange: -100,
     category: 'educacion',
-    requirements: { minBudget: 200 },
+    requirements: { minBudget: 100 },
     affectedGroups: {
       supports: ['estudiantiles', 'academicos', 'clase-media'],
       opposes: []
@@ -1073,7 +1076,7 @@ export const actionDefinitions: ActionDefinition[] = [
     popularityChange: 8,
     budgetChange: -50,
     category: 'turismo',
-    requirements: { minBudget: 150 },
+    requirements: { minBudget: 50 },
     affectedGroups: {
       supports: ['empresarios', 'artistas', 'clase-media'],
       opposes: []
@@ -1091,7 +1094,7 @@ export const actionDefinitions: ActionDefinition[] = [
     popularityChange: 12,
     budgetChange: -200,
     category: 'tecnologia',
-    requirements: { minBudget: 300 },
+    requirements: { minBudget: 200 },
     affectedGroups: {
       supports: ['empresarios', 'academicos', 'estudiantiles'],
       opposes: []

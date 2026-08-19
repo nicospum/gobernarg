@@ -46,16 +46,21 @@ describe('processElectionResults', () => {
     expect(result.victory).toBe(false);
   });
 
-  it('intención borderline con popularidad = 60 gana', () => {
+  // Estado con margen amplio (~5 pts por encima del umbral de 45%).
+  // El test anterior ganaba por solo 0.0875 pts (intención 45.0875),
+  // lo que lo hacía frágil ante cualquier cambio de pesos en
+  // calculateVotingIntention. Nota: processElectionResults NO lee
+  // state.votingIntention; recalcula todo desde el estado.
+  it('popularidad alta (70+) con presupuesto en crecimiento gana con margen claro', () => {
     const state = baseState({
-      votingIntention: 45,
-      popularity: 60,
+      popularity: 75,
       budget: 600,
-      historicalPopularity: [60, 58, 62, 61],
+      historicalPopularity: [75, 74, 76, 75], // promedio 75
       historicalBudget: [500],
       groupRelations: { aliados: 50 }
     });
     const result = processElectionResults(state);
+    expect(result.votesPercentage).toBeGreaterThanOrEqual(45);
     expect(result.victory).toBe(true);
   });
 });

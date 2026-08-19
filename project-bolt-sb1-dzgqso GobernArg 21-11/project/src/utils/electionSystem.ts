@@ -29,16 +29,6 @@ const ELECTION_CONSTANTS = {
   }
 };
 
-export function isElectionTurn(gameState: GameState): boolean {
-  return gameState.turn === ELECTION_CONSTANTS.TURNS_PER_YEAR &&
-         gameState.year === ELECTION_CONSTANTS.TOTAL_YEARS;
-}
-
-export function isMidTermElectionTurn(gameState: GameState): boolean {
-  return gameState.turn === ELECTION_CONSTANTS.TURNS_PER_YEAR &&
-         gameState.year === ELECTION_CONSTANTS.TOTAL_YEARS / 2;
-}
-
 export function getAvailableElectionOptions(gameState: GameState): ElectionOption[] {
   const options: ElectionOption[] = [];
   const { position, term } = gameState;
@@ -207,19 +197,4 @@ function calculateActivityImpact(gameState: GameState): number {
 
   // Cap en 100: hacer más de lo esperado no da bonus infinito
   return Math.min(100, (totalActionsTaken / expectedActions) * 100);
-}
-
-export function updateGameStateForElections(gameState: GameState): GameState {
-  // Función legacy: ahora el flujo de elecciones generales se maneja con pendingElection
-  if (!isElectionTurn(gameState)) {
-    return gameState;
-  }
-
-  const electionResults = processElectionResults(gameState);
-
-  return {
-    ...gameState,
-    electionResults,
-    votingIntention: electionResults.votesPercentage
-  };
 }

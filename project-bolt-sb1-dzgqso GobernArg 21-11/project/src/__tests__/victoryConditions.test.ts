@@ -45,4 +45,33 @@ describe('checkAllDefeatConditions', () => {
     expect(result.defeated).toBe(true);
     expect(result.reason).toBe('negative_budget');
   });
+
+  it('impeachment: popularidad < 10 y estabilidad < 20 por 2 turnos causa derrota', () => {
+    const state = baseState({
+      popularity: 9,
+      stability: 19,
+      impeachmentConsecutiveTurns: 2,
+    });
+    const result = checkAllDefeatConditions(state);
+    expect(result.defeated).toBe(true);
+    expect(result.reason).toBe('impeachment');
+  });
+
+  it('golpe institucional: estabilidad < 10 y apoyo legislativo < 25 por 3 turnos causa derrota', () => {
+    const state = baseState({
+      stability: 9,
+      legislativeSupport: 24,
+      coupConsecutiveTurns: 3,
+    });
+    const result = checkAllDefeatConditions(state);
+    expect(result.defeated).toBe(true);
+    expect(result.reason).toBe('institutional_coup');
+  });
+
+  it('hiperinflación: 7 o más emisiones monetarias causa derrota', () => {
+    const state = baseState({ moneyPrintingCount: 7 });
+    const result = checkAllDefeatConditions(state);
+    expect(result.defeated).toBe(true);
+    expect(result.reason).toBe('hyperinflation');
+  });
 });

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, Briefcase, Users, Radio, Info } from 'lucide-react';
+import { Info } from 'lucide-react';
 import { Archetype, Position } from '../types/game';
 import { IMAGES, getPositionBackground } from '../utils/imageAssets';
 import { THUMBNAIL_ARCHETYPES } from '../utils/iconThumbnails';
@@ -43,11 +43,11 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
     onComplete(position, archetype, governorName, avatar);
   };
 
-  const archetypes: { id: Archetype; icon: typeof User; title: string; bonus: string; description: string }[] = [
-    { id: 'politico', icon: User, title: 'Político de Raza', bonus: '+2 acciones por turno', description: 'Experto en acuerdos y manejo institucional.' },
-    { id: 'sindicalista', icon: Users, title: 'Sindicalista', bonus: '+1 acción, apoyo sindical', description: 'Fortaleza en movimientos sociales.' },
-    { id: 'empresario', icon: Briefcase, title: 'Empresario', bonus: '+1 acción, capital inicial', description: 'Visión económica y relación con el sector privado.' },
-    { id: 'comunicador', icon: Radio, title: 'Comunicador', bonus: 'Alta popularidad inicial', description: 'Domina la agenda pública y los medios.' },
+  const archetypes: { id: Archetype; title: string; bonus: string; description: string }[] = [
+    { id: 'politico', title: 'Político de Raza', bonus: '+2 acciones por turno', description: 'Experto en acuerdos y manejo institucional.' },
+    { id: 'sindicalista', title: 'Sindicalista', bonus: '+1 acción, apoyo sindical', description: 'Fortaleza en movimientos sociales.' },
+    { id: 'empresario', title: 'Empresario', bonus: '+1 acción, capital inicial', description: 'Visión económica y relación con el sector privado.' },
+    { id: 'comunicador', title: 'Comunicador', bonus: 'Alta popularidad inicial', description: 'Domina la agenda pública y los medios.' },
   ];
 
   return (
@@ -125,7 +125,6 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
                       alt={arch.title}
                       className="w-16 h-16 rounded-full object-cover bg-white/20 p-1 mb-3"
                     />
-                    <arch.icon className="w-5 h-5 mb-1 opacity-80" />
                     <h3 className="font-bold">{arch.title}</h3>
                     <p className="text-xs opacity-75 mt-1">{arch.bonus}</p>
                     <p className="text-xs opacity-90 mt-2">{arch.description}</p>

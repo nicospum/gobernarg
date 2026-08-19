@@ -250,40 +250,6 @@ export function getDefaultCooldown(action: GameAction): number {
   return 1;
 }
 
-export function isActionAvailable(action: GameAction, gameState: GameState): boolean {
-  // Verificar cooldown (Fase 2)
-  const cooldownRemaining = gameState.actionCooldowns[action.id] || 0;
-  if (cooldownRemaining > 0) return false;
-
-  // Verificar presupuesto mínimo
-  if (gameState.budget < action.requirements.minBudget) return false;
-
-  // Verificar popularidad mínima
-  if (action.requirements.minPopularity && 
-      gameState.popularity < action.requirements.minPopularity) return false;
-
-  // Verificar asesor requerido
-  if (action.requirements.advisorRequired) {
-    const hasRequiredAdvisor = gameState.advisors.some(
-      advisor => advisor.id === action.requirements.advisorRequired && advisor.isActive
-    );
-    if (!hasRequiredAdvisor) return false;
-  }
-
-  // Verificar apoyo de grupos requerido
-  if (action.requirements.groupSupportRequired) {
-    const meetsGroupSupport = action.requirements.groupSupportRequired.every(
-      req => (gameState.groupRelations[req.groupId] || 0) >= req.minSupport
-    );
-    if (!meetsGroupSupport) return false;
-  }
-
-  // Verificar si la acción está desbloqueada
-  if (!(gameState.unlockedActions ?? []).includes(action.id)) return false;
-
-  return true;
-}
-
 export function processPendingEffects(gameState: GameState): GameState {
   const currentTurn = getGlobalTurn(gameState);
 

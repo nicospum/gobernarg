@@ -6,7 +6,6 @@ import {
   CheckCircle,
   XCircle,
   Zap,
-  Calendar,
   TrendingUp,
   DollarSign,
   ScrollText,
@@ -290,84 +289,6 @@ function EfectosDiferidosSection({ gameState }: { gameState: GameState }) {
   );
 }
 
-// ─── Section 3: Próximos Eventos Programados ────────────────────────────
-
-function ProximosEventosSection({ gameState }: { gameState: GameState }) {
-  const events = gameState.scheduledEvents;
-
-  return (
-    <section>
-      <div className="flex items-center gap-2 mb-3">
-        <Calendar size={14} className="text-muted-foreground" />
-        <h3 className="font-display text-xs uppercase tracking-widest text-muted-foreground font-bold">
-          Próximos Eventos
-        </h3>
-        <span className="text-[10px] font-mono text-muted-foreground ml-auto">
-          {events.length}
-        </span>
-      </div>
-
-      {events.length === 0 ? (
-        <p className="text-xs text-muted-foreground/60 py-2">
-          No hay eventos programados.
-        </p>
-      ) : (
-        <div className="space-y-2">
-          {events
-            .sort((a, b) => a.turn - b.turn)
-            .map((se) => {
-              const turnsUntil = Math.max(0, se.turn - gameState.turn);
-              const isImminent = turnsUntil <= 2;
-              const borderCls = isImminent
-                ? 'border-red-400/25 bg-red-400/5'
-                : 'border-border bg-card';
-
-              return (
-                <div key={se.event.id} className={`rounded-lg border p-2.5 ${borderCls}`}>
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <div className="font-display font-semibold text-xs text-foreground leading-tight">
-                        {se.event.title}
-                      </div>
-                      <p className="text-[10px] text-muted-foreground leading-snug mt-0.5 line-clamp-2">
-                        {se.event.description}
-                      </p>
-                    </div>
-                    <div className="flex-shrink-0 text-right">
-                      <div
-                        className={`font-mono text-[11px] font-bold ${isImminent ? 'text-red-400' : 'text-muted-foreground'}`}
-                      >
-                        T{se.turn}
-                      </div>
-                      {turnsUntil > 0 && (
-                        <div className="text-[9px] text-muted-foreground">
-                          en {turnsUntil}t
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  {se.event.severity && (
-                    <span
-                      className={`inline-block text-[9px] uppercase tracking-wide mt-1.5 ${
-                        se.event.severity === 'critical'
-                          ? 'text-red-400'
-                          : se.event.severity === 'high'
-                            ? 'text-amber-400'
-                            : 'text-muted-foreground'
-                      }`}
-                    >
-                      {se.event.severity}
-                    </span>
-                  )}
-                </div>
-              );
-            })}
-        </div>
-      )}
-    </section>
-  );
-}
-
 // ─── Section 4: Historial Reciente ──────────────────────────────────────
 
 function HistorialRecienteSection({ gameState }: { gameState: GameState }) {
@@ -484,6 +405,7 @@ export function ManagementNotebook({ gameState, onClose }: ManagementNotebookPro
           </div>
           <button
             onClick={onClose}
+            aria-label="Cerrar"
             className="text-muted-foreground hover:text-foreground transition-colors text-xl leading-none"
           >
             &times;
@@ -494,7 +416,6 @@ export function ManagementNotebook({ gameState, onClose }: ManagementNotebookPro
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
           <CompromisosSection gameState={gameState} />
           <EfectosDiferidosSection gameState={gameState} />
-          <ProximosEventosSection gameState={gameState} />
           <HistorialRecienteSection gameState={gameState} />
         </div>
       </div>

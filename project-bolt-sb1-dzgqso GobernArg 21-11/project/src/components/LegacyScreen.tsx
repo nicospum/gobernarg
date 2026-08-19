@@ -81,6 +81,8 @@ export function LegacyScreen({ gameState, onRestart }: LegacyScreenProps) {
           <img
             src={isVictory ? IMAGES.ui.shieldEmblemPremium : IMAGES.events.socialProtest}
             alt={isVictory ? 'Victoria' : 'Derrota'}
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover"
           />
           <div

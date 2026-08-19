@@ -84,6 +84,17 @@ export function generateGroupAgendas(state: GameState): GroupAgendaItem[] {
             continue;
           }
 
+          // Verificar que el jugador cumpla los prerrequisitos de la acción
+          // (requiredActions no ejecutadas = penalidad garantizada, skip)
+          if (
+            actionDef.prerequisites?.requiredActions &&
+            !actionDef.prerequisites.requiredActions.every(reqId =>
+              state.completedActions.includes(reqId)
+            )
+          ) {
+            continue;
+          }
+
           // Verificar que no se haya ejecutado en los últimos 3 turnos
           if (recentActionIds.includes(actionId)) continue;
 
@@ -178,18 +189,39 @@ export function resolvePendingNegotiations(state: GameState): GameState {
       let demand: string | null = null;
 
       if (subgroup?.demandActionIds && subgroup.demandActionIds.length > 0) {
-        // Nuevo sistema: elegir de demandActionIds
-        const actionId = subgroup.demandActionIds[
-          Math.floor(Math.random() * subgroup.demandActionIds.length)
-        ];
-        const actionDef = actionDefinitions.find(a => a.id === actionId);
-        if (
-          actionDef &&
-          (!actionDef.availableForPositions ||
-            actionDef.availableForPositions.length === 0 ||
-            actionDef.availableForPositions.includes(state.position))
-        ) {
+        // Nuevo sistema: elegir de demandActionIds verificando disponibilidad
+        const candidateIds = [...subgroup.demandActionIds];
+
+        // Fisher-Yates shuffle para selección aleatoria sin repetición
+        for (let i = candidateIds.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [candidateIds[i], candidateIds[j]] = [candidateIds[j], candidateIds[i]];
+        }
+
+        for (const actionId of candidateIds) {
+          const actionDef = actionDefinitions.find(a => a.id === actionId);
+          if (
+            !actionDef ||
+            (actionDef.availableForPositions &&
+              actionDef.availableForPositions.length > 0 &&
+              !actionDef.availableForPositions.includes(state.position))
+          ) {
+            continue;
+          }
+
+          // Verificar que el jugador cumpla los prerrequisitos de la acción
+          // (requiredActions no ejecutadas = penalidad garantizada, skip)
+          if (
+            actionDef.prerequisites?.requiredActions &&
+            !actionDef.prerequisites.requiredActions.every(reqId =>
+              state.completedActions.includes(reqId)
+            )
+          ) {
+            continue;
+          }
+
           demand = actionId;
+          break;
         }
       }
 

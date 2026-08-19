@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { afterEach, describe, it, expect, vi } from 'vitest';
 import { resolveRandomEvents } from '../engine/eventResolver';
 import { getInitialGameState } from '../engine/gameEngine';
 import { GameState } from '../types/game';
@@ -6,6 +6,10 @@ import { GameState } from '../types/game';
 function makeState(overrides?: Partial<GameState>): GameState {
   return { ...getInitialGameState(), ...overrides };
 }
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 describe('resolveRandomEvents - limitador global', () => {
   it('bloquea eventos si el último fue hace menos de 3 turnos', () => {
@@ -26,10 +30,17 @@ describe('resolveRandomEvents - limitador global', () => {
       randomEventsThisTerm: 1,
     });
 
-    // No podemos garantizar que se dispare (probabilístico),
-    // pero al menos no debe estar bloqueado por cooldown
+    // Fuerza el trigger: con random = 0, cualquier evento elegible con
+    // probabilidad > 0 dispara. Con el estado inicial, student_protests
+    // (prob 0.25, turno 6 dentro de rango, popularidad 50 ≤ 50) es elegible.
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+
     const triggered = resolveRandomEvents(state);
-    expect(Array.isArray(triggered)).toBe(true);
+    expect(triggered.length).toBe(1);
+    // resolveRandomEvents muta el estado pasado: registra el turno global
+    // ((año-1)*4 + turno = 6) y suma 1 al contador del mandato.
+    expect(state.lastRandomEventTurn).toBe(6);
+    expect(state.randomEventsThisTerm).toBe(2);
   });
 
   it('bloquea eventos si ya se alcanzó el máximo por mandato', () => {
@@ -43,15 +54,21 @@ describe('resolveRandomEvents - limitador global', () => {
     expect(triggered.length).toBe(0);
   });
 
-  it('con 0 eventos y sin cooldown, puede intentar disparar (no está bloqueado)', () => {
+  it('con 0 eventos y sin cooldown, dispara si hay un evento elegible', () => {
     const state = makeState({
       turn: 1,
-      lastRandomEventTurn: 0,
+      lastRandomEventTurn: 0, // sin cooldown previo
       randomEventsThisTerm: 0,
     });
 
+    // Con random = 0, el primer evento elegible con probabilidad > 0
+    // se dispara: student_protests es elegible desde el turno 1.
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+
     const triggered = resolveRandomEvents(state);
-    expect(Array.isArray(triggered)).toBe(true);
+    expect(triggered.length).toBe(1);
+    expect(state.lastRandomEventTurn).toBe(1);
+    expect(state.randomEventsThisTerm).toBe(1);
   });
 });
 

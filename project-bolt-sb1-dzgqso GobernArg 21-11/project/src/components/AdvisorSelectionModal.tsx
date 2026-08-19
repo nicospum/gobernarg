@@ -77,7 +77,7 @@ export function AdvisorSelectionModal({ onClose, onHire, maxSelections, gameStat
       <div className="bg-card border border-border rounded-xl w-full max-w-4xl max-h-[85vh] overflow-hidden shadow-2xl">
         <div className="px-5 py-4 border-b border-border flex justify-between items-center">
           <h2 className="font-display text-xl font-bold uppercase tracking-wide text-foreground">Contratar Asesores</h2>
-          <button onClick={onClose} className="p-1 text-muted-foreground hover:text-foreground rounded transition-colors">
+          <button onClick={onClose} aria-label="Cerrar" className="p-1 text-muted-foreground hover:text-foreground rounded transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>

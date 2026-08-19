@@ -87,7 +87,6 @@ export function resolvePendingElection(gameState: GameState, option: ElectionOpt
   state.objectives = getPositionObjectives(state.position);
   state.completedActions = [];
   state.pendingEffects = [];
-  state.scheduledEvents = [];
   state.interactionHistory = {};
   state.concessionsThisTerm = 0;
   state.interactionCountByGroup = {};

@@ -187,23 +187,6 @@ function checkDefeat(state: GameState): GameState {
 }
 
 // ===========================
-// Verificación de elecciones
-// ===========================
-
-function checkElectionOrVictory(state: GameState): GameState {
-  if (state.gameOver) return state;
-
-  // Elección de medio término: consecuencias legislativas ya se procesan en resolveLegislativeConsequences.
-  // Acá solo registramos un mensaje informativo si corresponde.
-  if (state.year === 2 && state.turn === 4 && state.legislativeResults === null) {
-    // La lógica de medio término se dispara desde resolveLegislativeConsequences en el año 2, turno 4.
-    // No se modifica gameOver.
-  }
-
-  return state;
-}
-
-// ===========================
 // Recompensas de objetivos
 // ===========================
 
@@ -541,9 +524,6 @@ export function processEndTurn(gameState: GameState): import('./engineShared').T
 
   // 9.1 Notificaciones de advertencia
   state = addWarningNotifications(state);
-
-  // 9.2 Verificar elecciones de medio término y victoria/derrota general
-  state = checkElectionOrVictory(state);
 
   // 10. Actualizar objetivos y recompensas
   const previouslyCompleted = new Set(state.completedObjectives.map(o => o.id));

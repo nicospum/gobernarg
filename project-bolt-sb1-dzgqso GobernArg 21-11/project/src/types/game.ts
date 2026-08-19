@@ -303,12 +303,6 @@ export interface PendingEffect {
   stabilityChange?: number;   // cambio directo en estabilidad
 }
 
-export interface ScheduledEvent {
-  turn: number;
-  event: GameEvent;
-  effects: PendingEffect[];
-}
-
 // =====================
 // Eventos del juego
 // =====================
@@ -485,7 +479,6 @@ export interface GameState {
   isAdminMode: boolean;
   stability: number;
   pendingEffects: PendingEffect[];
-  scheduledEvents: ScheduledEvent[];
   interestGroups?: InterestGroup[];
   unlockedActions?: string[];
   notifications: Notification[];

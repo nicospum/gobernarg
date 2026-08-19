@@ -17,7 +17,7 @@ export function GameLog({ gameState, onClose }: GameLogProps) {
             <ScrollText className="w-6 h-6 text-primary" />
             Historial de gestión
           </h2>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground text-xl">&times;</button>
+          <button onClick={onClose} aria-label="Cerrar" className="text-muted-foreground hover:text-foreground text-xl">&times;</button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-6">

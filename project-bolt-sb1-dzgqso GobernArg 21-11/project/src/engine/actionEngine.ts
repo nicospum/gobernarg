@@ -61,6 +61,22 @@ export function getAvailableActionsForState(gameState: GameState): GameAction[] 
       }
       if (gameState.budget < action.requirements.minBudget) return false;
       if (action.requirements.minPopularity && gameState.popularity < action.requirements.minPopularity) return false;
+      // Fase 2: filtrar por asesor requerido
+      if (action.requirements.advisorRequired) {
+        const hasRequiredAdvisor = gameState.advisors.some(
+          advisor => advisor.id === action.requirements.advisorRequired && advisor.isActive
+        );
+        if (!hasRequiredAdvisor) return false;
+      }
+      // Fase 2: filtrar por apoyo de grupos requerido
+      if (action.requirements.groupSupportRequired) {
+        const meetsGroupSupport = action.requirements.groupSupportRequired.every(
+          req => (gameState.groupRelations[req.groupId] || 0) >= req.minSupport
+        );
+        if (!meetsGroupSupport) return false;
+      }
+      // Fase 2: filtrar por acciones desbloqueadas
+      if (!(gameState.unlockedActions ?? []).includes(action.id)) return false;
       return true;
     })
     .map(action => {
