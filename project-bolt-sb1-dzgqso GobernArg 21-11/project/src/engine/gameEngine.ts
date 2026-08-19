@@ -18,6 +18,7 @@ import { applyArchetypePassives } from './archetypeEngine';
 import {
   clampValue,
   addNotification,
+  getGlobalTurn,
   POSITION_STARTING_BUDGET,
   ARCHETYPE_STARTING_POPULARITY,
 } from './engineShared';
@@ -263,7 +264,7 @@ export function applyInteraction(
     // reunirse: bono temporal de apoyo + multiplicador en acciones del grupo
     newTemporarySupportBonuses[subgroupId] = {
       bonus: commitment.temporarySupport.bonus,
-      expiresAt: gameState.turn + commitment.temporarySupport.duration,
+      expiresAt: getGlobalTurn(gameState) + commitment.temporarySupport.duration,
       actionMultiplier: commitment.temporarySupport.actionMultiplier,
     };
   }
@@ -272,13 +273,13 @@ export function applyInteraction(
     // negociar: el grupo genera una demanda concreta en N turnos
     const [minDelay, maxDelay] = commitment.demandPending.turnsRange;
     const resolveTurn =
-      gameState.turn + minDelay + Math.floor(Math.random() * (maxDelay - minDelay + 1));
+      getGlobalTurn(gameState) + minDelay + Math.floor(Math.random() * (maxDelay - minDelay + 1));
     newNegotiationPending[subgroupId] = resolveTurn;
   }
 
   if (commitment.demandPause) {
     // conceder: el grupo no genera demandas por N turnos
-    newDemandPausedUntil[subgroupId] = gameState.turn + commitment.demandPause;
+    newDemandPausedUntil[subgroupId] = getGlobalTurn(gameState) + commitment.demandPause;
   }
 
   // Aplicar ganancia de apoyo al grupo objetivo

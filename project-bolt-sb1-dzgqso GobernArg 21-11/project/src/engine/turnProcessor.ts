@@ -15,7 +15,7 @@ import { generateGroupAgendas, updateGroupMoods, applyGroupSatisfactionPenalty, 
 import { applyArchetypePassives } from './archetypeEngine';
 import { getAvailableElectionOptions } from '../utils/electionSystem';
 import { updateObjectives, checkAllDefeatConditions } from '../utils/victoryConditions';
-import { addNotification, clampValue, recalcState, POSITION_INCOME, POSITION_MAINTENANCE, DEFEAT_POP_THRESHOLD } from './engineShared';
+import { addNotification, clampValue, getGlobalTurn, recalcState, POSITION_INCOME, POSITION_MAINTENANCE, DEFEAT_POP_THRESHOLD } from './engineShared';
 import { findActionById } from './actionEngine';
 import { processCalendarEvents, resolveLegislativeConsequences, resolveRandomEvents, applyImmediateEventEffects } from './eventResolver';
 import { finalizePresidentialCareer } from './electionEngine';
@@ -381,8 +381,12 @@ export function processEndTurn(gameState: GameState): import('./engineShared').T
   let effectiveIncome = Math.round(baseIncome * debtMultiplier);
 
   // Sprint 2: Aplicar modificadores de ingreso por efectos diferidos activos
+  // El efecto aplica si ya se alcanzó su activationTurn (turno global) y no expiró
+  const currentGlobalTurn = getGlobalTurn(state);
   const activeIncomeMods = state.pendingEffects
-    .filter(pe => pe.activationTurn >= state.turn && pe.incomeModifier)
+    .filter(pe => pe.incomeModifier &&
+      pe.activationTurn <= currentGlobalTurn &&
+      (pe.duration === undefined || pe.activationTurn + pe.duration > currentGlobalTurn))
     .reduce((sum, pe) => sum + (pe.incomeModifier ?? 0), 0);
   if (activeIncomeMods > 0) {
     effectiveIncome = Math.round(effectiveIncome * (1 + activeIncomeMods));

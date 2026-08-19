@@ -17,6 +17,7 @@ import type { GameState, InteractionType, Subgroup, Notification } from '../type
 import { POLITICAL_CALENDAR } from '../data/calendar';
 import { FIXED_GROUPS, SUBGROUP_TO_GROUP } from '@/lib/groups-mapping';
 import { getValueRisk, riskColor, riskLabel, type Risk } from '@/lib/risk';
+import { getGlobalTurn } from '../engine/engineShared';
 
 interface RightSidebarProps {
   gameState: GameState;
@@ -404,6 +405,9 @@ function GroupsAccordion({
                     const agenda = state.groupAgendas?.find(
                       (a) => a.groupId === subgroup.id && !a.satisfied,
                     );
+                    const agendaTurnsLeft = agenda
+                      ? agenda.deadline - getGlobalTurn(state)
+                      : 0;
                     const interactionLock = state.interactionHistory?.[subgroup.id];
                     const locked = interactionLock && interactionLock.turnsLeft > 0;
 
@@ -440,7 +444,9 @@ function GroupsAccordion({
                                   {agenda.demand}
                                 </div>
                                 <div className="text-[9px] text-orange-400/60 mt-0.5">
-                                  Vence T{agenda.deadline}
+                                  {agendaTurnsLeft >= 0
+                                    ? `Vence en ${agendaTurnsLeft} turno${agendaTurnsLeft !== 1 ? 's' : ''}`
+                                    : 'Vencida'}
                                 </div>
                               </div>
                             </div>

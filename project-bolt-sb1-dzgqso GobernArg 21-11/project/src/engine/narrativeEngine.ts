@@ -1,5 +1,6 @@
 import type { GameState, GameAction } from '../types/game';
 import { interestGroups } from '../data/interestGroups';
+import { getGlobalTurn } from './engineShared';
 
 // ===========================
 // Helpers
@@ -58,13 +59,14 @@ export function generateTurnIntro(state: GameState): string {
   }
 
   // Demandas pendientes
+  const currentGlobalTurn = getGlobalTurn(state);
   const pendingDemands = (state.groupAgendas ?? []).filter(
-    a => !a.satisfied && !a.penaltyApplied && a.deadline <= state.turn + 1
+    a => !a.satisfied && !a.penaltyApplied && a.deadline <= currentGlobalTurn + 1
   );
 
   if (pendingDemands.length > 0) {
-    const urgent = pendingDemands.filter(a => a.deadline <= state.turn);
-    const upcoming = pendingDemands.filter(a => a.deadline === state.turn + 1);
+    const urgent = pendingDemands.filter(a => a.deadline <= currentGlobalTurn);
+    const upcoming = pendingDemands.filter(a => a.deadline === currentGlobalTurn + 1);
 
     const groupNames = [...new Set(pendingDemands.map(a => getSubgroupName(a.groupId)))];
 

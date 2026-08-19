@@ -3,6 +3,7 @@ import { GameState } from '../types/game';
 import { InfoTooltip } from './InfoTooltip';
 import { getValueRisk, riskColor, riskLabel, type Risk } from '@/lib/risk';
 import { fmtBudget } from '@/lib/format';
+import { getGlobalTurn } from '../engine/engineShared';
 
 interface IndicatorsPanelProps {
   gameState: GameState;
@@ -39,7 +40,7 @@ function deriveConflictoSocial(state: GameState): number {
 
   if (state.groupAgendas) {
     const vencidas = state.groupAgendas.filter(
-      (a) => !a.satisfied && a.deadline < state.turn,
+      (a) => !a.satisfied && a.deadline < getGlobalTurn(state),
     ).length;
     conflict += vencidas * 5;
   }

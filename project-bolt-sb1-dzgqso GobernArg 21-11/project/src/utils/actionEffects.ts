@@ -1,5 +1,6 @@
 import { GameState, GameAction, PendingEffect, ActionCategory, AdvisorWithStatus } from '../types/game';
 import { MIDTERM_STRATEGY_EFFECTS } from '../data/midtermStrategies';
+import { getGlobalTurn } from '../engine/engineShared';
 
 interface ActionEffect {
   immediateEffects: {
@@ -42,8 +43,11 @@ export function calculateActionEffects(
 
   // Sprint 2: Verificar reducción de costos por efectos diferidos activos
   let costMultiplier = 1;
+  const currentGlobalTurn = getGlobalTurn(gameState);
   const activeReductions = gameState.pendingEffects
-    .filter(pe => pe.costReductionCategory && pe.activationTurn >= gameState.turn);
+    .filter(pe => pe.costReductionCategory &&
+      pe.activationTurn <= currentGlobalTurn &&
+      (pe.duration === undefined || pe.activationTurn + pe.duration > currentGlobalTurn));
   for (const reduction of activeReductions) {
     if (reduction.costReductionCategory === action.category) {
       costMultiplier = Math.min(costMultiplier, 1 - (reduction.costReductionPercent ?? 0));
@@ -145,8 +149,8 @@ function generatePendingEffects(action: GameAction, gameState: GameState): Pendi
   // Efectos diferidos explícitos
   if (action.futureEffects) {
     effects.push(...action.futureEffects.map(effect => ({
-      id: `${action.id}_${gameState.turn + effect.delay}`,
-      activationTurn: gameState.turn + effect.delay,
+      id: `${action.id}_${getGlobalTurn(gameState) + effect.delay}`,
+      activationTurn: getGlobalTurn(gameState) + effect.delay,
       budgetChange: effect.budgetChange,
       popularityChange: effect.popularityChange,
       groupEffects: effect.groupEffects
@@ -158,8 +162,8 @@ function generatePendingEffects(action: GameAction, gameState: GameState): Pendi
     const delay = 2 + Math.floor(Math.random() * 3); // 2-4 turnos
     const maintenanceCost = Math.round(Math.abs(action.budgetChange) * 0.15); // 15%
     effects.push({
-      id: `${action.id}_maintenance_${gameState.turn + delay}`,
-      activationTurn: gameState.turn + delay,
+      id: `${action.id}_maintenance_${getGlobalTurn(gameState) + delay}`,
+      activationTurn: getGlobalTurn(gameState) + delay,
       budgetChange: -maintenanceCost,
       popularityChange: -2
     });
@@ -169,8 +173,8 @@ function generatePendingEffects(action: GameAction, gameState: GameState): Pendi
   // Activa en 3 turnos, dura 3 turnos
   if (action.category === 'infraestructura') {
     effects.push({
-      id: `${action.id}_infra_income_${gameState.turn + 3}`,
-      activationTurn: gameState.turn + 3,
+      id: `${action.id}_infra_income_${getGlobalTurn(gameState) + 3}`,
+      activationTurn: getGlobalTurn(gameState) + 3,
       incomeModifier: 0.10,
       duration: 3,
       description: `Beneficio económico por obras de infraestructura: +10% ingresos por 3 turnos`
@@ -180,8 +184,8 @@ function generatePendingEffects(action: GameAction, gameState: GameState): Pendi
   // TASK 2A-2: Acciones de diplomacia → posibilidad de eventos futuros
   if (action.category === 'diplomacia') {
     effects.push({
-      id: `${action.id}_diplo_event_${gameState.turn + 2}`,
-      activationTurn: gameState.turn + 2,
+      id: `${action.id}_diplo_event_${getGlobalTurn(gameState) + 2}`,
+      activationTurn: getGlobalTurn(gameState) + 2,
       type: 'diplomatic_event',
       description: `Posibilidad de eventos diplomáticos futuros por ${action.title}`
     });
@@ -191,8 +195,8 @@ function generatePendingEffects(action: GameAction, gameState: GameState): Pendi
   // Activa en turn+1, dura 6 turnos
   if (action.id === 'estudio_factibilidad') {
     effects.push({
-      id: `${action.id}_cost_reduction_${gameState.turn + 1}`,
-      activationTurn: gameState.turn + 1,
+      id: `${action.id}_cost_reduction_${getGlobalTurn(gameState) + 1}`,
+      activationTurn: getGlobalTurn(gameState) + 1,
       costReductionCategory: 'infraestructura',
       costReductionPercent: 0.20,
       duration: 6,
@@ -249,12 +253,29 @@ export function isActionAvailable(action: GameAction, gameState: GameState): boo
 }
 
 export function processPendingEffects(gameState: GameState): GameState {
-  const currentTurn = gameState.turn;
-  const activeEffects = gameState.pendingEffects.filter(
-    effect => effect.activationTurn === currentTurn
-  );
-  
-  if (activeEffects.length === 0) return gameState;
+  const currentTurn = getGlobalTurn(gameState);
+
+  // Un efecto está activo si ya se alcanzó su activationTurn (turno global) y
+  // no expiró (solo los efectos con `duration` expiran; los one-shot no).
+  const isEffectActive = (effect: PendingEffect): boolean =>
+    effect.activationTurn <= currentTurn &&
+    (effect.duration === undefined || effect.activationTurn + effect.duration > currentTurn);
+
+  const activeEffects = gameState.pendingEffects.filter(isEffectActive);
+
+  if (activeEffects.length === 0) {
+    // Limpiar efectos de duración ya expirados aunque no haya efectos que aplicar
+    const hasExpired = gameState.pendingEffects.some(
+      e => e.activationTurn <= currentTurn && !isEffectActive(e)
+    );
+    if (!hasExpired) return gameState;
+    return {
+      ...gameState,
+      pendingEffects: gameState.pendingEffects.filter(
+        e => !isEffectActive(e) || e.duration !== undefined
+      )
+    };
+  }
 
   let updatedState = { ...gameState };
 
@@ -285,9 +306,11 @@ export function processPendingEffects(gameState: GameState): GameState {
     }
   });
 
-  // Remover los efectos procesados
+  // Remover efectos one-shot ya aplicados y efectos de duración expirados.
+  // Los efectos de duración vigentes se conservan: los filtros pasivos de
+  // incomeModifier / costReduction los consumen hasta que expiren.
   updatedState.pendingEffects = updatedState.pendingEffects.filter(
-    effect => effect.activationTurn !== currentTurn
+    e => !isEffectActive(e) || e.duration !== undefined
   );
 
   return updatedState;

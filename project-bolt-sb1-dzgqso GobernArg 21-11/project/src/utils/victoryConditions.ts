@@ -107,7 +107,7 @@ export function updateObjectives(gameState: GameState): GameState {
 
     if (objective.requirements.groupSupport && !completed) {
       const groupProgress = Object.entries(objective.requirements.groupSupport).map(([groupId, required]) => {
-        const currentSupport = (gameState.interestGroups ?? []).find(g => g.id === groupId)?.support || 0;
+        const currentSupport = gameState.groupRelations[groupId] ?? 0;
         return currentSupport >= required;
       });
       completed = groupProgress.every(Boolean);

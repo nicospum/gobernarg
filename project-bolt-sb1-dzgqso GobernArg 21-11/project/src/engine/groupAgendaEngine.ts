@@ -1,5 +1,6 @@
 import { GameState, GroupAgendaItem, GroupMood } from '../types/game';
 import { actionDefinitions } from '../data/actionRegistry';
+import { getGlobalTurn } from './engineShared';
 
 const AGENDA_TEMPLATES: Record<string, string[]> = {
   'empresarios': ['Reforma laboral', 'Simplificación tributaria', 'Incentivos a la inversión'],
@@ -41,16 +42,20 @@ export function generateGroupAgendas(state: GameState): GroupAgendaItem[] {
 
     // Sprint 3: Respetar pausa de demandas
     const pausedUntil = state.demandPausedUntil?.[sg.id] ?? 0;
-    if (state.turn < pausedUntil) continue;
+    if (getGlobalTurn(state) < pausedUntil) continue;
 
     const mood = state.groupMoods.find(m => m.groupId === sg.id);
     const ignoreBonus = (mood?.ignoredTurns ?? 0) * 0.05;
     const prob = Math.min(MAX_PROBABILITY, BASE_PROBABILITY + ignoreBonus);
 
     if (Math.random() < prob) {
-      // Obtener IDs de acciones ejecutadas en los últimos 3 turnos
+      // Obtener IDs de acciones ejecutadas en los últimos 3 turnos (turno global)
+      const currentGlobalTurn = getGlobalTurn(state);
       const recentActionIds = state.turnLog
-        .filter(entry => entry.turn >= state.turn - 3 && entry.turn < state.turn)
+        .filter(entry =>
+          (entry.year - 1) * 4 + entry.turn >= currentGlobalTurn - 3 &&
+          (entry.year - 1) * 4 + entry.turn < currentGlobalTurn
+        )
         .flatMap(entry => entry.actionsTaken);
 
       let demand: string | null = null;
@@ -97,7 +102,7 @@ export function generateGroupAgendas(state: GameState): GroupAgendaItem[] {
           id: `${sg.id}_agenda_${state.year}_${state.turn}`,
           groupId: sg.id,
           demand,
-          deadline: state.turn + deadlineTurns,
+          deadline: getGlobalTurn(state) + deadlineTurns,
           satisfied: false,
           penaltyApplied: false
         });
@@ -128,7 +133,7 @@ export function applyGroupSatisfactionPenalty(state: GameState): GameState {
   const newGroupRelations = { ...state.groupRelations };
   const updatedAgendas = state.groupAgendas.map(agenda => {
     if (agenda.satisfied || agenda.penaltyApplied) return agenda;
-    if (state.turn >= agenda.deadline) {
+    if (getGlobalTurn(state) >= agenda.deadline) {
       // Verificar si el jugador cumplió la demanda (ejecutó la acción)
       const isFulfilled = state.completedActions.includes(agenda.demand);
 
@@ -164,7 +169,7 @@ export function resolvePendingNegotiations(state: GameState): GameState {
   const newNegotiationPending = { ...state.negotiationPending };
 
   for (const [subgroupId, resolveTurn] of Object.entries(state.negotiationPending)) {
-    if (state.turn >= resolveTurn) {
+    if (getGlobalTurn(state) >= resolveTurn) {
       // Buscar el subgroup para usar demandActionIds si existen
       const subgroup = (state.interestGroups ?? [])
         .flatMap(g => g.subgroups)
@@ -201,7 +206,7 @@ export function resolvePendingNegotiations(state: GameState): GameState {
           id: `${subgroupId}_negotiated_${state.year}_${state.turn}`,
           groupId: subgroupId,
           demand,
-          deadline: state.turn + 4,
+          deadline: getGlobalTurn(state) + 4,
           satisfied: false,
           penaltyApplied: false
         });

@@ -1,5 +1,6 @@
 import { TrendingUp, Building2, Shield, Clock } from 'lucide-react';
 import { GameState } from '../types/game';
+import { getGlobalTurn } from '../engine/engineShared';
 
 interface ActiveBenefitsProps {
   gameState: GameState;
@@ -13,9 +14,10 @@ const BENEFIT_ICONS: Record<string, typeof TrendingUp> = {
 };
 
 export function ActiveBenefits({ gameState }: ActiveBenefitsProps) {
+  const currentGlobalTurn = getGlobalTurn(gameState);
   const activeBenefits = gameState.pendingEffects.filter(
-    pe => pe.activationTurn >= gameState.turn &&
-      (pe.incomeModifier || pe.costReductionCategory || (pe.stabilityChange && pe.activationTurn > gameState.turn))
+    pe => pe.activationTurn >= currentGlobalTurn &&
+      (pe.incomeModifier || pe.costReductionCategory || (pe.stabilityChange && pe.activationTurn > currentGlobalTurn))
   );
 
   if (activeBenefits.length === 0) return null;
@@ -28,7 +30,7 @@ export function ActiveBenefits({ gameState }: ActiveBenefitsProps) {
       </h3>
       <div className="space-y-1.5">
         {activeBenefits.map(benefit => {
-          const turnsLeft = benefit.activationTurn - gameState.turn;
+          const turnsLeft = benefit.activationTurn - currentGlobalTurn;
           const Icon = benefit.incomeModifier ? BENEFIT_ICONS.incomeModifier :
                        benefit.costReductionCategory ? BENEFIT_ICONS.costReduction :
                        BENEFIT_ICONS.default;

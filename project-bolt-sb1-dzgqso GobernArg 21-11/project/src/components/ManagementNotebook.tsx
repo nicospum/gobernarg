@@ -15,6 +15,7 @@ import {
 import type { GameState, GroupAgendaItem, PendingEffect } from '../types/game';
 import { actionDefinitions } from '../data/actionRegistry';
 import { FIXED_GROUPS } from '@/lib/groups-mapping';
+import { getGlobalTurn } from '../engine/engineShared';
 
 interface ManagementNotebookProps {
   gameState: GameState;
@@ -102,9 +103,9 @@ function CompromisosSection({ gameState }: { gameState: GameState }) {
         <div className="space-y-2">
           {/* Active/pending first */}
           {[...active, ...completed].map((agenda) => {
-            const status = getAgendaStatus(agenda, gameState.turn);
+            const status = getAgendaStatus(agenda, getGlobalTurn(gameState));
             const st = STATUS_STYLES[status];
-            const turnsLeft = Math.max(0, agenda.deadline - gameState.turn);
+            const turnsLeft = Math.max(0, agenda.deadline - getGlobalTurn(gameState));
             const penalty = computePenalty(agenda, gameState);
 
             return (
@@ -192,11 +193,12 @@ function describeDeferredEffect(pe: PendingEffect): string {
 
 function EfectosDiferidosSection({ gameState }: { gameState: GameState }) {
   const effects = gameState.pendingEffects;
+  const currentGlobalTurn = getGlobalTurn(gameState);
 
   // Separate: effects that haven't started yet (activationTurn > currentTurn)
   // and effects that are currently active and ending soon
-  const pending = effects.filter((pe) => pe.activationTurn > gameState.turn);
-  const active = effects.filter((pe) => pe.activationTurn <= gameState.turn);
+  const pending = effects.filter((pe) => pe.activationTurn > currentGlobalTurn);
+  const active = effects.filter((pe) => pe.activationTurn <= currentGlobalTurn);
 
   return (
     <section>
@@ -222,7 +224,7 @@ function EfectosDiferidosSection({ gameState }: { gameState: GameState }) {
                 Próximos a activarse
               </h4>
               {pending.map((pe) => {
-                const turnsUntil = pe.activationTurn - gameState.turn;
+                const turnsUntil = pe.activationTurn - currentGlobalTurn;
                 return (
                   <div
                     key={pe.id}

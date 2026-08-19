@@ -7,7 +7,7 @@ import type { GameEvent } from '../systems/events/types';
 import { getAllEvents } from '../data/events';
 import { getCalendarEventForTurn } from '../data/calendar';
 import { oppositionEvents, overconfidenceEvents } from '../data/events/legislativeConsequences';
-import { addNotification, filterAvailableMidtermStrategies, recalcState } from './engineShared';
+import { addNotification, filterAvailableMidtermStrategies, getGlobalTurn, recalcState } from './engineShared';
 
 // ===========================
 // Calendario político
@@ -226,7 +226,7 @@ export function resolveRandomEvents(state: GameState): GameEvent[] {
   const GLOBAL_COOLDOWN_TURNS = 3;      // turnos sin eventos tras uno disparado
   const MAX_RANDOM_EVENTS_PER_TERM = 5; // máx eventos aleatorios por mandato
 
-  if (state.lastRandomEventTurn > 0 && state.turn - state.lastRandomEventTurn < GLOBAL_COOLDOWN_TURNS) {
+  if (state.lastRandomEventTurn > 0 && getGlobalTurn(state) - state.lastRandomEventTurn < GLOBAL_COOLDOWN_TURNS) {
     return triggered; // en cooldown global
   }
   if (state.randomEventsThisTerm >= MAX_RANDOM_EVENTS_PER_TERM) {
@@ -243,7 +243,7 @@ export function resolveRandomEvents(state: GameState): GameEvent[] {
       const prob = event.conditions?.probability ?? event.probability ?? 0;
       if (roll < prob) {
         triggered.push(event);
-        state.lastRandomEventTurn = state.turn;
+        state.lastRandomEventTurn = getGlobalTurn(state);
         state.randomEventsThisTerm += 1;
         return triggered; // solo 1 evento por turno
       }
@@ -258,7 +258,7 @@ export function resolveRandomEvents(state: GameState): GameEvent[] {
       const prob = event.conditions?.probability ?? event.probability ?? 0;
       if (roll < prob) {
         triggered.push(event);
-        state.lastRandomEventTurn = state.turn;
+        state.lastRandomEventTurn = getGlobalTurn(state);
         state.randomEventsThisTerm += 1;
         return triggered; // solo 1 evento por turno
       }
@@ -326,7 +326,7 @@ export function applyEventChoice(gameState: GameState, event: GameEvent, choiceI
     choice.effects.delayed.forEach(effect => {
       state.pendingEffects.push({
         id: `${event.id}_${choiceId}_${state.turn}_${Math.random().toString(36).slice(2, 8)}`,
-        activationTurn: state.turn + (effect.turnsUntil || 1),
+        activationTurn: getGlobalTurn(state) + (effect.turnsUntil || 1),
         target: effect.target,
         value: effect.value,
         description: `Efecto diferido de ${event.title}`
@@ -345,8 +345,8 @@ function applyEventEffect(state: GameState, effect: { target?: string; value?: n
     state.budget += effect.value;
   } else if (effect.target === 'stability') {
     state.stability = Math.min(100, Math.max(0, state.stability + effect.value));
-  } else if (effect.target.startsWith('group_')) {
-    const groupId = effect.target.replace('group_', '');
+  } else {
+    const groupId = effect.target.startsWith('group_') ? effect.target.slice(6) : effect.target;
     state.groupRelations[groupId] = Math.min(100, Math.max(0,
       (state.groupRelations[groupId] || 0) + effect.value
     ));

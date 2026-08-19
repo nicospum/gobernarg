@@ -41,6 +41,7 @@ import {
   satisfyGroupDemand,
   triggerMidtermStrategy
 } from './engine/gameEngine';
+import { getGlobalTurn } from './engine/engineShared';
 
 function App() {
   const [gameState, setGameState] = useState(() => getInitialGameState());
@@ -204,14 +205,14 @@ function App() {
             {gameState.pendingEffects.length > 0 && (
               <PendingEffectsPanel
                 effects={gameState.pendingEffects}
-                currentTurn={gameState.turn}
+                currentTurn={getGlobalTurn(gameState)}
               />
             )}
 
             {gameState.pendingEffects.length > 0 && (
               <InformesPanel
                 effects={gameState.pendingEffects}
-                currentTurn={gameState.turn}
+                currentTurn={getGlobalTurn(gameState)}
               />
             )}
 

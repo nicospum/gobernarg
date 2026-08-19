@@ -7,6 +7,7 @@ import { THUMBNAIL_GROUPS } from '../utils/iconThumbnails';
 import { SupportBar } from './SupportBar';
 import { SubgroupMoodBadge } from './SubgroupMoodBadge';
 import { AgendaItem } from './AgendaItem';
+import { getGlobalTurn } from '../engine/engineShared';
 
 interface InterestGroupsPanelProps {
   gameState: GameState;
@@ -136,7 +137,7 @@ export function InterestGroupsPanel({ gameState, onInteraction, onSatisfyDemand 
                             <AgendaItem
                               key={agenda.id}
                               agenda={agenda}
-                              turnsLeft={agenda.deadline - gameState.turn}
+                              turnsLeft={agenda.deadline - getGlobalTurn(gameState)}
                               onSatisfy={onSatisfyDemand}
                             />
                           ))}
