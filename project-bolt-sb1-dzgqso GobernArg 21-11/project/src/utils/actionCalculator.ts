@@ -12,9 +12,13 @@ export function calculateAvailableActions(gameState: GameState): number {
   // Archetype bonus
   if (gameState.archetype === 'politico') {
     baseActions += 1;
-  } else if (gameState.archetype === 'empresario' || gameState.archetype === 'sindicalista') {
+  } else if (gameState.archetype === 'empresario') {
     baseActions += 1;
   }
+
+  // Pasiva de arquetipo: acciones base extra (applyArchetypePassives acumula
+  // passive.extraActions en _archetypeExtraActions; ej. sindicalista +1).
+  baseActions += gameState._archetypeExtraActions ?? 0;
 
   // Advisor bonus
   const advisorBonus = gameState.advisors

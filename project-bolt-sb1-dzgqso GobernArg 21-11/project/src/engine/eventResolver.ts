@@ -8,6 +8,7 @@ import { getAllEvents } from '../data/events';
 import { getCalendarEventForTurn } from '../data/calendar';
 import { oppositionEvents, overconfidenceEvents } from '../data/events/legislativeConsequences';
 import { addNotification, filterAvailableMidtermStrategies, getGlobalTurn, recalcState } from './engineShared';
+import { getDifficultyModifiers } from './difficultyEngine';
 
 // ===========================
 // Calendario político
@@ -226,6 +227,21 @@ export function resolveRandomEvents(state: GameState): GameEvent[] {
   const GLOBAL_COOLDOWN_TURNS = 3;      // turnos sin eventos tras uno disparado
   const MAX_RANDOM_EVENTS_PER_TERM = 5; // máx eventos aleatorios por mandato
 
+  const allEvents = getAllEvents();
+
+  // ============================================================
+  // Eventos contextuales (triggered)
+  // Probabilidad 1: se disparan si sus condiciones se cumplen.
+  // No están limitados por el cooldown global ni por el máximo
+  // por mandato (ver nota de diseño arriba).
+  // ============================================================
+  for (const event of allEvents) {
+    if (event.type !== 'triggered') continue;
+    if (checkEventConditions(event, state)) {
+      triggered.push(event);
+    }
+  }
+
   if (state.lastRandomEventTurn > 0 && getGlobalTurn(state) - state.lastRandomEventTurn < GLOBAL_COOLDOWN_TURNS) {
     return triggered; // en cooldown global
   }
@@ -233,14 +249,14 @@ export function resolveRandomEvents(state: GameState): GameEvent[] {
     return triggered; // límite por mandato alcanzado
   }
 
-  const allEvents = getAllEvents();
-
   // Crisis primero
   for (const event of allEvents) {
     if (event.type !== 'crisis') continue;
     if (checkEventConditions(event, state)) {
       const roll = Math.random();
-      const prob = event.conditions?.probability ?? event.probability ?? 0;
+      const baseProb = event.conditions?.probability ?? event.probability ?? 0;
+      // Multiplicador de dificultad: modula la probabilidad de las crisis
+      const prob = baseProb * getDifficultyModifiers(state.difficulty).crisisProbabilityMultiplier;
       if (roll < prob) {
         triggered.push(event);
         state.lastRandomEventTurn = getGlobalTurn(state);
@@ -339,12 +355,20 @@ export function applyEventChoice(gameState: GameState, event: GameEvent, choiceI
 
 function applyEventEffect(state: GameState, effect: { target?: string; value?: number }): void {
   if (!effect.target || effect.value === undefined) return;
+
+  // Resiliencia de arquetipo: reduce los efectos negativos sobre
+  // popularidad/estabilidad según _archetypeEventResilience.
+  let value = effect.value;
+  if ((effect.target === 'popularity' || effect.target === 'stability') && value < 0) {
+    value = value * (1 - (state._archetypeEventResilience ?? 0));
+  }
+
   if (effect.target === 'popularity') {
-    state.popularity = Math.min(100, Math.max(0, state.popularity + effect.value));
+    state.popularity = Math.min(100, Math.max(0, state.popularity + value));
   } else if (effect.target === 'budget') {
     state.budget += effect.value;
   } else if (effect.target === 'stability') {
-    state.stability = Math.min(100, Math.max(0, state.stability + effect.value));
+    state.stability = Math.min(100, Math.max(0, state.stability + value));
   } else {
     const groupId = effect.target.startsWith('group_') ? effect.target.slice(6) : effect.target;
     state.groupRelations[groupId] = Math.min(100, Math.max(0,

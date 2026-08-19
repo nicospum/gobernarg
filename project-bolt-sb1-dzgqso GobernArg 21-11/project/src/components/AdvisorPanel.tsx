@@ -42,7 +42,7 @@ export function AdvisorPanel({ gameState, onHireAdvisor, onDismissAdvisor }: Adv
           {!gameState.advisorActionUsed && gameState.advisors.length > 0 && (
             <button
               onClick={() => setShowDismissModal(true)}
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+              className="bg-destructive hover:bg-destructive/90 text-destructive-foreground px-4 py-2 rounded-lg flex items-center gap-2"
             >
               <UserMinus className="w-5 h-5" />
               <span>Despedir Asesor</span>
@@ -51,7 +51,7 @@ export function AdvisorPanel({ gameState, onHireAdvisor, onDismissAdvisor }: Adv
           {!gameState.advisorActionUsed && gameState.advisors.length < 2 && (
             <button
               onClick={() => setShowHireModal(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg flex items-center gap-2"
             >
               <UserPlus className="w-5 h-5" />
               <span>Contratar Asesor{maxAdvisorsToHire > 1 ? 'es' : ''}</span>
@@ -62,7 +62,7 @@ export function AdvisorPanel({ gameState, onHireAdvisor, onDismissAdvisor }: Adv
 
       <div className="space-y-4">
         {gameState.advisors.length === 0 ? (
-          <p className="text-gray-500 text-center py-8">
+          <p className="text-muted-foreground text-center py-8">
             No hay asesores contratados. ¡Contrata hasta 2 asesores para mejorar tu gobierno!
           </p>
         ) : (
@@ -72,8 +72,8 @@ export function AdvisorPanel({ gameState, onHireAdvisor, onDismissAdvisor }: Adv
             return (
               <div
                 key={advisor.id}
-                className={`p-4 border rounded-lg ${
-                  advisor.isActive ? 'bg-blue-50' : 'bg-gray-50'
+                className={`p-4 border border-border rounded-lg ${
+                  advisor.isActive ? 'bg-primary/10' : 'bg-muted'
                 }`}
               >
                 <div className="flex justify-between items-start gap-3">
@@ -81,7 +81,7 @@ export function AdvisorPanel({ gameState, onHireAdvisor, onDismissAdvisor }: Adv
                     <img
                       src={getAdvisorPortrait(advisor.specialty)}
                       alt={advisor.name}
-                      className="w-14 h-14 rounded-lg object-cover bg-white flex-shrink-0"
+                      className="w-14 h-14 rounded-lg object-cover bg-muted flex-shrink-0"
                     />
                     <div>
                       <div className="flex items-center gap-2">
@@ -91,8 +91,8 @@ export function AdvisorPanel({ gameState, onHireAdvisor, onDismissAdvisor }: Adv
                           <span className="text-sm font-medium">Nivel {advisor.level}</span>
                         </div>
                       </div>
-                      <p className="text-sm text-gray-600">{advisor.specialty}</p>
-                      <p className="text-sm text-gray-500 mt-1">{advisor.description}</p>
+                      <p className="text-sm text-muted-foreground">{advisor.specialty}</p>
+                      <p className="text-sm text-muted-foreground mt-1">{advisor.description}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 text-yellow-500 flex-shrink-0">
@@ -101,14 +101,14 @@ export function AdvisorPanel({ gameState, onHireAdvisor, onDismissAdvisor }: Adv
                   </div>
                 </div>
                 <div className="mt-2 text-sm">
-                  <div className="flex items-center gap-1 text-green-600">
+                  <div className="flex items-center gap-1 text-emerald-400">
                     <span>Popularidad</span>
                     {advisor.isActive && popularityIndicators.map((indicator, index) => (
                       <span key={index}>{indicator}</span>
                     ))}
                   </div>
                   <p>Acciones extra: {advisor.isActive ? `+${advisor.bonusActions}` : '0'}</p>
-                  <p className={advisor.isActive ? 'text-green-600' : 'text-gray-600'}>
+                  <p className={advisor.isActive ? 'text-emerald-400' : 'text-muted-foreground'}>
                     Estado: {advisor.isActive ? 'Activo' : `Inactivo por ${advisor.turnsInactive} turnos más`}
                   </p>
                   {advisor.isActive && (

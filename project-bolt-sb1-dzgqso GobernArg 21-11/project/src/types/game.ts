@@ -530,4 +530,5 @@ export interface GameState {
   _archetypeElectionRetention?: number;
   _archetypeEventResilience?: number;
   _archetypeFreeInteractions?: string[];
+  _archetypeExtraActions?: number;
 }

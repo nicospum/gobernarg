@@ -12,10 +12,10 @@ export function NotificationCenter({ gameState, onMarkRead, onDismiss }: Notific
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-4">
+    <div className="bg-card rounded-lg shadow-lg p-4">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-bold flex items-center gap-2">
-          <Bell className="w-6 h-6 text-blue-600" />
+          <Bell className="w-6 h-6 text-primary" />
           Notificaciones
           {unreadCount > 0 && (
             <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
@@ -26,7 +26,7 @@ export function NotificationCenter({ gameState, onMarkRead, onDismiss }: Notific
         {notifications.length > 0 && (
           <button
             onClick={onMarkRead}
-            className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+            className="text-sm text-primary hover:text-primary/80 flex items-center gap-1"
           >
             <Check className="w-4 h-4" />
             Marcar leídas
@@ -36,14 +36,14 @@ export function NotificationCenter({ gameState, onMarkRead, onDismiss }: Notific
 
       <div className="space-y-2 max-h-[400px] overflow-y-auto">
         {notifications.length === 0 && (
-          <p className="text-gray-500 text-sm text-center py-4">No hay notificaciones aún.</p>
+          <p className="text-muted-foreground text-sm text-center py-4">No hay notificaciones aún.</p>
         )}
 
         {notifications.map(notification => (
           <div
             key={notification.id}
             className={`p-3 rounded-lg border flex gap-3 transition-opacity ${
-              notification.read ? 'opacity-70 bg-gray-50 border-gray-200' : 'bg-white border-gray-300'
+              notification.read ? 'opacity-70 bg-muted border-border' : 'bg-card border-border'
             } ${getImportanceBorder(notification.importance)}`}
           >
             <div className="flex-shrink-0 mt-0.5">
@@ -56,14 +56,14 @@ export function NotificationCenter({ gameState, onMarkRead, onDismiss }: Notific
                 </p>
                 <button
                   onClick={() => onDismiss(notification.id)}
-                  className="text-gray-400 hover:text-gray-600 flex-shrink-0"
+                  className="text-muted-foreground hover:text-foreground flex-shrink-0"
                   aria-label="Descartar"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-sm text-gray-600 mt-0.5">{notification.message}</p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-sm text-muted-foreground mt-0.5">{notification.message}</p>
+              <p className="text-xs text-muted-foreground mt-1">
                 Año {gameState.year} · Trimestre {gameState.turn}
               </p>
             </div>
@@ -77,17 +77,17 @@ export function NotificationCenter({ gameState, onMarkRead, onDismiss }: Notific
 function getIcon(importance: NotificationImportance) {
   switch (importance) {
     case 'critical':
-      return <AlertTriangle className="w-5 h-5 text-red-600" />;
+      return <AlertTriangle className="w-5 h-5 text-red-400" />;
     case 'high':
-      return <AlertCircle className="w-5 h-5 text-orange-600" />;
+      return <AlertCircle className="w-5 h-5 text-orange-400" />;
     case 'medium':
-      return <Info className="w-5 h-5 text-blue-600" />;
+      return <Info className="w-5 h-5 text-sky-400" />;
     case 'low':
-      return <Info className="w-5 h-5 text-gray-500" />;
+      return <Info className="w-5 h-5 text-muted-foreground" />;
     case 'success':
-      return <Trophy className="w-5 h-5 text-green-600" />;
+      return <Trophy className="w-5 h-5 text-emerald-400" />;
     default:
-      return <Info className="w-5 h-5 text-gray-500" />;
+      return <Info className="w-5 h-5 text-muted-foreground" />;
   }
 }
 
@@ -102,21 +102,21 @@ function getImportanceBorder(importance: NotificationImportance): string {
     case 'success':
       return 'border-l-4 border-l-green-500';
     default:
-      return 'border-l-4 border-l-gray-300';
+      return 'border-l-4 border-l-border';
   }
 }
 
 function getTitleColor(importance: NotificationImportance): string {
   switch (importance) {
     case 'critical':
-      return 'text-red-700';
+      return 'text-red-400';
     case 'high':
-      return 'text-orange-700';
+      return 'text-orange-400';
     case 'medium':
-      return 'text-blue-700';
+      return 'text-sky-400';
     case 'success':
-      return 'text-green-700';
+      return 'text-emerald-400';
     default:
-      return 'text-gray-700';
+      return 'text-muted-foreground';
   }
 }

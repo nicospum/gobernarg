@@ -23,8 +23,8 @@ export function ActiveBenefits({ gameState }: ActiveBenefitsProps) {
   if (activeBenefits.length === 0) return null;
 
   return (
-    <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
-      <h3 className="text-sm font-semibold text-green-800 mb-2 flex items-center gap-1">
+    <div className="bg-emerald-400/10 border border-emerald-400/20 rounded-lg p-3 mb-4">
+      <h3 className="text-sm font-semibold text-emerald-300 mb-2 flex items-center gap-1">
         <TrendingUp className="w-4 h-4" />
         Beneficios activos
       </h3>
@@ -47,12 +47,12 @@ export function ActiveBenefits({ gameState }: ActiveBenefitsProps) {
           }
 
           return (
-            <div key={benefit.id} className="flex items-center justify-between text-xs text-green-700">
+            <div key={benefit.id} className="flex items-center justify-between text-xs text-emerald-300">
               <span className="flex items-center gap-1">
                 <Icon className="w-3 h-3" />
                 {label}
               </span>
-              <span className="text-green-600 font-medium">{turnsLeft}t</span>
+              <span className="text-emerald-400 font-medium">{turnsLeft}t</span>
             </div>
           );
         })}

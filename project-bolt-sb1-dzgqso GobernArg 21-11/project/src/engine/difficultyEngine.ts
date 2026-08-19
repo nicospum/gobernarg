@@ -1,5 +1,17 @@
 import { Difficulty } from '../types/game';
 
+/**
+ * Modificadores de dificultad por nivel.
+ *
+ * Consumo actual de cada modificador:
+ * - popularityDecayMultiplier      → turnProcessor.ts (desgaste natural de popularidad)
+ * - incomeMultiplier               → turnProcessor.ts (ingreso efectivo por turno)
+ * - crisisProbabilityMultiplier    → eventResolver.ts (probabilidad de eventos 'crisis')
+ * - loansAvailable                 → actionEngine.ts (disponibilidad de acciones isLoan)
+ * - baseActionsModifier            → sin consumir (pendiente: puntos de acción base)
+ * - ironman                        → sin consumir (pendiente: modo ironman)
+ */
+
 interface DifficultyModifiers {
   popularityDecayMultiplier: number;
   crisisProbabilityMultiplier: number;

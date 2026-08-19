@@ -392,7 +392,7 @@ export function useSpecialAbility(state: GameState, abilityId: string): GameStat
   if (state.actions < actionCost) return state;
   if (ability.cost.budget && state.budget < ability.cost.budget) return state;
 
-  const newState = { ...state };
+  const newState = { ...state, groupRelations: { ...state.groupRelations } };
 
   if (ability.effects.popularityChange) {
     newState.popularity = clampValue(newState.popularity + ability.effects.popularityChange);

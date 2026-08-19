@@ -54,13 +54,25 @@ export function calculateActionEffects(
     }
   }
 
+  // Sprint 3: Multiplicador por bonos temporales de reunión activos.
+  // Si la acción afecta a un grupo con el que el jugador se reunió recientemente,
+  // sus efectos (popularidad y apoyo del grupo) se multiplican por actionMultiplier.
+  const groupEffects = calculateGroupEffects(action, gameState);
+  const reunionMultiplier = calculateReunionMultiplier(gameState, groupEffects);
+
   const immediateEffects = {
-    popularityChange: effectivePopularityChange * archetypeMultiplier * advisorMultiplier * strategyMultiplier * POPULARITY_GLOBAL_FACTOR * diminishingFactor,
+    popularityChange: effectivePopularityChange * archetypeMultiplier * advisorMultiplier * strategyMultiplier * reunionMultiplier * POPULARITY_GLOBAL_FACTOR * diminishingFactor,
     budgetChange: action.budgetChange * diminishingFactor * costMultiplier,
     stabilityChange: (action.multiEffects?.stabilityChange ?? 0) * diminishingFactor,
     legitimacyChange: (action.multiEffects?.legitimacyChange ?? 0) * diminishingFactor,
     votingIntentionChange: (action.multiEffects?.votingIntentionChange ?? 0) * diminishingFactor,
-    groupEffects: calculateGroupEffects(action, gameState)
+    groupEffects: groupEffects.map(groupEffect => {
+      const bonus = (gameState.temporarySupportBonuses ?? {})[groupEffect.groupId];
+      if (bonus && bonus.expiresAt > currentGlobalTurn && bonus.actionMultiplier) {
+        return { ...groupEffect, supportChange: groupEffect.supportChange * bonus.actionMultiplier };
+      }
+      return groupEffect;
+    })
   };
 
   // Efectos pendientes
@@ -141,6 +153,26 @@ function calculateGroupEffects(action: GameAction, gameState: GameState) {
   });
 
   return effects;
+}
+
+/**
+ * Multiplicador por bonos temporales de reunión activos sobre los grupos que
+ * afecta la acción. Los bonos se escriben en applyInteraction (gameEngine) al
+ * reunirse con un grupo y expiran en expiresAt (turno global).
+ */
+function calculateReunionMultiplier(
+  gameState: GameState,
+  groupEffects: { groupId: string; supportChange: number }[]
+): number {
+  const currentGlobalTurn = getGlobalTurn(gameState);
+  let multiplier = 1;
+  for (const groupEffect of groupEffects) {
+    const bonus = (gameState.temporarySupportBonuses ?? {})[groupEffect.groupId];
+    if (bonus && bonus.expiresAt > currentGlobalTurn && bonus.actionMultiplier) {
+      multiplier *= bonus.actionMultiplier;
+    }
+  }
+  return multiplier;
 }
 
 function generatePendingEffects(action: GameAction, gameState: GameState): PendingEffect[] {

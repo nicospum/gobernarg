@@ -120,7 +120,7 @@ export function calculateVotingIntention(gameState: GameState): number {
   const stabilityBonus = calculateStabilityBonus(gameState);
   const activityImpact = calculateActivityImpact(gameState);
 
-  const votingIntention = (
+  let votingIntention = (
     (popularityImpact * ELECTION_CONSTANTS.WEIGHTS.POPULARITY) +
     (budgetImpact * ELECTION_CONSTANTS.WEIGHTS.BUDGET) +
     (groupsSupport * ELECTION_CONSTANTS.WEIGHTS.GROUPS_SUPPORT) +
@@ -128,6 +128,13 @@ export function calculateVotingIntention(gameState: GameState): number {
     (stabilityBonus * ELECTION_CONSTANTS.WEIGHTS.STABILITY) +
     (activityImpact * ELECTION_CONSTANTS.WEIGHTS.ACTIVITY)
   );
+
+  // Pasiva de arquetipo: retención de voto (ej. político +10%).
+  // Retiene un porcentaje del margen restante hasta 100.
+  const retention = gameState._archetypeElectionRetention ?? 0;
+  if (retention > 0) {
+    votingIntention += retention * (100 - votingIntention);
+  }
 
   return Math.min(100, Math.max(0, votingIntention));
 }

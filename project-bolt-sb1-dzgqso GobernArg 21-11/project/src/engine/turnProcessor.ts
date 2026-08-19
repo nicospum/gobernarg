@@ -271,6 +271,14 @@ export function processEndTurn(gameState: GameState): import('./engineShared').T
     groupRelations: { ...gameState.groupRelations },
     groupAgendas: gameState.groupAgendas.map(a => ({ ...a })),
     groupMoods: gameState.groupMoods.map(m => ({ ...m })),
+    pendingEffects: [...gameState.pendingEffects],
+    completedActions: [...gameState.completedActions],
+    turnLog: [...gameState.turnLog],
+    historicalPopularity: [...gameState.historicalPopularity],
+    historicalBudget: [...gameState.historicalBudget],
+    actionUsageCount: { ...gameState.actionUsageCount },
+    actionCooldowns: { ...gameState.actionCooldowns },
+    notifications: [...gameState.notifications],
   };
   const events: string[] = [];
   const narrative = generateTurnIntro(state);
@@ -395,6 +403,10 @@ export function processEndTurn(gameState: GameState): import('./engineShared').T
   // Aplicar bonus de income por pasiva de arquetipo
   const archetypeIncomeMultiplier = 1 + (state._archetypeIncomeBonus ?? 0);
   effectiveIncome = Math.round(effectiveIncome * archetypeIncomeMultiplier);
+
+  // Fase 4: Modificador de ingreso por dificultad
+  const difficultyIncomeMods = getDifficultyModifiers(state.difficulty);
+  effectiveIncome = Math.round(effectiveIncome * difficultyIncomeMods.incomeMultiplier);
 
   const netIncome = effectiveIncome - maintenance;
   state.budget += netIncome;

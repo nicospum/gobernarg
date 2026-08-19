@@ -10,18 +10,29 @@ function recordElectionOutcome(
   votesPercentage: number,
   victory: boolean
 ): GameState {
-  const lastMilestone = state.careerHistory[state.careerHistory.length - 1];
+  const lastIndex = state.careerHistory.length - 1;
+  const lastMilestone = state.careerHistory[lastIndex];
   if (lastMilestone && lastMilestone.position === state.position && lastMilestone.term === state.term) {
-    lastMilestone.endYear = state.year;
-    lastMilestone.result = victory ? 'victory' : 'defeat';
-    lastMilestone.type = state.term === 1 ? 'initial' : option === 'reelection' ? 'reelection' : 'promotion';
-    lastMilestone.votesPercentage = votesPercentage;
+    state.careerHistory = state.careerHistory.map((m, i) =>
+      i === lastIndex
+        ? {
+            ...m,
+            endYear: state.year,
+            result: victory ? 'victory' : 'defeat',
+            type: state.term === 1 ? 'initial' : option === 'reelection' ? 'reelection' : 'promotion',
+            votesPercentage,
+          }
+        : m
+    );
   }
   return state;
 }
 
 export function resolvePendingElection(gameState: GameState, option: ElectionOption): GameState {
-  let state: GameState = { ...gameState };
+  let state: GameState = {
+    ...gameState,
+    careerHistory: gameState.careerHistory.map(m => ({ ...m })),
+  };
   const results = processElectionResultsForOption(state, option);
   state.electionResults = results;
   state.votingIntention = results.votesPercentage;

@@ -15,6 +15,7 @@ export function applyArchetypePassives(state: GameState): GameState {
   updated._archetypeElectionRetention = 0;
   updated._archetypeEventResilience = 0;
   updated._archetypeFreeInteractions = [];
+  updated._archetypeExtraActions = 0;
 
   // Acumuladores de shift de ejes ideológicos
   let radicalConciliadorShift = 0;
@@ -27,6 +28,7 @@ export function applyArchetypePassives(state: GameState): GameState {
     }
 
     if (passive.extraActions) {
+      updated._archetypeExtraActions = (updated._archetypeExtraActions ?? 0) + passive.extraActions;
       updated.baseActions = (updated.baseActions || 5) + passive.extraActions;
       updated.actions = updated.baseActions;
     }
@@ -72,4 +74,16 @@ export function applyArchetypePassives(state: GameState): GameState {
 
 function clampAxis(value: number): number {
   return Math.min(100, Math.max(-100, value));
+}
+
+/**
+ * Préstamos máximos permitidos: 3 base + préstamos extra por pasiva de arquetipo
+ * (empresario "Red de contactos": +1, máx 4).
+ *
+ * TODO: el límite se aplica hoy con `Math.min(3, ...)` en turnProcessor.ts (y se
+ * inicializa en gameEngine.ts), archivos fuera del alcance del task de pasivas.
+ * Al integrar la pasiva, reemplazar el literal 3 por getMaxLoans(state).
+ */
+export function getMaxLoans(state: GameState): number {
+  return 3 + (state._archetypeExtraLoans ?? 0);
 }

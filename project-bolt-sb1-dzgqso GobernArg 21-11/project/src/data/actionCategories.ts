@@ -445,6 +445,49 @@ export const actionCategories: ActionCategoryData[] = [
           budgetChange: -15,
           popularityChange: 0
         }]
+      },
+      {
+        id: 'plan_hidrico',
+        title: 'Plan Hídrico',
+        description: 'Obras de irrigación, canales y gestión del agua',
+        icon: Droplet,
+        popularityChange: 14,
+        budgetChange: -450,
+        category: 'infraestructura',
+        requirements: { minBudget: 450 },
+        futureEffects: [
+          { delay: 3, budgetChange: -30, popularityChange: 4 },
+          { delay: 5, budgetChange: -20, popularityChange: 3 }
+        ]
+      },
+      {
+        id: 'mantenimiento_urbano',
+        title: 'Mantenimiento Urbano',
+        description: 'Reparación y mantenimiento de espacios públicos y edificios municipales',
+        icon: Construction,
+        popularityChange: 10,
+        budgetChange: -250,
+        category: 'infraestructura',
+        requirements: { minBudget: 250 },
+        futureEffects: [
+          { delay: 2, budgetChange: -25, popularityChange: 2 },
+          { delay: 4, budgetChange: -20, popularityChange: 3 }
+        ]
+      },
+      {
+        id: 'plan_conectividad',
+        title: 'Plan de Conectividad',
+        description: 'Despliegue de fibra óptica y redes de internet en zonas sin cobertura',
+        icon: Wifi,
+        popularityChange: 13,
+        budgetChange: -350,
+        category: 'infraestructura',
+        requirements: { minBudget: 350 },
+        availableForPositions: ['gobernador', 'presidente'],
+        futureEffects: [
+          { delay: 3, budgetChange: -30, popularityChange: 3 },
+          { delay: 6, budgetChange: -20, popularityChange: 5 }
+        ]
       }
     ]
   },

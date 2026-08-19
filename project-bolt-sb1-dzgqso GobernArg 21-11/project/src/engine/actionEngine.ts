@@ -5,6 +5,7 @@ import type {
 } from '../types/game';
 import { actionDefinitions } from '../data/actionRegistry';
 import { POSITION_ACTION_EXCLUSIONS } from './engineShared';
+import { getDifficultyModifiers } from './difficultyEngine';
 
 const REFORM_CATEGORIES: ActionCategory[] = ['economia', 'infraestructura'];
 
@@ -31,6 +32,8 @@ export function getAvailableActionsForState(gameState: GameState): GameAction[] 
   return actionDefinitions
     .filter(action => {
       if (excluded.includes(action.id)) return false;
+      // Dificultad: filtrar préstamos si la dificultad actual no los permite
+      if (action.isLoan && !getDifficultyModifiers(gameState.difficulty).loansAvailable) return false;
       // Fase 1: filtrar por cargo
       if (action.availableForPositions && !action.availableForPositions.includes(gameState.position)) return false;
       // Fase 2: filtrar por cooldown

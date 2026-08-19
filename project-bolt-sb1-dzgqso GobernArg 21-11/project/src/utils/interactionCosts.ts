@@ -57,8 +57,13 @@ export interface InteractionCommitment {
 export function calculateInteractionCost(
   interactionType: InteractionType,
   group: Subgroup,
-  _gameState: GameState
+  gameState: GameState
 ): number {
+  // Pasiva de arquetipo: interacciones gratis con grupos específicos
+  if (gameState._archetypeFreeInteractions?.includes(group.id)) {
+    return 0;
+  }
+
   switch (interactionType) {
     case 'reunion':
       return 10;
