@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="lowShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="lowInner" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="lowGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+  </defs>
+
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#lowShield)" stroke="#0d1626" stroke-width="20"/>
+  <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#lowInner)" stroke="#c29522" stroke-width="10"/>
+
+  <!-- Vivienda social de fondo -->
+  <g stroke="#0d1626" stroke-width="5">
+    <rect x="280" y="330" width="180" height="210" fill="#b9c6d4"/>
+    <rect x="470" y="330" width="180" height="210" fill="#c8d3df"/>
+    <g fill="#4a90c9">
+      <rect x="300" y="350" width="30" height="30"/>
+      <rect x="360" y="350" width="30" height="30"/>
+      <rect x="300" y="410" width="30" height="30"/>
+      <rect x="360" y="410" width="30" height="30"/>
+      <rect x="300" y="470" width="30" height="30"/>
+      <rect x="360" y="470" width="30" height="30"/>
+      <rect x="490" y="350" width="30" height="30"/>
+      <rect x="550" y="350" width="30" height="30"/>
+      <rect x="490" y="410" width="30" height="30"/>
+      <rect x="550" y="410" width="30" height="30"/>
+      <rect x="490" y="470" width="30" height="30"/>
+      <rect x="550" y="470" width="30" height="30"/>
+    </g>
+    <path d="M264,330 L370,250 L466,330 L648,330 L558,250 L470,330 Z" fill="#1a2b45"/>
+    <path d="M466,330 L648,330 L558,250 Z" fill="#16304d"/>
+  </g>
+
+  <!-- Manos recibiendo bolsa de alimentos -->
+  <g stroke="#0d1626" stroke-width="5">
+    <!-- bolsa -->
+    <path d="M372,600 L512,560 L652,600 L640,760 L384,760 Z" fill="#ffffff"/>
+    <path d="M372,600 L652,600" stroke="#c29522" stroke-width="8"/>
+    <path d="M430,640 L480,700" stroke="#e0b83e" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="530" cy="640" r="14" fill="#e0b83e"/>
+    <circle cx="560" cy="670" r="14" fill="#c29522"/>
+    <rect x="424" y="756" width="176" height="20" rx="8" fill="#c29522"/>
+    <!-- manos -->
+    <g fill="#f0cfa8">
+      <path d="M340,620 Q300,660 320,720 L360,710 Q360,660 380,640 Z"/>
+      <path d="M684,620 Q724,660 704,720 L664,710 Q664,660 644,640 Z"/>
+    </g>
+  </g>
+
+  <!-- Corazón solidario -->
+  <g transform="translate(512,840)" stroke="#0d1626" stroke-width="5">
+    <path d="M0,30 Q-60,-20 -30,-60 Q0,-86 0,-40 Q0,-86 30,-60 Q60,-20 0,30 Z" fill="#c0392b"/>
+    <path d="M-18,-22 Q0,-4 0,10" fill="none" stroke="#f0cfa8" stroke-width="8" stroke-linecap="round"/>
+  </g>
+
+  <!-- Acento dorado -->
+  <g fill="url(#lowGold)" stroke="#0d1626" stroke-width="4">
+    <circle cx="240" cy="760" r="16"/>
+    <circle cx="784" cy="760" r="16"/>
+  </g>
+</svg>

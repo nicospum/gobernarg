@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="mbiGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+    <linearGradient id="mbiNavy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#0d1626"/>
+    </linearGradient>
+    <linearGradient id="mbiStone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e8edf2"/>
+      <stop offset="1" stop-color="#b9c6d4"/>
+    </linearGradient>
+    <clipPath id="mbiClip">
+      <path d="M256,36 L428,104 L428,344 Q428,448 256,484 Q84,448 84,344 L84,104 Z"/>
+    </clipPath>
+  </defs>
+
+  <path d="M256,36 L428,104 L428,344 Q428,448 256,484 Q84,448 84,344 L84,104 Z" fill="url(#mbiGold)" stroke="#0d1626" stroke-width="10"/>
+  <path d="M256,56 L408,118 L408,338 Q408,436 256,468 Q104,436 104,338 L104,118 Z" fill="url(#mbiNavy)" stroke="#c29522" stroke-width="6"/>
+
+  <!-- Banda celeste diagonal -->
+  <g clip-path="url(#mbiClip)">
+    <rect x="-60" y="130" width="640" height="120" fill="#4a90c9" transform="rotate(-32 256 256)"/>
+    <rect x="-60" y="180" width="640" height="20" fill="#ffffff" transform="rotate(-32 256 256)"/>
+  </g>
+
+  <!-- Edificio municipal / torre de reloj -->
+  <g transform="translate(256,240)" stroke="#0d1626" stroke-width="5">
+    <!-- cuerpo principal -->
+    <rect x="-100" y="0" width="200" height="140" fill="url(#mbiStone)"/>
+    <!-- ventanas -->
+    <g fill="#7ab8e0">
+      <rect x="-80" y="20" width="30" height="40"/>
+      <rect x="-15" y="20" width="30" height="40"/>
+      <rect x="50" y="20" width="30" height="40"/>
+      <rect x="-80" y="80" width="30" height="40"/>
+      <rect x="-15" y="80" width="30" height="40"/>
+      <rect x="50" y="80" width="30" height="40"/>
+    </g>
+    <!-- torre central -->
+    <rect x="-34" y="-90" width="68" height="90" fill="url(#mbiStone)"/>
+    <!-- reloj -->
+    <circle cx="0" cy="-56" r="24" fill="#ffffff"/>
+    <circle cx="0" cy="-56" r="20" fill="none" stroke="#1a2b45" stroke-width="3"/>
+    <line x1="0" y1="-56" x2="0" y2="-70" stroke="#1a2b45" stroke-width="4"/>
+    <line x1="0" y1="-56" x2="10" y2="-52" stroke="#1a2b45" stroke-width="4"/>
+    <circle cx="0" cy="-56" r="3" fill="#c0392b"/>
+    <!-- remate de torre -->
+    <path d="M-34,-90 L0,-124 L34,-90 Z" fill="#e0b83e"/>
+    <rect x="-4" y="-136" width="8" height="12" fill="#c29522"/>
+    <!-- entablamento -->
+    <rect x="-110" y="-12" width="220" height="12" fill="#1a2b45"/>
+    <!-- puerta -->
+    <path d="M-24,140 L-24,104 Q0,84 24,104 L24,140 Z" fill="#1a2b45"/>
+    <!-- base -->
+    <rect x="-116" y="140" width="232" height="16" fill="#1a2b45"/>
+  </g>
+
+  <!-- Laureles laterales -->
+  <g fill="#1a2b45" stroke="#c29522" stroke-width="3">
+    <g transform="translate(118,360) rotate(-45)">
+      <path d="M0,0 Q10,-60 0,-120" fill="none" stroke="#c29522" stroke-width="8"/>
+      <ellipse cx="18" cy="-30" rx="20" ry="9" transform="rotate(-26 18 -30)"/>
+      <ellipse cx="22" cy="-70" rx="20" ry="9" transform="rotate(-14 22 -70)"/>
+      <ellipse cx="2" cy="-22" rx="20" ry="9" transform="rotate(26 2 -22)"/>
+      <ellipse cx="6" cy="-62" rx="20" ry="9" transform="rotate(30 6 -62)"/>
+    </g>
+    <g transform="translate(394,360) rotate(45)">
+      <path d="M0,0 Q10,-60 0,-120" fill="none" stroke="#c29522" stroke-width="8"/>
+      <ellipse cx="18" cy="-30" rx="20" ry="9" transform="rotate(-26 18 -30)"/>
+      <ellipse cx="22" cy="-70" rx="20" ry="9" transform="rotate(-14 22 -70)"/>
+      <ellipse cx="2" cy="-22" rx="20" ry="9" transform="rotate(26 2 -22)"/>
+      <ellipse cx="6" cy="-62" rx="20" ry="9" transform="rotate(30 6 -62)"/>
+    </g>
+  </g>
+</svg>

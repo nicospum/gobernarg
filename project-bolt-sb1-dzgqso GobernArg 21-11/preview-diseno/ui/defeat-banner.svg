@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 480">
+  <defs>
+    <linearGradient id="defBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1a2b45"/>
+      <stop offset="1" stop-color="#0d1626"/>
+    </linearGradient>
+    <linearGradient id="defSteel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8fa3b5"/>
+      <stop offset="1" stop-color="#5c7085"/>
+    </linearGradient>
+    <linearGradient id="defRed" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8e3b32"/>
+      <stop offset="1" stop-color="#6b2b24"/>
+    </linearGradient>
+    <radialGradient id="defSun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#8a93a3"/>
+      <stop offset="1" stop-color="#4a5566"/>
+    </radialGradient>
+    <filter id="defShadow" x="-10%" y="-30%" width="120%" height="160%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Cinta principal -->
+  <rect x="40" y="80" width="1840" height="320" rx="24" fill="url(#defBg)" stroke="#000000" stroke-width="12" filter="url(#defShadow)"/>
+
+  <!-- Doble borde -->
+  <rect x="62" y="102" width="1796" height="276" rx="16" fill="none" stroke="#5c7085" stroke-width="10"/>
+  <rect x="78" y="118" width="1764" height="244" rx="10" fill="none" stroke="#3a4658" stroke-width="3"/>
+
+  <!-- Sol de Mayo apagado -->
+  <g transform="translate(420,240)" opacity="0.75">
+    <g fill="#4a5566" stroke="#1a2b45" stroke-width="5">
+      <path d="M0,-120 L20,-50 L-20,-50 Z"/>
+      <path d="M0,120 L20,50 L-20,50 Z"/>
+      <path d="M-120,0 L-50,20 L-50,-20 Z"/>
+      <path d="M120,0 L50,20 L50,-20 Z"/>
+      <path d="M-85,-85 L-38,-38 L-66,-38 Z"/>
+      <path d="M85,-85 L38,-38 L66,-38 Z"/>
+      <path d="M-85,85 L-38,38 L-66,38 Z"/>
+      <path d="M85,85 L38,38 L66,38 Z"/>
+    </g>
+    <circle r="60" fill="url(#defSun)" stroke="#1a2b45" stroke-width="6"/>
+    <path d="M-22,10 Q0,-4 22,10" fill="none" stroke="#1a2b45" stroke-width="7" stroke-linecap="round"/>
+    <line x1="-18" y1="-8" x2="-4" y2="-8" stroke="#1a2b45" stroke-width="6" stroke-linecap="round"/>
+    <line x1="4" y1="-8" x2="18" y2="-8" stroke="#1a2b45" stroke-width="6" stroke-linecap="round"/>
+  </g>
+
+  <!-- Columna quebrada -->
+  <g transform="translate(1500,240)" stroke="#1a2b45" stroke-width="5">
+    <!-- base -->
+    <rect x="-120" y="120" width="240" height="30" fill="#5c7085"/>
+    <rect x="-140" y="150" width="280" height="24" fill="#4a5566"/>
+    <!-- fuste inferior -->
+    <rect x="-90" y="10" width="180" height="110" fill="url(#defSteel)"/>
+    <g stroke="#4a5566" stroke-width="3">
+      <line x1="-90" y1="30" x2="90" y2="30"/>
+      <line x1="-90" y1="60" x2="90" y2="60"/>
+      <line x1="-90" y1="90" x2="90" y2="90"/>
+    </g>
+    <!-- fuste superior caído -->
+    <rect x="-20" y="-150" width="180" height="120" fill="url(#defSteel)" transform="rotate(24 -20 -150)"/>
+    <g stroke="#4a5566" stroke-width="3" transform="rotate(24 -20 -150)">
+      <line x1="-20" y1="-130" x2="160" y2="-130"/>
+      <line x1="-20" y1="-100" x2="160" y2="-100"/>
+      <line x1="-20" y1="-70" x2="160" y2="-70"/>
+    </g>
+    <!-- capital caído -->
+    <rect x="-40" y="-170" width="220" height="30" fill="#4a5566" transform="rotate(24 -40 -170)"/>
+    <!-- grietas -->
+    <path d="M-40,60 L-10,80 L-30,100" fill="none" stroke="#1a2b45" stroke-width="5"/>
+    <path d="M30,20 L50,50 L30,80" fill="none" stroke="#1a2b45" stroke-width="5"/>
+    <!-- escombros -->
+    <rect x="-160" y="140" width="40" height="16" fill="#5c7085" transform="rotate(-14 -160 140)"/>
+    <rect x="120" y="144" width="46" height="14" fill="#4a5566" transform="rotate(10 120 144)"/>
+  </g>
+
+  <!-- Laurel invertido -->
+  <g fill="#4a5566" stroke="#5c7085" stroke-width="4">
+    <g transform="translate(120,40) rotate(160)">
+      <path d="M0,0 Q-60,-140 10,-320" fill="none" stroke="#5c7085" stroke-width="12"/>
+      <ellipse cx="-30" cy="-70" rx="30" ry="13" transform="rotate(-24 -30 -70)"/>
+      <ellipse cx="-44" cy="-150" rx="30" ry="13" transform="rotate(-14 -44 -150)"/>
+      <ellipse cx="-30" cy="-230" rx="28" ry="12" transform="rotate(-6 -30 -230)"/>
+      <ellipse cx="-10" cy="-50" rx="30" ry="13" transform="rotate(26 -10 -50)"/>
+      <ellipse cx="-18" cy="-130" rx="30" ry="13" transform="rotate(30 -18 -130)"/>
+    </g>
+  </g>
+
+  <!-- Cinta roja apagada -->
+  <g transform="translate(960,430)">
+    <path d="M-360,0 Q-330,26 -240,30 L240,30 Q330,26 360,0 L330,-8 L0,-2 L-330,-8 Z" fill="url(#defRed)" stroke="#1a2b45" stroke-width="6"/>
+    <path d="M-330,-2 Q-300,20 -220,22 L220,22 Q300,20 330,-2 L0,-8 Z" fill="#5c3540"/>
+  </g>
+
+  <!-- Espacio central vacío para texto de derrota -->
+
+  <!-- Rosetas -->
+  <g fill="#5c7085" stroke="#1a2b45" stroke-width="4">
+    <circle cx="100" cy="140" r="18"/>
+    <circle cx="1820" cy="140" r="18"/>
+    <circle cx="100" cy="340" r="18"/>
+    <circle cx="1820" cy="340" r="18"/>
+  </g>
+</svg>

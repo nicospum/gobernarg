@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="mbgGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+    <linearGradient id="mbgNavy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#0d1626"/>
+    </linearGradient>
+    <linearGradient id="mbgStone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e8edf2"/>
+      <stop offset="1" stop-color="#b9c6d4"/>
+    </linearGradient>
+    <clipPath id="mbgClip">
+      <path d="M256,36 L428,104 L428,344 Q428,448 256,484 Q84,448 84,344 L84,104 Z"/>
+    </clipPath>
+  </defs>
+
+  <path d="M256,36 L428,104 L428,344 Q428,448 256,484 Q84,448 84,344 L84,104 Z" fill="url(#mbgGold)" stroke="#0d1626" stroke-width="10"/>
+  <path d="M256,56 L408,118 L408,338 Q408,436 256,468 Q104,436 104,338 L104,118 Z" fill="url(#mbgNavy)" stroke="#c29522" stroke-width="6"/>
+
+  <!-- Banda celeste diagonal -->
+  <g clip-path="url(#mbgClip)">
+    <rect x="-60" y="130" width="640" height="120" fill="#4a90c9" transform="rotate(-32 256 256)"/>
+    <rect x="-60" y="180" width="640" height="20" fill="#ffffff" transform="rotate(-32 256 256)"/>
+  </g>
+
+  <!-- Casa de gobierno / cúpula provincial -->
+  <g transform="translate(256,240)" stroke="#0d1626" stroke-width="5">
+    <!-- cuerpo -->
+    <rect x="-110" y="-20" width="220" height="160" fill="url(#mbgStone)"/>
+    <!-- columnas -->
+    <g fill="#1a2b45">
+      <rect x="-92" y="0" width="26" height="120"/>
+      <rect x="-13" y="0" width="26" height="120"/>
+      <rect x="66" y="0" width="26" height="120"/>
+    </g>
+    <!-- entablamento -->
+    <rect x="-120" y="-34" width="240" height="14" fill="#1a2b45"/>
+    <!-- cúpula -->
+    <path d="M-80,-34 Q-90,-90 0,-120 Q90,-90 80,-34 Z" fill="#e0b83e"/>
+    <path d="M-60,-34 Q-68,-78 0,-104 Q68,-78 60,-34 Z" fill="url(#mbgGold)"/>
+    <!-- linterna -->
+    <rect x="-8" y="-140" width="16" height="20" fill="#c29522"/>
+    <path d="M-8,-140 L0,-156 L8,-140 Z" fill="#c29522"/>
+    <line x1="0" y1="-156" x2="0" y2="-176" stroke="#c29522" stroke-width="4"/>
+    <!-- bandera -->
+    <path d="M0,-176 L36,-168 L0,-160 Z" fill="#4a90c9"/>
+    <!-- puerta -->
+    <path d="M-30,140 L-30,90 Q0,66 30,90 L30,140 Z" fill="#1a2b45"/>
+    <!-- base -->
+    <rect x="-130" y="140" width="260" height="16" fill="#1a2b45"/>
+  </g>
+
+  <!-- Laureles laterales -->
+  <g fill="#1a2b45" stroke="#c29522" stroke-width="3">
+    <g transform="translate(120,360) rotate(-45)">
+      <path d="M0,0 Q10,-60 0,-120" fill="none" stroke="#c29522" stroke-width="8"/>
+      <ellipse cx="18" cy="-30" rx="20" ry="9" transform="rotate(-26 18 -30)"/>
+      <ellipse cx="22" cy="-70" rx="20" ry="9" transform="rotate(-14 22 -70)"/>
+      <ellipse cx="2" cy="-22" rx="20" ry="9" transform="rotate(26 2 -22)"/>
+      <ellipse cx="6" cy="-62" rx="20" ry="9" transform="rotate(30 6 -62)"/>
+    </g>
+    <g transform="translate(392,360) rotate(45)">
+      <path d="M0,0 Q10,-60 0,-120" fill="none" stroke="#c29522" stroke-width="8"/>
+      <ellipse cx="18" cy="-30" rx="20" ry="9" transform="rotate(-26 18 -30)"/>
+      <ellipse cx="22" cy="-70" rx="20" ry="9" transform="rotate(-14 22 -70)"/>
+      <ellipse cx="2" cy="-22" rx="20" ry="9" transform="rotate(26 2 -22)"/>
+      <ellipse cx="6" cy="-62" rx="20" ry="9" transform="rotate(30 6 -62)"/>
+    </g>
+  </g>
+</svg>

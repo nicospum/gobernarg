@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="indShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="indSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e8c88a"/>
+      <stop offset="1" stop-color="#d9a95c"/>
+    </linearGradient>
+    <linearGradient id="indGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+    <linearGradient id="indSun" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f2b84b"/>
+      <stop offset="1" stop-color="#d98f28"/>
+    </linearGradient>
+  </defs>
+
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#indShield)" stroke="#0d1626" stroke-width="20"/>
+  <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#indSky)" stroke="#c29522" stroke-width="10"/>
+
+  <!-- Territorio / montañas -->
+  <g fill="#8a5a2b" opacity="0.5">
+    <path d="M190,600 L320,430 L430,560 L512,420 L640,580 L740,470 L834,600 Z"/>
+  </g>
+  <g fill="#6b4423" opacity="0.45">
+    <path d="M190,600 L320,470 L420,580 L512,480 L620,600 Z"/>
+  </g>
+
+  <!-- Sol andino -->
+  <g transform="translate(512,340)">
+    <circle r="70" fill="url(#indSun)"/>
+    <g fill="#d98f28">
+      <path d="M0,-96 L20,-60 L-20,-60 Z"/>
+      <path d="M0,96 L20,60 L-20,60 Z"/>
+      <path d="M-96,0 L-60,20 L-60,-20 Z"/>
+      <path d="M96,0 L60,20 L60,-20 Z"/>
+      <path d="M-68,-68 L-44,-44 L-60,-44 Z"/>
+      <path d="M68,-68 L44,-44 L60,-44 Z"/>
+      <path d="M-68,68 L-44,44 L-60,44 Z"/>
+      <path d="M68,68 L44,44 L60,44 Z"/>
+    </g>
+    <circle cx="-20" cy="-12" r="9" fill="#1a2b45"/>
+    <circle cx="20" cy="-12" r="9" fill="#1a2b45"/>
+    <path d="M-18,14 Q0,26 18,14" fill="none" stroke="#1a2b45" stroke-width="7" stroke-linecap="round"/>
+  </g>
+
+  <!-- Figura con textiles originarios -->
+  <g stroke="#0d1626" stroke-width="5">
+    <!-- cabeza -->
+    <circle cx="512" cy="470" r="46" fill="#c98d5f"/>
+    <path d="M470,456 Q512,424 554,456 L554,440 Q512,406 470,440 Z" fill="#2b1a0a"/>
+    <!-- sombrero / tocado -->
+    <path d="M458,444 Q512,400 566,444 L566,428 Q512,386 458,428 Z" fill="#a8452c"/>
+    <path d="M458,428 L566,428" stroke="#d98f28" stroke-width="8"/>
+    <!-- poncho -->
+    <path d="M452,510 L572,510 L606,690 L418,690 Z" fill="#a8452c"/>
+    <!-- guardas textiles -->
+    <path d="M452,540 L572,540 L572,560 L452,560 Z" fill="#d98f28"/>
+    <path d="M452,580 L572,580 L572,600 L452,600 Z" fill="#f2b84b"/>
+    <g stroke="#d98f28" stroke-width="6">
+      <line x1="470" y1="510" x2="470" y2="690"/>
+      <line x1="512" y1="510" x2="512" y2="690"/>
+      <line x1="554" y1="510" x2="554" y2="690"/>
+    </g>
+    <g fill="#d98f28">
+      <rect x="474" y="620" width="10" height="10"/>
+      <rect x="500" y="620" width="10" height="10"/>
+      <rect x="526" y="620" width="10" height="10"/>
+      <rect x="487" y="648" width="10" height="10"/>
+      <rect x="513" y="648" width="10" height="10"/>
+      <rect x="474" y="676" width="10" height="10"/>
+      <rect x="500" y="676" width="10" height="10"/>
+      <rect x="526" y="676" width="10" height="10"/>
+    </g>
+  </g>
+
+  <!-- Bandera de la wiphala (respetuosa, estilizada) -->
+  <g transform="translate(512,770)" stroke="#0d1626" stroke-width="4">
+    <rect x="-70" y="-30" width="140" height="60" fill="#ffffff"/>
+    <g>
+      <rect x="-70" y="-30" width="28" height="12" fill="#c0392b"/>
+      <rect x="-42" y="-30" width="28" height="12" fill="#e0b83e"/>
+      <rect x="-14" y="-30" width="28" height="12" fill="#ffffff"/>
+      <rect x="14" y="-30" width="28" height="12" fill="#7ab8e0"/>
+      <rect x="42" y="-30" width="28" height="12" fill="#4a90c9"/>
+      <rect x="-70" y="-18" width="28" height="12" fill="#e0b83e"/>
+      <rect x="-42" y="-18" width="28" height="12" fill="#ffffff"/>
+      <rect x="-14" y="-18" width="28" height="12" fill="#7ab8e0"/>
+      <rect x="14" y="-18" width="28" height="12" fill="#4a90c9"/>
+      <rect x="42" y="-18" width="28" height="12" fill="#c0392b"/>
+      <rect x="-70" y="-6" width="28" height="12" fill="#ffffff"/>
+      <rect x="-42" y="-6" width="28" height="12" fill="#7ab8e0"/>
+      <rect x="-14" y="-6" width="28" height="12" fill="#4a90c9"/>
+      <rect x="14" y="-6" width="28" height="12" fill="#c0392b"/>
+      <rect x="42" y="-6" width="28" height="12" fill="#e0b83e"/>
+      <rect x="-70" y="6" width="28" height="12" fill="#7ab8e0"/>
+      <rect x="-42" y="6" width="28" height="12" fill="#4a90c9"/>
+      <rect x="-14" y="6" width="28" height="12" fill="#c0392b"/>
+      <rect x="14" y="6" width="28" height="12" fill="#e0b83e"/>
+      <rect x="42" y="6" width="28" height="12" fill="#ffffff"/>
+      <rect x="-70" y="18" width="28" height="12" fill="#4a90c9"/>
+      <rect x="-42" y="18" width="28" height="12" fill="#c0392b"/>
+      <rect x="-14" y="18" width="28" height="12" fill="#e0b83e"/>
+      <rect x="14" y="18" width="28" height="12" fill="#ffffff"/>
+      <rect x="42" y="18" width="28" height="12" fill="#7ab8e0"/>
+    </g>
+  </g>
+</svg>

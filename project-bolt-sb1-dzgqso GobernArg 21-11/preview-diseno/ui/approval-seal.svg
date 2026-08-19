@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="appGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+    <linearGradient id="appCeleste" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <radialGradient id="appSun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f7e6a8"/>
+      <stop offset="1" stop-color="#e0b83e"/>
+    </radialGradient>
+    <path id="appArc" d="M 76 256 A 180 180 0 0 1 436 256" fill="none"/>
+  </defs>
+
+  <!-- Sello con borde dentado -->
+  <path d="M 498.0,256.0 L 476.2,315.0 L 465.6,377.0 L 417.2,417.2 L 377.0,465.6 L 315.0,476.2 L 256.0,498.0 L 197.0,476.2 L 135.0,465.6 L 94.8,417.2 L 46.4,377.0 L 35.8,315.0 L 14.0,256.0 L 35.8,197.0 L 46.4,135.0 L 94.8,94.8 L 135.0,46.4 L 197.0,35.8 L 256.0,14.0 L 315.0,35.8 L 377.0,46.4 L 417.2,94.8 L 465.6,135.0 L 476.2,197.0 Z" fill="url(#appGold)" stroke="#0d1626" stroke-width="8"/>
+
+  <!-- Disco interior celeste -->
+  <circle cx="256" cy="256" r="200" fill="url(#appCeleste)" stroke="#1a2b45" stroke-width="8"/>
+  <circle cx="256" cy="256" r="178" fill="none" stroke="#ffffff" stroke-width="4" stroke-dasharray="2 10" stroke-linecap="round" opacity="0.8"/>
+
+  <!-- Sol de Mayo central -->
+  <g transform="translate(256,256)">
+    <g fill="#e0b83e" stroke="#1a2b45" stroke-width="4">
+      <path d="M0,-96 L18,-40 L-18,-40 Z"/>
+      <path d="M0,96 L18,40 L-18,40 Z"/>
+      <path d="M-96,0 L-40,18 L-40,-18 Z"/>
+      <path d="M96,0 L40,18 L40,-18 Z"/>
+      <path d="M-68,-68 L-28,-28 L-52,-28 Z"/>
+      <path d="M68,-68 L28,-28 L52,-28 Z"/>
+      <path d="M-68,68 L-28,28 L-52,28 Z"/>
+      <path d="M68,68 L28,28 L52,28 Z"/>
+    </g>
+    <circle r="48" fill="url(#appSun)" stroke="#1a2b45" stroke-width="4"/>
+    <circle cx="-14" cy="-8" r="7" fill="#1a2b45"/>
+    <circle cx="14" cy="-8" r="7" fill="#1a2b45"/>
+    <path d="M-13,12 Q0,24 13,12" fill="none" stroke="#1a2b45" stroke-width="6" stroke-linecap="round"/>
+  </g>
+
+  <!-- Texto en arco -->
+  <text font-family="Georgia, serif" font-size="44" font-weight="bold" fill="#1a2b45" letter-spacing="6">
+    <textPath href="#appArc" startOffset="50%" text-anchor="middle">APROBADO</textPath>
+  </text>
+</svg>

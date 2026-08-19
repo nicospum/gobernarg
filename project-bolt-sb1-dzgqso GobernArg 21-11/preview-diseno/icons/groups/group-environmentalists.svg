@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="envShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="envInner" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="envGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+    <linearGradient id="envGreen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5d9e57"/>
+      <stop offset="1" stop-color="#3a7a3f"/>
+    </linearGradient>
+    <radialGradient id="envSun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f7e6a8"/>
+      <stop offset="1" stop-color="#e0b83e"/>
+    </radialGradient>
+  </defs>
+
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#envShield)" stroke="#0d1626" stroke-width="20"/>
+  <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#envInner)" stroke="#c29522" stroke-width="10"/>
+
+  <!-- Sol naciente -->
+  <g transform="translate(512,300)">
+    <circle r="80" fill="url(#envSun)"/>
+    <g fill="#e0b83e">
+      <path d="M0,-108 L20,-66 L-20,-66 Z"/>
+      <path d="M0,108 L20,66 L-20,66 Z"/>
+      <path d="M-108,0 L-66,20 L-66,-20 Z"/>
+      <path d="M108,0 L66,20 L66,-20 Z"/>
+    </g>
+    <circle cx="-18" cy="-10" r="9" fill="#1a2b45"/>
+    <circle cx="18" cy="-10" r="9" fill="#1a2b45"/>
+    <path d="M-16,14 Q0,26 16,14" fill="none" stroke="#1a2b45" stroke-width="6" stroke-linecap="round"/>
+  </g>
+
+  <!-- Planeta -->
+  <g transform="translate(512,500)" stroke="#0d1626" stroke-width="5">
+    <circle r="110" fill="#7ab8e0"/>
+    <ellipse cx="-20" cy="0" rx="110" ry="44" fill="none" stroke="#4a90c9" stroke-width="6"/>
+    <path d="M-70,-60 Q-40,-80 -10,-70 Q20,-60 40,-74 Q60,-86 80,-70" fill="none" stroke="#3a7a3f" stroke-width="10"/>
+    <path d="M-90,30 Q-50,50 -10,40 Q30,30 60,44 Q80,52 100,40" fill="none" stroke="#3a7a3f" stroke-width="8"/>
+  </g>
+
+  <!-- Hoja verde -->
+  <g transform="translate(360,610) rotate(-30)" stroke="#0d1626" stroke-width="5">
+    <path d="M0,0 Q-40,-90 0,-160 Q40,-90 0,0 Z" fill="url(#envGreen)"/>
+    <path d="M0,0 L0,-150" stroke="#3a7a3f" stroke-width="5"/>
+    <g stroke="#3a7a3f" stroke-width="3" fill="none">
+      <path d="M0,-40 L-18,-60"/>
+      <path d="M0,-40 L18,-60"/>
+      <path d="M0,-80 L-14,-100"/>
+      <path d="M0,-80 L14,-100"/>
+    </g>
+  </g>
+
+  <!-- Panel solar -->
+  <g transform="translate(660,610)" stroke="#0d1626" stroke-width="5">
+    <rect x="-60" y="-60" width="120" height="120" rx="8" fill="#16304d" transform="rotate(10)"/>
+    <g transform="rotate(10)">
+      <line x1="-42" y1="-42" x2="42" y2="-42" stroke="#4a90c9" stroke-width="4"/>
+      <line x1="-42" y1="0" x2="42" y2="0" stroke="#4a90c9" stroke-width="4"/>
+      <line x1="-42" y1="42" x2="42" y2="42" stroke="#4a90c9" stroke-width="4"/>
+      <line x1="-42" y1="-42" x2="-42" y2="42" stroke="#4a90c9" stroke-width="4"/>
+      <line x1="0" y1="-42" x2="0" y2="42" stroke="#4a90c9" stroke-width="4"/>
+      <line x1="42" y1="-42" x2="42" y2="42" stroke="#4a90c9" stroke-width="4"/>
+    </g>
+  </g>
+</svg>

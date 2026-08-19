@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="cooShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="cooInner" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="cooGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+    <linearGradient id="cooSteel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c8d3df"/>
+      <stop offset="1" stop-color="#8fa3b5"/>
+    </linearGradient>
+  </defs>
+
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#cooShield)" stroke="#0d1626" stroke-width="20"/>
+  <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#cooInner)" stroke="#c29522" stroke-width="10"/>
+
+  <!-- Ramas de trigo -->
+  <g fill="#e0b83e" stroke="#c29522" stroke-width="3">
+    <g transform="translate(280,780) rotate(-20)">
+      <path d="M0,0 Q0,-80 0,-160" fill="none" stroke="#c29522" stroke-width="6"/>
+      <ellipse cx="-18" cy="-30" rx="12" ry="22" transform="rotate(-20 -18 -30)"/>
+      <ellipse cx="18" cy="-50" rx="12" ry="22" transform="rotate(20 18 -50)"/>
+      <ellipse cx="-18" cy="-80" rx="12" ry="22" transform="rotate(-20 -18 -80)"/>
+      <ellipse cx="18" cy="-100" rx="12" ry="22" transform="rotate(20 18 -100)"/>
+      <ellipse cx="-14" cy="-130" rx="11" ry="20" transform="rotate(-18 -14 -130)"/>
+      <ellipse cx="0" cy="-160" rx="11" ry="20"/>
+    </g>
+    <g transform="translate(744,780) rotate(20)">
+      <path d="M0,0 Q0,-80 0,-160" fill="none" stroke="#c29522" stroke-width="6"/>
+      <ellipse cx="18" cy="-30" rx="12" ry="22" transform="rotate(20 18 -30)"/>
+      <ellipse cx="-18" cy="-50" rx="12" ry="22" transform="rotate(-20 -18 -50)"/>
+      <ellipse cx="18" cy="-80" rx="12" ry="22" transform="rotate(20 18 -80)"/>
+      <ellipse cx="-18" cy="-100" rx="12" ry="22" transform="rotate(-20 -18 -100)"/>
+      <ellipse cx="14" cy="-130" rx="11" ry="20" transform="rotate(18 14 -130)"/>
+      <ellipse cx="0" cy="-160" rx="11" ry="20"/>
+    </g>
+  </g>
+
+  <!-- Engranaje -->
+  <g transform="translate(512,430)" stroke="#0d1626" stroke-width="5">
+    <circle r="110" fill="url(#cooSteel)"/>
+    <circle r="60" fill="#4a90c9"/>
+    <circle r="34" fill="#1a2b45"/>
+    <g fill="url(#cooSteel)" stroke="#0d1626" stroke-width="5">
+      <rect x="-16" y="-140" width="32" height="40" rx="8"/>
+      <rect x="-16" y="100" width="32" height="40" rx="8"/>
+      <rect x="-140" y="-16" width="40" height="32" rx="8"/>
+      <rect x="100" y="-16" width="40" height="32" rx="8"/>
+      <rect x="-96" y="-96" width="34" height="34" rx="8" transform="rotate(45 -79 -79)"/>
+      <rect x="62" y="-96" width="34" height="34" rx="8" transform="rotate(45 79 -79)"/>
+      <rect x="-96" y="62" width="34" height="34" rx="8" transform="rotate(45 -79 79)"/>
+      <rect x="62" y="62" width="34" height="34" rx="8" transform="rotate(45 79 79)"/>
+    </g>
+  </g>
+
+  <!-- Manos compartiendo -->
+  <g stroke="#0d1626" stroke-width="5">
+    <g fill="#f0cfa8">
+      <path d="M300,620 Q270,560 300,520 Q330,500 350,520 L360,560 Q340,590 330,620 Z"/>
+      <path d="M724,620 Q754,560 724,520 Q694,500 674,520 L664,560 Q684,590 694,620 Z"/>
+    </g>
+    <!-- línea de unión -->
+    <path d="M380,560 Q512,600 644,560" fill="none" stroke="#c29522" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="512" cy="582" r="14" fill="url(#cooGold)"/>
+  </g>
+</svg>

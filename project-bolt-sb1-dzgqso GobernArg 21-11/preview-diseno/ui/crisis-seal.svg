@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="criRed" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e74c3c"/>
+      <stop offset="1" stop-color="#9e2b23"/>
+    </linearGradient>
+    <linearGradient id="criNavy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#0d1626"/>
+    </linearGradient>
+    <path id="criArc" d="M 76 256 A 180 180 0 0 1 436 256" fill="none"/>
+  </defs>
+
+  <!-- Sello irregular rojo/azul -->
+  <path d="M 498.0,256.0 L 476.2,315.0 L 465.6,377.0 L 417.2,417.2 L 377.0,465.6 L 315.0,476.2 L 256.0,498.0 L 197.0,476.2 L 135.0,465.6 L 94.8,417.2 L 46.4,377.0 L 35.8,315.0 L 14.0,256.0 L 35.8,197.0 L 46.4,135.0 L 94.8,94.8 L 135.0,46.4 L 197.0,35.8 L 256.0,14.0 L 315.0,35.8 L 377.0,46.4 L 417.2,94.8 L 465.6,135.0 L 476.2,197.0 Z" fill="url(#criRed)" stroke="#0d1626" stroke-width="8"/>
+
+  <!-- Disco interior azul noche -->
+  <circle cx="256" cy="256" r="200" fill="url(#criNavy)" stroke="#000000" stroke-width="8"/>
+  <circle cx="256" cy="256" r="178" fill="none" stroke="#c0392b" stroke-width="4" stroke-dasharray="2 10" stroke-linecap="round" opacity="0.9"/>
+
+  <!-- Flecha descendente -->
+  <g transform="translate(256,268)" stroke="#0d1626" stroke-width="5">
+    <path d="M0,-90 L0,40" stroke="#e74c3c" stroke-width="34" stroke-linecap="round"/>
+    <path d="M0,-90 L0,40" stroke="#c0392b" stroke-width="8" stroke-linecap="round" stroke-dasharray="6 8"/>
+    <path d="M-60,20 L0,88 L60,20 Z" fill="#e74c3c"/>
+    <path d="M-38,32 L0,72 L38,32 Z" fill="#c0392b"/>
+  </g>
+
+  <!-- Texto en arco -->
+  <text font-family="Georgia, serif" font-size="52" font-weight="bold" fill="#ffffff" letter-spacing="8">
+    <textPath href="#criArc" startOffset="50%" text-anchor="middle">CRISIS</textPath>
+  </text>
+</svg>

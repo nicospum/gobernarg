@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="allShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="allInner" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="allGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+  </defs>
+
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#allShield)" stroke="#0d1626" stroke-width="20"/>
+  <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#allInner)" stroke="#c29522" stroke-width="10"/>
+
+  <!-- Banderas aliadas -->
+  <g stroke="#0d1626" stroke-width="4">
+    <!-- izquierda -->
+    <line x1="360" y1="560" x2="360" y2="300" stroke="#1a2b45" stroke-width="10"/>
+    <path d="M360,300 L470,330 L360,360 Z" fill="#4a90c9"/>
+    <path d="M360,316 L436,330 L360,344 Z" fill="#ffffff"/>
+    <!-- derecha -->
+    <line x1="664" y1="560" x2="664" y2="300" stroke="#1a2b45" stroke-width="10"/>
+    <path d="M664,300 L774,330 L664,360 Z" fill="#e0b83e"/>
+    <path d="M664,316 L740,330 L664,344 Z" fill="#ffffff"/>
+  </g>
+
+  <!-- Apretón de manos -->
+  <g stroke="#0d1626" stroke-width="6">
+    <path d="M320,520 Q380,470 470,470 L512,470" fill="none" stroke="#f0cfa8" stroke-width="58" stroke-linecap="round"/>
+    <path d="M704,520 Q644,470 554,470 L512,470" fill="none" stroke="#f0cfa8" stroke-width="58" stroke-linecap="round"/>
+    <!-- manga izquierda -->
+    <path d="M300,540 Q300,470 360,470 L400,470" fill="none" stroke="#16304d" stroke-width="66" stroke-linecap="round"/>
+    <!-- manga derecha -->
+    <path d="M724,540 Q724,470 664,470 L624,470" fill="none" stroke="#16304d" stroke-width="66" stroke-linecap="round"/>
+    <!-- puños -->
+    <path d="M500,430 Q560,430 560,480 Q560,520 512,520 Q464,520 464,480 Q464,430 500,430 Z" fill="#f0cfa8"/>
+    <g fill="none" stroke="#c98d5f" stroke-width="5" stroke-linecap="round">
+      <path d="M484,450 Q500,442 516,452"/>
+      <path d="M488,470 Q504,462 520,472"/>
+      <path d="M508,440 Q522,450 540,446"/>
+    </g>
+  </g>
+
+  <!-- Escudo compartido -->
+  <g transform="translate(512,650)" stroke="#0d1626" stroke-width="5">
+    <path d="M0,-50 L54,-30 L54,20 Q54,48 0,66 Q-54,48 -54,20 L-54,-30 Z" fill="url(#allGold)"/>
+    <path d="M0,-34 L38,-18 L38,14 Q38,34 0,48 Q-38,34 -38,14 L-38,-18 Z" fill="#4a90c9"/>
+    <path d="M-24,30 L0,6 L24,30" fill="none" stroke="#ffffff" stroke-width="5"/>
+    <circle cy="-2" r="8" fill="#e0b83e"/>
+  </g>
+
+  <!-- Laureles -->
+  <g fill="#c29522" stroke="#0d1626" stroke-width="3">
+    <ellipse cx="240" cy="700" rx="22" ry="10" transform="rotate(-24 240 700)"/>
+    <ellipse cx="226" cy="760" rx="22" ry="10" transform="rotate(20 226 760)"/>
+    <ellipse cx="784" cy="700" rx="22" ry="10" transform="rotate(24 784 700)"/>
+    <ellipse cx="798" cy="760" rx="22" ry="10" transform="rotate(-20 798 760)"/>
+  </g>
+</svg>

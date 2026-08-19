@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="touShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="touInner" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="touGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+    <radialGradient id="touSun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f7e6a8"/>
+      <stop offset="1" stop-color="#e0b83e"/>
+    </radialGradient>
+  </defs>
+
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#touShield)" stroke="#0d1626" stroke-width="20"/>
+  <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#touInner)" stroke="#c29522" stroke-width="10"/>
+
+  <!-- Sol naciente -->
+  <g transform="translate(512,330)">
+    <circle r="120" fill="url(#touSun)" opacity="0.9"/>
+    <g fill="#e0b83e" opacity="0.85">
+      <path d="M0,-150 L20,-96 L-20,-96 Z"/>
+      <path d="M0,150 L20,96 L-20,96 Z"/>
+      <path d="M-150,0 L-96,20 L-96,-20 Z"/>
+      <path d="M150,0 L96,20 L96,-20 Z"/>
+      <path d="M-106,-106 L-70,-70 L-92,-70 Z"/>
+      <path d="M106,-106 L70,-70 L92,-70 Z"/>
+      <path d="M-106,106 L-70,70 L-92,70 Z"/>
+      <path d="M106,106 L70,70 L92,70 Z"/>
+    </g>
+    <circle r="52" fill="#f7e6a8" stroke="#1a2b45" stroke-width="3"/>
+    <circle cx="-14" cy="-8" r="7" fill="#1a2b45"/>
+    <circle cx="14" cy="-8" r="7" fill="#1a2b45"/>
+    <path d="M-12,10 Q0,20 12,10" fill="none" stroke="#1a2b45" stroke-width="5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Paisaje: montañas -->
+  <g>
+    <path d="M190,700 L300,520 L380,640 L460,500 L620,700 Z" fill="#1a2b45" opacity="0.35"/>
+    <path d="M420,700 L560,540 L700,700 Z" fill="#1a2b45" opacity="0.45"/>
+    <!-- cataratas -->
+    <g stroke="#7ab8e0" stroke-width="10" stroke-linecap="round" opacity="0.8">
+      <path d="M300,560 L300,620"/>
+      <path d="M330,572 L330,640"/>
+      <path d="M360,580 L360,650"/>
+      <path d="M470,560 L470,630"/>
+      <path d="M500,570 L500,640"/>
+    </g>
+  </g>
+
+  <!-- Avión -->
+  <g transform="translate(512,470) rotate(-12)" stroke="#0d1626" stroke-width="5">
+    <path d="M-150,0 L-80,-30 L60,-30 L120,-60 L130,-60 L110,-20 L80,0 L110,20 L130,60 L120,60 L60,30 L-80,30 Z" fill="#ffffff"/>
+    <path d="M-150,0 L-90,0" stroke="#4a90c9" stroke-width="10"/>
+    <circle cx="-40" cy="0" r="10" fill="#c29522"/>
+    <path d="M-150,-8 L-150,8" stroke="#4a90c9" stroke-width="8"/>
+  </g>
+
+  <!-- Maleta -->
+  <g transform="translate(512,690)" stroke="#0d1626" stroke-width="5">
+    <rect x="-90" y="-50" width="180" height="110" rx="16" fill="url(#touGold)"/>
+    <rect x="-30" y="-70" width="60" height="24" rx="8" fill="#c29522"/>
+    <line x1="-90" y1="-4" x2="90" y2="-4" stroke="#1a2b45" stroke-width="6"/>
+    <rect x="-6" y="-40" width="12" height="90" fill="#1a2b45"/>
+    <circle cx="-50" cy="6" r="8" fill="#1a2b45"/>
+    <circle cx="50" cy="6" r="8" fill="#1a2b45"/>
+  </g>
+</svg>

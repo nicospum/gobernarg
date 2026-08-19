@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bizShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="bizInner" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="bizGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+    <radialGradient id="bizGlow" cx="0.5" cy="0.35" r="0.6">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Escudo exterior -->
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#bizShield)" stroke="#0d1626" stroke-width="20"/>
+  <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#bizInner)" stroke="#c29522" stroke-width="10"/>
+
+  <!-- Skyline de oficinas -->
+  <g fill="#1a2b45" opacity="0.32">
+    <rect x="222" y="528" width="56" height="150" rx="3"/>
+    <rect x="296" y="468" width="68" height="210" rx="3"/>
+    <rect x="382" y="508" width="54" height="170" rx="3"/>
+    <rect x="456" y="440" width="74" height="238" rx="3"/>
+    <rect x="548" y="508" width="54" height="170" rx="3"/>
+    <rect x="620" y="478" width="68" height="200" rx="3"/>
+    <rect x="706" y="528" width="56" height="150" rx="3"/>
+  </g>
+  <!-- Ventanas -->
+  <g fill="#7ab8e0" opacity="0.5">
+    <rect x="308" y="484" width="14" height="14"/><rect x="336" y="484" width="14" height="14"/>
+    <rect x="308" y="516" width="14" height="14"/><rect x="336" y="516" width="14" height="14"/>
+    <rect x="468" y="456" width="14" height="14"/><rect x="496" y="456" width="14" height="14"/>
+    <rect x="468" y="488" width="14" height="14"/><rect x="496" y="488" width="14" height="14"/>
+    <rect x="468" y="520" width="14" height="14"/><rect x="496" y="520" width="14" height="14"/>
+    <rect x="632" y="494" width="14" height="14"/><rect x="660" y="494" width="14" height="14"/>
+    <rect x="632" y="526" width="14" height="14"/><rect x="660" y="526" width="14" height="14"/>
+  </g>
+
+  <!-- Gráfico ascendente -->
+  <path d="M258,690 L356,632 L430,660 L522,572 L612,592 L742,492" fill="none" stroke="#e0b83e" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="742" cy="492" r="12" fill="#f4db82" stroke="#1a2b45" stroke-width="4"/>
+  <path d="M712,512 L742,492 L738,524 Z" fill="#c29522"/>
+
+  <!-- Ejecutivo -->
+  <g stroke="#0d1626" stroke-width="5">
+    <circle cx="512" cy="330" r="56" fill="#f0cfa8"/>
+    <path d="M466,318 Q512,288 558,318 L558,300 Q512,266 466,300 Z" fill="#4a3520"/>
+    <circle cx="492" cy="332" r="6" fill="#1a2b45" stroke="none"/>
+    <circle cx="532" cy="332" r="6" fill="#1a2b45" stroke="none"/>
+    <path d="M500,352 Q512,362 524,352" fill="none" stroke="#1a2b45" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- Cuerpo / traje -->
+    <path d="M436,386 L588,386 L604,540 L420,540 Z" fill="#16304d"/>
+    <path d="M484,432 L540,432 L540,540 L484,540 Z" fill="#f0cfa8"/>
+    <path d="M500,432 L524,432 L512,540 Z" fill="url(#bizGold)"/>
+
+    <!-- Brazos -->
+    <path d="M436,398 L356,470 L366,506 L444,482 Z" fill="#16304d"/>
+    <path d="M588,398 L668,470 L658,506 L580,482 Z" fill="#16304d"/>
+    <circle cx="366" cy="500" r="16" fill="#f0cfa8"/>
+
+    <!-- Maletín -->
+    <rect x="612" y="478" width="78" height="54" rx="9" fill="url(#bizGold)"/>
+    <rect x="638" y="462" width="26" height="18" rx="6" fill="#c29522"/>
+    <path d="M651,480 L651,478" stroke="#1a2b45" stroke-width="5"/>
+    <line x1="612" y1="506" x2="690" y2="506" stroke="#1a2b45" stroke-width="4"/>
+
+    <!-- Piernas -->
+    <rect x="470" y="532" width="32" height="88" rx="8" fill="#1a2b45"/>
+    <rect x="522" y="532" width="32" height="88" rx="8" fill="#1a2b45"/>
+    <rect x="470" y="612" width="42" height="16" rx="6" fill="#0d1626"/>
+    <rect x="522" y="612" width="42" height="16" rx="6" fill="#0d1626"/>
+  </g>
+
+  <!-- Brillo -->
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#bizGlow)"/>
+</svg>

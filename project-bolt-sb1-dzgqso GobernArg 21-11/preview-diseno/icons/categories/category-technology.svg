@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="tecShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="tecInner" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="tecGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+    <linearGradient id="tecChip" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#16304d"/>
+      <stop offset="1" stop-color="#0d1626"/>
+    </linearGradient>
+  </defs>
+
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#tecShield)" stroke="#0d1626" stroke-width="20"/>
+  <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#tecInner)" stroke="#c29522" stroke-width="10"/>
+
+  <!-- Circuitos de fondo -->
+  <g fill="none" stroke="#1a2b45" stroke-width="8" stroke-linecap="round" opacity="0.30">
+    <path d="M240,400 L360,400 L360,330 L430,330"/>
+    <path d="M784,400 L664,400 L664,330 L594,330"/>
+    <path d="M240,640 L340,640 L340,700 L430,700"/>
+    <path d="M784,640 L684,640 L684,700 L594,700"/>
+    <circle cx="430" cy="330" r="10" fill="#1a2b45"/>
+    <circle cx="594" cy="330" r="10" fill="#1a2b45"/>
+    <circle cx="430" cy="700" r="10" fill="#1a2b45"/>
+    <circle cx="594" cy="700" r="10" fill="#1a2b45"/>
+  </g>
+
+  <!-- Pantalla con datos -->
+  <g transform="translate(512,300)" stroke="#0d1626" stroke-width="5">
+    <rect x="-150" y="-90" width="300" height="190" rx="18" fill="#ffffff"/>
+    <rect x="-140" y="-80" width="280" height="150" rx="10" fill="#eef4fb"/>
+    <line x1="-120" y1="-60" x2="120" y2="-60" stroke="#c29522" stroke-width="6"/>
+    <g fill="#4a90c9">
+      <rect x="-110" y="-38" width="80" height="10" rx="4"/>
+      <rect x="-110" y="-16" width="130" height="10" rx="4"/>
+      <rect x="-110" y="6" width="100" height="10" rx="4"/>
+      <rect x="-110" y="28" width="150" height="10" rx="4"/>
+    </g>
+    <path d="M-90,96 Q0,60 90,30" fill="none" stroke="#e0b83e" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="90" cy="30" r="8" fill="#e0b83e" stroke="#1a2b45" stroke-width="3"/>
+    <rect x="-150" y="100" width="300" height="22" rx="10" fill="#1a2b45"/>
+  </g>
+
+  <!-- Chip electrónico central -->
+  <g transform="translate(512,620)" stroke="#0d1626" stroke-width="5">
+    <rect x="-120" y="-120" width="240" height="240" rx="18" fill="url(#tecChip)"/>
+    <rect x="-80" y="-80" width="160" height="160" rx="12" fill="url(#tecGold)"/>
+    <rect x="-40" y="-40" width="80" height="80" rx="8" fill="#16304d"/>
+    <g stroke="#e0b83e" stroke-width="6" fill="none">
+      <path d="M-120,-40 L-90,-40"/>
+      <path d="M120,-40 L90,-40"/>
+      <path d="M-120,40 L-90,40"/>
+      <path d="M120,40 L90,40"/>
+      <path d="M-40,-120 L-40,-90"/>
+      <path d="M40,-120 L40,-90"/>
+      <path d="M-40,120 L-40,90"/>
+      <path d="M40,120 L40,90"/>
+    </g>
+    <g fill="#c29522">
+      <circle cx="-120" cy="-120" r="10"/>
+      <circle cx="120" cy="-120" r="10"/>
+      <circle cx="-120" cy="120" r="10"/>
+      <circle cx="120" cy="120" r="10"/>
+    </g>
+    <!-- patas del chip -->
+    <g stroke="#c29522" stroke-width="7">
+      <line x1="-30" y1="-120" x2="-30" y2="-150"/>
+      <line x1="0" y1="-120" x2="0" y2="-150"/>
+      <line x1="30" y1="-120" x2="30" y2="-150"/>
+      <line x1="-30" y1="120" x2="-30" y2="150"/>
+      <line x1="0" y1="120" x2="0" y2="150"/>
+      <line x1="30" y1="120" x2="30" y2="150"/>
+      <line x1="-120" y1="-30" x2="-150" y2="-30"/>
+      <line x1="-120" y1="0" x2="-150" y2="0"/>
+      <line x1="-120" y1="30" x2="-150" y2="30"/>
+      <line x1="120" y1="-30" x2="150" y2="-30"/>
+      <line x1="120" y1="0" x2="150" y2="0"/>
+      <line x1="120" y1="30" x2="150" y2="30"/>
+    </g>
+  </g>
+</svg>

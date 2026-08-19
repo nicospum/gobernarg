@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="uniShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="uniInner" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="uniGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+    <radialGradient id="uniSun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f7e6a8"/>
+      <stop offset="1" stop-color="#e0b83e"/>
+    </radialGradient>
+  </defs>
+
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#uniShield)" stroke="#0d1626" stroke-width="20"/>
+  <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#uniInner)" stroke="#c29522" stroke-width="10"/>
+
+  <!-- Siluetas de trabajadores de fondo -->
+  <g fill="#1a2b45" opacity="0.28">
+    <circle cx="300" cy="610" r="26"/>
+    <rect x="274" y="636" width="52" height="80" rx="10"/>
+    <circle cx="470" cy="596" r="26"/>
+    <rect x="444" y="622" width="52" height="94" rx="10"/>
+    <circle cx="636" cy="600" r="26"/>
+    <rect x="610" y="626" width="52" height="90" rx="10"/>
+    <circle cx="740" cy="616" r="24"/>
+    <rect x="716" y="640" width="48" height="76" rx="10"/>
+  </g>
+
+  <!-- Puño levantado -->
+  <g stroke="#0d1626" stroke-width="6">
+    <!-- antebrazo -->
+    <path d="M512,760 L512,560" stroke="#f0cfa8" stroke-width="88" stroke-linecap="round"/>
+    <!-- manga -->
+    <path d="M512,760 L512,640" stroke="#16304d" stroke-width="96" stroke-linecap="round"/>
+    <path d="M512,660 L512,636" stroke="#c29522" stroke-width="98" stroke-linecap="round"/>
+    <!-- puño -->
+    <circle cx="512" cy="470" r="78" fill="#f0cfa8"/>
+    <path d="M470,420 Q512,380 554,420" fill="none" stroke="#c29522" stroke-width="10"/>
+    <g fill="none" stroke="#0d1626" stroke-width="6" stroke-linecap="round">
+      <path d="M470,470 L470,420"/>
+      <path d="M486,486 L486,428"/>
+      <path d="M506,492 L506,432"/>
+      <path d="M524,486 L524,428"/>
+      <path d="M540,470 L540,420"/>
+    </g>
+  </g>
+
+  <!-- Banderín argentino en el puño -->
+  <g transform="translate(512,400) rotate(14)">
+    <rect x="-6" y="-70" width="12" height="160" fill="#1a2b45"/>
+    <path d="M6,-66 L118,-36 L6,-6 Z" fill="#4a90c9"/>
+    <path d="M6,-46 L88,-36 L6,-26 Z" fill="#ffffff"/>
+    <!-- Sol de Mayo en bandera -->
+    <circle cx="52" cy="-36" r="14" fill="url(#uniSun)"/>
+    <g fill="#e0b83e">
+      <path d="M52,-58 L56,-48 L48,-48 Z"/>
+      <path d="M52,-14 L56,-24 L48,-24 Z"/>
+      <path d="M30,-36 L40,-40 L40,-32 Z"/>
+      <path d="M74,-36 L64,-40 L64,-32 Z"/>
+    </g>
+  </g>
+
+  <!-- Sol de Mayo en pecho del puño -->
+  <g transform="translate(512,470)">
+    <circle r="30" fill="url(#uniSun)" stroke="#0d1626" stroke-width="3"/>
+    <circle cx="-8" cy="-5" r="4" fill="#1a2b45"/>
+    <circle cx="8" cy="-5" r="4" fill="#1a2b45"/>
+    <path d="M-7,6 Q0,12 7,6" fill="none" stroke="#1a2b45" stroke-width="3" stroke-linecap="round"/>
+  </g>
+</svg>

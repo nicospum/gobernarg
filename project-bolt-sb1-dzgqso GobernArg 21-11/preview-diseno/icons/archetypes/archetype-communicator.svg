@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="comShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="comInner" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="comGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+    <radialGradient id="comGlow" cx="0.5" cy="0.4" r="0.55">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#comShield)" stroke="#0d1626" stroke-width="20"/>
+  <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#comInner)" stroke="#c29522" stroke-width="10"/>
+
+  <!-- Cámara y pantalla de fondo -->
+  <g fill="#1a2b45" opacity="0.30">
+    <rect x="238" y="486" width="120" height="84" rx="14"/>
+    <rect x="252" y="500" width="92" height="56" rx="8" fill="#7ab8e0"/>
+    <rect x="666" y="470" width="130" height="100" rx="14"/>
+    <rect x="680" y="484" width="102" height="72" rx="8" fill="#7ab8e0"/>
+  </g>
+  <!-- Antena cámara -->
+  <circle cx="298" cy="470" r="10" fill="#e0b83e"/>
+  <circle cx="731" cy="454" r="10" fill="#e0b83e"/>
+
+  <!-- Ondas de sonido -->
+  <g fill="none" stroke="#e0b83e" stroke-width="12" stroke-linecap="round">
+    <path d="M300,430 Q512,300 724,430"/>
+    <path d="M252,470 Q512,252 772,470"/>
+    <path d="M204,510 Q512,204 820,510"/>
+  </g>
+  <g fill="none" stroke="#c29522" stroke-width="12" stroke-linecap="round" opacity="0.8">
+    <path d="M276,450 Q512,276 748,450"/>
+  </g>
+
+  <!-- Micrófono clásico -->
+  <g stroke="#0d1626" stroke-width="5">
+    <!-- rejilla -->
+    <rect x="462" y="330" width="100" height="120" rx="30" fill="url(#comGold)"/>
+    <g stroke="#1a2b45" stroke-width="4" opacity="0.55">
+      <line x1="470" y1="350" x2="554" y2="350"/>
+      <line x1="470" y1="374" x2="554" y2="374"/>
+      <line x1="470" y1="398" x2="554" y2="398"/>
+      <line x1="470" y1="422" x2="554" y2="422"/>
+      <line x1="476" y1="446" x2="548" y2="446"/>
+    </g>
+    <rect x="482" y="310" width="60" height="40" rx="10" fill="#c29522"/>
+    <!-- brazo -->
+    <path d="M512,450 L512,540" fill="none" stroke="#1a2b45" stroke-width="16" stroke-linecap="round"/>
+    <path d="M500,540 L524,540" stroke="#1a2b45" stroke-width="14" stroke-linecap="round"/>
+    <!-- base -->
+    <path d="M470,568 Q512,596 554,568 L548,584 Q512,612 476,584 Z" fill="url(#comGold)"/>
+    <!-- perillas -->
+    <circle cx="438" cy="486" r="12" fill="#c29522"/>
+    <circle cx="586" cy="486" r="12" fill="#c29522"/>
+  </g>
+
+  <!-- Destellos -->
+  <g fill="#ffffff" opacity="0.85">
+    <path d="M646,360 L656,340 L666,360 L656,380 Z"/>
+    <path d="M378,360 L388,344 L398,360 L388,376 Z"/>
+    <circle cx="660" cy="330" r="8"/>
+    <circle cx="364" cy="330" r="8"/>
+  </g>
+
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#comGlow)"/>
+</svg>

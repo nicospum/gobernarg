@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="femShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="femInner" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="femViolet" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b06ab3"/>
+      <stop offset="1" stop-color="#8e44ad"/>
+    </linearGradient>
+    <linearGradient id="femGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+  </defs>
+
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#femShield)" stroke="#0d1626" stroke-width="20"/>
+  <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#femInner)" stroke="#c29522" stroke-width="10"/>
+
+  <!-- Ondas de protesta pacífica -->
+  <g fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round" opacity="0.35">
+    <path d="M220,420 Q280,360 340,420 Q400,480 460,420 Q520,360 580,420 Q640,480 700,420 Q760,360 804,420"/>
+    <path d="M220,470 Q280,410 340,470 Q400,530 460,470 Q520,410 580,470 Q640,530 700,470 Q760,410 804,470"/>
+  </g>
+
+  <!-- Símbolo de género -->
+  <g transform="translate(512,300)" stroke="#0d1626" stroke-width="5">
+    <circle cx="0" cy="-40" r="56" fill="url(#femViolet)"/>
+    <line x1="0" y1="16" x2="0" y2="90" stroke="url(#femViolet)" stroke-width="14"/>
+    <line x1="-34" y1="60" x2="34" y2="60" stroke="url(#femViolet)" stroke-width="12"/>
+  </g>
+
+  <!-- Puño con bandera argentina -->
+  <g stroke="#0d1626" stroke-width="6">
+    <path d="M512,560 L512,380" stroke="#f0cfa8" stroke-width="76" stroke-linecap="round"/>
+    <path d="M512,560 L512,470" stroke="url(#femViolet)" stroke-width="84" stroke-linecap="round"/>
+    <circle cx="512" cy="350" r="70" fill="#f0cfa8"/>
+    <g fill="none" stroke="#0d1626" stroke-width="6" stroke-linecap="round">
+      <path d="M480,340 L480,310"/>
+      <path d="M500,348 L500,312"/>
+      <path d="M520,348 L520,312"/>
+      <path d="M540,340 L540,310"/>
+    </g>
+  </g>
+
+  <!-- Banderín argentino -->
+  <g transform="translate(512,330) rotate(8)">
+    <rect x="-5" y="-70" width="10" height="150" fill="#1a2b45"/>
+    <path d="M5,-66 L100,-38 L5,-10 Z" fill="#4a90c9"/>
+    <path d="M5,-48 L78,-38 L5,-28 Z" fill="#ffffff"/>
+  </g>
+
+  <!-- Acentos -->
+  <g fill="url(#femGold)" stroke="#0d1626" stroke-width="4">
+    <circle cx="270" cy="620" r="14"/>
+    <circle cx="754" cy="620" r="14"/>
+    <circle cx="290" cy="560" r="10"/>
+    <circle cx="734" cy="560" r="10"/>
+  </g>
+</svg>

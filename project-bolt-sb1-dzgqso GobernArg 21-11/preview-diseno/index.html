@@ -1,0 +1,2526 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GobernArg — Preview de Piezas de Diseño</title>
+<style>
+  :root {
+    --bg: #0d1626;
+    --bg2: #1a2b45;
+    --celeste: #4a90c9;
+    --celeste-claro: #7ab8e0;
+    --dorado: #e0b83e;
+    --texto: #e8eef5;
+    --muted: #8fa3b5;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--texto); font-family: Georgia, 'Times New Roman', serif; }
+  header { padding: 48px 24px 32px; text-align: center; border-bottom: 1px solid rgba(224,184,62,0.35); background: linear-gradient(180deg, #14243a 0%, var(--bg) 100%); }
+  header h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 3rem); color: var(--dorado); letter-spacing: 1px; }
+  header p { margin: 12px auto 0; max-width: 760px; color: var(--muted); font-size: 1.05rem; line-height: 1.6; }
+  .palette { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .palette span { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.35); display: inline-block; }
+  main { padding: 40px 24px 80px; max-width: 1600px; margin: 0 auto; }
+  section { margin-bottom: 56px; }
+  section h2 { font-size: 1.5rem; color: var(--celeste-claro); border-left: 4px solid var(--dorado); padding-left: 14px; margin: 0 0 6px; }
+  section .desc { color: var(--muted); margin: 0 0 22px; padding-left: 18px; font-size: 0.95rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 22px; }
+  .card { margin: 0; background: var(--bg2); border: 1px solid rgba(122,184,224,0.25); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; transition: transform .15s ease, border-color .15s ease; }
+  .card:hover { transform: translateY(-3px); border-color: var(--dorado); }
+  .card.wide { grid-column: 1 / -1; }
+  .tile { flex: 1; padding: 14px; display: flex; align-items: center; justify-content: center; background-color: #dfe4ea; background-image: linear-gradient(45deg, #b9c2cc 25%, transparent 25%), linear-gradient(-45deg, #b9c2cc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #b9c2cc 75%), linear-gradient(-45deg, transparent 75%, #b9c2cc 75%); background-size: 22px 22px; background-position: 0 0, 0 11px, 11px -11px, -11px 0; }
+  .tile svg { width: 100%; height: auto; display: block; max-height: 320px; }
+  .card.wide .tile svg { max-height: 420px; }
+  figcaption { padding: 10px 12px; text-align: center; font-family: 'Courier New', monospace; font-size: 0.82rem; color: var(--muted); background: #15253d; border-top: 1px solid rgba(122,184,224,0.18); word-break: break-all; }
+  footer { text-align: center; color: var(--muted); padding: 24px; border-top: 1px solid rgba(224,184,62,0.25); font-size: 0.85rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>GobernArg — Preview de Piezas de Diseño</h1>
+  <p>31 piezas vectoriales SVG (iconos 1024×1024, sellos e insignias 512×512 y banners 1920×480) para el simulador político argentino. Fondo de damero para apreciar las transparencias.</p>
+  <div class="palette">
+    <span style="background:#4a90c9" title="Celeste"></span>
+    <span style="background:#7ab8e0" title="Celeste claro"></span>
+    <span style="background:#e0b83e" title="Dorado"></span>
+    <span style="background:#c29522" title="Dorado oscuro"></span>
+    <span style="background:#1a2b45" title="Azul oscuro"></span>
+    <span style="background:#0d1626" title="Azul noche"></span>
+    <span style="background:#c0392b" title="Rojo crisis"></span>
+  </div>
+</header>
+<main>
+
+<section>
+  <h2>Iconos de Arquetipos</h2>
+  <p class="desc">Arquetipos de personaje · 3 piezas</p>
+  <div class="grid">
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="bizShield" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#1a2b45"/>
+        </linearGradient>
+        <linearGradient id="bizInner" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="1" stop-color="#4a90c9"/>
+        </linearGradient>
+        <linearGradient id="bizGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+        <radialGradient id="bizGlow" cx="0.5" cy="0.35" r="0.6">
+          <stop offset="0" stop-color="#ffffff" stop-opacity="0.25"/>
+          <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+    
+      <!-- Escudo exterior -->
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#bizShield)" stroke="#0d1626" stroke-width="20"/>
+      <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#bizInner)" stroke="#c29522" stroke-width="10"/>
+    
+      <!-- Skyline de oficinas -->
+      <g fill="#1a2b45" opacity="0.32">
+        <rect x="222" y="528" width="56" height="150" rx="3"/>
+        <rect x="296" y="468" width="68" height="210" rx="3"/>
+        <rect x="382" y="508" width="54" height="170" rx="3"/>
+        <rect x="456" y="440" width="74" height="238" rx="3"/>
+        <rect x="548" y="508" width="54" height="170" rx="3"/>
+        <rect x="620" y="478" width="68" height="200" rx="3"/>
+        <rect x="706" y="528" width="56" height="150" rx="3"/>
+      </g>
+      <!-- Ventanas -->
+      <g fill="#7ab8e0" opacity="0.5">
+        <rect x="308" y="484" width="14" height="14"/><rect x="336" y="484" width="14" height="14"/>
+        <rect x="308" y="516" width="14" height="14"/><rect x="336" y="516" width="14" height="14"/>
+        <rect x="468" y="456" width="14" height="14"/><rect x="496" y="456" width="14" height="14"/>
+        <rect x="468" y="488" width="14" height="14"/><rect x="496" y="488" width="14" height="14"/>
+        <rect x="468" y="520" width="14" height="14"/><rect x="496" y="520" width="14" height="14"/>
+        <rect x="632" y="494" width="14" height="14"/><rect x="660" y="494" width="14" height="14"/>
+        <rect x="632" y="526" width="14" height="14"/><rect x="660" y="526" width="14" height="14"/>
+      </g>
+    
+      <!-- Gráfico ascendente -->
+      <path d="M258,690 L356,632 L430,660 L522,572 L612,592 L742,492" fill="none" stroke="#e0b83e" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="742" cy="492" r="12" fill="#f4db82" stroke="#1a2b45" stroke-width="4"/>
+      <path d="M712,512 L742,492 L738,524 Z" fill="#c29522"/>
+    
+      <!-- Ejecutivo -->
+      <g stroke="#0d1626" stroke-width="5">
+        <circle cx="512" cy="330" r="56" fill="#f0cfa8"/>
+        <path d="M466,318 Q512,288 558,318 L558,300 Q512,266 466,300 Z" fill="#4a3520"/>
+        <circle cx="492" cy="332" r="6" fill="#1a2b45" stroke="none"/>
+        <circle cx="532" cy="332" r="6" fill="#1a2b45" stroke="none"/>
+        <path d="M500,352 Q512,362 524,352" fill="none" stroke="#1a2b45" stroke-width="4" stroke-linecap="round"/>
+    
+        <!-- Cuerpo / traje -->
+        <path d="M436,386 L588,386 L604,540 L420,540 Z" fill="#16304d"/>
+        <path d="M484,432 L540,432 L540,540 L484,540 Z" fill="#f0cfa8"/>
+        <path d="M500,432 L524,432 L512,540 Z" fill="url(#bizGold)"/>
+    
+        <!-- Brazos -->
+        <path d="M436,398 L356,470 L366,506 L444,482 Z" fill="#16304d"/>
+        <path d="M588,398 L668,470 L658,506 L580,482 Z" fill="#16304d"/>
+        <circle cx="366" cy="500" r="16" fill="#f0cfa8"/>
+    
+        <!-- Maletín -->
+        <rect x="612" y="478" width="78" height="54" rx="9" fill="url(#bizGold)"/>
+        <rect x="638" y="462" width="26" height="18" rx="6" fill="#c29522"/>
+        <path d="M651,480 L651,478" stroke="#1a2b45" stroke-width="5"/>
+        <line x1="612" y1="506" x2="690" y2="506" stroke="#1a2b45" stroke-width="4"/>
+    
+        <!-- Piernas -->
+        <rect x="470" y="532" width="32" height="88" rx="8" fill="#1a2b45"/>
+        <rect x="522" y="532" width="32" height="88" rx="8" fill="#1a2b45"/>
+        <rect x="470" y="612" width="42" height="16" rx="6" fill="#0d1626"/>
+        <rect x="522" y="612" width="42" height="16" rx="6" fill="#0d1626"/>
+      </g>
+    
+      <!-- Brillo -->
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#bizGlow)"/>
+    </svg></div>
+          <figcaption>archetype-business.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="comShield" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#1a2b45"/>
+        </linearGradient>
+        <linearGradient id="comInner" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="1" stop-color="#4a90c9"/>
+        </linearGradient>
+        <linearGradient id="comGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+        <radialGradient id="comGlow" cx="0.5" cy="0.4" r="0.55">
+          <stop offset="0" stop-color="#ffffff" stop-opacity="0.22"/>
+          <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+    
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#comShield)" stroke="#0d1626" stroke-width="20"/>
+      <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#comInner)" stroke="#c29522" stroke-width="10"/>
+    
+      <!-- Cámara y pantalla de fondo -->
+      <g fill="#1a2b45" opacity="0.30">
+        <rect x="238" y="486" width="120" height="84" rx="14"/>
+        <rect x="252" y="500" width="92" height="56" rx="8" fill="#7ab8e0"/>
+        <rect x="666" y="470" width="130" height="100" rx="14"/>
+        <rect x="680" y="484" width="102" height="72" rx="8" fill="#7ab8e0"/>
+      </g>
+      <!-- Antena cámara -->
+      <circle cx="298" cy="470" r="10" fill="#e0b83e"/>
+      <circle cx="731" cy="454" r="10" fill="#e0b83e"/>
+    
+      <!-- Ondas de sonido -->
+      <g fill="none" stroke="#e0b83e" stroke-width="12" stroke-linecap="round">
+        <path d="M300,430 Q512,300 724,430"/>
+        <path d="M252,470 Q512,252 772,470"/>
+        <path d="M204,510 Q512,204 820,510"/>
+      </g>
+      <g fill="none" stroke="#c29522" stroke-width="12" stroke-linecap="round" opacity="0.8">
+        <path d="M276,450 Q512,276 748,450"/>
+      </g>
+    
+      <!-- Micrófono clásico -->
+      <g stroke="#0d1626" stroke-width="5">
+        <!-- rejilla -->
+        <rect x="462" y="330" width="100" height="120" rx="30" fill="url(#comGold)"/>
+        <g stroke="#1a2b45" stroke-width="4" opacity="0.55">
+          <line x1="470" y1="350" x2="554" y2="350"/>
+          <line x1="470" y1="374" x2="554" y2="374"/>
+          <line x1="470" y1="398" x2="554" y2="398"/>
+          <line x1="470" y1="422" x2="554" y2="422"/>
+          <line x1="476" y1="446" x2="548" y2="446"/>
+        </g>
+        <rect x="482" y="310" width="60" height="40" rx="10" fill="#c29522"/>
+        <!-- brazo -->
+        <path d="M512,450 L512,540" fill="none" stroke="#1a2b45" stroke-width="16" stroke-linecap="round"/>
+        <path d="M500,540 L524,540" stroke="#1a2b45" stroke-width="14" stroke-linecap="round"/>
+        <!-- base -->
+        <path d="M470,568 Q512,596 554,568 L548,584 Q512,612 476,584 Z" fill="url(#comGold)"/>
+        <!-- perillas -->
+        <circle cx="438" cy="486" r="12" fill="#c29522"/>
+        <circle cx="586" cy="486" r="12" fill="#c29522"/>
+      </g>
+    
+      <!-- Destellos -->
+      <g fill="#ffffff" opacity="0.85">
+        <path d="M646,360 L656,340 L666,360 L656,380 Z"/>
+        <path d="M378,360 L388,344 L398,360 L388,376 Z"/>
+        <circle cx="660" cy="330" r="8"/>
+        <circle cx="364" cy="330" r="8"/>
+      </g>
+    
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#comGlow)"/>
+    </svg></div>
+          <figcaption>archetype-communicator.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="uniShield" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#1a2b45"/>
+        </linearGradient>
+        <linearGradient id="uniInner" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="1" stop-color="#4a90c9"/>
+        </linearGradient>
+        <linearGradient id="uniGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+        <radialGradient id="uniSun" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#f7e6a8"/>
+          <stop offset="1" stop-color="#e0b83e"/>
+        </radialGradient>
+      </defs>
+    
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#uniShield)" stroke="#0d1626" stroke-width="20"/>
+      <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#uniInner)" stroke="#c29522" stroke-width="10"/>
+    
+      <!-- Siluetas de trabajadores de fondo -->
+      <g fill="#1a2b45" opacity="0.28">
+        <circle cx="300" cy="610" r="26"/>
+        <rect x="274" y="636" width="52" height="80" rx="10"/>
+        <circle cx="470" cy="596" r="26"/>
+        <rect x="444" y="622" width="52" height="94" rx="10"/>
+        <circle cx="636" cy="600" r="26"/>
+        <rect x="610" y="626" width="52" height="90" rx="10"/>
+        <circle cx="740" cy="616" r="24"/>
+        <rect x="716" y="640" width="48" height="76" rx="10"/>
+      </g>
+    
+      <!-- Puño levantado -->
+      <g stroke="#0d1626" stroke-width="6">
+        <!-- antebrazo -->
+        <path d="M512,760 L512,560" stroke="#f0cfa8" stroke-width="88" stroke-linecap="round"/>
+        <!-- manga -->
+        <path d="M512,760 L512,640" stroke="#16304d" stroke-width="96" stroke-linecap="round"/>
+        <path d="M512,660 L512,636" stroke="#c29522" stroke-width="98" stroke-linecap="round"/>
+        <!-- puño -->
+        <circle cx="512" cy="470" r="78" fill="#f0cfa8"/>
+        <path d="M470,420 Q512,380 554,420" fill="none" stroke="#c29522" stroke-width="10"/>
+        <g fill="none" stroke="#0d1626" stroke-width="6" stroke-linecap="round">
+          <path d="M470,470 L470,420"/>
+          <path d="M486,486 L486,428"/>
+          <path d="M506,492 L506,432"/>
+          <path d="M524,486 L524,428"/>
+          <path d="M540,470 L540,420"/>
+        </g>
+      </g>
+    
+      <!-- Banderín argentino en el puño -->
+      <g transform="translate(512,400) rotate(14)">
+        <rect x="-6" y="-70" width="12" height="160" fill="#1a2b45"/>
+        <path d="M6,-66 L118,-36 L6,-6 Z" fill="#4a90c9"/>
+        <path d="M6,-46 L88,-36 L6,-26 Z" fill="#ffffff"/>
+        <!-- Sol de Mayo en bandera -->
+        <circle cx="52" cy="-36" r="14" fill="url(#uniSun)"/>
+        <g fill="#e0b83e">
+          <path d="M52,-58 L56,-48 L48,-48 Z"/>
+          <path d="M52,-14 L56,-24 L48,-24 Z"/>
+          <path d="M30,-36 L40,-40 L40,-32 Z"/>
+          <path d="M74,-36 L64,-40 L64,-32 Z"/>
+        </g>
+      </g>
+    
+      <!-- Sol de Mayo en pecho del puño -->
+      <g transform="translate(512,470)">
+        <circle r="30" fill="url(#uniSun)" stroke="#0d1626" stroke-width="3"/>
+        <circle cx="-8" cy="-5" r="4" fill="#1a2b45"/>
+        <circle cx="8" cy="-5" r="4" fill="#1a2b45"/>
+        <path d="M-7,6 Q0,12 7,6" fill="none" stroke="#1a2b45" stroke-width="3" stroke-linecap="round"/>
+      </g>
+    </svg></div>
+          <figcaption>archetype-union.svg</figcaption>
+        </figure>
+
+  </div>
+</section>
+
+<section>
+  <h2>Iconos de Categorías</h2>
+  <p class="desc">Categorías de gestión · 3 piezas</p>
+  <div class="grid">
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="culShield" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#1a2b45"/>
+        </linearGradient>
+        <linearGradient id="culInner" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="1" stop-color="#4a90c9"/>
+        </linearGradient>
+        <linearGradient id="culGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+        <radialGradient id="culSun" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#f7e6a8"/>
+          <stop offset="1" stop-color="#e0b83e"/>
+        </radialGradient>
+      </defs>
+    
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#culShield)" stroke="#0d1626" stroke-width="20"/>
+      <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#culInner)" stroke="#c29522" stroke-width="10"/>
+    
+      <!-- Sol de Mayo arriba -->
+      <g transform="translate(512,240)">
+        <g fill="#e0b83e">
+          <path d="M0,-70 L14,-30 L-14,-30 Z"/>
+          <path d="M0,70 L14,30 L-14,30 Z"/>
+          <path d="M-70,0 L-30,14 L-30,-14 Z"/>
+          <path d="M70,0 L30,14 L30,-14 Z"/>
+          <path d="M-49,-49 L-24,-24 L-24,-42 Z"/>
+          <path d="M49,-49 L24,-24 L42,-24 Z"/>
+          <path d="M-49,49 L-24,24 L-42,24 Z"/>
+          <path d="M49,49 L24,24 L42,24 Z"/>
+        </g>
+        <circle r="34" fill="url(#culSun)" stroke="#1a2b45" stroke-width="3"/>
+        <circle cx="-10" cy="-6" r="5" fill="#1a2b45"/>
+        <circle cx="10" cy="-6" r="5" fill="#1a2b45"/>
+        <path d="M-9,8 Q0,16 9,8" fill="none" stroke="#1a2b45" stroke-width="4" stroke-linecap="round"/>
+      </g>
+    
+      <!-- Paleta de pintor -->
+      <g transform="translate(512,470)" stroke="#0d1626" stroke-width="5">
+        <path d="M-130,-40 Q-160,40 -90,120 Q-10,180 70,120 Q130,60 100,-40 Q80,-110 -10,-110 Q-90,-110 -130,-40 Z" fill="url(#culGold)"/>
+        <circle cx="-70" cy="0" r="14" fill="#c0392b"/>
+        <circle cx="-20" cy="-30" r="14" fill="#4a90c9"/>
+        <circle cx="40" cy="-10" r="14" fill="#e0b83e"/>
+        <circle cx="10" cy="40" r="14" fill="#ffffff"/>
+        <circle cx="-40" cy="50" r="14" fill="#1a2b45"/>
+      </g>
+    
+      <!-- Pincel -->
+      <g stroke="#0d1626" stroke-width="5">
+        <path d="M604,340 L744,200" stroke="#c29522" stroke-width="18" stroke-linecap="round"/>
+        <path d="M600,344 L744,200" stroke="#e0b83e" stroke-width="18" stroke-linecap="round" transform="translate(2,-4)"/>
+        <path d="M742,180 L770,208 L742,196 L714,224 Z" fill="#1a2b45"/>
+        <path d="M756,200 Q778,222 796,240 L770,216 Z" fill="#4a90c9"/>
+      </g>
+    
+      <!-- Máscara teatral -->
+      <g transform="translate(512,650)" stroke="#0d1626" stroke-width="5">
+        <path d="M-90,-40 Q-140,-10 -130,60 Q-120,120 -60,130 Q-20,138 0,118 Q20,138 60,130 Q120,120 130,60 Q140,-10 90,-40 Q60,-70 0,-70 Q-60,-70 -90,-40 Z" fill="#1a2b45"/>
+        <g fill="#f0cfa8">
+          <ellipse cx="-55" cy="-6" rx="22" ry="26"/>
+          <ellipse cx="55" cy="-6" rx="22" ry="26"/>
+        </g>
+        <circle cx="-58" cy="-10" r="8" fill="#0d1626"/>
+        <circle cx="52" cy="-10" r="8" fill="#0d1626"/>
+        <path d="M-22,44 Q0,64 22,44" fill="none" stroke="#c29522" stroke-width="6" stroke-linecap="round"/>
+      </g>
+    
+      <!-- Laureles laterales -->
+      <g fill="#c29522">
+        <g transform="translate(232,560)">
+          <path d="M0,0 Q-40,-120 -70,-240" fill="none" stroke="#c29522" stroke-width="8"/>
+          <ellipse cx="-30" cy="-60" rx="20" ry="9" transform="rotate(-30 -30 -60)"/>
+          <ellipse cx="-52" cy="-120" rx="20" ry="9" transform="rotate(-20 -52 -120)"/>
+          <ellipse cx="-66" cy="-180" rx="18" ry="8" transform="rotate(-10 -66 -180)"/>
+          <ellipse cx="-20" cy="-40" rx="20" ry="9" transform="rotate(20 -20 -40)"/>
+          <ellipse cx="-44" cy="-100" rx="20" ry="9" transform="rotate(30 -44 -100)"/>
+        </g>
+        <g transform="translate(792,560) scale(-1,1)">
+          <path d="M0,0 Q-40,-120 -70,-240" fill="none" stroke="#c29522" stroke-width="8"/>
+          <ellipse cx="-30" cy="-60" rx="20" ry="9" transform="rotate(-30 -30 -60)"/>
+          <ellipse cx="-52" cy="-120" rx="20" ry="9" transform="rotate(-20 -52 -120)"/>
+          <ellipse cx="-66" cy="-180" rx="18" ry="8" transform="rotate(-10 -66 -180)"/>
+          <ellipse cx="-20" cy="-40" rx="20" ry="9" transform="rotate(20 -20 -40)"/>
+          <ellipse cx="-44" cy="-100" rx="20" ry="9" transform="rotate(30 -44 -100)"/>
+        </g>
+      </g>
+    </svg></div>
+          <figcaption>category-culture.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="tecShield" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#1a2b45"/>
+        </linearGradient>
+        <linearGradient id="tecInner" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="1" stop-color="#4a90c9"/>
+        </linearGradient>
+        <linearGradient id="tecGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+        <linearGradient id="tecChip" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#16304d"/>
+          <stop offset="1" stop-color="#0d1626"/>
+        </linearGradient>
+      </defs>
+    
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#tecShield)" stroke="#0d1626" stroke-width="20"/>
+      <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#tecInner)" stroke="#c29522" stroke-width="10"/>
+    
+      <!-- Circuitos de fondo -->
+      <g fill="none" stroke="#1a2b45" stroke-width="8" stroke-linecap="round" opacity="0.30">
+        <path d="M240,400 L360,400 L360,330 L430,330"/>
+        <path d="M784,400 L664,400 L664,330 L594,330"/>
+        <path d="M240,640 L340,640 L340,700 L430,700"/>
+        <path d="M784,640 L684,640 L684,700 L594,700"/>
+        <circle cx="430" cy="330" r="10" fill="#1a2b45"/>
+        <circle cx="594" cy="330" r="10" fill="#1a2b45"/>
+        <circle cx="430" cy="700" r="10" fill="#1a2b45"/>
+        <circle cx="594" cy="700" r="10" fill="#1a2b45"/>
+      </g>
+    
+      <!-- Pantalla con datos -->
+      <g transform="translate(512,300)" stroke="#0d1626" stroke-width="5">
+        <rect x="-150" y="-90" width="300" height="190" rx="18" fill="#ffffff"/>
+        <rect x="-140" y="-80" width="280" height="150" rx="10" fill="#eef4fb"/>
+        <line x1="-120" y1="-60" x2="120" y2="-60" stroke="#c29522" stroke-width="6"/>
+        <g fill="#4a90c9">
+          <rect x="-110" y="-38" width="80" height="10" rx="4"/>
+          <rect x="-110" y="-16" width="130" height="10" rx="4"/>
+          <rect x="-110" y="6" width="100" height="10" rx="4"/>
+          <rect x="-110" y="28" width="150" height="10" rx="4"/>
+        </g>
+        <path d="M-90,96 Q0,60 90,30" fill="none" stroke="#e0b83e" stroke-width="8" stroke-linecap="round"/>
+        <circle cx="90" cy="30" r="8" fill="#e0b83e" stroke="#1a2b45" stroke-width="3"/>
+        <rect x="-150" y="100" width="300" height="22" rx="10" fill="#1a2b45"/>
+      </g>
+    
+      <!-- Chip electrónico central -->
+      <g transform="translate(512,620)" stroke="#0d1626" stroke-width="5">
+        <rect x="-120" y="-120" width="240" height="240" rx="18" fill="url(#tecChip)"/>
+        <rect x="-80" y="-80" width="160" height="160" rx="12" fill="url(#tecGold)"/>
+        <rect x="-40" y="-40" width="80" height="80" rx="8" fill="#16304d"/>
+        <g stroke="#e0b83e" stroke-width="6" fill="none">
+          <path d="M-120,-40 L-90,-40"/>
+          <path d="M120,-40 L90,-40"/>
+          <path d="M-120,40 L-90,40"/>
+          <path d="M120,40 L90,40"/>
+          <path d="M-40,-120 L-40,-90"/>
+          <path d="M40,-120 L40,-90"/>
+          <path d="M-40,120 L-40,90"/>
+          <path d="M40,120 L40,90"/>
+        </g>
+        <g fill="#c29522">
+          <circle cx="-120" cy="-120" r="10"/>
+          <circle cx="120" cy="-120" r="10"/>
+          <circle cx="-120" cy="120" r="10"/>
+          <circle cx="120" cy="120" r="10"/>
+        </g>
+        <!-- patas del chip -->
+        <g stroke="#c29522" stroke-width="7">
+          <line x1="-30" y1="-120" x2="-30" y2="-150"/>
+          <line x1="0" y1="-120" x2="0" y2="-150"/>
+          <line x1="30" y1="-120" x2="30" y2="-150"/>
+          <line x1="-30" y1="120" x2="-30" y2="150"/>
+          <line x1="0" y1="120" x2="0" y2="150"/>
+          <line x1="30" y1="120" x2="30" y2="150"/>
+          <line x1="-120" y1="-30" x2="-150" y2="-30"/>
+          <line x1="-120" y1="0" x2="-150" y2="0"/>
+          <line x1="-120" y1="30" x2="-150" y2="30"/>
+          <line x1="120" y1="-30" x2="150" y2="-30"/>
+          <line x1="120" y1="0" x2="150" y2="0"/>
+          <line x1="120" y1="30" x2="150" y2="30"/>
+        </g>
+      </g>
+    </svg></div>
+          <figcaption>category-technology.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="touShield" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#1a2b45"/>
+        </linearGradient>
+        <linearGradient id="touInner" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="1" stop-color="#4a90c9"/>
+        </linearGradient>
+        <linearGradient id="touGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+        <radialGradient id="touSun" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#f7e6a8"/>
+          <stop offset="1" stop-color="#e0b83e"/>
+        </radialGradient>
+      </defs>
+    
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#touShield)" stroke="#0d1626" stroke-width="20"/>
+      <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#touInner)" stroke="#c29522" stroke-width="10"/>
+    
+      <!-- Sol naciente -->
+      <g transform="translate(512,330)">
+        <circle r="120" fill="url(#touSun)" opacity="0.9"/>
+        <g fill="#e0b83e" opacity="0.85">
+          <path d="M0,-150 L20,-96 L-20,-96 Z"/>
+          <path d="M0,150 L20,96 L-20,96 Z"/>
+          <path d="M-150,0 L-96,20 L-96,-20 Z"/>
+          <path d="M150,0 L96,20 L96,-20 Z"/>
+          <path d="M-106,-106 L-70,-70 L-92,-70 Z"/>
+          <path d="M106,-106 L70,-70 L92,-70 Z"/>
+          <path d="M-106,106 L-70,70 L-92,70 Z"/>
+          <path d="M106,106 L70,70 L92,70 Z"/>
+        </g>
+        <circle r="52" fill="#f7e6a8" stroke="#1a2b45" stroke-width="3"/>
+        <circle cx="-14" cy="-8" r="7" fill="#1a2b45"/>
+        <circle cx="14" cy="-8" r="7" fill="#1a2b45"/>
+        <path d="M-12,10 Q0,20 12,10" fill="none" stroke="#1a2b45" stroke-width="5" stroke-linecap="round"/>
+      </g>
+    
+      <!-- Paisaje: montañas -->
+      <g>
+        <path d="M190,700 L300,520 L380,640 L460,500 L620,700 Z" fill="#1a2b45" opacity="0.35"/>
+        <path d="M420,700 L560,540 L700,700 Z" fill="#1a2b45" opacity="0.45"/>
+        <!-- cataratas -->
+        <g stroke="#7ab8e0" stroke-width="10" stroke-linecap="round" opacity="0.8">
+          <path d="M300,560 L300,620"/>
+          <path d="M330,572 L330,640"/>
+          <path d="M360,580 L360,650"/>
+          <path d="M470,560 L470,630"/>
+          <path d="M500,570 L500,640"/>
+        </g>
+      </g>
+    
+      <!-- Avión -->
+      <g transform="translate(512,470) rotate(-12)" stroke="#0d1626" stroke-width="5">
+        <path d="M-150,0 L-80,-30 L60,-30 L120,-60 L130,-60 L110,-20 L80,0 L110,20 L130,60 L120,60 L60,30 L-80,30 Z" fill="#ffffff"/>
+        <path d="M-150,0 L-90,0" stroke="#4a90c9" stroke-width="10"/>
+        <circle cx="-40" cy="0" r="10" fill="#c29522"/>
+        <path d="M-150,-8 L-150,8" stroke="#4a90c9" stroke-width="8"/>
+      </g>
+    
+      <!-- Maleta -->
+      <g transform="translate(512,690)" stroke="#0d1626" stroke-width="5">
+        <rect x="-90" y="-50" width="180" height="110" rx="16" fill="url(#touGold)"/>
+        <rect x="-30" y="-70" width="60" height="24" rx="8" fill="#c29522"/>
+        <line x1="-90" y1="-4" x2="90" y2="-4" stroke="#1a2b45" stroke-width="6"/>
+        <rect x="-6" y="-40" width="12" height="90" fill="#1a2b45"/>
+        <circle cx="-50" cy="6" r="8" fill="#1a2b45"/>
+        <circle cx="50" cy="6" r="8" fill="#1a2b45"/>
+      </g>
+    </svg></div>
+          <figcaption>category-tourism.svg</figcaption>
+        </figure>
+
+  </div>
+</section>
+
+<section>
+  <h2>Iconos de Grupos</h2>
+  <p class="desc">Grupos de interés · 15 piezas</p>
+  <div class="grid">
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="acaShield" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#1a2b45"/>
+        </linearGradient>
+        <linearGradient id="acaInner" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="1" stop-color="#4a90c9"/>
+        </linearGradient>
+        <linearGradient id="acaGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+      </defs>
+    
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#acaShield)" stroke="#0d1626" stroke-width="20"/>
+      <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#acaInner)" stroke="#c29522" stroke-width="10"/>
+    
+      <!-- Átomo -->
+      <g transform="translate(512,320)" stroke="#0d1626" stroke-width="5">
+        <ellipse cx="0" cy="0" rx="130" ry="44" fill="none" stroke="url(#acaGold)" stroke-width="8"/>
+        <ellipse cx="0" cy="0" rx="130" ry="44" fill="none" stroke="#c29522" stroke-width="8" transform="rotate(60)"/>
+        <ellipse cx="0" cy="0" rx="130" ry="44" fill="none" stroke="#e0b83e" stroke-width="8" transform="rotate(120)"/>
+        <circle cx="0" cy="0" r="16" fill="#c29522"/>
+        <circle cx="130" cy="0" r="12" fill="#e0b83e"/>
+        <circle cx="-65" cy="-38" r="10" fill="#c29522"/>
+        <circle cx="-65" cy="38" r="10" fill="#e0b83e"/>
+      </g>
+    
+      <!-- Birrete -->
+      <g transform="translate(340,560)" stroke="#0d1626" stroke-width="5">
+        <path d="M-90,0 L0,-52 L90,0 Z" fill="#1a2b45"/>
+        <path d="M-90,0 L0,-52 L90,0 L72,12 L0,-38 L-72,12 Z" fill="#16304d"/>
+        <path d="M90,0 Q112,16 104,60" fill="none" stroke="#c29522" stroke-width="7"/>
+        <circle cx="104" cy="68" r="12" fill="url(#acaGold)"/>
+      </g>
+    
+      <!-- Libro abierto -->
+      <g transform="translate(640,560)" stroke="#0d1626" stroke-width="5">
+        <path d="M-100,0 Q0,-30 0,30 Q0,-30 100,0 L100,14 Q0,-16 0,44 Q0,-16 -100,14 Z" fill="#ffffff"/>
+        <path d="M0,-30 L0,44" stroke="#c29522" stroke-width="5"/>
+        <path d="M-72,-6 Q-44,-16 -16,-8" fill="none" stroke="#4a90c9" stroke-width="4"/>
+        <path d="M16,-8 Q44,-16 72,-6" fill="none" stroke="#4a90c9" stroke-width="4"/>
+      </g>
+    
+      <!-- Microscopio -->
+      <g transform="translate(512,760)" stroke="#0d1626" stroke-width="5">
+        <path d="M0,60 L0,-10 Q0,-40 26,-48" fill="none" stroke="#1a2b45" stroke-width="14" stroke-linecap="round"/>
+        <rect x="-16" y="60" width="32" height="14" rx="4" fill="#1a2b45"/>
+        <path d="M26,-48 Q60,-70 90,-40 L110,-20" fill="none" stroke="#1a2b45" stroke-width="12" stroke-linecap="round"/>
+        <path d="M90,-40 L70,-16" stroke="#c29522" stroke-width="8" stroke-linecap="round"/>
+        <circle cx="70" cy="-10" r="8" fill="url(#acaGold)"/>
+        <rect x="100" y="-70" width="20" height="60" rx="6" fill="#1a2b45"/>
+        <rect x="112" y="-90" width="40" height="16" rx="6" fill="#c29522"/>
+      </g>
+    </svg></div>
+          <figcaption>group-academics.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="allShield" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#1a2b45"/>
+        </linearGradient>
+        <linearGradient id="allInner" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="1" stop-color="#4a90c9"/>
+        </linearGradient>
+        <linearGradient id="allGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+      </defs>
+    
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#allShield)" stroke="#0d1626" stroke-width="20"/>
+      <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#allInner)" stroke="#c29522" stroke-width="10"/>
+    
+      <!-- Banderas aliadas -->
+      <g stroke="#0d1626" stroke-width="4">
+        <!-- izquierda -->
+        <line x1="360" y1="560" x2="360" y2="300" stroke="#1a2b45" stroke-width="10"/>
+        <path d="M360,300 L470,330 L360,360 Z" fill="#4a90c9"/>
+        <path d="M360,316 L436,330 L360,344 Z" fill="#ffffff"/>
+        <!-- derecha -->
+        <line x1="664" y1="560" x2="664" y2="300" stroke="#1a2b45" stroke-width="10"/>
+        <path d="M664,300 L774,330 L664,360 Z" fill="#e0b83e"/>
+        <path d="M664,316 L740,330 L664,344 Z" fill="#ffffff"/>
+      </g>
+    
+      <!-- Apretón de manos -->
+      <g stroke="#0d1626" stroke-width="6">
+        <path d="M320,520 Q380,470 470,470 L512,470" fill="none" stroke="#f0cfa8" stroke-width="58" stroke-linecap="round"/>
+        <path d="M704,520 Q644,470 554,470 L512,470" fill="none" stroke="#f0cfa8" stroke-width="58" stroke-linecap="round"/>
+        <!-- manga izquierda -->
+        <path d="M300,540 Q300,470 360,470 L400,470" fill="none" stroke="#16304d" stroke-width="66" stroke-linecap="round"/>
+        <!-- manga derecha -->
+        <path d="M724,540 Q724,470 664,470 L624,470" fill="none" stroke="#16304d" stroke-width="66" stroke-linecap="round"/>
+        <!-- puños -->
+        <path d="M500,430 Q560,430 560,480 Q560,520 512,520 Q464,520 464,480 Q464,430 500,430 Z" fill="#f0cfa8"/>
+        <g fill="none" stroke="#c98d5f" stroke-width="5" stroke-linecap="round">
+          <path d="M484,450 Q500,442 516,452"/>
+          <path d="M488,470 Q504,462 520,472"/>
+          <path d="M508,440 Q522,450 540,446"/>
+        </g>
+      </g>
+    
+      <!-- Escudo compartido -->
+      <g transform="translate(512,650)" stroke="#0d1626" stroke-width="5">
+        <path d="M0,-50 L54,-30 L54,20 Q54,48 0,66 Q-54,48 -54,20 L-54,-30 Z" fill="url(#allGold)"/>
+        <path d="M0,-34 L38,-18 L38,14 Q38,34 0,48 Q-38,34 -38,14 L-38,-18 Z" fill="#4a90c9"/>
+        <path d="M-24,30 L0,6 L24,30" fill="none" stroke="#ffffff" stroke-width="5"/>
+        <circle cy="-2" r="8" fill="#e0b83e"/>
+      </g>
+    
+      <!-- Laureles -->
+      <g fill="#c29522" stroke="#0d1626" stroke-width="3">
+        <ellipse cx="240" cy="700" rx="22" ry="10" transform="rotate(-24 240 700)"/>
+        <ellipse cx="226" cy="760" rx="22" ry="10" transform="rotate(20 226 760)"/>
+        <ellipse cx="784" cy="700" rx="22" ry="10" transform="rotate(24 784 700)"/>
+        <ellipse cx="798" cy="760" rx="22" ry="10" transform="rotate(-20 798 760)"/>
+      </g>
+    </svg></div>
+          <figcaption>group-allies.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="artShield" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#1a2b45"/>
+        </linearGradient>
+        <linearGradient id="artInner" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="1" stop-color="#4a90c9"/>
+        </linearGradient>
+        <linearGradient id="artGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+      </defs>
+    
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#artShield)" stroke="#0d1626" stroke-width="20"/>
+      <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#artInner)" stroke="#c29522" stroke-width="10"/>
+    
+      <!-- Columna de escenario -->
+      <g stroke="#0d1626" stroke-width="5">
+        <rect x="420" y="180" width="184" height="20" fill="#c29522"/>
+        <rect x="430" y="200" width="164" height="300" fill="#e8edf2"/>
+        <g stroke="#1a2b45" stroke-width="4">
+          <line x1="430" y1="220" x2="594" y2="220"/>
+          <line x1="430" y1="250" x2="594" y2="250"/>
+          <line x1="430" y1="280" x2="594" y2="280"/>
+          <line x1="430" y1="310" x2="594" y2="310"/>
+          <line x1="430" y1="340" x2="594" y2="340"/>
+          <line x1="430" y1="370" x2="594" y2="370"/>
+          <line x1="430" y1="400" x2="594" y2="400"/>
+          <line x1="430" y1="430" x2="594" y2="430"/>
+          <line x1="430" y1="460" x2="594" y2="460"/>
+        </g>
+        <rect x="412" y="500" width="200" height="22" fill="#c29522"/>
+        <rect x="404" y="522" width="216" height="22" fill="#1a2b45"/>
+      </g>
+    
+      <!-- Paleta de pintor -->
+      <g transform="translate(340,620)" stroke="#0d1626" stroke-width="5">
+        <path d="M-90,-30 Q-110,30 -60,80 Q0,110 60,80 Q100,40 80,-20 Q60,-80 -20,-80 Q-70,-80 -90,-30 Z" fill="url(#artGold)"/>
+        <circle cx="-50" cy="0" r="12" fill="#c0392b"/>
+        <circle cx="-14" cy="-24" r="12" fill="#4a90c9"/>
+        <circle cx="28" cy="-6" r="12" fill="#e0b83e"/>
+        <circle cx="6" cy="32" r="12" fill="#ffffff"/>
+        <circle cx="-34" cy="40" r="12" fill="#1a2b45"/>
+      </g>
+    
+      <!-- Pincel -->
+      <g transform="translate(640,660) rotate(40)" stroke="#0d1626" stroke-width="5">
+        <rect x="-10" y="-10" width="20" height="120" fill="#c29522"/>
+        <path d="M-10,10 L-10,-40 Q0,-70 10,-40 L10,10 Z" fill="#f0cfa8"/>
+        <path d="M-10,-40 Q0,-70 10,-40" fill="#1a2b45"/>
+      </g>
+    
+      <!-- Máscara teatral -->
+      <g transform="translate(512,660)" stroke="#0d1626" stroke-width="5">
+        <path d="M-80,-36 Q-124,-10 -114,52 Q-104,106 -52,114 Q-18,122 0,104 Q18,122 52,114 Q104,106 114,52 Q124,-10 80,-36 Q54,-62 0,-62 Q-54,-62 -80,-36 Z" fill="#1a2b45"/>
+        <g fill="#f0cfa8">
+          <ellipse cx="-48" cy="-4" rx="20" ry="24"/>
+          <ellipse cx="48" cy="-4" rx="20" ry="24"/>
+        </g>
+        <circle cx="-50" cy="-8" r="7" fill="#0d1626"/>
+        <circle cx="46" cy="-8" r="7" fill="#0d1626"/>
+        <path d="M-20,40 Q0,58 20,40" fill="none" stroke="#e0b83e" stroke-width="6" stroke-linecap="round"/>
+        <path d="M-52,90 Q-30,104 0,96" fill="none" stroke="#c0392b" stroke-width="5" stroke-linecap="round"/>
+        <path d="M52,90 Q30,104 0,96" fill="none" stroke="#c0392b" stroke-width="5" stroke-linecap="round"/>
+      </g>
+    </svg></div>
+          <figcaption>group-artists.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="athShield" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#1a2b45"/>
+        </linearGradient>
+        <linearGradient id="athInner" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="1" stop-color="#4a90c9"/>
+        </linearGradient>
+        <linearGradient id="athGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+      </defs>
+    
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#athShield)" stroke="#0d1626" stroke-width="20"/>
+      <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#athInner)" stroke="#c29522" stroke-width="10"/>
+    
+      <!-- Estadio -->
+      <g stroke="#0d1626" stroke-width="5">
+        <ellipse cx="512" cy="400" rx="240" ry="80" fill="#ffffff"/>
+        <ellipse cx="512" cy="400" rx="240" ry="80" fill="none" stroke="#1a2b45" stroke-width="8"/>
+        <ellipse cx="512" cy="400" rx="180" ry="56" fill="#3a7a3f"/>
+        <path d="M512,344 L512,456" stroke="#ffffff" stroke-width="6"/>
+        <circle cx="512" cy="400" r="26" fill="none" stroke="#ffffff" stroke-width="6"/>
+        <ellipse cx="512" cy="336" rx="240" ry="60" fill="none" stroke="#c29522" stroke-width="6"/>
+        <g fill="#1a2b45">
+          <rect x="300" y="470" width="16" height="50"/>
+          <rect x="340" y="470" width="16" height="50"/>
+          <rect x="380" y="470" width="16" height="50"/>
+          <rect x="420" y="470" width="16" height="50"/>
+          <rect x="460" y="470" width="16" height="50"/>
+          <rect x="500" y="470" width="16" height="50"/>
+          <rect x="540" y="470" width="16" height="50"/>
+          <rect x="580" y="470" width="16" height="50"/>
+          <rect x="620" y="470" width="16" height="50"/>
+          <rect x="660" y="470" width="16" height="50"/>
+          <rect x="700" y="470" width="16" height="50"/>
+        </g>
+      </g>
+    
+      <!-- Pelota -->
+      <g transform="translate(512,640)" stroke="#0d1626" stroke-width="5">
+        <circle r="60" fill="#ffffff"/>
+        <path d="M0,-60 L0,60 M-60,0 L60,0 M-42,-42 L42,42 M-42,42 L42,-42" stroke="#1a2b45" stroke-width="5"/>
+        <path d="M-30,-60 L-60,-30 L-30,0 L0,-30 Z" fill="#1a2b45"/>
+        <path d="M30,60 L60,30 L30,0 L0,30 Z" fill="#1a2b45"/>
+      </g>
+    
+      <!-- Medalla -->
+      <g transform="translate(300,520)" stroke="#0d1626" stroke-width="5">
+        <circle r="46" fill="url(#athGold)"/>
+        <circle r="30" fill="none" stroke="#c29522" stroke-width="5"/>
+        <path d="M-16,-10 L16,-10" stroke="#1a2b45" stroke-width="4"/>
+        <rect x="-10" y="-90" width="20" height="46" fill="#c0392b"/>
+        <rect x="-10" y="-44" width="20" height="44" fill="#4a90c9"/>
+      </g>
+    
+      <!-- Antorcha -->
+      <g transform="translate(724,520)" stroke="#0d1626" stroke-width="5">
+        <path d="M0,60 L0,-20" stroke="#c29522" stroke-width="16" stroke-linecap="round"/>
+        <path d="M-16,-20 Q0,-60 16,-20 Z" fill="url(#athGold)"/>
+        <g fill="#e07a3f">
+          <path d="M0,-30 Q-16,-50 0,-70 Q16,-50 0,-30 Z"/>
+          <path d="M-8,-40 Q0,-58 0,-66 Q0,-58 8,-40 Z" fill="#f2b84b"/>
+        </g>
+      </g>
+    </svg></div>
+          <figcaption>group-athletes.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="cooShield" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#1a2b45"/>
+        </linearGradient>
+        <linearGradient id="cooInner" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="1" stop-color="#4a90c9"/>
+        </linearGradient>
+        <linearGradient id="cooGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+        <linearGradient id="cooSteel" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#c8d3df"/>
+          <stop offset="1" stop-color="#8fa3b5"/>
+        </linearGradient>
+      </defs>
+    
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#cooShield)" stroke="#0d1626" stroke-width="20"/>
+      <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#cooInner)" stroke="#c29522" stroke-width="10"/>
+    
+      <!-- Ramas de trigo -->
+      <g fill="#e0b83e" stroke="#c29522" stroke-width="3">
+        <g transform="translate(280,780) rotate(-20)">
+          <path d="M0,0 Q0,-80 0,-160" fill="none" stroke="#c29522" stroke-width="6"/>
+          <ellipse cx="-18" cy="-30" rx="12" ry="22" transform="rotate(-20 -18 -30)"/>
+          <ellipse cx="18" cy="-50" rx="12" ry="22" transform="rotate(20 18 -50)"/>
+          <ellipse cx="-18" cy="-80" rx="12" ry="22" transform="rotate(-20 -18 -80)"/>
+          <ellipse cx="18" cy="-100" rx="12" ry="22" transform="rotate(20 18 -100)"/>
+          <ellipse cx="-14" cy="-130" rx="11" ry="20" transform="rotate(-18 -14 -130)"/>
+          <ellipse cx="0" cy="-160" rx="11" ry="20"/>
+        </g>
+        <g transform="translate(744,780) rotate(20)">
+          <path d="M0,0 Q0,-80 0,-160" fill="none" stroke="#c29522" stroke-width="6"/>
+          <ellipse cx="18" cy="-30" rx="12" ry="22" transform="rotate(20 18 -30)"/>
+          <ellipse cx="-18" cy="-50" rx="12" ry="22" transform="rotate(-20 -18 -50)"/>
+          <ellipse cx="18" cy="-80" rx="12" ry="22" transform="rotate(20 18 -80)"/>
+          <ellipse cx="-18" cy="-100" rx="12" ry="22" transform="rotate(-20 -18 -100)"/>
+          <ellipse cx="14" cy="-130" rx="11" ry="20" transform="rotate(18 14 -130)"/>
+          <ellipse cx="0" cy="-160" rx="11" ry="20"/>
+        </g>
+      </g>
+    
+      <!-- Engranaje -->
+      <g transform="translate(512,430)" stroke="#0d1626" stroke-width="5">
+        <circle r="110" fill="url(#cooSteel)"/>
+        <circle r="60" fill="#4a90c9"/>
+        <circle r="34" fill="#1a2b45"/>
+        <g fill="url(#cooSteel)" stroke="#0d1626" stroke-width="5">
+          <rect x="-16" y="-140" width="32" height="40" rx="8"/>
+          <rect x="-16" y="100" width="32" height="40" rx="8"/>
+          <rect x="-140" y="-16" width="40" height="32" rx="8"/>
+          <rect x="100" y="-16" width="40" height="32" rx="8"/>
+          <rect x="-96" y="-96" width="34" height="34" rx="8" transform="rotate(45 -79 -79)"/>
+          <rect x="62" y="-96" width="34" height="34" rx="8" transform="rotate(45 79 -79)"/>
+          <rect x="-96" y="62" width="34" height="34" rx="8" transform="rotate(45 -79 79)"/>
+          <rect x="62" y="62" width="34" height="34" rx="8" transform="rotate(45 79 79)"/>
+        </g>
+      </g>
+    
+      <!-- Manos compartiendo -->
+      <g stroke="#0d1626" stroke-width="5">
+        <g fill="#f0cfa8">
+          <path d="M300,620 Q270,560 300,520 Q330,500 350,520 L360,560 Q340,590 330,620 Z"/>
+          <path d="M724,620 Q754,560 724,520 Q694,500 674,520 L664,560 Q684,590 694,620 Z"/>
+        </g>
+        <!-- línea de unión -->
+        <path d="M380,560 Q512,600 644,560" fill="none" stroke="#c29522" stroke-width="10" stroke-linecap="round"/>
+        <circle cx="512" cy="582" r="14" fill="url(#cooGold)"/>
+      </g>
+    </svg></div>
+          <figcaption>group-cooperatives.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="envShield" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#1a2b45"/>
+        </linearGradient>
+        <linearGradient id="envInner" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="1" stop-color="#4a90c9"/>
+        </linearGradient>
+        <linearGradient id="envGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+        <linearGradient id="envGreen" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#5d9e57"/>
+          <stop offset="1" stop-color="#3a7a3f"/>
+        </linearGradient>
+        <radialGradient id="envSun" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#f7e6a8"/>
+          <stop offset="1" stop-color="#e0b83e"/>
+        </radialGradient>
+      </defs>
+    
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#envShield)" stroke="#0d1626" stroke-width="20"/>
+      <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#envInner)" stroke="#c29522" stroke-width="10"/>
+    
+      <!-- Sol naciente -->
+      <g transform="translate(512,300)">
+        <circle r="80" fill="url(#envSun)"/>
+        <g fill="#e0b83e">
+          <path d="M0,-108 L20,-66 L-20,-66 Z"/>
+          <path d="M0,108 L20,66 L-20,66 Z"/>
+          <path d="M-108,0 L-66,20 L-66,-20 Z"/>
+          <path d="M108,0 L66,20 L66,-20 Z"/>
+        </g>
+        <circle cx="-18" cy="-10" r="9" fill="#1a2b45"/>
+        <circle cx="18" cy="-10" r="9" fill="#1a2b45"/>
+        <path d="M-16,14 Q0,26 16,14" fill="none" stroke="#1a2b45" stroke-width="6" stroke-linecap="round"/>
+      </g>
+    
+      <!-- Planeta -->
+      <g transform="translate(512,500)" stroke="#0d1626" stroke-width="5">
+        <circle r="110" fill="#7ab8e0"/>
+        <ellipse cx="-20" cy="0" rx="110" ry="44" fill="none" stroke="#4a90c9" stroke-width="6"/>
+        <path d="M-70,-60 Q-40,-80 -10,-70 Q20,-60 40,-74 Q60,-86 80,-70" fill="none" stroke="#3a7a3f" stroke-width="10"/>
+        <path d="M-90,30 Q-50,50 -10,40 Q30,30 60,44 Q80,52 100,40" fill="none" stroke="#3a7a3f" stroke-width="8"/>
+      </g>
+    
+      <!-- Hoja verde -->
+      <g transform="translate(360,610) rotate(-30)" stroke="#0d1626" stroke-width="5">
+        <path d="M0,0 Q-40,-90 0,-160 Q40,-90 0,0 Z" fill="url(#envGreen)"/>
+        <path d="M0,0 L0,-150" stroke="#3a7a3f" stroke-width="5"/>
+        <g stroke="#3a7a3f" stroke-width="3" fill="none">
+          <path d="M0,-40 L-18,-60"/>
+          <path d="M0,-40 L18,-60"/>
+          <path d="M0,-80 L-14,-100"/>
+          <path d="M0,-80 L14,-100"/>
+        </g>
+      </g>
+    
+      <!-- Panel solar -->
+      <g transform="translate(660,610)" stroke="#0d1626" stroke-width="5">
+        <rect x="-60" y="-60" width="120" height="120" rx="8" fill="#16304d" transform="rotate(10)"/>
+        <g transform="rotate(10)">
+          <line x1="-42" y1="-42" x2="42" y2="-42" stroke="#4a90c9" stroke-width="4"/>
+          <line x1="-42" y1="0" x2="42" y2="0" stroke="#4a90c9" stroke-width="4"/>
+          <line x1="-42" y1="42" x2="42" y2="42" stroke="#4a90c9" stroke-width="4"/>
+          <line x1="-42" y1="-42" x2="-42" y2="42" stroke="#4a90c9" stroke-width="4"/>
+          <line x1="0" y1="-42" x2="0" y2="42" stroke="#4a90c9" stroke-width="4"/>
+          <line x1="42" y1="-42" x2="42" y2="42" stroke="#4a90c9" stroke-width="4"/>
+        </g>
+      </g>
+    </svg></div>
+          <figcaption>group-environmentalists.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="femShield" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#1a2b45"/>
+        </linearGradient>
+        <linearGradient id="femInner" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="1" stop-color="#4a90c9"/>
+        </linearGradient>
+        <linearGradient id="femViolet" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#b06ab3"/>
+          <stop offset="1" stop-color="#8e44ad"/>
+        </linearGradient>
+        <linearGradient id="femGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+      </defs>
+    
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#femShield)" stroke="#0d1626" stroke-width="20"/>
+      <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#femInner)" stroke="#c29522" stroke-width="10"/>
+    
+      <!-- Ondas de protesta pacífica -->
+      <g fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round" opacity="0.35">
+        <path d="M220,420 Q280,360 340,420 Q400,480 460,420 Q520,360 580,420 Q640,480 700,420 Q760,360 804,420"/>
+        <path d="M220,470 Q280,410 340,470 Q400,530 460,470 Q520,410 580,470 Q640,530 700,470 Q760,410 804,470"/>
+      </g>
+    
+      <!-- Símbolo de género -->
+      <g transform="translate(512,300)" stroke="#0d1626" stroke-width="5">
+        <circle cx="0" cy="-40" r="56" fill="url(#femViolet)"/>
+        <line x1="0" y1="16" x2="0" y2="90" stroke="url(#femViolet)" stroke-width="14"/>
+        <line x1="-34" y1="60" x2="34" y2="60" stroke="url(#femViolet)" stroke-width="12"/>
+      </g>
+    
+      <!-- Puño con bandera argentina -->
+      <g stroke="#0d1626" stroke-width="6">
+        <path d="M512,560 L512,380" stroke="#f0cfa8" stroke-width="76" stroke-linecap="round"/>
+        <path d="M512,560 L512,470" stroke="url(#femViolet)" stroke-width="84" stroke-linecap="round"/>
+        <circle cx="512" cy="350" r="70" fill="#f0cfa8"/>
+        <g fill="none" stroke="#0d1626" stroke-width="6" stroke-linecap="round">
+          <path d="M480,340 L480,310"/>
+          <path d="M500,348 L500,312"/>
+          <path d="M520,348 L520,312"/>
+          <path d="M540,340 L540,310"/>
+        </g>
+      </g>
+    
+      <!-- Banderín argentino -->
+      <g transform="translate(512,330) rotate(8)">
+        <rect x="-5" y="-70" width="10" height="150" fill="#1a2b45"/>
+        <path d="M5,-66 L100,-38 L5,-10 Z" fill="#4a90c9"/>
+        <path d="M5,-48 L78,-38 L5,-28 Z" fill="#ffffff"/>
+      </g>
+    
+      <!-- Acentos -->
+      <g fill="url(#femGold)" stroke="#0d1626" stroke-width="4">
+        <circle cx="270" cy="620" r="14"/>
+        <circle cx="754" cy="620" r="14"/>
+        <circle cx="290" cy="560" r="10"/>
+        <circle cx="734" cy="560" r="10"/>
+      </g>
+    </svg></div>
+          <figcaption>group-feminists.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="finShield" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#1a2b45"/>
+        </linearGradient>
+        <linearGradient id="finInner" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="1" stop-color="#4a90c9"/>
+        </linearGradient>
+        <linearGradient id="finGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+        <radialGradient id="finSun" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#f7e6a8"/>
+          <stop offset="1" stop-color="#e0b83e"/>
+        </radialGradient>
+      </defs>
+    
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#finShield)" stroke="#0d1626" stroke-width="20"/>
+      <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#finInner)" stroke="#c29522" stroke-width="10"/>
+    
+      <!-- Edificio bancario -->
+      <g stroke="#0d1626" stroke-width="5">
+        <!-- frontón triangular -->
+        <path d="M362,300 L512,190 L662,300 Z" fill="#1a2b45"/>
+        <!-- Sol de Mayo en frontón -->
+        <g transform="translate(512,250)">
+          <circle r="26" fill="url(#finSun)"/>
+          <g fill="#e0b83e">
+            <path d="M0,-44 L9,-26 L-9,-26 Z"/>
+            <path d="M0,44 L9,26 L-9,26 Z"/>
+            <path d="M-44,0 L-26,9 L-26,-9 Z"/>
+            <path d="M44,0 L26,9 L26,-9 Z"/>
+          </g>
+          <circle cx="-8" cy="-4" r="4" fill="#1a2b45"/>
+          <circle cx="8" cy="-4" r="4" fill="#1a2b45"/>
+        </g>
+        <!-- cuerpo -->
+        <rect x="372" y="300" width="280" height="240" fill="#e8edf2"/>
+        <!-- columnas -->
+        <g fill="url(#finGold)">
+          <rect x="392" y="320" width="40" height="200" rx="4"/>
+          <rect x="492" y="320" width="40" height="200" rx="4"/>
+          <rect x="592" y="320" width="40" height="200" rx="4"/>
+        </g>
+        <rect x="372" y="540" width="280" height="20" fill="#1a2b45"/>
+        <!-- puerta -->
+        <path d="M486,540 L486,470 Q512,446 538,470 L538,540 Z" fill="#1a2b45"/>
+        <!-- escalones -->
+        <rect x="462" y="560" width="100" height="16" rx="4" fill="#1a2b45"/>
+        <rect x="442" y="576" width="140" height="16" rx="4" fill="#1a2b45"/>
+      </g>
+    
+      <!-- Billete -->
+      <g transform="translate(512,660) rotate(-6)" stroke="#0d1626" stroke-width="5">
+        <rect x="-120" y="-56" width="240" height="112" rx="10" fill="#ffffff"/>
+        <rect x="-108" y="-44" width="216" height="88" rx="6" fill="#f2f7fb" stroke="#7ab8e0" stroke-width="3"/>
+        <circle cx="-70" cy="0" r="20" fill="#7ab8e0" opacity="0.6"/>
+        <text x="10" y="12" font-family="Georgia, serif" font-size="26" fill="#1a2b45" text-anchor="middle" font-weight="bold">$100</text>
+        <path d="M70,-20 Q90,0 70,20" fill="none" stroke="#c29522" stroke-width="4"/>
+      </g>
+    
+      <!-- Gráfico de velas ascendente -->
+      <g transform="translate(512,760)" stroke="#0d1626" stroke-width="4">
+        <g>
+          <rect x="-140" y="-40" width="14" height="70" fill="#c29522"/>
+          <line x1="-133" y1="-70" x2="-133" y2="40" stroke="#c29522" stroke-width="4"/>
+          <rect x="-100" y="-60" width="14" height="90" fill="#c29522"/>
+          <line x1="-93" y1="-90" x2="-93" y2="40" stroke="#c29522" stroke-width="4"/>
+          <rect x="-60" y="-20" width="14" height="50" fill="#c29522"/>
+          <line x1="-53" y1="-40" x2="-53" y2="40" stroke="#c29522" stroke-width="4"/>
+          <rect x="-20" y="-80" width="14" height="110" fill="#e0b83e"/>
+          <line x1="-13" y1="-110" x2="-13" y2="40" stroke="#e0b83e" stroke-width="4"/>
+          <rect x="20" y="-50" width="14" height="80" fill="#e0b83e"/>
+          <line x1="27" y1="-80" x2="27" y2="40" stroke="#e0b83e" stroke-width="4"/>
+          <rect x="60" y="-90" width="14" height="120" fill="#e0b83e"/>
+          <line x1="67" y1="-120" x2="67" y2="40" stroke="#e0b83e" stroke-width="4"/>
+          <rect x="100" y="-30" width="14" height="60" fill="#c29522"/>
+          <line x1="107" y1="-55" x2="107" y2="40" stroke="#c29522" stroke-width="4"/>
+        </g>
+      </g>
+    </svg></div>
+          <figcaption>group-financial.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="indShield" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#1a2b45"/>
+        </linearGradient>
+        <linearGradient id="indSky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#e8c88a"/>
+          <stop offset="1" stop-color="#d9a95c"/>
+        </linearGradient>
+        <linearGradient id="indGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+        <linearGradient id="indSun" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f2b84b"/>
+          <stop offset="1" stop-color="#d98f28"/>
+        </linearGradient>
+      </defs>
+    
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#indShield)" stroke="#0d1626" stroke-width="20"/>
+      <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#indSky)" stroke="#c29522" stroke-width="10"/>
+    
+      <!-- Territorio / montañas -->
+      <g fill="#8a5a2b" opacity="0.5">
+        <path d="M190,600 L320,430 L430,560 L512,420 L640,580 L740,470 L834,600 Z"/>
+      </g>
+      <g fill="#6b4423" opacity="0.45">
+        <path d="M190,600 L320,470 L420,580 L512,480 L620,600 Z"/>
+      </g>
+    
+      <!-- Sol andino -->
+      <g transform="translate(512,340)">
+        <circle r="70" fill="url(#indSun)"/>
+        <g fill="#d98f28">
+          <path d="M0,-96 L20,-60 L-20,-60 Z"/>
+          <path d="M0,96 L20,60 L-20,60 Z"/>
+          <path d="M-96,0 L-60,20 L-60,-20 Z"/>
+          <path d="M96,0 L60,20 L60,-20 Z"/>
+          <path d="M-68,-68 L-44,-44 L-60,-44 Z"/>
+          <path d="M68,-68 L44,-44 L60,-44 Z"/>
+          <path d="M-68,68 L-44,44 L-60,44 Z"/>
+          <path d="M68,68 L44,44 L60,44 Z"/>
+        </g>
+        <circle cx="-20" cy="-12" r="9" fill="#1a2b45"/>
+        <circle cx="20" cy="-12" r="9" fill="#1a2b45"/>
+        <path d="M-18,14 Q0,26 18,14" fill="none" stroke="#1a2b45" stroke-width="7" stroke-linecap="round"/>
+      </g>
+    
+      <!-- Figura con textiles originarios -->
+      <g stroke="#0d1626" stroke-width="5">
+        <!-- cabeza -->
+        <circle cx="512" cy="470" r="46" fill="#c98d5f"/>
+        <path d="M470,456 Q512,424 554,456 L554,440 Q512,406 470,440 Z" fill="#2b1a0a"/>
+        <!-- sombrero / tocado -->
+        <path d="M458,444 Q512,400 566,444 L566,428 Q512,386 458,428 Z" fill="#a8452c"/>
+        <path d="M458,428 L566,428" stroke="#d98f28" stroke-width="8"/>
+        <!-- poncho -->
+        <path d="M452,510 L572,510 L606,690 L418,690 Z" fill="#a8452c"/>
+        <!-- guardas textiles -->
+        <path d="M452,540 L572,540 L572,560 L452,560 Z" fill="#d98f28"/>
+        <path d="M452,580 L572,580 L572,600 L452,600 Z" fill="#f2b84b"/>
+        <g stroke="#d98f28" stroke-width="6">
+          <line x1="470" y1="510" x2="470" y2="690"/>
+          <line x1="512" y1="510" x2="512" y2="690"/>
+          <line x1="554" y1="510" x2="554" y2="690"/>
+        </g>
+        <g fill="#d98f28">
+          <rect x="474" y="620" width="10" height="10"/>
+          <rect x="500" y="620" width="10" height="10"/>
+          <rect x="526" y="620" width="10" height="10"/>
+          <rect x="487" y="648" width="10" height="10"/>
+          <rect x="513" y="648" width="10" height="10"/>
+          <rect x="474" y="676" width="10" height="10"/>
+          <rect x="500" y="676" width="10" height="10"/>
+          <rect x="526" y="676" width="10" height="10"/>
+        </g>
+      </g>
+    
+      <!-- Bandera de la wiphala (respetuosa, estilizada) -->
+      <g transform="translate(512,770)" stroke="#0d1626" stroke-width="4">
+        <rect x="-70" y="-30" width="140" height="60" fill="#ffffff"/>
+        <g>
+          <rect x="-70" y="-30" width="28" height="12" fill="#c0392b"/>
+          <rect x="-42" y="-30" width="28" height="12" fill="#e0b83e"/>
+          <rect x="-14" y="-30" width="28" height="12" fill="#ffffff"/>
+          <rect x="14" y="-30" width="28" height="12" fill="#7ab8e0"/>
+          <rect x="42" y="-30" width="28" height="12" fill="#4a90c9"/>
+          <rect x="-70" y="-18" width="28" height="12" fill="#e0b83e"/>
+          <rect x="-42" y="-18" width="28" height="12" fill="#ffffff"/>
+          <rect x="-14" y="-18" width="28" height="12" fill="#7ab8e0"/>
+          <rect x="14" y="-18" width="28" height="12" fill="#4a90c9"/>
+          <rect x="42" y="-18" width="28" height="12" fill="#c0392b"/>
+          <rect x="-70" y="-6" width="28" height="12" fill="#ffffff"/>
+          <rect x="-42" y="-6" width="28" height="12" fill="#7ab8e0"/>
+          <rect x="-14" y="-6" width="28" height="12" fill="#4a90c9"/>
+          <rect x="14" y="-6" width="28" height="12" fill="#c0392b"/>
+          <rect x="42" y="-6" width="28" height="12" fill="#e0b83e"/>
+          <rect x="-70" y="6" width="28" height="12" fill="#7ab8e0"/>
+          <rect x="-42" y="6" width="28" height="12" fill="#4a90c9"/>
+          <rect x="-14" y="6" width="28" height="12" fill="#c0392b"/>
+          <rect x="14" y="6" width="28" height="12" fill="#e0b83e"/>
+          <rect x="42" y="6" width="28" height="12" fill="#ffffff"/>
+          <rect x="-70" y="18" width="28" height="12" fill="#4a90c9"/>
+          <rect x="-42" y="18" width="28" height="12" fill="#c0392b"/>
+          <rect x="-14" y="18" width="28" height="12" fill="#e0b83e"/>
+          <rect x="14" y="18" width="28" height="12" fill="#ffffff"/>
+          <rect x="42" y="18" width="28" height="12" fill="#7ab8e0"/>
+        </g>
+      </g>
+    </svg></div>
+          <figcaption>group-indigenous.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="lowShield" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#1a2b45"/>
+        </linearGradient>
+        <linearGradient id="lowInner" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="1" stop-color="#4a90c9"/>
+        </linearGradient>
+        <linearGradient id="lowGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+      </defs>
+    
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#lowShield)" stroke="#0d1626" stroke-width="20"/>
+      <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#lowInner)" stroke="#c29522" stroke-width="10"/>
+    
+      <!-- Vivienda social de fondo -->
+      <g stroke="#0d1626" stroke-width="5">
+        <rect x="280" y="330" width="180" height="210" fill="#b9c6d4"/>
+        <rect x="470" y="330" width="180" height="210" fill="#c8d3df"/>
+        <g fill="#4a90c9">
+          <rect x="300" y="350" width="30" height="30"/>
+          <rect x="360" y="350" width="30" height="30"/>
+          <rect x="300" y="410" width="30" height="30"/>
+          <rect x="360" y="410" width="30" height="30"/>
+          <rect x="300" y="470" width="30" height="30"/>
+          <rect x="360" y="470" width="30" height="30"/>
+          <rect x="490" y="350" width="30" height="30"/>
+          <rect x="550" y="350" width="30" height="30"/>
+          <rect x="490" y="410" width="30" height="30"/>
+          <rect x="550" y="410" width="30" height="30"/>
+          <rect x="490" y="470" width="30" height="30"/>
+          <rect x="550" y="470" width="30" height="30"/>
+        </g>
+        <path d="M264,330 L370,250 L466,330 L648,330 L558,250 L470,330 Z" fill="#1a2b45"/>
+        <path d="M466,330 L648,330 L558,250 Z" fill="#16304d"/>
+      </g>
+    
+      <!-- Manos recibiendo bolsa de alimentos -->
+      <g stroke="#0d1626" stroke-width="5">
+        <!-- bolsa -->
+        <path d="M372,600 L512,560 L652,600 L640,760 L384,760 Z" fill="#ffffff"/>
+        <path d="M372,600 L652,600" stroke="#c29522" stroke-width="8"/>
+        <path d="M430,640 L480,700" stroke="#e0b83e" stroke-width="10" stroke-linecap="round"/>
+        <circle cx="530" cy="640" r="14" fill="#e0b83e"/>
+        <circle cx="560" cy="670" r="14" fill="#c29522"/>
+        <rect x="424" y="756" width="176" height="20" rx="8" fill="#c29522"/>
+        <!-- manos -->
+        <g fill="#f0cfa8">
+          <path d="M340,620 Q300,660 320,720 L360,710 Q360,660 380,640 Z"/>
+          <path d="M684,620 Q724,660 704,720 L664,710 Q664,660 644,640 Z"/>
+        </g>
+      </g>
+    
+      <!-- Corazón solidario -->
+      <g transform="translate(512,840)" stroke="#0d1626" stroke-width="5">
+        <path d="M0,30 Q-60,-20 -30,-60 Q0,-86 0,-40 Q0,-86 30,-60 Q60,-20 0,30 Z" fill="#c0392b"/>
+        <path d="M-18,-22 Q0,-4 0,10" fill="none" stroke="#f0cfa8" stroke-width="8" stroke-linecap="round"/>
+      </g>
+    
+      <!-- Acento dorado -->
+      <g fill="url(#lowGold)" stroke="#0d1626" stroke-width="4">
+        <circle cx="240" cy="760" r="16"/>
+        <circle cx="784" cy="760" r="16"/>
+      </g>
+    </svg></div>
+          <figcaption>group-low-income.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="midShield" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#1a2b45"/>
+        </linearGradient>
+        <linearGradient id="midInner" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="1" stop-color="#4a90c9"/>
+        </linearGradient>
+        <linearGradient id="midGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+      </defs>
+    
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#midShield)" stroke="#0d1626" stroke-width="20"/>
+      <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#midInner)" stroke="#c29522" stroke-width="10"/>
+    
+      <!-- Casa unifamiliar -->
+      <g stroke="#0d1626" stroke-width="5">
+        <!-- techo -->
+        <path d="M310,560 L512,330 L714,560 Z" fill="#c0392b"/>
+        <path d="M310,560 L512,330 L512,566 Z" fill="#a93226"/>
+        <!-- cuerpo -->
+        <rect x="336" y="560" width="352" height="190" fill="#ffffff"/>
+        <!-- puerta -->
+        <rect x="472" y="620" width="80" height="130" rx="6" fill="#4a90c9"/>
+        <circle cx="540" cy="688" r="7" fill="#e0b83e"/>
+        <!-- ventanas -->
+        <rect x="368" y="600" width="70" height="70" rx="4" fill="#7ab8e0"/>
+        <line x1="403" y1="600" x2="403" y2="670" stroke="#1a2b45" stroke-width="4"/>
+        <line x1="368" y1="635" x2="438" y2="635" stroke="#1a2b45" stroke-width="4"/>
+        <rect x="586" y="600" width="70" height="70" rx="4" fill="#7ab8e0"/>
+        <line x1="621" y1="600" x2="621" y2="670" stroke="#1a2b45" stroke-width="4"/>
+        <line x1="586" y1="635" x2="656" y2="635" stroke="#1a2b45" stroke-width="4"/>
+        <!-- base -->
+        <rect x="320" y="750" width="384" height="22" fill="#1a2b45"/>
+      </g>
+    
+      <!-- Auto modesto -->
+      <g transform="translate(400,790)" stroke="#0d1626" stroke-width="5">
+        <path d="M0,0 L10,-34 L70,-34 L90,-60 L170,-60 L196,-34 L240,-34 L250,0 Z" fill="#4a90c9"/>
+        <rect x="60" y="-52" width="60" height="26" rx="6" fill="#7ab8e0"/>
+        <circle cx="70" cy="0" r="26" fill="#1a2b45"/>
+        <circle cx="70" cy="0" r="12" fill="#7ab8e0"/>
+        <circle cx="190" cy="0" r="26" fill="#1a2b45"/>
+        <circle cx="190" cy="0" r="12" fill="#7ab8e0"/>
+      </g>
+    
+      <!-- Familia -->
+      <g stroke="#0d1626" stroke-width="5">
+        <!-- adulto -->
+        <circle cx="300" cy="560" r="34" fill="#f0cfa8"/>
+        <path d="M282,556 Q300,536 318,556 L318,540 Q300,520 282,540 Z" fill="#4a3520"/>
+        <path d="M272,592 L328,592 L340,700 L260,700 Z" fill="#1a2b45"/>
+        <!-- niño -->
+        <circle cx="380" cy="610" r="26" fill="#f0cfa8"/>
+        <path d="M366,606 Q380,592 394,606 L394,594 Q380,580 366,594 Z" fill="#4a3520"/>
+        <path d="M358,636 L402,636 L410,700 L350,700 Z" fill="#e0b83e"/>
+      </g>
+    
+      <!-- Sol de Mayo pequeño -->
+      <g transform="translate(512,420)">
+        <circle r="28" fill="url(#midGold)"/>
+        <g fill="#e0b83e">
+          <path d="M0,-44 L10,-24 L-10,-24 Z"/>
+          <path d="M0,44 L10,24 L-10,24 Z"/>
+          <path d="M-44,0 L-24,10 L-24,-10 Z"/>
+          <path d="M44,0 L24,10 L24,-10 Z"/>
+        </g>
+        <circle cx="-8" cy="-4" r="4" fill="#1a2b45"/>
+        <circle cx="8" cy="-4" r="4" fill="#1a2b45"/>
+        <path d="M-8,7 Q0,13 8,7" fill="none" stroke="#1a2b45" stroke-width="4" stroke-linecap="round"/>
+      </g>
+    </svg></div>
+          <figcaption>group-middle-class.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="ngoShield" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#1a2b45"/>
+        </linearGradient>
+        <linearGradient id="ngoInner" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="1" stop-color="#4a90c9"/>
+        </linearGradient>
+        <linearGradient id="ngoGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+      </defs>
+    
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#ngoShield)" stroke="#0d1626" stroke-width="20"/>
+      <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#ngoInner)" stroke="#c29522" stroke-width="10"/>
+    
+      <!-- Ramas de laurel -->
+      <g fill="#c29522" stroke="#0d1626" stroke-width="3">
+        <g transform="translate(260,760)">
+          <path d="M0,0 Q-70,-140 -40,-300" fill="none" stroke="#c29522" stroke-width="10"/>
+          <ellipse cx="-34" cy="-80" rx="24" ry="11" transform="rotate(-28 -34 -80)"/>
+          <ellipse cx="-56" cy="-160" rx="24" ry="11" transform="rotate(-18 -56 -160)"/>
+          <ellipse cx="-50" cy="-240" rx="22" ry="10" transform="rotate(-8 -50 -240)"/>
+          <ellipse cx="-12" cy="-60" rx="24" ry="11" transform="rotate(24 -12 -60)"/>
+          <ellipse cx="-32" cy="-140" rx="24" ry="11" transform="rotate(30 -32 -140)"/>
+        </g>
+        <g transform="translate(764,760) scale(-1,1)">
+          <path d="M0,0 Q-70,-140 -40,-300" fill="none" stroke="#c29522" stroke-width="10"/>
+          <ellipse cx="-34" cy="-80" rx="24" ry="11" transform="rotate(-28 -34 -80)"/>
+          <ellipse cx="-56" cy="-160" rx="24" ry="11" transform="rotate(-18 -56 -160)"/>
+          <ellipse cx="-50" cy="-240" rx="22" ry="10" transform="rotate(-8 -50 -240)"/>
+          <ellipse cx="-12" cy="-60" rx="24" ry="11" transform="rotate(24 -12 -60)"/>
+          <ellipse cx="-32" cy="-140" rx="24" ry="11" transform="rotate(30 -32 -140)"/>
+        </g>
+      </g>
+    
+      <!-- Manos entrelazadas formando corazón -->
+      <g stroke="#0d1626" stroke-width="5">
+        <!-- brazos que forman corazón -->
+        <path d="M270,420 Q360,300 512,420 Q664,300 754,420 Q780,470 740,520 L512,720 L284,520 Q244,470 270,420 Z" fill="#f0cfa8"/>
+        <path d="M270,420 Q360,300 512,420 Q664,300 754,420 Q780,470 740,520 L512,720 L284,520 Q244,470 270,420 Z" fill="none" stroke="#0d1626" stroke-width="6"/>
+        <!-- pliegues -->
+        <path d="M340,480 Q370,520 400,540" fill="none" stroke="#c98d5f" stroke-width="5"/>
+        <path d="M684,480 Q654,520 624,540" fill="none" stroke="#c98d5f" stroke-width="5"/>
+        <!-- símbolo de comunidad (círculo de personas) -->
+        <g transform="translate(512,560)">
+          <circle cx="0" cy="-18" r="14" fill="#f0cfa8"/>
+          <circle cx="-24" cy="14" r="14" fill="#f0cfa8"/>
+          <circle cx="24" cy="14" r="14" fill="#f0cfa8"/>
+          <path d="M-16,-4 Q0,14 16,-4" fill="none" stroke="#1a2b45" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="0" cy="0" r="6" fill="#c29522"/>
+        </g>
+      </g>
+    
+      <!-- Sol de Mayo -->
+      <g transform="translate(512,320)">
+        <circle r="44" fill="url(#ngoGold)" stroke="#0d1626" stroke-width="3"/>
+        <g fill="#e0b83e">
+          <path d="M0,-66 L14,-30 L-14,-30 Z"/>
+          <path d="M0,66 L14,30 L-14,30 Z"/>
+          <path d="M-66,0 L-30,14 L-30,-14 Z"/>
+          <path d="M66,0 L30,14 L30,-14 Z"/>
+        </g>
+        <circle cx="-12" cy="-6" r="6" fill="#1a2b45"/>
+        <circle cx="12" cy="-6" r="6" fill="#1a2b45"/>
+        <path d="M-12,12 Q0,20 12,12" fill="none" stroke="#1a2b45" stroke-width="5" stroke-linecap="round"/>
+      </g>
+    </svg></div>
+          <figcaption>group-ngo.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="oppShield" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#1a2b45"/>
+        </linearGradient>
+        <linearGradient id="oppInner" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#8fa3b5"/>
+          <stop offset="1" stop-color="#5c7085"/>
+        </linearGradient>
+        <linearGradient id="oppRed" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#e74c3c"/>
+          <stop offset="1" stop-color="#c0392b"/>
+        </linearGradient>
+        <linearGradient id="oppGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+      </defs>
+    
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#oppShield)" stroke="#0d1626" stroke-width="20"/>
+      <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#oppInner)" stroke="#c29522" stroke-width="10"/>
+    
+      <!-- Siluetas en desacuerdo -->
+      <g fill="#1a2b45" opacity="0.30">
+        <circle cx="300" cy="430" r="30"/>
+        <rect x="272" y="460" width="56" height="120" rx="12"/>
+        <circle cx="470" cy="410" r="30"/>
+        <rect x="442" y="440" width="56" height="140" rx="12"/>
+        <circle cx="640" cy="420" r="30"/>
+        <rect x="612" y="450" width="56" height="130" rx="12"/>
+        <circle cx="740" cy="440" r="28"/>
+        <rect x="714" y="468" width="52" height="112" rx="12"/>
+      </g>
+    
+      <!-- Tribuna opositora -->
+      <g stroke="#0d1626" stroke-width="5">
+        <rect x="310" y="560" width="404" height="160" rx="12" fill="#1a2b45"/>
+        <rect x="290" y="540" width="444" height="40" rx="10" fill="#16304d"/>
+        <!-- micrófonos -->
+        <g>
+          <line x1="360" y1="560" x2="360" y2="500" stroke="#8fa3b5" stroke-width="8"/>
+          <circle cx="360" cy="492" r="14" fill="#8fa3b5"/>
+          <line x1="440" y1="560" x2="440" y2="490" stroke="#8fa3b5" stroke-width="8"/>
+          <circle cx="440" cy="482" r="14" fill="#8fa3b5"/>
+          <line x1="600" y1="560" x2="600" y2="500" stroke="#8fa3b5" stroke-width="8"/>
+          <circle cx="600" cy="492" r="14" fill="#8fa3b5"/>
+        </g>
+      </g>
+    
+      <!-- Pulgar hacia abajo estilizado -->
+      <g transform="translate(512,320)" stroke="#0d1626" stroke-width="6">
+        <path d="M-30,-80 L-30,30 Q-30,60 -10,80 L40,110 Q70,120 90,100 L140,40" fill="none" stroke="url(#oppRed)" stroke-width="64" stroke-linecap="round"/>
+        <path d="M-30,-80 L-30,30 Q-30,60 -10,80 L40,110 Q70,120 90,100 L140,40" fill="none" stroke="#0d1626" stroke-width="6" stroke-dasharray="0" opacity="0"/>
+        <!-- uña -->
+        <path d="M120,14 Q140,6 150,20" fill="none" stroke="#e8a89a" stroke-width="8" stroke-linecap="round"/>
+        <g fill="none" stroke="#a93226" stroke-width="5" stroke-linecap="round">
+          <path d="M-6,-60 Q10,-70 30,-66"/>
+          <path d="M-10,-30 Q10,-40 40,-32"/>
+        </g>
+      </g>
+    
+      <!-- señal de desacuerdo -->
+      <g stroke="#c0392b" stroke-width="10" stroke-linecap="round">
+        <line x1="250" y1="300" x2="290" y2="260"/>
+        <line x1="774" y1="300" x2="734" y2="260"/>
+      </g>
+    </svg></div>
+          <figcaption>group-opposition.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="stuShield" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#1a2b45"/>
+        </linearGradient>
+        <linearGradient id="stuInner" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="1" stop-color="#4a90c9"/>
+        </linearGradient>
+        <linearGradient id="stuGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+      </defs>
+    
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#stuShield)" stroke="#0d1626" stroke-width="20"/>
+      <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#stuInner)" stroke="#c29522" stroke-width="10"/>
+    
+      <!-- Birrete de graduación -->
+      <g transform="translate(512,360)" stroke="#0d1626" stroke-width="5">
+        <path d="M-120,0 L0,-70 L120,0 Z" fill="#1a2b45"/>
+        <path d="M-120,0 L0,-70 L120,0 L100,14 L0,-50 L-100,14 Z" fill="#16304d"/>
+        <!-- borla -->
+        <path d="M120,0 Q150,20 140,80" fill="none" stroke="#c29522" stroke-width="8"/>
+        <circle cx="140" cy="88" r="14" fill="url(#stuGold)"/>
+        <path d="M0,-70 L0,-30" stroke="#1a2b45" stroke-width="8"/>
+        <circle cx="0" cy="-24" r="12" fill="url(#stuGold)"/>
+      </g>
+    
+      <!-- Libro abierto -->
+      <g transform="translate(512,600)" stroke="#0d1626" stroke-width="5">
+        <path d="M-140,0 Q0,-40 0,40 Q0,-40 140,0 L140,20 Q0,-20 0,60 Q0,-20 -140,20 Z" fill="#ffffff"/>
+        <path d="M0,-40 L0,60" stroke="#c29522" stroke-width="6"/>
+        <path d="M-100,-8 Q-60,-22 -20,-12" fill="none" stroke="#4a90c9" stroke-width="5" stroke-linecap="round"/>
+        <path d="M-100,6 Q-60,-8 -20,2" fill="none" stroke="#7ab8e0" stroke-width="5" stroke-linecap="round"/>
+        <path d="M20,-12 Q60,-22 100,-8" fill="none" stroke="#4a90c9" stroke-width="5" stroke-linecap="round"/>
+        <path d="M20,2 Q60,-8 100,6" fill="none" stroke="#7ab8e0" stroke-width="5" stroke-linecap="round"/>
+      </g>
+    
+      <!-- Banderín estudiantil -->
+      <g transform="translate(512,760)" stroke="#0d1626" stroke-width="5">
+        <line x1="0" y1="-60" x2="0" y2="70" stroke="#1a2b45" stroke-width="12"/>
+        <path d="M0,-56 L90,-30 L0,-4 Z" fill="#e0b83e"/>
+        <path d="M0,-30 L60,-22 L0,-14 Z" fill="#4a90c9"/>
+      </g>
+    
+      <!-- Lápiz -->
+      <g transform="translate(300,480) rotate(-35)" stroke="#0d1626" stroke-width="5">
+        <rect x="-14" y="-90" width="28" height="120" fill="#e0b83e"/>
+        <rect x="-14" y="-90" width="28" height="30" fill="#c29522"/>
+        <path d="M-14,-90 L0,-140 L14,-90 Z" fill="#f0cfa8"/>
+        <path d="M-6,-140 L6,-140 L10,-90 L-10,-90 Z" fill="#1a2b45"/>
+        <path d="M-10,-128 L10,-128" stroke="#1a2b45" stroke-width="3"/>
+        <path d="M-14,30 L0,60 L14,30 Z" fill="#f0cfa8"/>
+      </g>
+    </svg></div>
+          <figcaption>group-students.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="uppShield" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#1a2b45"/>
+        </linearGradient>
+        <linearGradient id="uppGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+        <linearGradient id="uppSky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="1" stop-color="#4a90c9"/>
+        </linearGradient>
+      </defs>
+    
+      <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#uppShield)" stroke="#0d1626" stroke-width="20"/>
+      <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="url(#uppSky)" stroke="#c29522" stroke-width="10"/>
+    
+      <!-- Torre de lujo -->
+      <g stroke="#0d1626" stroke-width="5">
+        <rect x="340" y="300" width="344" height="340" fill="#16304d"/>
+        <rect x="340" y="300" width="344" height="20" fill="#0d1626"/>
+        <!-- antena -->
+        <line x1="512" y1="300" x2="512" y2="200" stroke="#c29522" stroke-width="10"/>
+        <circle cx="512" cy="196" r="10" fill="#e0b83e"/>
+        <!-- ventanas -->
+        <g fill="#7ab8e0">
+          <rect x="360" y="340" width="40" height="40"/>
+          <rect x="420" y="340" width="40" height="40"/>
+          <rect x="480" y="340" width="40" height="40"/>
+          <rect x="540" y="340" width="40" height="40"/>
+          <rect x="360" y="410" width="40" height="40"/>
+          <rect x="420" y="410" width="40" height="40"/>
+          <rect x="480" y="410" width="40" height="40"/>
+          <rect x="540" y="410" width="40" height="40"/>
+          <rect x="360" y="480" width="40" height="40"/>
+          <rect x="420" y="480" width="40" height="40"/>
+          <rect x="480" y="480" width="40" height="40"/>
+          <rect x="540" y="480" width="40" height="40"/>
+          <rect x="360" y="550" width="40" height="40"/>
+          <rect x="420" y="550" width="40" height="40"/>
+          <rect x="480" y="550" width="40" height="40"/>
+          <rect x="540" y="550" width="40" height="40"/>
+        </g>
+        <!-- entrada -->
+        <path d="M470,640 L470,590 Q512,566 554,590 L554,640 Z" fill="url(#uppGold)"/>
+        <!-- cornisa -->
+        <rect x="330" y="640" width="364" height="18" fill="#c29522"/>
+      </g>
+    
+      <!-- Auto de alta gama -->
+      <g transform="translate(512,780)" stroke="#0d1626" stroke-width="5">
+        <path d="M-130,10 Q-150,-10 -120,-30 L-40,-30 L-10,-60 L90,-60 L130,-30 L180,-30 Q210,-30 220,-10 L220,10 Z" fill="url(#uppGold)"/>
+        <path d="M-60,-30 L20,-30 L40,-52 L80,-52 L100,-30 L130,-30" fill="none" stroke="#1a2b45" stroke-width="6"/>
+        <circle cx="-60" cy="12" r="26" fill="#1a2b45"/>
+        <circle cx="-60" cy="12" r="12" fill="#c29522"/>
+        <circle cx="140" cy="12" r="26" fill="#1a2b45"/>
+        <circle cx="140" cy="12" r="12" fill="#c29522"/>
+        <path d="M170,6 L170,18" stroke="#e0b83e" stroke-width="5"/>
+      </g>
+    
+      <!-- Escudo exclusivo -->
+      <g transform="translate(512,400)" stroke="#0d1626" stroke-width="5">
+        <path d="M0,-60 L60,-40 L60,20 Q60,50 0,70 Q-60,50 -60,20 L-60,-40 Z" fill="url(#uppGold)"/>
+        <path d="M0,-44 L44,-28 L44,16 Q44,40 0,56 Q-44,40 -44,16 L-44,-28 Z" fill="#16304d"/>
+        <circle r="16" fill="#e0b83e"/>
+        <path d="M-30,44 L0,20 L30,44" fill="none" stroke="#e0b83e" stroke-width="4"/>
+      </g>
+    </svg></div>
+          <figcaption>group-upper-class.svg</figcaption>
+        </figure>
+
+  </div>
+</section>
+
+<section>
+  <h2>Elementos UI</h2>
+  <p class="desc">Componentes de interfaz y sellos · 10 piezas</p>
+  <div class="grid">
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+      <defs>
+        <linearGradient id="amgGold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+        <radialGradient id="amgDisc" cx="0.35" cy="0.3" r="0.9">
+          <stop offset="0" stop-color="#f7e6a8"/>
+          <stop offset="0.5" stop-color="#e0b83e"/>
+          <stop offset="1" stop-color="#a87e1c"/>
+        </radialGradient>
+        <radialGradient id="amgSun" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#f7e6a8"/>
+          <stop offset="1" stop-color="#e0b83e"/>
+        </radialGradient>
+        <filter id="amgShadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0d1626" flood-opacity="0.45"/>
+        </filter>
+      </defs>
+    
+      <!-- Colas de cinta (detrás del disco) -->
+      <g stroke="#0d1626" stroke-width="4">
+        <path d="M198,160 L150,360 L206,368 L234,200 Z" fill="#4a90c9"/>
+        <path d="M314,160 L362,360 L306,368 L278,200 Z" fill="#4a90c9"/>
+      </g>
+    
+      <!-- Cinta superior -->
+      <g stroke="#0d1626" stroke-width="4">
+        <path d="M196,14 L316,14 L316,168 L196,168 Z" fill="#4a90c9"/>
+        <path d="M246,14 L266,14 L266,168 L246,168 Z" fill="#ffffff"/>
+        <path d="M186,160 L326,160 L300,196 L212,196 Z" fill="#3a78b5"/>
+      </g>
+    
+      <!-- Disco dorado -->
+      <g filter="url(#amgShadow)">
+        <circle cx="256" cy="310" r="150" fill="url(#amgDisc)" stroke="#0d1626" stroke-width="8"/>
+        <circle cx="256" cy="310" r="128" fill="none" stroke="#c29522" stroke-width="6"/>
+        <circle cx="256" cy="310" r="112" fill="none" stroke="#ffffff" stroke-width="3" stroke-dasharray="3 9" stroke-linecap="round" opacity="0.8"/>
+      </g>
+    
+      <!-- Sol de Mayo central -->
+      <g transform="translate(256,310)">
+        <g fill="#e0b83e" stroke="#1a2b45" stroke-width="3">
+          <path d="M0,-70 L14,-32 L-14,-32 Z"/>
+          <path d="M0,70 L14,32 L-14,32 Z"/>
+          <path d="M-70,0 L-32,14 L-32,-14 Z"/>
+          <path d="M70,0 L32,14 L32,-14 Z"/>
+          <path d="M-49,-49 L-22,-22 L-36,-22 Z"/>
+          <path d="M49,-49 L22,-22 L36,-22 Z"/>
+          <path d="M-49,49 L-22,22 L-36,22 Z"/>
+          <path d="M49,49 L22,22 L36,22 Z"/>
+        </g>
+        <circle r="36" fill="url(#amgSun)" stroke="#1a2b45" stroke-width="3"/>
+        <circle cx="-10" cy="-6" r="6" fill="#1a2b45"/>
+        <circle cx="10" cy="-6" r="6" fill="#1a2b45"/>
+        <path d="M-9,9 Q0,18 9,9" fill="none" stroke="#1a2b45" stroke-width="4" stroke-linecap="round"/>
+      </g>
+    
+      <!-- Laureles en la base del disco -->
+      <g fill="#1a2b45" stroke="#c29522" stroke-width="3">
+        <g transform="translate(150,340) rotate(30)">
+          <path d="M0,0 Q20,50 60,70" fill="none" stroke="#c29522" stroke-width="6"/>
+          <ellipse cx="24" cy="22" rx="18" ry="8" transform="rotate(20 24 22)"/>
+          <ellipse cx="48" cy="46" rx="18" ry="8" transform="rotate(10 48 46)"/>
+          <ellipse cx="10" cy="34" rx="18" ry="8" transform="rotate(40 10 34)"/>
+        </g>
+        <g transform="translate(362,340) rotate(-30)">
+          <path d="M0,0 Q-20,50 -60,70" fill="none" stroke="#c29522" stroke-width="6"/>
+          <ellipse cx="-24" cy="22" rx="18" ry="8" transform="rotate(-20 -24 22)"/>
+          <ellipse cx="-48" cy="46" rx="18" ry="8" transform="rotate(-10 -48 46)"/>
+          <ellipse cx="-10" cy="34" rx="18" ry="8" transform="rotate(-40 -10 34)"/>
+        </g>
+      </g>
+    </svg></div>
+          <figcaption>achievement-medal-gold.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+      <defs>
+        <linearGradient id="amsSilver" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#d8dee6"/>
+          <stop offset="1" stop-color="#8fa3b5"/>
+        </linearGradient>
+        <radialGradient id="amsDisc" cx="0.35" cy="0.3" r="0.9">
+          <stop offset="0" stop-color="#f0f3f7"/>
+          <stop offset="0.5" stop-color="#c8d3df"/>
+          <stop offset="1" stop-color="#8fa3b5"/>
+        </radialGradient>
+        <radialGradient id="amsSun" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#f7e6a8"/>
+          <stop offset="1" stop-color="#e0b83e"/>
+        </radialGradient>
+        <filter id="amsShadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0d1626" flood-opacity="0.4"/>
+        </filter>
+      </defs>
+    
+      <!-- Colas de cinta -->
+      <g stroke="#0d1626" stroke-width="4">
+        <path d="M198,160 L150,360 L206,368 L234,200 Z" fill="#4a90c9"/>
+        <path d="M314,160 L362,360 L306,368 L278,200 Z" fill="#4a90c9"/>
+      </g>
+    
+      <!-- Cinta superior -->
+      <g stroke="#0d1626" stroke-width="4">
+        <path d="M196,14 L316,14 L316,168 L196,168 Z" fill="#4a90c9"/>
+        <path d="M246,14 L266,14 L266,168 L246,168 Z" fill="#ffffff"/>
+        <path d="M186,160 L326,160 L300,196 L212,196 Z" fill="#3a78b5"/>
+      </g>
+    
+      <!-- Disco plateado -->
+      <g filter="url(#amsShadow)">
+        <circle cx="256" cy="310" r="142" fill="url(#amsDisc)" stroke="#0d1626" stroke-width="8"/>
+        <circle cx="256" cy="310" r="122" fill="none" stroke="#8fa3b5" stroke-width="6"/>
+        <circle cx="256" cy="310" r="108" fill="none" stroke="#ffffff" stroke-width="3" stroke-dasharray="3 9" stroke-linecap="round" opacity="0.9"/>
+      </g>
+    
+      <!-- Sol de Mayo central -->
+      <g transform="translate(256,310)">
+        <g fill="#c8d3df" stroke="#1a2b45" stroke-width="3">
+          <path d="M0,-66 L13,-30 L-13,-30 Z"/>
+          <path d="M0,66 L13,30 L-13,30 Z"/>
+          <path d="M-66,0 L-30,13 L-30,-13 Z"/>
+          <path d="M66,0 L30,13 L30,-13 Z"/>
+          <path d="M-47,-47 L-21,-21 L-34,-21 Z"/>
+          <path d="M47,-47 L21,-21 L34,-21 Z"/>
+          <path d="M-47,47 L-21,21 L-34,21 Z"/>
+          <path d="M47,47 L21,21 L34,21 Z"/>
+        </g>
+        <circle r="34" fill="url(#amsSun)" stroke="#1a2b45" stroke-width="3"/>
+        <circle cx="-10" cy="-5" r="6" fill="#1a2b45"/>
+        <circle cx="10" cy="-5" r="6" fill="#1a2b45"/>
+        <path d="M-9,9 Q0,17 9,9" fill="none" stroke="#1a2b45" stroke-width="4" stroke-linecap="round"/>
+      </g>
+    
+      <!-- Laureles en la base del disco -->
+      <g fill="#1a2b45" stroke="#8fa3b5" stroke-width="3">
+        <g transform="translate(152,338) rotate(30)">
+          <path d="M0,0 Q20,50 60,70" fill="none" stroke="#8fa3b5" stroke-width="6"/>
+          <ellipse cx="24" cy="22" rx="18" ry="8" transform="rotate(20 24 22)"/>
+          <ellipse cx="48" cy="46" rx="18" ry="8" transform="rotate(10 48 46)"/>
+          <ellipse cx="10" cy="34" rx="18" ry="8" transform="rotate(40 10 34)"/>
+        </g>
+        <g transform="translate(360,338) rotate(-30)">
+          <path d="M0,0 Q-20,50 -60,70" fill="none" stroke="#8fa3b5" stroke-width="6"/>
+          <ellipse cx="-24" cy="22" rx="18" ry="8" transform="rotate(-20 -24 22)"/>
+          <ellipse cx="-48" cy="46" rx="18" ry="8" transform="rotate(-10 -48 46)"/>
+          <ellipse cx="-10" cy="34" rx="18" ry="8" transform="rotate(-40 -10 34)"/>
+        </g>
+      </g>
+    </svg></div>
+          <figcaption>achievement-medal-silver.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+      <defs>
+        <linearGradient id="appGold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+        <linearGradient id="appCeleste" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="1" stop-color="#4a90c9"/>
+        </linearGradient>
+        <radialGradient id="appSun" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#f7e6a8"/>
+          <stop offset="1" stop-color="#e0b83e"/>
+        </radialGradient>
+        <path id="appArc" d="M 76 256 A 180 180 0 0 1 436 256" fill="none"/>
+      </defs>
+    
+      <!-- Sello con borde dentado -->
+      <path d="M 498.0,256.0 L 476.2,315.0 L 465.6,377.0 L 417.2,417.2 L 377.0,465.6 L 315.0,476.2 L 256.0,498.0 L 197.0,476.2 L 135.0,465.6 L 94.8,417.2 L 46.4,377.0 L 35.8,315.0 L 14.0,256.0 L 35.8,197.0 L 46.4,135.0 L 94.8,94.8 L 135.0,46.4 L 197.0,35.8 L 256.0,14.0 L 315.0,35.8 L 377.0,46.4 L 417.2,94.8 L 465.6,135.0 L 476.2,197.0 Z" fill="url(#appGold)" stroke="#0d1626" stroke-width="8"/>
+    
+      <!-- Disco interior celeste -->
+      <circle cx="256" cy="256" r="200" fill="url(#appCeleste)" stroke="#1a2b45" stroke-width="8"/>
+      <circle cx="256" cy="256" r="178" fill="none" stroke="#ffffff" stroke-width="4" stroke-dasharray="2 10" stroke-linecap="round" opacity="0.8"/>
+    
+      <!-- Sol de Mayo central -->
+      <g transform="translate(256,256)">
+        <g fill="#e0b83e" stroke="#1a2b45" stroke-width="4">
+          <path d="M0,-96 L18,-40 L-18,-40 Z"/>
+          <path d="M0,96 L18,40 L-18,40 Z"/>
+          <path d="M-96,0 L-40,18 L-40,-18 Z"/>
+          <path d="M96,0 L40,18 L40,-18 Z"/>
+          <path d="M-68,-68 L-28,-28 L-52,-28 Z"/>
+          <path d="M68,-68 L28,-28 L52,-28 Z"/>
+          <path d="M-68,68 L-28,28 L-52,28 Z"/>
+          <path d="M68,68 L28,28 L52,28 Z"/>
+        </g>
+        <circle r="48" fill="url(#appSun)" stroke="#1a2b45" stroke-width="4"/>
+        <circle cx="-14" cy="-8" r="7" fill="#1a2b45"/>
+        <circle cx="14" cy="-8" r="7" fill="#1a2b45"/>
+        <path d="M-13,12 Q0,24 13,12" fill="none" stroke="#1a2b45" stroke-width="6" stroke-linecap="round"/>
+      </g>
+    
+      <!-- Texto en arco -->
+      <text font-family="Georgia, serif" font-size="44" font-weight="bold" fill="#1a2b45" letter-spacing="6">
+        <textPath href="#appArc" startOffset="50%" text-anchor="middle">APROBADO</textPath>
+      </text>
+    </svg></div>
+          <figcaption>approval-seal.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+      <defs>
+        <linearGradient id="criRed" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#e74c3c"/>
+          <stop offset="1" stop-color="#9e2b23"/>
+        </linearGradient>
+        <linearGradient id="criNavy" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#0d1626"/>
+        </linearGradient>
+        <path id="criArc" d="M 76 256 A 180 180 0 0 1 436 256" fill="none"/>
+      </defs>
+    
+      <!-- Sello irregular rojo/azul -->
+      <path d="M 498.0,256.0 L 476.2,315.0 L 465.6,377.0 L 417.2,417.2 L 377.0,465.6 L 315.0,476.2 L 256.0,498.0 L 197.0,476.2 L 135.0,465.6 L 94.8,417.2 L 46.4,377.0 L 35.8,315.0 L 14.0,256.0 L 35.8,197.0 L 46.4,135.0 L 94.8,94.8 L 135.0,46.4 L 197.0,35.8 L 256.0,14.0 L 315.0,35.8 L 377.0,46.4 L 417.2,94.8 L 465.6,135.0 L 476.2,197.0 Z" fill="url(#criRed)" stroke="#0d1626" stroke-width="8"/>
+    
+      <!-- Disco interior azul noche -->
+      <circle cx="256" cy="256" r="200" fill="url(#criNavy)" stroke="#000000" stroke-width="8"/>
+      <circle cx="256" cy="256" r="178" fill="none" stroke="#c0392b" stroke-width="4" stroke-dasharray="2 10" stroke-linecap="round" opacity="0.9"/>
+    
+      <!-- Flecha descendente -->
+      <g transform="translate(256,268)" stroke="#0d1626" stroke-width="5">
+        <path d="M0,-90 L0,40" stroke="#e74c3c" stroke-width="34" stroke-linecap="round"/>
+        <path d="M0,-90 L0,40" stroke="#c0392b" stroke-width="8" stroke-linecap="round" stroke-dasharray="6 8"/>
+        <path d="M-60,20 L0,88 L60,20 Z" fill="#e74c3c"/>
+        <path d="M-38,32 L0,72 L38,32 Z" fill="#c0392b"/>
+      </g>
+    
+      <!-- Texto en arco -->
+      <text font-family="Georgia, serif" font-size="52" font-weight="bold" fill="#ffffff" letter-spacing="8">
+        <textPath href="#criArc" startOffset="50%" text-anchor="middle">CRISIS</textPath>
+      </text>
+    </svg></div>
+          <figcaption>crisis-seal.svg</figcaption>
+        </figure>
+
+    <figure class="card wide">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 480">
+      <defs>
+        <linearGradient id="defBg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#1a2b45"/>
+          <stop offset="1" stop-color="#0d1626"/>
+        </linearGradient>
+        <linearGradient id="defSteel" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#8fa3b5"/>
+          <stop offset="1" stop-color="#5c7085"/>
+        </linearGradient>
+        <linearGradient id="defRed" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#8e3b32"/>
+          <stop offset="1" stop-color="#6b2b24"/>
+        </linearGradient>
+        <radialGradient id="defSun" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#8a93a3"/>
+          <stop offset="1" stop-color="#4a5566"/>
+        </radialGradient>
+        <filter id="defShadow" x="-10%" y="-30%" width="120%" height="160%">
+          <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.5"/>
+        </filter>
+      </defs>
+    
+      <!-- Cinta principal -->
+      <rect x="40" y="80" width="1840" height="320" rx="24" fill="url(#defBg)" stroke="#000000" stroke-width="12" filter="url(#defShadow)"/>
+    
+      <!-- Doble borde -->
+      <rect x="62" y="102" width="1796" height="276" rx="16" fill="none" stroke="#5c7085" stroke-width="10"/>
+      <rect x="78" y="118" width="1764" height="244" rx="10" fill="none" stroke="#3a4658" stroke-width="3"/>
+    
+      <!-- Sol de Mayo apagado -->
+      <g transform="translate(420,240)" opacity="0.75">
+        <g fill="#4a5566" stroke="#1a2b45" stroke-width="5">
+          <path d="M0,-120 L20,-50 L-20,-50 Z"/>
+          <path d="M0,120 L20,50 L-20,50 Z"/>
+          <path d="M-120,0 L-50,20 L-50,-20 Z"/>
+          <path d="M120,0 L50,20 L50,-20 Z"/>
+          <path d="M-85,-85 L-38,-38 L-66,-38 Z"/>
+          <path d="M85,-85 L38,-38 L66,-38 Z"/>
+          <path d="M-85,85 L-38,38 L-66,38 Z"/>
+          <path d="M85,85 L38,38 L66,38 Z"/>
+        </g>
+        <circle r="60" fill="url(#defSun)" stroke="#1a2b45" stroke-width="6"/>
+        <path d="M-22,10 Q0,-4 22,10" fill="none" stroke="#1a2b45" stroke-width="7" stroke-linecap="round"/>
+        <line x1="-18" y1="-8" x2="-4" y2="-8" stroke="#1a2b45" stroke-width="6" stroke-linecap="round"/>
+        <line x1="4" y1="-8" x2="18" y2="-8" stroke="#1a2b45" stroke-width="6" stroke-linecap="round"/>
+      </g>
+    
+      <!-- Columna quebrada -->
+      <g transform="translate(1500,240)" stroke="#1a2b45" stroke-width="5">
+        <!-- base -->
+        <rect x="-120" y="120" width="240" height="30" fill="#5c7085"/>
+        <rect x="-140" y="150" width="280" height="24" fill="#4a5566"/>
+        <!-- fuste inferior -->
+        <rect x="-90" y="10" width="180" height="110" fill="url(#defSteel)"/>
+        <g stroke="#4a5566" stroke-width="3">
+          <line x1="-90" y1="30" x2="90" y2="30"/>
+          <line x1="-90" y1="60" x2="90" y2="60"/>
+          <line x1="-90" y1="90" x2="90" y2="90"/>
+        </g>
+        <!-- fuste superior caído -->
+        <rect x="-20" y="-150" width="180" height="120" fill="url(#defSteel)" transform="rotate(24 -20 -150)"/>
+        <g stroke="#4a5566" stroke-width="3" transform="rotate(24 -20 -150)">
+          <line x1="-20" y1="-130" x2="160" y2="-130"/>
+          <line x1="-20" y1="-100" x2="160" y2="-100"/>
+          <line x1="-20" y1="-70" x2="160" y2="-70"/>
+        </g>
+        <!-- capital caído -->
+        <rect x="-40" y="-170" width="220" height="30" fill="#4a5566" transform="rotate(24 -40 -170)"/>
+        <!-- grietas -->
+        <path d="M-40,60 L-10,80 L-30,100" fill="none" stroke="#1a2b45" stroke-width="5"/>
+        <path d="M30,20 L50,50 L30,80" fill="none" stroke="#1a2b45" stroke-width="5"/>
+        <!-- escombros -->
+        <rect x="-160" y="140" width="40" height="16" fill="#5c7085" transform="rotate(-14 -160 140)"/>
+        <rect x="120" y="144" width="46" height="14" fill="#4a5566" transform="rotate(10 120 144)"/>
+      </g>
+    
+      <!-- Laurel invertido -->
+      <g fill="#4a5566" stroke="#5c7085" stroke-width="4">
+        <g transform="translate(120,40) rotate(160)">
+          <path d="M0,0 Q-60,-140 10,-320" fill="none" stroke="#5c7085" stroke-width="12"/>
+          <ellipse cx="-30" cy="-70" rx="30" ry="13" transform="rotate(-24 -30 -70)"/>
+          <ellipse cx="-44" cy="-150" rx="30" ry="13" transform="rotate(-14 -44 -150)"/>
+          <ellipse cx="-30" cy="-230" rx="28" ry="12" transform="rotate(-6 -30 -230)"/>
+          <ellipse cx="-10" cy="-50" rx="30" ry="13" transform="rotate(26 -10 -50)"/>
+          <ellipse cx="-18" cy="-130" rx="30" ry="13" transform="rotate(30 -18 -130)"/>
+        </g>
+      </g>
+    
+      <!-- Cinta roja apagada -->
+      <g transform="translate(960,430)">
+        <path d="M-360,0 Q-330,26 -240,30 L240,30 Q330,26 360,0 L330,-8 L0,-2 L-330,-8 Z" fill="url(#defRed)" stroke="#1a2b45" stroke-width="6"/>
+        <path d="M-330,-2 Q-300,20 -220,22 L220,22 Q300,20 330,-2 L0,-8 Z" fill="#5c3540"/>
+      </g>
+    
+      <!-- Espacio central vacío para texto de derrota -->
+    
+      <!-- Rosetas -->
+      <g fill="#5c7085" stroke="#1a2b45" stroke-width="4">
+        <circle cx="100" cy="140" r="18"/>
+        <circle cx="1820" cy="140" r="18"/>
+        <circle cx="100" cy="340" r="18"/>
+        <circle cx="1820" cy="340" r="18"/>
+      </g>
+    </svg></div>
+          <figcaption>defeat-banner.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+      <defs>
+        <linearGradient id="mbgGold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+        <linearGradient id="mbgNavy" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#0d1626"/>
+        </linearGradient>
+        <linearGradient id="mbgStone" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#e8edf2"/>
+          <stop offset="1" stop-color="#b9c6d4"/>
+        </linearGradient>
+        <clipPath id="mbgClip">
+          <path d="M256,36 L428,104 L428,344 Q428,448 256,484 Q84,448 84,344 L84,104 Z"/>
+        </clipPath>
+      </defs>
+    
+      <path d="M256,36 L428,104 L428,344 Q428,448 256,484 Q84,448 84,344 L84,104 Z" fill="url(#mbgGold)" stroke="#0d1626" stroke-width="10"/>
+      <path d="M256,56 L408,118 L408,338 Q408,436 256,468 Q104,436 104,338 L104,118 Z" fill="url(#mbgNavy)" stroke="#c29522" stroke-width="6"/>
+    
+      <!-- Banda celeste diagonal -->
+      <g clip-path="url(#mbgClip)">
+        <rect x="-60" y="130" width="640" height="120" fill="#4a90c9" transform="rotate(-32 256 256)"/>
+        <rect x="-60" y="180" width="640" height="20" fill="#ffffff" transform="rotate(-32 256 256)"/>
+      </g>
+    
+      <!-- Casa de gobierno / cúpula provincial -->
+      <g transform="translate(256,240)" stroke="#0d1626" stroke-width="5">
+        <!-- cuerpo -->
+        <rect x="-110" y="-20" width="220" height="160" fill="url(#mbgStone)"/>
+        <!-- columnas -->
+        <g fill="#1a2b45">
+          <rect x="-92" y="0" width="26" height="120"/>
+          <rect x="-13" y="0" width="26" height="120"/>
+          <rect x="66" y="0" width="26" height="120"/>
+        </g>
+        <!-- entablamento -->
+        <rect x="-120" y="-34" width="240" height="14" fill="#1a2b45"/>
+        <!-- cúpula -->
+        <path d="M-80,-34 Q-90,-90 0,-120 Q90,-90 80,-34 Z" fill="#e0b83e"/>
+        <path d="M-60,-34 Q-68,-78 0,-104 Q68,-78 60,-34 Z" fill="url(#mbgGold)"/>
+        <!-- linterna -->
+        <rect x="-8" y="-140" width="16" height="20" fill="#c29522"/>
+        <path d="M-8,-140 L0,-156 L8,-140 Z" fill="#c29522"/>
+        <line x1="0" y1="-156" x2="0" y2="-176" stroke="#c29522" stroke-width="4"/>
+        <!-- bandera -->
+        <path d="M0,-176 L36,-168 L0,-160 Z" fill="#4a90c9"/>
+        <!-- puerta -->
+        <path d="M-30,140 L-30,90 Q0,66 30,90 L30,140 Z" fill="#1a2b45"/>
+        <!-- base -->
+        <rect x="-130" y="140" width="260" height="16" fill="#1a2b45"/>
+      </g>
+    
+      <!-- Laureles laterales -->
+      <g fill="#1a2b45" stroke="#c29522" stroke-width="3">
+        <g transform="translate(120,360) rotate(-45)">
+          <path d="M0,0 Q10,-60 0,-120" fill="none" stroke="#c29522" stroke-width="8"/>
+          <ellipse cx="18" cy="-30" rx="20" ry="9" transform="rotate(-26 18 -30)"/>
+          <ellipse cx="22" cy="-70" rx="20" ry="9" transform="rotate(-14 22 -70)"/>
+          <ellipse cx="2" cy="-22" rx="20" ry="9" transform="rotate(26 2 -22)"/>
+          <ellipse cx="6" cy="-62" rx="20" ry="9" transform="rotate(30 6 -62)"/>
+        </g>
+        <g transform="translate(392,360) rotate(45)">
+          <path d="M0,0 Q10,-60 0,-120" fill="none" stroke="#c29522" stroke-width="8"/>
+          <ellipse cx="18" cy="-30" rx="20" ry="9" transform="rotate(-26 18 -30)"/>
+          <ellipse cx="22" cy="-70" rx="20" ry="9" transform="rotate(-14 22 -70)"/>
+          <ellipse cx="2" cy="-22" rx="20" ry="9" transform="rotate(26 2 -22)"/>
+          <ellipse cx="6" cy="-62" rx="20" ry="9" transform="rotate(30 6 -62)"/>
+        </g>
+      </g>
+    </svg></div>
+          <figcaption>mandate-badge-governor.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+      <defs>
+        <linearGradient id="mbiGold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+        <linearGradient id="mbiNavy" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#0d1626"/>
+        </linearGradient>
+        <linearGradient id="mbiStone" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#e8edf2"/>
+          <stop offset="1" stop-color="#b9c6d4"/>
+        </linearGradient>
+        <clipPath id="mbiClip">
+          <path d="M256,36 L428,104 L428,344 Q428,448 256,484 Q84,448 84,344 L84,104 Z"/>
+        </clipPath>
+      </defs>
+    
+      <path d="M256,36 L428,104 L428,344 Q428,448 256,484 Q84,448 84,344 L84,104 Z" fill="url(#mbiGold)" stroke="#0d1626" stroke-width="10"/>
+      <path d="M256,56 L408,118 L408,338 Q408,436 256,468 Q104,436 104,338 L104,118 Z" fill="url(#mbiNavy)" stroke="#c29522" stroke-width="6"/>
+    
+      <!-- Banda celeste diagonal -->
+      <g clip-path="url(#mbiClip)">
+        <rect x="-60" y="130" width="640" height="120" fill="#4a90c9" transform="rotate(-32 256 256)"/>
+        <rect x="-60" y="180" width="640" height="20" fill="#ffffff" transform="rotate(-32 256 256)"/>
+      </g>
+    
+      <!-- Edificio municipal / torre de reloj -->
+      <g transform="translate(256,240)" stroke="#0d1626" stroke-width="5">
+        <!-- cuerpo principal -->
+        <rect x="-100" y="0" width="200" height="140" fill="url(#mbiStone)"/>
+        <!-- ventanas -->
+        <g fill="#7ab8e0">
+          <rect x="-80" y="20" width="30" height="40"/>
+          <rect x="-15" y="20" width="30" height="40"/>
+          <rect x="50" y="20" width="30" height="40"/>
+          <rect x="-80" y="80" width="30" height="40"/>
+          <rect x="-15" y="80" width="30" height="40"/>
+          <rect x="50" y="80" width="30" height="40"/>
+        </g>
+        <!-- torre central -->
+        <rect x="-34" y="-90" width="68" height="90" fill="url(#mbiStone)"/>
+        <!-- reloj -->
+        <circle cx="0" cy="-56" r="24" fill="#ffffff"/>
+        <circle cx="0" cy="-56" r="20" fill="none" stroke="#1a2b45" stroke-width="3"/>
+        <line x1="0" y1="-56" x2="0" y2="-70" stroke="#1a2b45" stroke-width="4"/>
+        <line x1="0" y1="-56" x2="10" y2="-52" stroke="#1a2b45" stroke-width="4"/>
+        <circle cx="0" cy="-56" r="3" fill="#c0392b"/>
+        <!-- remate de torre -->
+        <path d="M-34,-90 L0,-124 L34,-90 Z" fill="#e0b83e"/>
+        <rect x="-4" y="-136" width="8" height="12" fill="#c29522"/>
+        <!-- entablamento -->
+        <rect x="-110" y="-12" width="220" height="12" fill="#1a2b45"/>
+        <!-- puerta -->
+        <path d="M-24,140 L-24,104 Q0,84 24,104 L24,140 Z" fill="#1a2b45"/>
+        <!-- base -->
+        <rect x="-116" y="140" width="232" height="16" fill="#1a2b45"/>
+      </g>
+    
+      <!-- Laureles laterales -->
+      <g fill="#1a2b45" stroke="#c29522" stroke-width="3">
+        <g transform="translate(118,360) rotate(-45)">
+          <path d="M0,0 Q10,-60 0,-120" fill="none" stroke="#c29522" stroke-width="8"/>
+          <ellipse cx="18" cy="-30" rx="20" ry="9" transform="rotate(-26 18 -30)"/>
+          <ellipse cx="22" cy="-70" rx="20" ry="9" transform="rotate(-14 22 -70)"/>
+          <ellipse cx="2" cy="-22" rx="20" ry="9" transform="rotate(26 2 -22)"/>
+          <ellipse cx="6" cy="-62" rx="20" ry="9" transform="rotate(30 6 -62)"/>
+        </g>
+        <g transform="translate(394,360) rotate(45)">
+          <path d="M0,0 Q10,-60 0,-120" fill="none" stroke="#c29522" stroke-width="8"/>
+          <ellipse cx="18" cy="-30" rx="20" ry="9" transform="rotate(-26 18 -30)"/>
+          <ellipse cx="22" cy="-70" rx="20" ry="9" transform="rotate(-14 22 -70)"/>
+          <ellipse cx="2" cy="-22" rx="20" ry="9" transform="rotate(26 2 -22)"/>
+          <ellipse cx="6" cy="-62" rx="20" ry="9" transform="rotate(30 6 -62)"/>
+        </g>
+      </g>
+    </svg></div>
+          <figcaption>mandate-badge-intendente.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+      <defs>
+        <linearGradient id="mbpGold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+        <linearGradient id="mbpNavy" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2c4e7a"/>
+          <stop offset="1" stop-color="#0d1626"/>
+        </linearGradient>
+        <radialGradient id="mbpSun" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#f7e6a8"/>
+          <stop offset="1" stop-color="#e0b83e"/>
+        </radialGradient>
+        <clipPath id="mbpClip">
+          <path d="M256,36 L428,104 L428,344 Q428,448 256,484 Q84,448 84,344 L84,104 Z"/>
+        </clipPath>
+      </defs>
+    
+      <!-- Escudo exterior -->
+      <path d="M256,36 L428,104 L428,344 Q428,448 256,484 Q84,448 84,344 L84,104 Z" fill="url(#mbpGold)" stroke="#0d1626" stroke-width="10"/>
+      <path d="M256,56 L408,118 L408,338 Q408,436 256,468 Q104,436 104,338 L104,118 Z" fill="url(#mbpNavy)" stroke="#c29522" stroke-width="6"/>
+    
+      <!-- Banda presidencial celeste-blanca (diagonal) -->
+      <g clip-path="url(#mbpClip)">
+        <rect x="-60" y="120" width="640" height="150" fill="#4a90c9" transform="rotate(-32 256 256)"/>
+        <rect x="-60" y="182" width="640" height="26" fill="#ffffff" transform="rotate(-32 256 256)"/>
+      </g>
+    
+      <!-- Sol de Mayo -->
+      <g transform="translate(256,250)">
+        <g fill="#e0b83e" stroke="#1a2b45" stroke-width="4">
+          <path d="M0,-92 L18,-40 L-18,-40 Z"/>
+          <path d="M0,92 L18,40 L-18,40 Z"/>
+          <path d="M-92,0 L-40,18 L-40,-18 Z"/>
+          <path d="M92,0 L40,18 L40,-18 Z"/>
+          <path d="M-65,-65 L-28,-28 L-50,-28 Z"/>
+          <path d="M65,-65 L28,-28 L50,-28 Z"/>
+          <path d="M-65,65 L-28,28 L-50,28 Z"/>
+          <path d="M65,65 L28,28 L50,28 Z"/>
+        </g>
+        <circle r="46" fill="url(#mbpSun)" stroke="#1a2b45" stroke-width="4"/>
+        <circle cx="-13" cy="-8" r="7" fill="#1a2b45"/>
+        <circle cx="13" cy="-8" r="7" fill="#1a2b45"/>
+        <path d="M-12,12 Q0,24 12,12" fill="none" stroke="#1a2b45" stroke-width="5" stroke-linecap="round"/>
+      </g>
+    
+      <!-- Laureles laterales -->
+      <g fill="#1a2b45" stroke="#c29522" stroke-width="3">
+        <g transform="translate(120,330) rotate(-40)">
+          <path d="M0,0 Q10,-70 0,-150" fill="none" stroke="#c29522" stroke-width="8"/>
+          <ellipse cx="20" cy="-34" rx="22" ry="10" transform="rotate(-26 20 -34)"/>
+          <ellipse cx="24" cy="-84" rx="22" ry="10" transform="rotate(-14 24 -84)"/>
+          <ellipse cx="16" cy="-130" rx="20" ry="9" transform="rotate(-6 16 -130)"/>
+          <ellipse cx="2" cy="-26" rx="22" ry="10" transform="rotate(26 2 -26)"/>
+          <ellipse cx="6" cy="-76" rx="22" ry="10" transform="rotate(30 6 -76)"/>
+        </g>
+        <g transform="translate(392,330) rotate(40)">
+          <path d="M0,0 Q10,-70 0,-150" fill="none" stroke="#c29522" stroke-width="8"/>
+          <ellipse cx="20" cy="-34" rx="22" ry="10" transform="rotate(-26 20 -34)"/>
+          <ellipse cx="24" cy="-84" rx="22" ry="10" transform="rotate(-14 24 -84)"/>
+          <ellipse cx="16" cy="-130" rx="20" ry="9" transform="rotate(-6 16 -130)"/>
+          <ellipse cx="2" cy="-26" rx="22" ry="10" transform="rotate(26 2 -26)"/>
+          <ellipse cx="6" cy="-76" rx="22" ry="10" transform="rotate(30 6 -76)"/>
+        </g>
+      </g>
+    
+      <!-- Estrella superior -->
+      <g transform="translate(256,80)">
+        <path d="M0,-22 L6,-6 L22,-6 L9,4 L13,20 L0,11 L-13,20 L-9,4 L-22,-6 L-6,-6 Z" fill="url(#mbpGold)" stroke="#1a2b45" stroke-width="3"/>
+      </g>
+    </svg></div>
+          <figcaption>mandate-badge-president.svg</figcaption>
+        </figure>
+
+    <figure class="card">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+      <defs>
+        <linearGradient id="ppfGold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="0.5" stop-color="#e0b83e"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+        <linearGradient id="ppfGold2" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f7e6a8"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+        <linearGradient id="ppfCeleste" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="1" stop-color="#4a90c9"/>
+        </linearGradient>
+        <radialGradient id="ppfSun" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#f7e6a8"/>
+          <stop offset="1" stop-color="#e0b83e"/>
+        </radialGradient>
+        <filter id="ppfShadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#0d1626" flood-opacity="0.45"/>
+        </filter>
+      </defs>
+    
+      <!-- Sombra general -->
+      <g filter="url(#ppfShadow)">
+        <!-- Marco ovalado principal (centro transparente vía evenodd) -->
+        <path fill-rule="evenodd" fill="url(#ppfGold)"
+          d="M512,72 A360,440 0 0 1 872,512 A360,440 0 0 1 512,952 A360,440 0 0 1 152,512 A360,440 0 0 1 512,72 Z
+             M512,132 A300,380 0 0 1 812,512 A300,380 0 0 1 512,892 A300,380 0 0 1 212,512 A300,380 0 0 1 512,132 Z"/>
+      </g>
+    
+      <!-- Anillo decorativo interior (borde del centro transparente) -->
+      <path d="M512,120 A308,388 0 0 1 820,512 A308,388 0 0 1 512,904 A308,388 0 0 1 204,512 A308,388 0 0 1 512,120 Z" fill="none" stroke="#ffffff" stroke-width="8" opacity="0.85"/>
+      <path d="M512,148 A292,372 0 0 1 804,512 A292,372 0 0 1 512,876 A292,372 0 0 1 220,512 A292,372 0 0 1 512,148 Z" fill="none" stroke="#c29522" stroke-width="6"/>
+    
+      <!-- Moldura exterior -->
+      <path d="M512,56 A380,460 0 0 1 892,512 A380,460 0 0 1 512,968 A380,460 0 0 1 132,512 A380,460 0 0 1 512,56 Z" fill="none" stroke="#1a2b45" stroke-width="12"/>
+      <path d="M512,56 A380,460 0 0 1 892,512 A380,460 0 0 1 512,968 A380,460 0 0 1 132,512 A380,460 0 0 1 512,56 Z" fill="none" stroke="url(#ppfGold2)" stroke-width="4" stroke-dasharray="2 14" stroke-linecap="round"/>
+    
+      <!-- Laureles laterales -->
+      <g fill="#1a2b45" stroke="#c29522" stroke-width="3">
+        <g transform="translate(140,512) rotate(-70)">
+          <path d="M0,0 Q10,-120 0,-260" fill="none" stroke="#c29522" stroke-width="10"/>
+          <ellipse cx="22" cy="-50" rx="26" ry="12" transform="rotate(-28 22 -50)"/>
+          <ellipse cx="30" cy="-120" rx="26" ry="12" transform="rotate(-16 30 -120)"/>
+          <ellipse cx="24" cy="-190" rx="24" ry="11" transform="rotate(-6 24 -190)"/>
+          <ellipse cx="2" cy="-34" rx="26" ry="12" transform="rotate(24 2 -34)"/>
+          <ellipse cx="10" cy="-104" rx="26" ry="12" transform="rotate(28 10 -104)"/>
+          <ellipse cx="6" cy="-174" rx="24" ry="11" transform="rotate(30 6 -174)"/>
+        </g>
+        <g transform="translate(884,512) rotate(70)">
+          <path d="M0,0 Q10,-120 0,-260" fill="none" stroke="#c29522" stroke-width="10"/>
+          <ellipse cx="22" cy="-50" rx="26" ry="12" transform="rotate(-28 22 -50)"/>
+          <ellipse cx="30" cy="-120" rx="26" ry="12" transform="rotate(-16 30 -120)"/>
+          <ellipse cx="24" cy="-190" rx="24" ry="11" transform="rotate(-6 24 -190)"/>
+          <ellipse cx="2" cy="-34" rx="26" ry="12" transform="rotate(24 2 -34)"/>
+          <ellipse cx="10" cy="-104" rx="26" ry="12" transform="rotate(28 10 -104)"/>
+          <ellipse cx="6" cy="-174" rx="24" ry="11" transform="rotate(30 6 -174)"/>
+        </g>
+      </g>
+    
+      <!-- Sol de Mayo arriba -->
+      <g transform="translate(512,86)">
+        <g fill="#e0b83e" stroke="#1a2b45" stroke-width="4">
+          <path d="M0,-66 L14,-28 L-14,-28 Z"/>
+          <path d="M0,66 L14,28 L-14,28 Z"/>
+          <path d="M-66,0 L-28,14 L-28,-14 Z"/>
+          <path d="M66,0 L28,14 L28,-14 Z"/>
+          <path d="M-47,-47 L-20,-20 L-40,-20 Z"/>
+          <path d="M47,-47 L20,-20 L40,-20 Z"/>
+          <path d="M-47,47 L-20,20 L-40,20 Z"/>
+          <path d="M47,47 L20,20 L40,20 Z"/>
+        </g>
+        <circle r="34" fill="url(#ppfSun)" stroke="#1a2b45" stroke-width="4"/>
+        <circle cx="-10" cy="-6" r="5" fill="#1a2b45"/>
+        <circle cx="10" cy="-6" r="5" fill="#1a2b45"/>
+        <path d="M-9,8 Q0,16 9,8" fill="none" stroke="#1a2b45" stroke-width="4" stroke-linecap="round"/>
+      </g>
+    
+      <!-- Cintas celeste/blanca en la base -->
+      <g transform="translate(512,928)">
+        <path d="M-170,0 Q-150,44 -110,64 L0,70 L110,64 Q150,44 170,0 L120,-6 L0,-2 L-120,-6 Z" fill="url(#ppfCeleste)" stroke="#1a2b45" stroke-width="6"/>
+        <path d="M-150,6 Q-136,40 -104,52 L0,58 L104,52 Q136,40 150,6 L0,2 Z" fill="#ffffff"/>
+        <path d="M-60,10 L60,10 L60,26 L-60,26 Z" fill="url(#ppfCeleste)" stroke="#c29522" stroke-width="4"/>
+        <circle cx="0" cy="18" r="10" fill="url(#ppfSun)" stroke="#1a2b45" stroke-width="3"/>
+      </g>
+    
+      <!-- Rosetas en esquinas superiores -->
+      <g fill="url(#ppfGold2)" stroke="#1a2b45" stroke-width="4">
+        <circle cx="196" cy="150" r="20"/>
+        <circle cx="828" cy="150" r="20"/>
+      </g>
+    </svg></div>
+          <figcaption>presidential-portrait-frame.svg</figcaption>
+        </figure>
+
+    <figure class="card wide">
+          <div class="tile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 480">
+      <defs>
+        <linearGradient id="vicBg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7ab8e0"/>
+          <stop offset="0.5" stop-color="#4a90c9"/>
+          <stop offset="1" stop-color="#2f6f9f"/>
+        </linearGradient>
+        <linearGradient id="vicGold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f4db82"/>
+          <stop offset="1" stop-color="#c29522"/>
+        </linearGradient>
+        <radialGradient id="vicSun" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#f7e6a8"/>
+          <stop offset="1" stop-color="#e0b83e"/>
+        </radialGradient>
+        <filter id="vicShadow" x="-10%" y="-30%" width="120%" height="160%">
+          <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#0d1626" flood-opacity="0.4"/>
+        </filter>
+      </defs>
+    
+      <!-- Cinta principal -->
+      <rect x="40" y="80" width="1840" height="320" rx="24" fill="url(#vicBg)" stroke="#0d1626" stroke-width="12" filter="url(#vicShadow)"/>
+    
+      <!-- Doble borde dorado -->
+      <rect x="62" y="102" width="1796" height="276" rx="16" fill="none" stroke="url(#vicGold)" stroke-width="10"/>
+      <rect x="78" y="118" width="1764" height="244" rx="10" fill="none" stroke="#c29522" stroke-width="3"/>
+    
+      <!-- Destellos radiantes de fondo -->
+      <g fill="#ffffff" opacity="0.12">
+        <path d="M480,240 L900,180 L900,300 Z"/>
+        <path d="M480,240 L860,120 L860,360 Z" opacity="0.7"/>
+      </g>
+    
+      <!-- Sol de Mayo radiante (izquierda) -->
+      <g transform="translate(420,240)">
+        <g fill="#e0b83e" stroke="#1a2b45" stroke-width="5">
+          <path d="M0,-130 L22,-52 L-22,-52 Z"/>
+          <path d="M0,130 L22,52 L-22,52 Z"/>
+          <path d="M-130,0 L-52,22 L-52,-22 Z"/>
+          <path d="M130,0 L52,22 L52,-22 Z"/>
+          <path d="M-92,-92 L-40,-40 L-72,-40 Z"/>
+          <path d="M92,-92 L40,-40 L72,-40 Z"/>
+          <path d="M-92,92 L-40,40 L-72,40 Z"/>
+          <path d="M92,92 L40,40 L72,40 Z"/>
+        </g>
+        <circle r="64" fill="url(#vicSun)" stroke="#1a2b45" stroke-width="6"/>
+        <circle cx="-20" cy="-12" r="10" fill="#1a2b45"/>
+        <circle cx="20" cy="-12" r="10" fill="#1a2b45"/>
+        <path d="M-18,14 Q0,28 18,14" fill="none" stroke="#1a2b45" stroke-width="7" stroke-linecap="round"/>
+      </g>
+    
+      <!-- Laureles izquierda -->
+      <g fill="#1a2b45" stroke="#c29522" stroke-width="4">
+        <g transform="translate(120,470) rotate(20)">
+          <path d="M0,0 Q-60,-140 10,-320" fill="none" stroke="#c29522" stroke-width="12"/>
+          <ellipse cx="-30" cy="-70" rx="30" ry="13" transform="rotate(-24 -30 -70)"/>
+          <ellipse cx="-44" cy="-150" rx="30" ry="13" transform="rotate(-14 -44 -150)"/>
+          <ellipse cx="-30" cy="-230" rx="28" ry="12" transform="rotate(-6 -30 -230)"/>
+          <ellipse cx="-10" cy="-50" rx="30" ry="13" transform="rotate(26 -10 -50)"/>
+          <ellipse cx="-18" cy="-130" rx="30" ry="13" transform="rotate(30 -18 -130)"/>
+          <ellipse cx="-12" cy="-210" rx="28" ry="12" transform="rotate(28 -12 -210)"/>
+        </g>
+      </g>
+    
+      <!-- Laureles derecha -->
+      <g fill="#1a2b45" stroke="#c29522" stroke-width="4">
+        <g transform="translate(1800,470) rotate(-20)">
+          <path d="M0,0 Q60,-140 -10,-320" fill="none" stroke="#c29522" stroke-width="12"/>
+          <ellipse cx="30" cy="-70" rx="30" ry="13" transform="rotate(24 30 -70)"/>
+          <ellipse cx="44" cy="-150" rx="30" ry="13" transform="rotate(14 44 -150)"/>
+          <ellipse cx="30" cy="-230" rx="28" ry="12" transform="rotate(6 30 -230)"/>
+          <ellipse cx="10" cy="-50" rx="30" ry="13" transform="rotate(-26 10 -50)"/>
+          <ellipse cx="18" cy="-130" rx="30" ry="13" transform="rotate(-30 18 -130)"/>
+          <ellipse cx="12" cy="-210" rx="28" ry="12" transform="rotate(-28 12 -210)"/>
+        </g>
+      </g>
+    
+      <!-- Espacio central vacío para texto "¡Victoria!" -->
+      <!-- (se deja deliberadamente en blanco) -->
+    
+      <!-- Rosetas decorativas -->
+      <g fill="url(#vicGold)" stroke="#1a2b45" stroke-width="4">
+        <circle cx="100" cy="140" r="18"/>
+        <circle cx="1820" cy="140" r="18"/>
+        <circle cx="100" cy="340" r="18"/>
+        <circle cx="1820" cy="340" r="18"/>
+      </g>
+    
+      <!-- Cinta celeste/blanca inferior -->
+      <g transform="translate(960,430)">
+        <path d="M-360,0 Q-330,26 -240,30 L240,30 Q330,26 360,0 L330,-8 L0,-2 L-330,-8 Z" fill="url(#vicGold)" stroke="#0d1626" stroke-width="6"/>
+        <path d="M-330,-2 Q-300,20 -220,22 L220,22 Q300,20 330,-2 L0,-8 Z" fill="#ffffff"/>
+        <path d="M-160,-4 L160,-4 L160,8 L-160,8 Z" fill="url(#vicBg)" stroke="#c29522" stroke-width="3"/>
+      </g>
+    </svg></div>
+          <figcaption>victory-banner.svg</figcaption>
+        </figure>
+
+  </div>
+</section>
+
+</main>
+<footer>GobernArg · Preview de diseño · Generado automáticamente</footer>
+</body>
+</html>
