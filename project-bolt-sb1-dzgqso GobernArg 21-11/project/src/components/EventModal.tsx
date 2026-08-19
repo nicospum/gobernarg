@@ -118,7 +118,7 @@ export function EventModal({ event, onChoice, onClose }: EventModalProps) {
     low: 'text-emerald-400',
   };
 
-  const eventImage = getEventImage(event.category, event.severity);
+  const eventImage = getEventImage(event.category, event.severity, event.id);
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">

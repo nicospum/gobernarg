@@ -13,6 +13,12 @@ interface CharacterCreationProps {
 const AVATARS = [
   { id: 'executive-1', src: IMAGES.characters.executive1, label: 'Ejecutivo' },
   { id: 'executive-2', src: IMAGES.characters.executive2, label: 'Ejecutiva' },
+  { id: 'female-executive-1', src: IMAGES.characters.femaleExecutive1, label: 'Ejecutiva 1' },
+  { id: 'female-executive-2', src: IMAGES.characters.femaleExecutive2, label: 'Ejecutiva 2' },
+  { id: 'senior-leader', src: IMAGES.characters.seniorLeader, label: 'Líder sénior' },
+  { id: 'indigenous-leader', src: IMAGES.characters.indigenousLeader, label: 'Líder indígena' },
+  { id: 'youth-activist', src: IMAGES.characters.youthActivist, label: 'Activista joven' },
+  { id: 'business-executive', src: IMAGES.characters.businessExecutive, label: 'Empresaria' },
   { id: 'popular-leader', src: IMAGES.characters.popularLeader, label: 'Líder popular' },
   { id: 'spokesperson', src: IMAGES.characters.spokesperson, label: 'Vocera' },
   { id: 'candidate-handshake', src: IMAGES.characters.candidateHandshake, label: 'Candidato' },
