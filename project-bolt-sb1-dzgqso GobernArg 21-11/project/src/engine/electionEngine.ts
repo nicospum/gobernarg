@@ -80,6 +80,8 @@ export function resolvePendingElection(gameState: GameState, option: ElectionOpt
   state.interactionHistory = {};
   state.concessionsThisTerm = 0;
   state.interactionCountByGroup = {};
+  state.lastRandomEventTurn = 0;
+  state.randomEventsThisTerm = 0;
   state.advisors = [];
   state.advisorActionUsed = false;
   state.moneyPrintingCount = 0;

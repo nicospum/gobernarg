@@ -216,6 +216,23 @@ export function resolveLegislativeConsequences(state: GameState): GameState {
 
 export function resolveRandomEvents(state: GameState): GameEvent[] {
   const triggered: GameEvent[] = [];
+
+  // ============================================================
+  // LIMITADOR GLOBAL de eventos aleatorios
+  // Cuando un evento aleatorio/crisis se dispara, los demás
+  // quedan bloqueados por N turnos para evitar avalanchas.
+  // Los eventos contextuales (triggered/scheduled) NO están limitados.
+  // ============================================================
+  const GLOBAL_COOLDOWN_TURNS = 3;      // turnos sin eventos tras uno disparado
+  const MAX_RANDOM_EVENTS_PER_TERM = 5; // máx eventos aleatorios por mandato
+
+  if (state.lastRandomEventTurn > 0 && state.turn - state.lastRandomEventTurn < GLOBAL_COOLDOWN_TURNS) {
+    return triggered; // en cooldown global
+  }
+  if (state.randomEventsThisTerm >= MAX_RANDOM_EVENTS_PER_TERM) {
+    return triggered; // límite por mandato alcanzado
+  }
+
   const allEvents = getAllEvents();
 
   // Crisis primero
@@ -226,7 +243,9 @@ export function resolveRandomEvents(state: GameState): GameEvent[] {
       const prob = event.conditions?.probability ?? event.probability ?? 0;
       if (roll < prob) {
         triggered.push(event);
-        break;
+        state.lastRandomEventTurn = state.turn;
+        state.randomEventsThisTerm += 1;
+        return triggered; // solo 1 evento por turno
       }
     }
   }
@@ -239,7 +258,9 @@ export function resolveRandomEvents(state: GameState): GameEvent[] {
       const prob = event.conditions?.probability ?? event.probability ?? 0;
       if (roll < prob) {
         triggered.push(event);
-        break;
+        state.lastRandomEventTurn = state.turn;
+        state.randomEventsThisTerm += 1;
+        return triggered; // solo 1 evento por turno
       }
     }
   }

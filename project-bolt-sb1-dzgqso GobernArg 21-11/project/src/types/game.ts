@@ -520,6 +520,10 @@ export interface GameState {
   concessionsThisTerm: number;
   /** Historial de interacciones por grupo: cuántas reuniones/negociaciones hubo antes de una concesión */
   interactionCountByGroup: Record<string, { reuniones: number; negociaciones: number }>;
+  /** Turno en el que se disparó el último evento aleatorio (para cooldown global) */
+  lastRandomEventTurn: number;
+  /** Cantidad de eventos aleatorios disparados en el mandato actual */
+  randomEventsThisTerm: number;
   // Internos para motores (no persistidos)
   _archetypeIncomeBonus?: number;
   _archetypeExtraLoans?: number;

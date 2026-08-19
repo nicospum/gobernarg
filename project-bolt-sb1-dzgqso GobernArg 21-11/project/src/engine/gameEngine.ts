@@ -129,6 +129,8 @@ export function getInitialGameState(): GameState {
     temporarySupportBonuses: {},
     concessionsThisTerm: 0,
     interactionCountByGroup: {},
+    lastRandomEventTurn: 0,
+    randomEventsThisTerm: 0,
     // Fase 4: Profundidad
     difficulty: 'normal',
     radicalConciliadorAxis: 0,
