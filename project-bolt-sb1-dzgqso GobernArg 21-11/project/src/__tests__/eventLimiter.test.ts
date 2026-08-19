@@ -56,12 +56,12 @@ describe('resolveRandomEvents - limitador global', () => {
 });
 
 describe('pendingEvents registry', () => {
-  it('tiene eventos registrados y 3 activos', async () => {
+  it('tiene todos los eventos registrados y activos', async () => {
     const { PENDING_EVENTS, ENABLED_PENDING_EVENT_IDS, getEnabledPendingEvents } = await import('../data/events/pendingEvents');
 
-    expect(Object.keys(PENDING_EVENTS).length).toBeGreaterThanOrEqual(12);
-    expect(ENABLED_PENDING_EVENT_IDS.length).toBe(3);
-    expect(getEnabledPendingEvents().length).toBe(3);
+    expect(Object.keys(PENDING_EVENTS).length).toBe(12);
+    expect(ENABLED_PENDING_EVENT_IDS.length).toBe(12);
+    expect(getEnabledPendingEvents().length).toBe(12);
   });
 
   it('los eventos pendientes tienen estructura válida', async () => {
@@ -76,20 +76,27 @@ describe('pendingEvents registry', () => {
     }
   });
 
-  it('getAllEvents incluye los 3 pendientes activos y excluye los desactivados', async () => {
+  it('getAllEvents incluye los 12 pendientes activos', async () => {
     const { getAllEvents } = await import('../data/events/index');
     const allEvents = getAllEvents();
 
-    // Activos: energy_crisis, diplomatic_conflict, police_violence_scandal
-    const activeIds = ['energy_crisis', 'diplomatic_conflict', 'police_violence_scandal'];
-    for (const id of activeIds) {
-      expect(allEvents.find(e => e.id === id)).toBeDefined();
-    }
+    const allPendingIds = [
+      'police_violence_scandal',
+      'minister_resignation',
+      'debt_default',
+      'energy_crisis',
+      'general_strike',
+      'prison_riot',
+      'drug_wave',
+      'diplomatic_conflict',
+      'external_sanctions',
+      'heat_wave',
+      'drought',
+      'flood',
+    ];
 
-    // Desactivados: debt_default, general_strike, flood, etc.
-    const inactiveIds = ['debt_default', 'general_strike', 'flood', 'drought', 'prison_riot', 'drug_wave', 'minister_resignation', 'heat_wave', 'external_sanctions'];
-    for (const id of inactiveIds) {
-      expect(allEvents.find(e => e.id === id)).toBeUndefined();
+    for (const id of allPendingIds) {
+      expect(allEvents.find(e => e.id === id)).toBeDefined();
     }
   });
 });

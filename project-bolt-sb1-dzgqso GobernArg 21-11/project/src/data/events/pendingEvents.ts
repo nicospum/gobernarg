@@ -567,9 +567,23 @@ export const PENDING_EVENTS: Record<string, GameEvent> = {
  * Se agregan UNO POR UNO para evitar cambios bruscos.
  */
 export const ENABLED_PENDING_EVENT_IDS: string[] = [
-  'energy_crisis',
-  'diplomatic_conflict',
+  // Contextuales
   'police_violence_scandal',
+  'minister_resignation',
+  // Económicos
+  'debt_default',
+  'energy_crisis',
+  // Sociales
+  'general_strike',
+  'prison_riot',
+  'drug_wave',
+  // Internacionales
+  'diplomatic_conflict',
+  'external_sanctions',
+  // Naturales
+  'heat_wave',
+  'drought',
+  'flood',
 ];
 
 /**
