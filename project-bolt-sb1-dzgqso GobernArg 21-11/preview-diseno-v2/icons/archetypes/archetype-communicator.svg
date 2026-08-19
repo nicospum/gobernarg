@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="comv2_shield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a90c9" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#1a2b45" stop-opacity="0.03"/>
+    </linearGradient>
+    <linearGradient id="comv2_mic" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4db82" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#e0b83e" stop-opacity="0.85"/>
+    </linearGradient>
+  </defs>
+
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#comv2_shield)" stroke="#1a2b45" stroke-width="2.5" stroke-linejoin="round"/>
+  <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="none" stroke="#e0b83e" stroke-width="1.5" stroke-linejoin="round" opacity="0.65"/>
+
+  <g fill="none" stroke="#e0b83e" stroke-linecap="round">
+    <path d="M615 296 A168 168 0 0 1 615 560" stroke-width="2.5" opacity="0.85"/>
+    <path d="M642 261 A212 212 0 0 1 642 595" stroke-width="2.5" opacity="0.55"/>
+  </g>
+
+  <rect x="456" y="352" width="112" height="148" rx="56" fill="url(#comv2_mic)" stroke="#1a2b45" stroke-width="2.5"/>
+  <line x1="478" y1="392" x2="546" y2="392" stroke="#1a2b45" stroke-width="2" opacity="0.28" stroke-linecap="round"/>
+  <line x1="478" y1="432" x2="546" y2="432" stroke="#1a2b45" stroke-width="2" opacity="0.28" stroke-linecap="round"/>
+  <line x1="512" y1="500" x2="512" y2="540" stroke="#1a2b45" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M474 556 Q512 572 550 556" fill="none" stroke="#1a2b45" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

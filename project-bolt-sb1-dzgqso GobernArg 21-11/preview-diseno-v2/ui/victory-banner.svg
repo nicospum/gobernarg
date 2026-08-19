@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 480">
+  <defs>
+    <linearGradient id="vb-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8cc3e8"/>
+      <stop offset="0.5" stop-color="#6aa8d6"/>
+      <stop offset="1" stop-color="#3f7fae"/>
+    </linearGradient>
+    <linearGradient id="vb-gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f2dfa0"/>
+      <stop offset="1" stop-color="#caa33a"/>
+    </linearGradient>
+    <radialGradient id="vb-sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f9edc4"/>
+      <stop offset="1" stop-color="#e0b83e"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Cinta principal -->
+  <rect x="80" y="96" width="1760" height="288" rx="20" fill="url(#vb-bg)" stroke="#16283f" stroke-width="2.5"/>
+
+  <!-- Bordes finos -->
+  <rect x="96" y="112" width="1728" height="256" rx="14" fill="none" stroke="url(#vb-gold)" stroke-width="2"/>
+  <rect x="104" y="120" width="1712" height="240" rx="10" fill="none" stroke="#caa33a" stroke-width="1" opacity="0.65"/>
+
+  <!-- Destellos sutiles -->
+  <g stroke="#ffffff" stroke-width="1.5" opacity="0.07" stroke-linecap="round">
+    <line x1="320" y1="240" x2="1240" y2="140"/>
+    <line x1="320" y1="240" x2="1280" y2="240"/>
+    <line x1="320" y1="240" x2="1240" y2="340"/>
+  </g>
+
+  <!-- Sol de Mayo, fino -->
+  <g transform="translate(320,240)">
+    <g stroke="#caa33a" stroke-width="3" stroke-linecap="round">
+      <line x1="0" y1="-50" x2="0" y2="-64"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(45)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(90)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(135)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(180)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(225)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(270)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(315)"/>
+    </g>
+    <circle r="42" fill="url(#vb-sun)" stroke="#16283f" stroke-width="2"/>
+    <circle cx="-10" cy="-6" r="4" fill="#16283f"/>
+    <circle cx="10" cy="-6" r="4" fill="#16283f"/>
+    <path d="M-9,8 Q0,18 9,8" fill="none" stroke="#16283f" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Acento inferior -->
+  <g transform="translate(960,368)">
+    <line x1="-220" y1="0" x2="220" y2="0" stroke="url(#vb-gold)" stroke-width="1.5"/>
+    <path d="M0,-6 L8,0 L0,6 L-8,0 Z" fill="url(#vb-gold)"/>
+  </g>
+</svg>

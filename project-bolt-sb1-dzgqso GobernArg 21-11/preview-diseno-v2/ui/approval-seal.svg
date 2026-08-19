@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="ap-gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f3e2a6"/>
+      <stop offset="0.55" stop-color="#e0b83e"/>
+      <stop offset="1" stop-color="#c9a23c"/>
+    </linearGradient>
+    <linearGradient id="ap-celeste" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a9d4ef"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <radialGradient id="ap-sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f9edc4"/>
+      <stop offset="1" stop-color="#e2bd5c"/>
+    </radialGradient>
+    <path id="ap-arc" d="M 96 256 A 160 160 0 0 1 416 256" fill="none"/>
+  </defs>
+
+  <!-- Sello -->
+  <circle cx="256" cy="256" r="222" fill="url(#ap-gold)" stroke="#16283f" stroke-width="1.5"/>
+  <circle cx="256" cy="256" r="208" fill="none" stroke="#caa33a" stroke-width="3" stroke-dasharray="0.5 6.9" stroke-linecap="round" opacity="0.9"/>
+  <circle cx="256" cy="256" r="196" fill="url(#ap-celeste)" stroke="#caa33a" stroke-width="1.5"/>
+  <circle cx="256" cy="256" r="178" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="1 9" stroke-linecap="round" opacity="0.8"/>
+
+  <!-- Sol de Mayo central -->
+  <g transform="translate(256,276)">
+    <g stroke="#caa33a" stroke-width="2.5" stroke-linecap="round">
+      <line x1="0" y1="-42" x2="0" y2="-52"/>
+      <line x1="0" y1="-42" x2="0" y2="-52" transform="rotate(45)"/>
+      <line x1="0" y1="-42" x2="0" y2="-52" transform="rotate(90)"/>
+      <line x1="0" y1="-42" x2="0" y2="-52" transform="rotate(135)"/>
+      <line x1="0" y1="-42" x2="0" y2="-52" transform="rotate(180)"/>
+      <line x1="0" y1="-42" x2="0" y2="-52" transform="rotate(225)"/>
+      <line x1="0" y1="-42" x2="0" y2="-52" transform="rotate(270)"/>
+      <line x1="0" y1="-42" x2="0" y2="-52" transform="rotate(315)"/>
+    </g>
+    <circle r="34" fill="url(#ap-sun)" stroke="#16283f" stroke-width="1.8"/>
+    <circle cx="-8" cy="-5" r="3" fill="#16283f"/>
+    <circle cx="8" cy="-5" r="3" fill="#16283f"/>
+    <path d="M-7,8 Q0,15 7,8" fill="none" stroke="#16283f" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Texto en arco -->
+  <text font-family="Georgia, serif" font-size="40" font-weight="bold" fill="#16283f" letter-spacing="6">
+    <textPath href="#ap-arc" startOffset="50%" text-anchor="middle">APROBADO</textPath>
+  </text>
+</svg>

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="gvrGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F2E2A8"/>
+      <stop offset="1" stop-color="#CDA434"/>
+    </linearGradient>
+    <linearGradient id="gvrNavy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#35577F"/>
+      <stop offset="1" stop-color="#101D33"/>
+    </linearGradient>
+    <linearGradient id="gvrCeleste" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#79B1DD"/>
+      <stop offset="1" stop-color="#4785BC"/>
+    </linearGradient>
+    <linearGradient id="gvrStone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EDF2F7"/>
+      <stop offset="1" stop-color="#C2CEDC"/>
+    </linearGradient>
+    <linearGradient id="gvrDome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F2E2A8"/>
+      <stop offset="1" stop-color="#CDA434"/>
+    </linearGradient>
+    <clipPath id="gvrClip">
+      <path d="M256,76 L394,128 L394,336 Q394,430 256,458 Q118,430 118,336 L118,128 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- Escudo exterior fino -->
+  <path d="M256,60 L410,114 L410,342 Q410,444 256,474 Q102,444 102,342 L102,114 Z" fill="url(#gvrGold)" stroke="#0D1626" stroke-width="3"/>
+  <path d="M256,76 L394,128 L394,336 Q394,430 256,458 Q118,430 118,336 L118,128 Z" fill="url(#gvrNavy)" stroke="#CDA434" stroke-width="1.5"/>
+
+  <!-- Banda celeste -->
+  <g clip-path="url(#gvrClip)">
+    <rect x="-70" y="146" width="700" height="112" fill="url(#gvrCeleste)" transform="rotate(-24 256 256)"/>
+    <rect x="-70" y="196" width="700" height="12" fill="#FFFFFF" transform="rotate(-24 256 256)"/>
+  </g>
+
+  <!-- Casa de gobierno / cúpula -->
+  <g transform="translate(256,252)" stroke="#0D1626" stroke-width="2" stroke-linejoin="round">
+    <rect x="-74" y="-14" width="148" height="132" fill="url(#gvrStone)"/>
+    <g fill="#1A2B45" stroke="none">
+      <rect x="-52" y="0" width="14" height="118"/>
+      <rect x="-7" y="0" width="14" height="118"/>
+      <rect x="38" y="0" width="14" height="118"/>
+    </g>
+    <rect x="-82" y="-26" width="164" height="12" fill="#1A2B45" stroke="none"/>
+    <path d="M-50,-26 Q-58,-74 0,-100 Q58,-74 50,-26 Z" fill="url(#gvrDome)" stroke="#1A2B45" stroke-width="2"/>
+    <rect x="-4" y="-114" width="8" height="14" fill="#CDA434" stroke="#1A2B45" stroke-width="1.5"/>
+    <path d="M-4,-114 L0,-122 L4,-114 Z" fill="#CDA434" stroke="#1A2B45" stroke-width="1.5"/>
+    <line x1="0" y1="-122" x2="0" y2="-136" stroke="#1A2B45" stroke-width="2"/>
+    <path d="M0,-136 L22,-131 L0,-126 Z" fill="#4A90C9" stroke="#1A2B45" stroke-width="1.5"/>
+    <path d="M-20,118 L-20,84 Q0,68 20,84 L20,118 Z" fill="#1A2B45" stroke="none"/>
+    <rect x="-90" y="118" width="180" height="12" fill="#1A2B45" stroke="none"/>
+  </g>
+</svg>

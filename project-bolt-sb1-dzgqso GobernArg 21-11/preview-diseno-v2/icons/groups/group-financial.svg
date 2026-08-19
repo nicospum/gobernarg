@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="finShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="finSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="finGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+    <radialGradient id="finSun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f7e6a8"/>
+      <stop offset="1" stop-color="#e0b83e"/>
+    </radialGradient>
+  </defs>
+
+  <path d="M512,140 L812,300 L812,470 C812,622 696,736 512,880 C328,736 212,622 212,470 L212,300 Z" fill="url(#finShield)" fill-opacity="0.14" stroke="url(#finGold)" stroke-width="4" stroke-linejoin="round"/>
+
+  <g>
+    <circle cx="512" cy="300" r="76" fill="url(#finSky)" fill-opacity="0.32" stroke="#1a2b45" stroke-width="3"/>
+    <circle cx="512" cy="300" r="54" fill="none" stroke="url(#finGold)" stroke-width="3"/>
+    <circle cx="512" cy="300" r="8" fill="url(#finGold)"/>
+  </g>
+
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <line x1="288" y1="664" x2="740" y2="664" stroke="#1a2b45" stroke-width="3" opacity="0.35"/>
+    <polyline points="300,640 430,540 560,582 720,452" fill="none" stroke="url(#finGold)" stroke-width="6"/>
+    <circle cx="300" cy="640" r="9" fill="#7ab8e0" stroke="#1a2b45" stroke-width="3"/>
+    <circle cx="430" cy="540" r="9" fill="#7ab8e0" stroke="#1a2b45" stroke-width="3"/>
+    <circle cx="560" cy="582" r="9" fill="#7ab8e0" stroke="#1a2b45" stroke-width="3"/>
+    <circle cx="720" cy="452" r="11" fill="url(#finSun)" stroke="#1a2b45" stroke-width="3"/>
+  </g>
+</svg>

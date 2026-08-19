@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="touv2_shield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a90c9" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#1a2b45" stop-opacity="0.03"/>
+    </linearGradient>
+    <linearGradient id="touv2_pin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#4a90c9" stop-opacity="0.85"/>
+    </linearGradient>
+  </defs>
+
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#touv2_shield)" stroke="#1a2b45" stroke-width="2.5" stroke-linejoin="round"/>
+  <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="none" stroke="#e0b83e" stroke-width="1.5" stroke-linejoin="round" opacity="0.65"/>
+
+  <path d="M512 616 C512 616 450 554 450 456 A62 62 0 1 1 574 456 C574 554 512 616 512 616 Z" fill="url(#touv2_pin)" stroke="#1a2b45" stroke-width="2.5" stroke-linejoin="round"/>
+  <circle cx="512" cy="456" r="26" fill="none" stroke="#1a2b45" stroke-width="2.5"/>
+  <circle cx="512" cy="456" r="9" fill="#e0b83e"/>
+</svg>

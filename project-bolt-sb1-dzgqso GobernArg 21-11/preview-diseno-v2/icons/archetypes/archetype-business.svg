@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bizv2_shield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a90c9" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#1a2b45" stop-opacity="0.03"/>
+    </linearGradient>
+    <linearGradient id="bizv2_line" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#4a90c9"/>
+      <stop offset="1" stop-color="#7ab8e0"/>
+    </linearGradient>
+  </defs>
+
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#bizv2_shield)" stroke="#1a2b45" stroke-width="2.5" stroke-linejoin="round"/>
+  <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="none" stroke="#e0b83e" stroke-width="1.5" stroke-linejoin="round" opacity="0.65"/>
+
+  <line x1="344" y1="682" x2="684" y2="682" stroke="#1a2b45" stroke-width="2" opacity="0.18" stroke-linecap="round"/>
+  <path d="M360 648 L482 566 L558 588 L688 436" fill="none" stroke="url(#bizv2_line)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="688" cy="436" r="11" fill="#e0b83e" stroke="#1a2b45" stroke-width="2"/>
+</svg>

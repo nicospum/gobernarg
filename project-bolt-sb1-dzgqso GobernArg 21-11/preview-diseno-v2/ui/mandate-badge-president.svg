@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="prsGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F2E2A8"/>
+      <stop offset="1" stop-color="#CDA434"/>
+    </linearGradient>
+    <linearGradient id="prsNavy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#35577F"/>
+      <stop offset="1" stop-color="#101D33"/>
+    </linearGradient>
+    <linearGradient id="prsCeleste" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#79B1DD"/>
+      <stop offset="1" stop-color="#4785BC"/>
+    </linearGradient>
+    <radialGradient id="prsSun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FDF3D0"/>
+      <stop offset="1" stop-color="#E2B64C"/>
+    </radialGradient>
+    <clipPath id="prsClip">
+      <path d="M256,76 L394,128 L394,336 Q394,430 256,458 Q118,430 118,336 L118,128 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- Escudo exterior fino -->
+  <path d="M256,60 L410,114 L410,342 Q410,444 256,474 Q102,444 102,342 L102,114 Z" fill="url(#prsGold)" stroke="#0D1626" stroke-width="3"/>
+  <path d="M256,76 L394,128 L394,336 Q394,430 256,458 Q118,430 118,336 L118,128 Z" fill="url(#prsNavy)" stroke="#CDA434" stroke-width="1.5"/>
+
+  <!-- Banda presidencial celeste -->
+  <g clip-path="url(#prsClip)">
+    <rect x="-70" y="146" width="700" height="112" fill="url(#prsCeleste)" transform="rotate(-24 256 256)"/>
+    <rect x="-70" y="196" width="700" height="12" fill="#FFFFFF" transform="rotate(-24 256 256)"/>
+  </g>
+
+  <!-- Sol de Mayo -->
+  <g transform="translate(256,252)" fill="#E2B64C" stroke="#1A2B45" stroke-width="1.5" stroke-linejoin="round">
+    <g>
+      <path d="M0,-60 L9,-28 L-9,-28 Z"/>
+      <path d="M0,60 L9,28 L-9,28 Z"/>
+      <path d="M-60,0 L-28,9 L-28,-9 Z"/>
+      <path d="M60,0 L28,9 L28,-9 Z"/>
+    </g>
+    <g transform="rotate(45)">
+      <path d="M0,-60 L9,-28 L-9,-28 Z"/>
+      <path d="M0,60 L9,28 L-9,28 Z"/>
+      <path d="M-60,0 L-28,9 L-28,-9 Z"/>
+      <path d="M60,0 L28,9 L28,-9 Z"/>
+    </g>
+    <circle r="40" fill="url(#prsSun)" stroke="#1A2B45" stroke-width="1.5"/>
+    <circle cx="-11" cy="-7" r="5.5" fill="#1A2B45" stroke="none"/>
+    <circle cx="11" cy="-7" r="5.5" fill="#1A2B45" stroke="none"/>
+    <path d="M-10,9 Q0,17 10,9" fill="none" stroke="#1A2B45" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Estrella superior -->
+  <g transform="translate(256,86)">
+    <path d="M0,-15 L4.6,-5 L15,-5 L7,2 L10,12.5 L0,7.5 L-10,12.5 L-7,2 L-15,-5 L-4.6,-5 Z" fill="url(#prsGold)" stroke="#1A2B45" stroke-width="1.5" stroke-linejoin="round"/>
+  </g>
+</svg>

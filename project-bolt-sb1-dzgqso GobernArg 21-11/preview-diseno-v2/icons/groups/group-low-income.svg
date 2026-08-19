@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="lowShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="lowSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="lowGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+  </defs>
+
+  <path d="M512,140 L812,300 L812,470 C812,622 696,736 512,880 C328,736 212,622 212,470 L212,300 Z" fill="url(#lowShield)" fill-opacity="0.14" stroke="url(#lowGold)" stroke-width="4" stroke-linejoin="round"/>
+
+  <path d="M512,470 C512,470 390,350 390,252 C390,206 426,172 466,172 C492,172 508,186 512,206 C516,186 532,172 558,172 C598,172 634,206 634,252 C634,350 512,470 512,470 Z" fill="url(#lowSky)" fill-opacity="0.5" stroke="#1a2b45" stroke-width="4" stroke-linejoin="round"/>
+
+  <path d="M336,600 C392,552 476,552 512,606 C548,552 632,552 688,600" fill="none" stroke="url(#lowGold)" stroke-width="7" stroke-linecap="round"/>
+  <path d="M336,600 C400,560 470,560 512,606" fill="none" stroke="url(#lowGold)" stroke-width="4" stroke-linecap="round" opacity="0.65"/>
+</svg>

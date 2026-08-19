@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="culv2_shield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a90c9" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#1a2b45" stop-opacity="0.03"/>
+    </linearGradient>
+    <linearGradient id="culv2_comedy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0" stop-opacity="0.30"/>
+      <stop offset="1" stop-color="#4a90c9" stop-opacity="0.16"/>
+    </linearGradient>
+    <linearGradient id="culv2_tragedy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4db82" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#e0b83e" stop-opacity="0.20"/>
+    </linearGradient>
+  </defs>
+
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#culv2_shield)" stroke="#1a2b45" stroke-width="2.5" stroke-linejoin="round"/>
+  <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="none" stroke="#e0b83e" stroke-width="1.5" stroke-linejoin="round" opacity="0.65"/>
+
+  <ellipse cx="408" cy="500" rx="104" ry="138" fill="url(#culv2_comedy)" stroke="#1a2b45" stroke-width="2.5"/>
+  <circle cx="372" cy="458" r="9" fill="#1a2b45"/>
+  <circle cx="444" cy="458" r="9" fill="#1a2b45"/>
+  <path d="M364 548 Q408 604 452 548" fill="none" stroke="#1a2b45" stroke-width="3" stroke-linecap="round"/>
+
+  <ellipse cx="616" cy="500" rx="104" ry="138" fill="url(#culv2_tragedy)" stroke="#1a2b45" stroke-width="2.5"/>
+  <circle cx="580" cy="458" r="9" fill="#1a2b45"/>
+  <circle cx="652" cy="458" r="9" fill="#1a2b45"/>
+  <path d="M580 566 Q616 512 652 566" fill="none" stroke="#1a2b45" stroke-width="3" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="midShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="midSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="midGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+    <radialGradient id="midSun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f7e6a8"/>
+      <stop offset="1" stop-color="#e0b83e"/>
+    </radialGradient>
+  </defs>
+
+  <path d="M512,140 L812,300 L812,470 C812,622 696,736 512,880 C328,736 212,622 212,470 L212,300 Z" fill="url(#midShield)" fill-opacity="0.14" stroke="url(#midGold)" stroke-width="4" stroke-linejoin="round"/>
+
+  <g transform="translate(512,250)">
+    <circle r="54" fill="url(#midSun)"/>
+    <g stroke="url(#midGold)" stroke-width="4" stroke-linecap="round">
+      <line x1="0" y1="-80" x2="0" y2="-98"/>
+      <line x1="0" y1="80" x2="0" y2="98"/>
+      <line x1="-80" y1="0" x2="-98" y2="0"/>
+      <line x1="80" y1="0" x2="98" y2="0"/>
+      <line x1="-57" y1="-57" x2="-69" y2="-69"/>
+      <line x1="57" y1="-57" x2="69" y2="-69"/>
+      <line x1="-57" y1="57" x2="-69" y2="69"/>
+      <line x1="57" y1="57" x2="69" y2="69"/>
+    </g>
+  </g>
+
+  <g stroke="#1a2b45" stroke-width="4" stroke-linejoin="round">
+    <path d="M512,392 L676,532 L348,532 Z" fill="url(#midSky)" fill-opacity="0.4"/>
+    <rect x="392" y="532" width="240" height="162" fill="#ffffff" fill-opacity="0.88"/>
+    <path d="M476,694 L476,622 Q512,598 548,622 L548,694 Z" fill="url(#midGold)" stroke="url(#midGold)" stroke-width="3"/>
+  </g>
+</svg>

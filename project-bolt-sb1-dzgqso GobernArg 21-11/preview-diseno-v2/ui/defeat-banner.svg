@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 480">
+  <defs>
+    <linearGradient id="db-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#22334e"/>
+      <stop offset="1" stop-color="#0d1626"/>
+    </linearGradient>
+    <linearGradient id="db-steel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#93a5b8"/>
+      <stop offset="1" stop-color="#5c7085"/>
+    </linearGradient>
+    <radialGradient id="db-sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#9aa7b6"/>
+      <stop offset="1" stop-color="#55647a"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Cinta principal -->
+  <rect x="80" y="96" width="1760" height="288" rx="20" fill="url(#db-bg)" stroke="#0d1626" stroke-width="2.5"/>
+
+  <!-- Bordes finos -->
+  <rect x="96" y="112" width="1728" height="256" rx="14" fill="none" stroke="url(#db-steel)" stroke-width="2"/>
+  <rect x="104" y="120" width="1712" height="240" rx="10" fill="none" stroke="#3a4658" stroke-width="1" opacity="0.7"/>
+
+  <!-- Sol apagado -->
+  <g transform="translate(320,240)" opacity="0.9">
+    <g stroke="#5c7085" stroke-width="3" stroke-linecap="round">
+      <line x1="0" y1="-50" x2="0" y2="-64"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(45)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(90)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(135)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(180)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(225)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(270)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(315)"/>
+    </g>
+    <circle r="42" fill="url(#db-sun)" stroke="#16283f" stroke-width="2"/>
+    <path d="M-12,8 Q0,-2 12,8" fill="none" stroke="#16283f" stroke-width="2" stroke-linecap="round"/>
+    <line x1="-8" y1="-8" x2="-2" y2="-8" stroke="#16283f" stroke-width="2" stroke-linecap="round"/>
+    <line x1="2" y1="-8" x2="8" y2="-8" stroke="#16283f" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Chevrones descendentes -->
+  <g transform="translate(1560,240)" fill="none" stroke="url(#db-steel)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M-64,-56 L0,-16 L64,-56"/>
+    <path d="M-48,-24 L0,16 L48,-24"/>
+    <path d="M-32,8 L0,48 L32,8"/>
+  </g>
+
+  <!-- Acento inferior -->
+  <g transform="translate(960,368)">
+    <line x1="-220" y1="0" x2="220" y2="0" stroke="url(#db-steel)" stroke-width="1.5"/>
+  </g>
+</svg>

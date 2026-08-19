@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="ngoShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="ngoSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="ngoGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+  </defs>
+
+  <path d="M512,140 L812,300 L812,470 C812,622 696,736 512,880 C328,736 212,622 212,470 L212,300 Z" fill="url(#ngoShield)" fill-opacity="0.14" stroke="url(#ngoGold)" stroke-width="4" stroke-linejoin="round"/>
+
+  <g stroke="#1a2b45" stroke-width="4" stroke-linejoin="round">
+    <circle cx="512" cy="300" r="42" fill="url(#ngoSky)" fill-opacity="0.5"/>
+    <circle cx="392" cy="424" r="42" fill="url(#ngoSky)" fill-opacity="0.5"/>
+    <circle cx="632" cy="424" r="42" fill="url(#ngoSky)" fill-opacity="0.5"/>
+    <path d="M470,332 L452,382" stroke-linecap="round"/>
+    <path d="M554,332 L572,382" stroke-linecap="round"/>
+    <path d="M434,424 L590,424" stroke-linecap="round"/>
+    <circle cx="512" cy="404" r="10" fill="url(#ngoGold)" stroke="none"/>
+  </g>
+
+  <g>
+    <path d="M404,640 C440,616 470,620 512,652 C554,620 584,616 620,640" fill="none" stroke="url(#ngoGold)" stroke-width="5" stroke-linecap="round"/>
+    <g fill="url(#ngoGold)">
+      <ellipse cx="398" cy="628" rx="20" ry="9" transform="rotate(-28 398 628)"/>
+      <ellipse cx="446" cy="612" rx="20" ry="9" transform="rotate(-14 446 612)"/>
+      <ellipse cx="626" cy="628" rx="20" ry="9" transform="rotate(28 626 628)"/>
+      <ellipse cx="578" cy="612" rx="20" ry="9" transform="rotate(14 578 612)"/>
+    </g>
+  </g>
+</svg>

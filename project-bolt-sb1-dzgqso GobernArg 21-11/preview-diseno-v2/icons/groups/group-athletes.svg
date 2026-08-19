@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="gAthFrame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a6f9a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="gAthHandle" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#16263f"/>
+    </linearGradient>
+    <linearGradient id="gAthGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6e3a1"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+    <linearGradient id="gAthFlame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6e3a1"/>
+      <stop offset="1" stop-color="#e0a63b"/>
+    </linearGradient>
+  </defs>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="512,182 790,347 790,677 512,842 234,677 234,347" stroke="url(#gAthFrame)" stroke-width="4"/>
+    <polygon points="512,222 758,367 758,657 512,802 266,657 266,367" stroke="url(#gAthGold)" stroke-width="2.5" opacity="0.85"/>
+  </g>
+
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M500,352 C558,414 562,462 500,498 C438,462 442,414 500,352 Z" fill="url(#gAthFlame)" stroke="#0d1626" stroke-width="4"/>
+    <path d="M500,402 C530,430 532,462 500,478 C468,462 470,430 500,402 Z" fill="url(#gAthGold)" stroke="none"/>
+    <path d="M472,510 L528,510 L540,650 L460,650 Z" fill="url(#gAthHandle)" stroke="#0d1626" stroke-width="4"/>
+    <path d="M474,556 L526,556" fill="none" stroke="url(#gAthGold)" stroke-width="4"/>
+  </g>
+</svg>

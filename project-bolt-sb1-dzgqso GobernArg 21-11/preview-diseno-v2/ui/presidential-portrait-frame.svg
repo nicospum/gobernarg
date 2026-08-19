@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="pf-gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6e7b0"/>
+      <stop offset="0.55" stop-color="#e2bd5c"/>
+      <stop offset="1" stop-color="#c9a23c"/>
+    </linearGradient>
+    <linearGradient id="pf-gold-leaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f2dfa0"/>
+      <stop offset="1" stop-color="#caa33a"/>
+    </linearGradient>
+    <radialGradient id="pf-sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f9edc4"/>
+      <stop offset="1" stop-color="#e2bd5c"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Cuerpo del marco ovalado (centro transparente vía evenodd) -->
+  <path fill-rule="evenodd" fill="url(#pf-gold)"
+    d="M512,54 A380,458 0 0 1 892,512 A380,458 0 0 1 512,970 A380,458 0 0 1 132,512 A380,458 0 0 1 512,54 Z
+       M512,134 A300,378 0 0 1 812,512 A300,378 0 0 1 512,890 A300,378 0 0 1 212,512 A300,378 0 0 1 512,134 Z"/>
+
+  <!-- Contornos finos -->
+  <path d="M512,54 A380,458 0 0 1 892,512 A380,458 0 0 1 512,970 A380,458 0 0 1 132,512 A380,458 0 0 1 512,54 Z" fill="none" stroke="#16283f" stroke-width="2.5"/>
+  <path d="M512,134 A300,378 0 0 1 812,512 A300,378 0 0 1 512,890 A300,378 0 0 1 212,512 A300,378 0 0 1 512,134 Z" fill="none" stroke="#f8eec9" stroke-width="1.5" opacity="0.85"/>
+  <path d="M512,146 A288,366 0 0 1 800,512 A288,366 0 0 1 512,878 A288,366 0 0 1 224,512 A288,366 0 0 1 512,146 Z" fill="none" stroke="#caa33a" stroke-width="1.2" opacity="0.7"/>
+
+  <!-- Sol de Mayo superior, fino -->
+  <g transform="translate(512,92)">
+    <g stroke="#caa33a" stroke-width="3" stroke-linecap="round">
+      <line x1="0" y1="-40" x2="0" y2="-54"/>
+      <line x1="0" y1="-40" x2="0" y2="-54" transform="rotate(45)"/>
+      <line x1="0" y1="-40" x2="0" y2="-54" transform="rotate(90)"/>
+      <line x1="0" y1="-40" x2="0" y2="-54" transform="rotate(135)"/>
+      <line x1="0" y1="-40" x2="0" y2="-54" transform="rotate(180)"/>
+      <line x1="0" y1="-40" x2="0" y2="-54" transform="rotate(225)"/>
+      <line x1="0" y1="-40" x2="0" y2="-54" transform="rotate(270)"/>
+      <line x1="0" y1="-40" x2="0" y2="-54" transform="rotate(315)"/>
+    </g>
+    <circle r="28" fill="url(#pf-sun)" stroke="#16283f" stroke-width="2"/>
+    <circle cx="-7" cy="-4" r="2.5" fill="#16283f"/>
+    <circle cx="7" cy="-4" r="2.5" fill="#16283f"/>
+    <path d="M-6,6 Q0,12 6,6" fill="none" stroke="#16283f" stroke-width="1.8" stroke-linecap="round"/>
+  </g>
+
+  <!-- Laurel izquierdo, minimalista -->
+  <g transform="translate(168,528)" fill="none">
+    <path d="M0,0 C-4,-52 -8,-104 -2,-160" stroke="url(#pf-gold)" stroke-width="2.5" stroke-linecap="round"/>
+    <g fill="url(#pf-gold-leaf)" stroke="#16283f" stroke-width="1.3">
+      <path d="M-2,-38 C-16,-50 -18,-72 -4,-86 C10,-72 10,-50 -2,-38 Z"/>
+      <path d="M-3,-86 C-17,-98 -19,-120 -5,-134 C9,-120 9,-98 -3,-86 Z"/>
+      <path d="M-2,-128 C-12,-136 -14,-150 -6,-158 C2,-150 2,-136 -2,-128 Z"/>
+    </g>
+  </g>
+
+  <!-- Laurel derecho, minimalista -->
+  <g transform="translate(856,528) scale(-1,1)" fill="none">
+    <path d="M0,0 C-4,-52 -8,-104 -2,-160" stroke="url(#pf-gold)" stroke-width="2.5" stroke-linecap="round"/>
+    <g fill="url(#pf-gold-leaf)" stroke="#16283f" stroke-width="1.3">
+      <path d="M-2,-38 C-16,-50 -18,-72 -4,-86 C10,-72 10,-50 -2,-38 Z"/>
+      <path d="M-3,-86 C-17,-98 -19,-120 -5,-134 C9,-120 9,-98 -3,-86 Z"/>
+      <path d="M-2,-128 C-12,-136 -14,-150 -6,-158 C2,-150 2,-136 -2,-128 Z"/>
+    </g>
+  </g>
+
+  <!-- Cinta base, simplificada -->
+  <g transform="translate(512,938)">
+    <rect x="-150" y="-14" width="300" height="28" rx="6" fill="url(#pf-gold)" stroke="#16283f" stroke-width="2"/>
+    <circle cx="0" cy="0" r="10" fill="url(#pf-sun)" stroke="#16283f" stroke-width="1.5"/>
+  </g>
+</svg>

@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="slvRibbon" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6FA7D9"/>
+      <stop offset="1" stop-color="#3E7BB8"/>
+    </linearGradient>
+    <radialGradient id="slvDisc" cx="0.4" cy="0.32" r="0.9">
+      <stop offset="0" stop-color="#F5F7FA"/>
+      <stop offset="0.55" stop-color="#C8D3DF"/>
+      <stop offset="1" stop-color="#8FA3B5"/>
+    </radialGradient>
+    <radialGradient id="slvSun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FDF3D0"/>
+      <stop offset="1" stop-color="#E2B64C"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Cinta superior -->
+  <g stroke="#0D1626" stroke-width="2" stroke-linejoin="round">
+    <path d="M208,20 L304,20 L304,172 L208,172 Z" fill="url(#slvRibbon)"/>
+    <path d="M247,20 L265,20 L265,172 L247,172 Z" fill="#FFFFFF" stroke="none"/>
+    <path d="M198,172 L314,172 L286,204 L226,204 Z" fill="#3A78B5"/>
+  </g>
+
+  <!-- Disco plateado -->
+  <g>
+    <circle cx="256" cy="330" r="122" fill="url(#slvDisc)" stroke="#0D1626" stroke-width="3"/>
+    <circle cx="256" cy="330" r="100" fill="none" stroke="#8FA3B5" stroke-width="1.5"/>
+    <circle cx="256" cy="330" r="92" fill="none" stroke="#FFFFFF" stroke-width="1" stroke-dasharray="2 8" stroke-linecap="round" opacity="0.8"/>
+  </g>
+
+  <!-- Sol de Mayo central -->
+  <g transform="translate(256,330)" fill="#C8D3DF" stroke="#1A2B45" stroke-width="1.5" stroke-linejoin="round">
+    <g>
+      <path d="M0,-60 L9,-28 L-9,-28 Z"/>
+      <path d="M0,60 L9,28 L-9,28 Z"/>
+      <path d="M-60,0 L-28,9 L-28,-9 Z"/>
+      <path d="M60,0 L28,9 L28,-9 Z"/>
+    </g>
+    <g transform="rotate(45)">
+      <path d="M0,-60 L9,-28 L-9,-28 Z"/>
+      <path d="M0,60 L9,28 L-9,28 Z"/>
+      <path d="M-60,0 L-28,9 L-28,-9 Z"/>
+      <path d="M60,0 L28,9 L28,-9 Z"/>
+    </g>
+    <circle r="36" fill="url(#slvSun)" stroke="#1A2B45" stroke-width="1.5"/>
+    <circle cx="-10" cy="-6" r="5.5" fill="#1A2B45" stroke="none"/>
+    <circle cx="10" cy="-6" r="5.5" fill="#1A2B45" stroke="none"/>
+    <path d="M-9,8 Q0,16 9,8" fill="none" stroke="#1A2B45" stroke-width="2" stroke-linecap="round"/>
+  </g>
+</svg>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="gStuFrame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a6f9a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="gStuCap" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3b5f8c"/>
+      <stop offset="1" stop-color="#16263f"/>
+    </linearGradient>
+    <linearGradient id="gStuGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6e3a1"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+  </defs>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="512,182 790,347 790,677 512,842 234,677 234,347" stroke="url(#gStuFrame)" stroke-width="4"/>
+    <polygon points="512,222 758,367 758,657 512,802 266,657 266,367" stroke="url(#gStuGold)" stroke-width="2.5" opacity="0.85"/>
+  </g>
+
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M512,370 L660,444 L512,518 L364,444 Z" fill="url(#gStuCap)" stroke="#0d1626" stroke-width="4"/>
+    <circle cx="512" cy="374" r="10" fill="url(#gStuGold)" stroke="#0d1626" stroke-width="2"/>
+    <path d="M660,444 C664,498 648,552 626,602" fill="none" stroke="url(#gStuGold)" stroke-width="5"/>
+    <circle cx="624" cy="610" r="9" fill="url(#gStuGold)" stroke="#0d1626" stroke-width="2"/>
+  </g>
+</svg>

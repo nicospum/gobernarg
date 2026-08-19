@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GobernArg — Preview de Piezas de Diseño v2</title>
+<style>
+  :root {
+    --bg: #0d1626;
+    --border: rgba(255, 255, 255, 0.12);
+    --check-a: #e0e0e0;
+    --check-b: #d0d0d0;
+    --text: #ffffff;
+    --muted: #a9b8cc;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    padding: 32px 20px 64px;
+  }
+  .page-title {
+    font-size: 1.9rem;
+    font-weight: 700;
+    margin: 0 0 8px;
+    letter-spacing: -0.02em;
+  }
+  .page-sub {
+    color: var(--muted);
+    margin: 0 0 40px;
+    font-size: 0.95rem;
+  }
+  .section { margin-bottom: 48px; }
+  .section h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    padding-bottom: 10px;
+    margin: 0 0 20px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  @media (min-width: 640px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1100px) {
+    .grid { grid-template-columns: repeat(4, 1fr); }
+  }
+  .card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .card.full-width { grid-column: 1 / -1; }
+  .preview {
+    background-color: var(--check-a);
+    background-image:
+      linear-gradient(45deg, var(--check-b) 25%, transparent 25%, transparent 75%, var(--check-b) 75%),
+      linear-gradient(45deg, var(--check-b) 25%, transparent 25%, transparent 75%, var(--check-b) 75%);
+    background-size: 24px 24px;
+    background-position: 0 0, 12px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    min-height: 220px;
+  }
+  .size-1024 .preview { min-height: 240px; }
+  .size-512 .preview { min-height: 190px; }
+  .size-banner .preview { padding: 0; min-height: 0; }
+  .preview svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+  .size-1024 .preview svg { width: 200px; }
+  .size-512 .preview svg { width: 150px; }
+  .size-banner .preview svg { width: 100%; }
+  .label {
+    padding: 10px 12px;
+    font-size: 0.78rem;
+    color: var(--text);
+    background: rgba(0, 0, 0, 0.28);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    word-break: break-all;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+  <h1 class="page-title">GobernArg — Preview de Piezas de Diseño v2</h1>
+  <p class="page-sub">31 piezas SVG embebidas inline — funciona con doble clic, sin servidor.</p>
+
+  <section class="section">
+    <h2>Iconos de Arquetipos</h2>
+    <div class="grid">
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bizv2_shield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a90c9" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#1a2b45" stop-opacity="0.03"/>
+    </linearGradient>
+    <linearGradient id="bizv2_line" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#4a90c9"/>
+      <stop offset="1" stop-color="#7ab8e0"/>
+    </linearGradient>
+  </defs>
+
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#bizv2_shield)" stroke="#1a2b45" stroke-width="2.5" stroke-linejoin="round"/>
+  <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="none" stroke="#e0b83e" stroke-width="1.5" stroke-linejoin="round" opacity="0.65"/>
+
+  <line x1="344" y1="682" x2="684" y2="682" stroke="#1a2b45" stroke-width="2" opacity="0.18" stroke-linecap="round"/>
+  <path d="M360 648 L482 566 L558 588 L688 436" fill="none" stroke="url(#bizv2_line)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="688" cy="436" r="11" fill="#e0b83e" stroke="#1a2b45" stroke-width="2"/>
+</svg>
+        </div>
+        <div class="label">archetype-business.svg</div>
+      </article>
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="comv2_shield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a90c9" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#1a2b45" stop-opacity="0.03"/>
+    </linearGradient>
+    <linearGradient id="comv2_mic" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4db82" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#e0b83e" stop-opacity="0.85"/>
+    </linearGradient>
+  </defs>
+
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#comv2_shield)" stroke="#1a2b45" stroke-width="2.5" stroke-linejoin="round"/>
+  <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="none" stroke="#e0b83e" stroke-width="1.5" stroke-linejoin="round" opacity="0.65"/>
+
+  <g fill="none" stroke="#e0b83e" stroke-linecap="round">
+    <path d="M615 296 A168 168 0 0 1 615 560" stroke-width="2.5" opacity="0.85"/>
+    <path d="M642 261 A212 212 0 0 1 642 595" stroke-width="2.5" opacity="0.55"/>
+  </g>
+
+  <rect x="456" y="352" width="112" height="148" rx="56" fill="url(#comv2_mic)" stroke="#1a2b45" stroke-width="2.5"/>
+  <line x1="478" y1="392" x2="546" y2="392" stroke="#1a2b45" stroke-width="2" opacity="0.28" stroke-linecap="round"/>
+  <line x1="478" y1="432" x2="546" y2="432" stroke="#1a2b45" stroke-width="2" opacity="0.28" stroke-linecap="round"/>
+  <line x1="512" y1="500" x2="512" y2="540" stroke="#1a2b45" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M474 556 Q512 572 550 556" fill="none" stroke="#1a2b45" stroke-width="2.5" stroke-linecap="round"/>
+</svg>
+        </div>
+        <div class="label">archetype-communicator.svg</div>
+      </article>
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="univ2_shield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a90c9" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#1a2b45" stop-opacity="0.03"/>
+    </linearGradient>
+    <linearGradient id="univ2_a" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="univ2_b" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#e0b83e"/>
+    </linearGradient>
+    <linearGradient id="univ2_c" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+  </defs>
+
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#univ2_shield)" stroke="#1a2b45" stroke-width="2.5" stroke-linejoin="round"/>
+  <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="none" stroke="#e0b83e" stroke-width="1.5" stroke-linejoin="round" opacity="0.65"/>
+
+  <circle cx="512" cy="430" r="118" fill="none" stroke="url(#univ2_a)" stroke-width="2.5"/>
+  <circle cx="452" cy="552" r="118" fill="none" stroke="url(#univ2_b)" stroke-width="2.5"/>
+  <circle cx="572" cy="552" r="118" fill="none" stroke="url(#univ2_c)" stroke-width="2.5"/>
+</svg>
+        </div>
+        <div class="label">archetype-union.svg</div>
+      </article>
+    </div>
+  </section>
+  <section class="section">
+    <h2>Iconos de Categorías</h2>
+    <div class="grid">
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="culv2_shield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a90c9" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#1a2b45" stop-opacity="0.03"/>
+    </linearGradient>
+    <linearGradient id="culv2_comedy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0" stop-opacity="0.30"/>
+      <stop offset="1" stop-color="#4a90c9" stop-opacity="0.16"/>
+    </linearGradient>
+    <linearGradient id="culv2_tragedy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4db82" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#e0b83e" stop-opacity="0.20"/>
+    </linearGradient>
+  </defs>
+
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#culv2_shield)" stroke="#1a2b45" stroke-width="2.5" stroke-linejoin="round"/>
+  <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="none" stroke="#e0b83e" stroke-width="1.5" stroke-linejoin="round" opacity="0.65"/>
+
+  <ellipse cx="408" cy="500" rx="104" ry="138" fill="url(#culv2_comedy)" stroke="#1a2b45" stroke-width="2.5"/>
+  <circle cx="372" cy="458" r="9" fill="#1a2b45"/>
+  <circle cx="444" cy="458" r="9" fill="#1a2b45"/>
+  <path d="M364 548 Q408 604 452 548" fill="none" stroke="#1a2b45" stroke-width="3" stroke-linecap="round"/>
+
+  <ellipse cx="616" cy="500" rx="104" ry="138" fill="url(#culv2_tragedy)" stroke="#1a2b45" stroke-width="2.5"/>
+  <circle cx="580" cy="458" r="9" fill="#1a2b45"/>
+  <circle cx="652" cy="458" r="9" fill="#1a2b45"/>
+  <path d="M580 566 Q616 512 652 566" fill="none" stroke="#1a2b45" stroke-width="3" stroke-linecap="round"/>
+</svg>
+        </div>
+        <div class="label">category-culture.svg</div>
+      </article>
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="tecv2_shield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a90c9" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#1a2b45" stop-opacity="0.03"/>
+    </linearGradient>
+    <linearGradient id="tecv2_chip" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7ab8e0" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#4a90c9" stop-opacity="0.12"/>
+    </linearGradient>
+  </defs>
+
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#tecv2_shield)" stroke="#1a2b45" stroke-width="2.5" stroke-linejoin="round"/>
+  <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="none" stroke="#e0b83e" stroke-width="1.5" stroke-linejoin="round" opacity="0.65"/>
+
+  <g stroke="#1a2b45" stroke-width="3" stroke-linecap="round">
+    <line x1="432" y1="362" x2="432" y2="330"/>
+    <line x1="482" y1="362" x2="482" y2="330"/>
+    <line x1="542" y1="362" x2="542" y2="330"/>
+    <line x1="592" y1="362" x2="592" y2="330"/>
+    <line x1="432" y1="662" x2="432" y2="694"/>
+    <line x1="482" y1="662" x2="482" y2="694"/>
+    <line x1="542" y1="662" x2="542" y2="694"/>
+    <line x1="592" y1="662" x2="592" y2="694"/>
+    <line x1="362" y1="432" x2="330" y2="432"/>
+    <line x1="362" y1="482" x2="330" y2="482"/>
+    <line x1="362" y1="542" x2="330" y2="542"/>
+    <line x1="362" y1="592" x2="330" y2="592"/>
+    <line x1="662" y1="432" x2="694" y2="432"/>
+    <line x1="662" y1="482" x2="694" y2="482"/>
+    <line x1="662" y1="542" x2="694" y2="542"/>
+    <line x1="662" y1="592" x2="694" y2="592"/>
+  </g>
+
+  <rect x="362" y="362" width="300" height="300" rx="44" fill="url(#tecv2_chip)" stroke="#1a2b45" stroke-width="2.5"/>
+  <rect x="436" y="436" width="152" height="152" rx="22" fill="none" stroke="#e0b83e" stroke-width="2.5" opacity="0.85"/>
+  <circle cx="512" cy="512" r="13" fill="#4a90c9" stroke="#1a2b45" stroke-width="2"/>
+</svg>
+        </div>
+        <div class="label">category-technology.svg</div>
+      </article>
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="touv2_shield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a90c9" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#1a2b45" stop-opacity="0.03"/>
+    </linearGradient>
+    <linearGradient id="touv2_pin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#4a90c9" stop-opacity="0.85"/>
+    </linearGradient>
+  </defs>
+
+  <polygon points="512,118 868,320 868,566 512,906 156,566 156,320" fill="url(#touv2_shield)" stroke="#1a2b45" stroke-width="2.5" stroke-linejoin="round"/>
+  <polygon points="512,156 834,340 834,544 512,866 190,544 190,340" fill="none" stroke="#e0b83e" stroke-width="1.5" stroke-linejoin="round" opacity="0.65"/>
+
+  <path d="M512 616 C512 616 450 554 450 456 A62 62 0 1 1 574 456 C574 554 512 616 512 616 Z" fill="url(#touv2_pin)" stroke="#1a2b45" stroke-width="2.5" stroke-linejoin="round"/>
+  <circle cx="512" cy="456" r="26" fill="none" stroke="#1a2b45" stroke-width="2.5"/>
+  <circle cx="512" cy="456" r="9" fill="#e0b83e"/>
+</svg>
+        </div>
+        <div class="label">category-tourism.svg</div>
+      </article>
+    </div>
+  </section>
+  <section class="section">
+    <h2>Iconos de Grupos de Interés</h2>
+    <div class="grid">
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="gAcaFrame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a6f9a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="gAcaPage" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eaf3fa"/>
+      <stop offset="1" stop-color="#b9d6ec"/>
+    </linearGradient>
+    <linearGradient id="gAcaGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6e3a1"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+  </defs>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="512,182 790,347 790,677 512,842 234,677 234,347" stroke="url(#gAcaFrame)" stroke-width="4"/>
+    <polygon points="512,222 758,367 758,657 512,802 266,657 266,367" stroke="url(#gAcaGold)" stroke-width="2.5" opacity="0.85"/>
+  </g>
+
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M512,448 C466,414 400,398 356,386 L356,596 C400,576 466,586 512,620 Z" fill="url(#gAcaPage)" stroke="#2c4e7a" stroke-width="4"/>
+    <path d="M512,448 C558,414 624,398 668,386 L668,596 C624,576 558,586 512,620 Z" fill="url(#gAcaPage)" stroke="#2c4e7a" stroke-width="4"/>
+    <path d="M512,448 L512,620" fill="none" stroke="url(#gAcaGold)" stroke-width="4"/>
+  </g>
+</svg>
+        </div>
+        <div class="label">group-academics.svg</div>
+      </article>
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="gAllFrame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a6f9a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="gAllBlue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#2c4e7a"/>
+    </linearGradient>
+    <linearGradient id="gAllGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6e3a1"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+  </defs>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="512,182 790,347 790,677 512,842 234,677 234,347" stroke="url(#gAllFrame)" stroke-width="4"/>
+    <polygon points="512,222 758,367 758,657 512,802 266,657 266,367" stroke="url(#gAllGold)" stroke-width="2.5" opacity="0.85"/>
+  </g>
+
+  <g fill="none" stroke-linecap="round">
+    <circle cx="430" cy="512" r="150" stroke="url(#gAllBlue)" stroke-width="10"/>
+    <circle cx="594" cy="512" r="150" stroke="url(#gAllGold)" stroke-width="10"/>
+  </g>
+</svg>
+        </div>
+        <div class="label">group-allies.svg</div>
+      </article>
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="gArtFrame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a6f9a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="gArtPal" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#3b5f8c"/>
+    </linearGradient>
+    <linearGradient id="gArtGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6e3a1"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+  </defs>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="512,182 790,347 790,677 512,842 234,677 234,347" stroke="url(#gArtFrame)" stroke-width="4"/>
+    <polygon points="512,222 758,367 758,657 512,802 266,657 266,367" stroke="url(#gArtGold)" stroke-width="2.5" opacity="0.85"/>
+  </g>
+
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path fill-rule="evenodd" d="M512,318 C420,318 350,398 360,500 C366,572 430,622 512,622 C594,622 664,566 664,486 C664,398 596,318 512,318 Z M602,476 a34,34 0 1,0 -68,0 a34,34 0 1,0 68,0 Z" fill="url(#gArtPal)" stroke="#0d1626" stroke-width="4"/>
+    <circle cx="452" cy="430" r="16" fill="#7ab8e0" stroke="#0d1626" stroke-width="2"/>
+    <circle cx="500" cy="528" r="16" fill="url(#gArtGold)" stroke="#0d1626" stroke-width="2"/>
+    <circle cx="556" cy="404" r="16" fill="#1a2b45" stroke="#0d1626" stroke-width="2"/>
+  </g>
+</svg>
+        </div>
+        <div class="label">group-artists.svg</div>
+      </article>
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="gAthFrame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a6f9a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="gAthHandle" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#16263f"/>
+    </linearGradient>
+    <linearGradient id="gAthGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6e3a1"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+    <linearGradient id="gAthFlame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6e3a1"/>
+      <stop offset="1" stop-color="#e0a63b"/>
+    </linearGradient>
+  </defs>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="512,182 790,347 790,677 512,842 234,677 234,347" stroke="url(#gAthFrame)" stroke-width="4"/>
+    <polygon points="512,222 758,367 758,657 512,802 266,657 266,367" stroke="url(#gAthGold)" stroke-width="2.5" opacity="0.85"/>
+  </g>
+
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M500,352 C558,414 562,462 500,498 C438,462 442,414 500,352 Z" fill="url(#gAthFlame)" stroke="#0d1626" stroke-width="4"/>
+    <path d="M500,402 C530,430 532,462 500,478 C468,462 470,430 500,402 Z" fill="url(#gAthGold)" stroke="none"/>
+    <path d="M472,510 L528,510 L540,650 L460,650 Z" fill="url(#gAthHandle)" stroke="#0d1626" stroke-width="4"/>
+    <path d="M474,556 L526,556" fill="none" stroke="url(#gAthGold)" stroke-width="4"/>
+  </g>
+</svg>
+        </div>
+        <div class="label">group-athletes.svg</div>
+      </article>
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="gCooFrame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a6f9a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="gCooBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3b5f8c"/>
+      <stop offset="1" stop-color="#16263f"/>
+    </linearGradient>
+    <linearGradient id="gCooGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6e3a1"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+  </defs>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="512,182 790,347 790,677 512,842 234,677 234,347" stroke="url(#gCooFrame)" stroke-width="4"/>
+    <polygon points="512,222 758,367 758,657 512,802 266,657 266,367" stroke="url(#gCooGold)" stroke-width="2.5" opacity="0.85"/>
+  </g>
+
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="512" cy="512" r="150" fill="none" stroke="url(#gCooBody)" stroke-width="6"/>
+    <g transform="translate(512,512)" fill="url(#gCooBody)" stroke="#0d1626" stroke-width="3">
+      <rect x="-16" y="-212" width="32" height="66" rx="8"/>
+      <rect x="-16" y="-212" width="32" height="66" rx="8" transform="rotate(45)"/>
+      <rect x="-16" y="-212" width="32" height="66" rx="8" transform="rotate(90)"/>
+      <rect x="-16" y="-212" width="32" height="66" rx="8" transform="rotate(135)"/>
+      <rect x="-16" y="-212" width="32" height="66" rx="8" transform="rotate(180)"/>
+      <rect x="-16" y="-212" width="32" height="66" rx="8" transform="rotate(225)"/>
+      <rect x="-16" y="-212" width="32" height="66" rx="8" transform="rotate(270)"/>
+      <rect x="-16" y="-212" width="32" height="66" rx="8" transform="rotate(315)"/>
+    </g>
+    <circle cx="512" cy="512" r="78" fill="none" stroke="url(#gCooGold)" stroke-width="4"/>
+    <circle cx="512" cy="512" r="22" fill="url(#gCooGold)" stroke="#0d1626" stroke-width="2"/>
+  </g>
+</svg>
+        </div>
+        <div class="label">group-cooperatives.svg</div>
+      </article>
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="envShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="envSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="envGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+    <radialGradient id="envSun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f7e6a8"/>
+      <stop offset="1" stop-color="#e0b83e"/>
+    </radialGradient>
+  </defs>
+
+  <path d="M512,140 L812,300 L812,470 C812,622 696,736 512,880 C328,736 212,622 212,470 L212,300 Z" fill="url(#envShield)" fill-opacity="0.14" stroke="url(#envGold)" stroke-width="4" stroke-linejoin="round"/>
+
+  <g transform="translate(512,232)">
+    <circle r="44" fill="url(#envSun)"/>
+    <g stroke="url(#envGold)" stroke-width="4" stroke-linecap="round">
+      <line x1="0" y1="-56" x2="0" y2="-80"/>
+      <line x1="0" y1="56" x2="0" y2="80"/>
+      <line x1="-56" y1="0" x2="-80" y2="0"/>
+      <line x1="56" y1="0" x2="80" y2="0"/>
+      <line x1="-40" y1="-40" x2="-58" y2="-58"/>
+      <line x1="40" y1="-40" x2="58" y2="-58"/>
+      <line x1="-40" y1="40" x2="-58" y2="58"/>
+      <line x1="40" y1="40" x2="58" y2="58"/>
+    </g>
+  </g>
+
+  <g transform="translate(512,530) rotate(-14)">
+    <path d="M0,0 Q-66,-104 0,-208 Q66,-104 0,0 Z" fill="url(#envSky)" fill-opacity="0.55" stroke="#1a2b45" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M0,0 L0,-202" stroke="#1a2b45" stroke-width="4" stroke-linecap="round"/>
+    <g stroke="#1a2b45" stroke-width="3" stroke-linecap="round" opacity="0.7">
+      <path d="M0,-56 L-26,-84"/>
+      <path d="M0,-56 L26,-84"/>
+      <path d="M0,-118 L-20,-144"/>
+      <path d="M0,-118 L20,-144"/>
+    </g>
+  </g>
+</svg>
+        </div>
+        <div class="label">group-environmentalists.svg</div>
+      </article>
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="femShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="femSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="femGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+  </defs>
+
+  <path d="M512,140 L812,300 L812,470 C812,622 696,736 512,880 C328,736 212,622 212,470 L212,300 Z" fill="url(#femShield)" fill-opacity="0.14" stroke="url(#femGold)" stroke-width="4" stroke-linejoin="round"/>
+
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="512" cy="322" r="72" fill="url(#femSky)" fill-opacity="0.45" stroke="#1a2b45" stroke-width="4"/>
+    <line x1="512" y1="394" x2="512" y2="584" stroke="url(#femSky)" stroke-width="11"/>
+    <line x1="470" y1="548" x2="554" y2="548" stroke="url(#femGold)" stroke-width="11"/>
+  </g>
+
+  <path d="M438,716 L512,632 L586,716" fill="none" stroke="url(#femGold)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+        </div>
+        <div class="label">group-feminists.svg</div>
+      </article>
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="finShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="finSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="finGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+    <radialGradient id="finSun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f7e6a8"/>
+      <stop offset="1" stop-color="#e0b83e"/>
+    </radialGradient>
+  </defs>
+
+  <path d="M512,140 L812,300 L812,470 C812,622 696,736 512,880 C328,736 212,622 212,470 L212,300 Z" fill="url(#finShield)" fill-opacity="0.14" stroke="url(#finGold)" stroke-width="4" stroke-linejoin="round"/>
+
+  <g>
+    <circle cx="512" cy="300" r="76" fill="url(#finSky)" fill-opacity="0.32" stroke="#1a2b45" stroke-width="3"/>
+    <circle cx="512" cy="300" r="54" fill="none" stroke="url(#finGold)" stroke-width="3"/>
+    <circle cx="512" cy="300" r="8" fill="url(#finGold)"/>
+  </g>
+
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <line x1="288" y1="664" x2="740" y2="664" stroke="#1a2b45" stroke-width="3" opacity="0.35"/>
+    <polyline points="300,640 430,540 560,582 720,452" fill="none" stroke="url(#finGold)" stroke-width="6"/>
+    <circle cx="300" cy="640" r="9" fill="#7ab8e0" stroke="#1a2b45" stroke-width="3"/>
+    <circle cx="430" cy="540" r="9" fill="#7ab8e0" stroke="#1a2b45" stroke-width="3"/>
+    <circle cx="560" cy="582" r="9" fill="#7ab8e0" stroke="#1a2b45" stroke-width="3"/>
+    <circle cx="720" cy="452" r="11" fill="url(#finSun)" stroke="#1a2b45" stroke-width="3"/>
+  </g>
+</svg>
+        </div>
+        <div class="label">group-financial.svg</div>
+      </article>
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="indShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="indSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8fc1e6"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="indGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+    <radialGradient id="indSun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f7e6a8"/>
+      <stop offset="1" stop-color="#e0b83e"/>
+    </radialGradient>
+  </defs>
+
+  <path d="M512,140 L812,300 L812,470 C812,622 696,736 512,880 C328,736 212,622 212,470 L212,300 Z" fill="url(#indShield)" fill-opacity="0.14" stroke="url(#indGold)" stroke-width="4" stroke-linejoin="round"/>
+
+  <g transform="translate(512,286)">
+    <circle r="68" fill="url(#indSun)"/>
+    <g fill="url(#indGold)" stroke="#1a2b45" stroke-width="3" stroke-linejoin="round">
+      <path d="M0,-112 L18,-78 L-18,-78 Z"/>
+      <path d="M0,112 L18,78 L-18,78 Z"/>
+      <path d="M-112,0 L-78,18 L-78,-18 Z"/>
+      <path d="M112,0 L78,18 L78,-18 Z"/>
+      <path d="M-79,-79 L-55,-55 L-79,-55 Z"/>
+      <path d="M79,-79 L55,-55 L79,-55 Z"/>
+      <path d="M-79,79 L-55,55 L-79,55 Z"/>
+      <path d="M79,79 L55,55 L79,55 Z"/>
+    </g>
+    <circle cx="-14" cy="-8" r="6" fill="#1a2b45"/>
+    <circle cx="14" cy="-8" r="6" fill="#1a2b45"/>
+    <path d="M-12,12 Q0,20 12,12" fill="none" stroke="#1a2b45" stroke-width="4" stroke-linecap="round"/>
+  </g>
+
+  <g stroke="#1a2b45" stroke-width="4" stroke-linejoin="round">
+    <path d="M270,618 L404,468 L512,538 L620,464 L754,618 Z" fill="url(#indSky)" fill-opacity="0.5"/>
+    <path d="M360,618 L512,520 L664,618 Z" fill="url(#indSky)" fill-opacity="0.35"/>
+  </g>
+</svg>
+        </div>
+        <div class="label">group-indigenous.svg</div>
+      </article>
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="lowShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="lowSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="lowGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+  </defs>
+
+  <path d="M512,140 L812,300 L812,470 C812,622 696,736 512,880 C328,736 212,622 212,470 L212,300 Z" fill="url(#lowShield)" fill-opacity="0.14" stroke="url(#lowGold)" stroke-width="4" stroke-linejoin="round"/>
+
+  <path d="M512,470 C512,470 390,350 390,252 C390,206 426,172 466,172 C492,172 508,186 512,206 C516,186 532,172 558,172 C598,172 634,206 634,252 C634,350 512,470 512,470 Z" fill="url(#lowSky)" fill-opacity="0.5" stroke="#1a2b45" stroke-width="4" stroke-linejoin="round"/>
+
+  <path d="M336,600 C392,552 476,552 512,606 C548,552 632,552 688,600" fill="none" stroke="url(#lowGold)" stroke-width="7" stroke-linecap="round"/>
+  <path d="M336,600 C400,560 470,560 512,606" fill="none" stroke="url(#lowGold)" stroke-width="4" stroke-linecap="round" opacity="0.65"/>
+</svg>
+        </div>
+        <div class="label">group-low-income.svg</div>
+      </article>
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="midShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="midSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="midGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+    <radialGradient id="midSun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f7e6a8"/>
+      <stop offset="1" stop-color="#e0b83e"/>
+    </radialGradient>
+  </defs>
+
+  <path d="M512,140 L812,300 L812,470 C812,622 696,736 512,880 C328,736 212,622 212,470 L212,300 Z" fill="url(#midShield)" fill-opacity="0.14" stroke="url(#midGold)" stroke-width="4" stroke-linejoin="round"/>
+
+  <g transform="translate(512,250)">
+    <circle r="54" fill="url(#midSun)"/>
+    <g stroke="url(#midGold)" stroke-width="4" stroke-linecap="round">
+      <line x1="0" y1="-80" x2="0" y2="-98"/>
+      <line x1="0" y1="80" x2="0" y2="98"/>
+      <line x1="-80" y1="0" x2="-98" y2="0"/>
+      <line x1="80" y1="0" x2="98" y2="0"/>
+      <line x1="-57" y1="-57" x2="-69" y2="-69"/>
+      <line x1="57" y1="-57" x2="69" y2="-69"/>
+      <line x1="-57" y1="57" x2="-69" y2="69"/>
+      <line x1="57" y1="57" x2="69" y2="69"/>
+    </g>
+  </g>
+
+  <g stroke="#1a2b45" stroke-width="4" stroke-linejoin="round">
+    <path d="M512,392 L676,532 L348,532 Z" fill="url(#midSky)" fill-opacity="0.4"/>
+    <rect x="392" y="532" width="240" height="162" fill="#ffffff" fill-opacity="0.88"/>
+    <path d="M476,694 L476,622 Q512,598 548,622 L548,694 Z" fill="url(#midGold)" stroke="url(#midGold)" stroke-width="3"/>
+  </g>
+</svg>
+        </div>
+        <div class="label">group-middle-class.svg</div>
+      </article>
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="ngoShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="ngoSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="ngoGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+  </defs>
+
+  <path d="M512,140 L812,300 L812,470 C812,622 696,736 512,880 C328,736 212,622 212,470 L212,300 Z" fill="url(#ngoShield)" fill-opacity="0.14" stroke="url(#ngoGold)" stroke-width="4" stroke-linejoin="round"/>
+
+  <g stroke="#1a2b45" stroke-width="4" stroke-linejoin="round">
+    <circle cx="512" cy="300" r="42" fill="url(#ngoSky)" fill-opacity="0.5"/>
+    <circle cx="392" cy="424" r="42" fill="url(#ngoSky)" fill-opacity="0.5"/>
+    <circle cx="632" cy="424" r="42" fill="url(#ngoSky)" fill-opacity="0.5"/>
+    <path d="M470,332 L452,382" stroke-linecap="round"/>
+    <path d="M554,332 L572,382" stroke-linecap="round"/>
+    <path d="M434,424 L590,424" stroke-linecap="round"/>
+    <circle cx="512" cy="404" r="10" fill="url(#ngoGold)" stroke="none"/>
+  </g>
+
+  <g>
+    <path d="M404,640 C440,616 470,620 512,652 C554,620 584,616 620,640" fill="none" stroke="url(#ngoGold)" stroke-width="5" stroke-linecap="round"/>
+    <g fill="url(#ngoGold)">
+      <ellipse cx="398" cy="628" rx="20" ry="9" transform="rotate(-28 398 628)"/>
+      <ellipse cx="446" cy="612" rx="20" ry="9" transform="rotate(-14 446 612)"/>
+      <ellipse cx="626" cy="628" rx="20" ry="9" transform="rotate(28 626 628)"/>
+      <ellipse cx="578" cy="612" rx="20" ry="9" transform="rotate(14 578 612)"/>
+    </g>
+  </g>
+</svg>
+        </div>
+        <div class="label">group-ngo.svg</div>
+      </article>
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="gOppFrame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a6f9a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="gOppBlue" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#2c4e7a"/>
+    </linearGradient>
+    <linearGradient id="gOppGold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f6e3a1"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+  </defs>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="512,182 790,347 790,677 512,842 234,677 234,347" stroke="url(#gOppFrame)" stroke-width="4"/>
+    <polygon points="512,222 758,367 758,657 512,802 266,657 266,367" stroke="url(#gOppGold)" stroke-width="2.5" opacity="0.85"/>
+  </g>
+
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="512" cy="512" r="13" fill="url(#gOppGold)" stroke="#0d1626" stroke-width="2"/>
+    <path d="M500,512 L420,512" fill="none" stroke="url(#gOppBlue)" stroke-width="6"/>
+    <path d="M388,512 L420,488 L420,536 Z" fill="url(#gOppBlue)" stroke="#0d1626" stroke-width="2"/>
+    <path d="M524,512 L604,512" fill="none" stroke="url(#gOppGold)" stroke-width="6"/>
+    <path d="M636,512 L604,488 L604,536 Z" fill="url(#gOppGold)" stroke="#0d1626" stroke-width="2"/>
+  </g>
+</svg>
+        </div>
+        <div class="label">group-opposition.svg</div>
+      </article>
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="gStuFrame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a6f9a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="gStuCap" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3b5f8c"/>
+      <stop offset="1" stop-color="#16263f"/>
+    </linearGradient>
+    <linearGradient id="gStuGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f6e3a1"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+  </defs>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="512,182 790,347 790,677 512,842 234,677 234,347" stroke="url(#gStuFrame)" stroke-width="4"/>
+    <polygon points="512,222 758,367 758,657 512,802 266,657 266,367" stroke="url(#gStuGold)" stroke-width="2.5" opacity="0.85"/>
+  </g>
+
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M512,370 L660,444 L512,518 L364,444 Z" fill="url(#gStuCap)" stroke="#0d1626" stroke-width="4"/>
+    <circle cx="512" cy="374" r="10" fill="url(#gStuGold)" stroke="#0d1626" stroke-width="2"/>
+    <path d="M660,444 C664,498 648,552 626,602" fill="none" stroke="url(#gStuGold)" stroke-width="5"/>
+    <circle cx="624" cy="610" r="9" fill="url(#gStuGold)" stroke="#0d1626" stroke-width="2"/>
+  </g>
+</svg>
+        </div>
+        <div class="label">group-students.svg</div>
+      </article>
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="uppShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="uppSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="uppGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+  </defs>
+
+  <path d="M512,140 L812,300 L812,470 C812,622 696,736 512,880 C328,736 212,622 212,470 L212,300 Z" fill="url(#uppShield)" fill-opacity="0.14" stroke="url(#uppGold)" stroke-width="4" stroke-linejoin="round"/>
+
+  <g stroke-linejoin="round">
+    <line x1="512" y1="272" x2="512" y2="196" stroke="url(#uppGold)" stroke-width="4"/>
+    <path d="M512,180 L528,198 L512,216 L496,198 Z" fill="url(#uppGold)"/>
+    <path d="M512,272 L596,398 L428,398 Z" fill="#1a2b45" fill-opacity="0.88"/>
+    <rect x="428" y="398" width="168" height="294" fill="url(#uppSky)" fill-opacity="0.35" stroke="#1a2b45" stroke-width="4"/>
+    <g stroke="#4a90c9" stroke-width="3" opacity="0.85">
+      <line x1="456" y1="452" x2="568" y2="452"/>
+      <line x1="456" y1="512" x2="568" y2="512"/>
+      <line x1="456" y1="572" x2="568" y2="572"/>
+      <line x1="456" y1="632" x2="568" y2="632"/>
+    </g>
+    <path d="M476,692 L476,638 Q512,612 548,638 L548,692 Z" fill="url(#uppGold)" fill-opacity="0.9"/>
+  </g>
+</svg>
+        </div>
+        <div class="label">group-upper-class.svg</div>
+      </article>
+    </div>
+  </section>
+  <section class="section">
+    <h2>Elementos UI</h2>
+    <div class="grid">
+      <article class="card size-512">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="gldRibbon" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6FA7D9"/>
+      <stop offset="1" stop-color="#3E7BB8"/>
+    </linearGradient>
+    <radialGradient id="gldDisc" cx="0.4" cy="0.32" r="0.9">
+      <stop offset="0" stop-color="#FBEBC0"/>
+      <stop offset="0.55" stop-color="#EBC66A"/>
+      <stop offset="1" stop-color="#C29522"/>
+    </radialGradient>
+    <radialGradient id="gldSun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FDF3D0"/>
+      <stop offset="1" stop-color="#E2B64C"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Cinta superior -->
+  <g stroke="#0D1626" stroke-width="2" stroke-linejoin="round">
+    <path d="M208,20 L304,20 L304,172 L208,172 Z" fill="url(#gldRibbon)"/>
+    <path d="M247,20 L265,20 L265,172 L247,172 Z" fill="#FFFFFF" stroke="none"/>
+    <path d="M198,172 L314,172 L286,204 L226,204 Z" fill="#3A78B5"/>
+  </g>
+
+  <!-- Disco dorado -->
+  <g>
+    <circle cx="256" cy="330" r="124" fill="url(#gldDisc)" stroke="#0D1626" stroke-width="3"/>
+    <circle cx="256" cy="330" r="102" fill="none" stroke="#C29522" stroke-width="1.5"/>
+    <circle cx="256" cy="330" r="94" fill="none" stroke="#FFFFFF" stroke-width="1" stroke-dasharray="2 8" stroke-linecap="round" opacity="0.7"/>
+  </g>
+
+  <!-- Sol de Mayo central -->
+  <g transform="translate(256,330)" fill="#E2B64C" stroke="#1A2B45" stroke-width="1.5" stroke-linejoin="round">
+    <g>
+      <path d="M0,-60 L9,-28 L-9,-28 Z"/>
+      <path d="M0,60 L9,28 L-9,28 Z"/>
+      <path d="M-60,0 L-28,9 L-28,-9 Z"/>
+      <path d="M60,0 L28,9 L28,-9 Z"/>
+    </g>
+    <g transform="rotate(45)">
+      <path d="M0,-60 L9,-28 L-9,-28 Z"/>
+      <path d="M0,60 L9,28 L-9,28 Z"/>
+      <path d="M-60,0 L-28,9 L-28,-9 Z"/>
+      <path d="M60,0 L28,9 L28,-9 Z"/>
+    </g>
+    <circle r="38" fill="url(#gldSun)" stroke="#1A2B45" stroke-width="1.5"/>
+    <circle cx="-10" cy="-6" r="5.5" fill="#1A2B45" stroke="none"/>
+    <circle cx="10" cy="-6" r="5.5" fill="#1A2B45" stroke="none"/>
+    <path d="M-9,8 Q0,16 9,8" fill="none" stroke="#1A2B45" stroke-width="2" stroke-linecap="round"/>
+  </g>
+</svg>
+        </div>
+        <div class="label">achievement-medal-gold.svg</div>
+      </article>
+      <article class="card size-512">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="slvRibbon" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6FA7D9"/>
+      <stop offset="1" stop-color="#3E7BB8"/>
+    </linearGradient>
+    <radialGradient id="slvDisc" cx="0.4" cy="0.32" r="0.9">
+      <stop offset="0" stop-color="#F5F7FA"/>
+      <stop offset="0.55" stop-color="#C8D3DF"/>
+      <stop offset="1" stop-color="#8FA3B5"/>
+    </radialGradient>
+    <radialGradient id="slvSun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FDF3D0"/>
+      <stop offset="1" stop-color="#E2B64C"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Cinta superior -->
+  <g stroke="#0D1626" stroke-width="2" stroke-linejoin="round">
+    <path d="M208,20 L304,20 L304,172 L208,172 Z" fill="url(#slvRibbon)"/>
+    <path d="M247,20 L265,20 L265,172 L247,172 Z" fill="#FFFFFF" stroke="none"/>
+    <path d="M198,172 L314,172 L286,204 L226,204 Z" fill="#3A78B5"/>
+  </g>
+
+  <!-- Disco plateado -->
+  <g>
+    <circle cx="256" cy="330" r="122" fill="url(#slvDisc)" stroke="#0D1626" stroke-width="3"/>
+    <circle cx="256" cy="330" r="100" fill="none" stroke="#8FA3B5" stroke-width="1.5"/>
+    <circle cx="256" cy="330" r="92" fill="none" stroke="#FFFFFF" stroke-width="1" stroke-dasharray="2 8" stroke-linecap="round" opacity="0.8"/>
+  </g>
+
+  <!-- Sol de Mayo central -->
+  <g transform="translate(256,330)" fill="#C8D3DF" stroke="#1A2B45" stroke-width="1.5" stroke-linejoin="round">
+    <g>
+      <path d="M0,-60 L9,-28 L-9,-28 Z"/>
+      <path d="M0,60 L9,28 L-9,28 Z"/>
+      <path d="M-60,0 L-28,9 L-28,-9 Z"/>
+      <path d="M60,0 L28,9 L28,-9 Z"/>
+    </g>
+    <g transform="rotate(45)">
+      <path d="M0,-60 L9,-28 L-9,-28 Z"/>
+      <path d="M0,60 L9,28 L-9,28 Z"/>
+      <path d="M-60,0 L-28,9 L-28,-9 Z"/>
+      <path d="M60,0 L28,9 L28,-9 Z"/>
+    </g>
+    <circle r="36" fill="url(#slvSun)" stroke="#1A2B45" stroke-width="1.5"/>
+    <circle cx="-10" cy="-6" r="5.5" fill="#1A2B45" stroke="none"/>
+    <circle cx="10" cy="-6" r="5.5" fill="#1A2B45" stroke="none"/>
+    <path d="M-9,8 Q0,16 9,8" fill="none" stroke="#1A2B45" stroke-width="2" stroke-linecap="round"/>
+  </g>
+</svg>
+        </div>
+        <div class="label">achievement-medal-silver.svg</div>
+      </article>
+      <article class="card size-512">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="ap-gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f3e2a6"/>
+      <stop offset="0.55" stop-color="#e0b83e"/>
+      <stop offset="1" stop-color="#c9a23c"/>
+    </linearGradient>
+    <linearGradient id="ap-celeste" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a9d4ef"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <radialGradient id="ap-sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f9edc4"/>
+      <stop offset="1" stop-color="#e2bd5c"/>
+    </radialGradient>
+    <path id="ap-arc" d="M 96 256 A 160 160 0 0 1 416 256" fill="none"/>
+  </defs>
+
+  <!-- Sello -->
+  <circle cx="256" cy="256" r="222" fill="url(#ap-gold)" stroke="#16283f" stroke-width="1.5"/>
+  <circle cx="256" cy="256" r="208" fill="none" stroke="#caa33a" stroke-width="3" stroke-dasharray="0.5 6.9" stroke-linecap="round" opacity="0.9"/>
+  <circle cx="256" cy="256" r="196" fill="url(#ap-celeste)" stroke="#caa33a" stroke-width="1.5"/>
+  <circle cx="256" cy="256" r="178" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="1 9" stroke-linecap="round" opacity="0.8"/>
+
+  <!-- Sol de Mayo central -->
+  <g transform="translate(256,276)">
+    <g stroke="#caa33a" stroke-width="2.5" stroke-linecap="round">
+      <line x1="0" y1="-42" x2="0" y2="-52"/>
+      <line x1="0" y1="-42" x2="0" y2="-52" transform="rotate(45)"/>
+      <line x1="0" y1="-42" x2="0" y2="-52" transform="rotate(90)"/>
+      <line x1="0" y1="-42" x2="0" y2="-52" transform="rotate(135)"/>
+      <line x1="0" y1="-42" x2="0" y2="-52" transform="rotate(180)"/>
+      <line x1="0" y1="-42" x2="0" y2="-52" transform="rotate(225)"/>
+      <line x1="0" y1="-42" x2="0" y2="-52" transform="rotate(270)"/>
+      <line x1="0" y1="-42" x2="0" y2="-52" transform="rotate(315)"/>
+    </g>
+    <circle r="34" fill="url(#ap-sun)" stroke="#16283f" stroke-width="1.8"/>
+    <circle cx="-8" cy="-5" r="3" fill="#16283f"/>
+    <circle cx="8" cy="-5" r="3" fill="#16283f"/>
+    <path d="M-7,8 Q0,15 7,8" fill="none" stroke="#16283f" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Texto en arco -->
+  <text font-family="Georgia, serif" font-size="40" font-weight="bold" fill="#16283f" letter-spacing="6">
+    <textPath href="#ap-arc" startOffset="50%" text-anchor="middle">APROBADO</textPath>
+  </text>
+</svg>
+        </div>
+        <div class="label">approval-seal.svg</div>
+      </article>
+      <article class="card size-512">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="cr-red" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d9594c"/>
+      <stop offset="0.55" stop-color="#c0392b"/>
+      <stop offset="1" stop-color="#9e2b23"/>
+    </linearGradient>
+    <linearGradient id="cr-navy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#0d1626"/>
+    </linearGradient>
+    <path id="cr-arc" d="M 96 256 A 160 160 0 0 1 416 256" fill="none"/>
+  </defs>
+
+  <!-- Sello -->
+  <circle cx="256" cy="256" r="222" fill="url(#cr-red)" stroke="#0d1626" stroke-width="1.5"/>
+  <circle cx="256" cy="256" r="208" fill="none" stroke="#9e2b23" stroke-width="3" stroke-dasharray="0.5 6.9" stroke-linecap="round" opacity="0.9"/>
+  <circle cx="256" cy="256" r="196" fill="url(#cr-navy)" stroke="#9e2b23" stroke-width="1.5"/>
+  <circle cx="256" cy="256" r="178" fill="none" stroke="#e07a6e" stroke-width="1.5" stroke-dasharray="1 9" stroke-linecap="round" opacity="0.8"/>
+
+  <!-- Chevrones descendentes -->
+  <g transform="translate(256,268)" fill="none" stroke="#e07a6e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M-56,-52 L0,-14 L56,-52"/>
+    <path d="M-42,-20 L0,18 L42,-20"/>
+    <path d="M-28,12 L0,50 L28,12"/>
+  </g>
+
+  <!-- Texto en arco -->
+  <text font-family="Georgia, serif" font-size="44" font-weight="bold" fill="#ffffff" letter-spacing="8">
+    <textPath href="#cr-arc" startOffset="50%" text-anchor="middle">CRISIS</textPath>
+  </text>
+</svg>
+        </div>
+        <div class="label">crisis-seal.svg</div>
+      </article>
+      <article class="card size-banner full-width">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 480">
+  <defs>
+    <linearGradient id="db-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#22334e"/>
+      <stop offset="1" stop-color="#0d1626"/>
+    </linearGradient>
+    <linearGradient id="db-steel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#93a5b8"/>
+      <stop offset="1" stop-color="#5c7085"/>
+    </linearGradient>
+    <radialGradient id="db-sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#9aa7b6"/>
+      <stop offset="1" stop-color="#55647a"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Cinta principal -->
+  <rect x="80" y="96" width="1760" height="288" rx="20" fill="url(#db-bg)" stroke="#0d1626" stroke-width="2.5"/>
+
+  <!-- Bordes finos -->
+  <rect x="96" y="112" width="1728" height="256" rx="14" fill="none" stroke="url(#db-steel)" stroke-width="2"/>
+  <rect x="104" y="120" width="1712" height="240" rx="10" fill="none" stroke="#3a4658" stroke-width="1" opacity="0.7"/>
+
+  <!-- Sol apagado -->
+  <g transform="translate(320,240)" opacity="0.9">
+    <g stroke="#5c7085" stroke-width="3" stroke-linecap="round">
+      <line x1="0" y1="-50" x2="0" y2="-64"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(45)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(90)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(135)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(180)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(225)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(270)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(315)"/>
+    </g>
+    <circle r="42" fill="url(#db-sun)" stroke="#16283f" stroke-width="2"/>
+    <path d="M-12,8 Q0,-2 12,8" fill="none" stroke="#16283f" stroke-width="2" stroke-linecap="round"/>
+    <line x1="-8" y1="-8" x2="-2" y2="-8" stroke="#16283f" stroke-width="2" stroke-linecap="round"/>
+    <line x1="2" y1="-8" x2="8" y2="-8" stroke="#16283f" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Chevrones descendentes -->
+  <g transform="translate(1560,240)" fill="none" stroke="url(#db-steel)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M-64,-56 L0,-16 L64,-56"/>
+    <path d="M-48,-24 L0,16 L48,-24"/>
+    <path d="M-32,8 L0,48 L32,8"/>
+  </g>
+
+  <!-- Acento inferior -->
+  <g transform="translate(960,368)">
+    <line x1="-220" y1="0" x2="220" y2="0" stroke="url(#db-steel)" stroke-width="1.5"/>
+  </g>
+</svg>
+        </div>
+        <div class="label">defeat-banner.svg</div>
+      </article>
+      <article class="card size-512">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="gvrGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F2E2A8"/>
+      <stop offset="1" stop-color="#CDA434"/>
+    </linearGradient>
+    <linearGradient id="gvrNavy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#35577F"/>
+      <stop offset="1" stop-color="#101D33"/>
+    </linearGradient>
+    <linearGradient id="gvrCeleste" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#79B1DD"/>
+      <stop offset="1" stop-color="#4785BC"/>
+    </linearGradient>
+    <linearGradient id="gvrStone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EDF2F7"/>
+      <stop offset="1" stop-color="#C2CEDC"/>
+    </linearGradient>
+    <linearGradient id="gvrDome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F2E2A8"/>
+      <stop offset="1" stop-color="#CDA434"/>
+    </linearGradient>
+    <clipPath id="gvrClip">
+      <path d="M256,76 L394,128 L394,336 Q394,430 256,458 Q118,430 118,336 L118,128 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- Escudo exterior fino -->
+  <path d="M256,60 L410,114 L410,342 Q410,444 256,474 Q102,444 102,342 L102,114 Z" fill="url(#gvrGold)" stroke="#0D1626" stroke-width="3"/>
+  <path d="M256,76 L394,128 L394,336 Q394,430 256,458 Q118,430 118,336 L118,128 Z" fill="url(#gvrNavy)" stroke="#CDA434" stroke-width="1.5"/>
+
+  <!-- Banda celeste -->
+  <g clip-path="url(#gvrClip)">
+    <rect x="-70" y="146" width="700" height="112" fill="url(#gvrCeleste)" transform="rotate(-24 256 256)"/>
+    <rect x="-70" y="196" width="700" height="12" fill="#FFFFFF" transform="rotate(-24 256 256)"/>
+  </g>
+
+  <!-- Casa de gobierno / cúpula -->
+  <g transform="translate(256,252)" stroke="#0D1626" stroke-width="2" stroke-linejoin="round">
+    <rect x="-74" y="-14" width="148" height="132" fill="url(#gvrStone)"/>
+    <g fill="#1A2B45" stroke="none">
+      <rect x="-52" y="0" width="14" height="118"/>
+      <rect x="-7" y="0" width="14" height="118"/>
+      <rect x="38" y="0" width="14" height="118"/>
+    </g>
+    <rect x="-82" y="-26" width="164" height="12" fill="#1A2B45" stroke="none"/>
+    <path d="M-50,-26 Q-58,-74 0,-100 Q58,-74 50,-26 Z" fill="url(#gvrDome)" stroke="#1A2B45" stroke-width="2"/>
+    <rect x="-4" y="-114" width="8" height="14" fill="#CDA434" stroke="#1A2B45" stroke-width="1.5"/>
+    <path d="M-4,-114 L0,-122 L4,-114 Z" fill="#CDA434" stroke="#1A2B45" stroke-width="1.5"/>
+    <line x1="0" y1="-122" x2="0" y2="-136" stroke="#1A2B45" stroke-width="2"/>
+    <path d="M0,-136 L22,-131 L0,-126 Z" fill="#4A90C9" stroke="#1A2B45" stroke-width="1.5"/>
+    <path d="M-20,118 L-20,84 Q0,68 20,84 L20,118 Z" fill="#1A2B45" stroke="none"/>
+    <rect x="-90" y="118" width="180" height="12" fill="#1A2B45" stroke="none"/>
+  </g>
+</svg>
+        </div>
+        <div class="label">mandate-badge-governor.svg</div>
+      </article>
+      <article class="card size-512">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="intGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F2E2A8"/>
+      <stop offset="1" stop-color="#CDA434"/>
+    </linearGradient>
+    <linearGradient id="intNavy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#35577F"/>
+      <stop offset="1" stop-color="#101D33"/>
+    </linearGradient>
+    <linearGradient id="intCeleste" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#79B1DD"/>
+      <stop offset="1" stop-color="#4785BC"/>
+    </linearGradient>
+    <linearGradient id="intStone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EDF2F7"/>
+      <stop offset="1" stop-color="#C2CEDC"/>
+    </linearGradient>
+    <linearGradient id="intDome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F2E2A8"/>
+      <stop offset="1" stop-color="#CDA434"/>
+    </linearGradient>
+    <clipPath id="intClip">
+      <path d="M256,76 L394,128 L394,336 Q394,430 256,458 Q118,430 118,336 L118,128 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- Escudo exterior fino -->
+  <path d="M256,60 L410,114 L410,342 Q410,444 256,474 Q102,444 102,342 L102,114 Z" fill="url(#intGold)" stroke="#0D1626" stroke-width="3"/>
+  <path d="M256,76 L394,128 L394,336 Q394,430 256,458 Q118,430 118,336 L118,128 Z" fill="url(#intNavy)" stroke="#CDA434" stroke-width="1.5"/>
+
+  <!-- Banda celeste -->
+  <g clip-path="url(#intClip)">
+    <rect x="-70" y="146" width="700" height="112" fill="url(#intCeleste)" transform="rotate(-24 256 256)"/>
+    <rect x="-70" y="196" width="700" height="12" fill="#FFFFFF" transform="rotate(-24 256 256)"/>
+  </g>
+
+  <!-- Edificio municipal / torre de reloj -->
+  <g transform="translate(256,252)" stroke="#0D1626" stroke-width="2" stroke-linejoin="round">
+    <rect x="-70" y="-8" width="140" height="132" fill="url(#intStone)"/>
+    <g fill="#7AB8E0" stroke="none">
+      <rect x="-52" y="10" width="20" height="34"/>
+      <rect x="-10" y="10" width="20" height="34"/>
+      <rect x="32" y="10" width="20" height="34"/>
+      <rect x="-52" y="60" width="20" height="34"/>
+      <rect x="-10" y="60" width="20" height="34"/>
+      <rect x="32" y="60" width="20" height="34"/>
+    </g>
+    <rect x="-78" y="-20" width="156" height="12" fill="#1A2B45" stroke="none"/>
+    <rect x="-26" y="-74" width="52" height="54" fill="url(#intStone)"/>
+    <circle cx="0" cy="-46" r="17" fill="#FFFFFF" stroke="#1A2B45" stroke-width="1.5"/>
+    <circle cx="0" cy="-46" r="13" fill="none" stroke="#1A2B45" stroke-width="1"/>
+    <line x1="0" y1="-46" x2="0" y2="-55" stroke="#1A2B45" stroke-width="1.5"/>
+    <line x1="0" y1="-46" x2="7" y2="-43" stroke="#1A2B45" stroke-width="1.5"/>
+    <circle cx="0" cy="-46" r="2" fill="#C0392B"/>
+    <path d="M-26,-74 L0,-96 L26,-74 Z" fill="url(#intDome)" stroke="#1A2B45" stroke-width="1.5" stroke-linejoin="round"/>
+    <rect x="-3" y="-102" width="6" height="10" fill="#CDA434" stroke="#1A2B45" stroke-width="1"/>
+    <path d="M-18,124 L-18,100 Q0,88 18,100 L18,124 Z" fill="#1A2B45" stroke="none"/>
+    <rect x="-86" y="124" width="172" height="12" fill="#1A2B45" stroke="none"/>
+  </g>
+</svg>
+        </div>
+        <div class="label">mandate-badge-intendente.svg</div>
+      </article>
+      <article class="card size-512">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="prsGold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F2E2A8"/>
+      <stop offset="1" stop-color="#CDA434"/>
+    </linearGradient>
+    <linearGradient id="prsNavy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#35577F"/>
+      <stop offset="1" stop-color="#101D33"/>
+    </linearGradient>
+    <linearGradient id="prsCeleste" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#79B1DD"/>
+      <stop offset="1" stop-color="#4785BC"/>
+    </linearGradient>
+    <radialGradient id="prsSun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FDF3D0"/>
+      <stop offset="1" stop-color="#E2B64C"/>
+    </radialGradient>
+    <clipPath id="prsClip">
+      <path d="M256,76 L394,128 L394,336 Q394,430 256,458 Q118,430 118,336 L118,128 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- Escudo exterior fino -->
+  <path d="M256,60 L410,114 L410,342 Q410,444 256,474 Q102,444 102,342 L102,114 Z" fill="url(#prsGold)" stroke="#0D1626" stroke-width="3"/>
+  <path d="M256,76 L394,128 L394,336 Q394,430 256,458 Q118,430 118,336 L118,128 Z" fill="url(#prsNavy)" stroke="#CDA434" stroke-width="1.5"/>
+
+  <!-- Banda presidencial celeste -->
+  <g clip-path="url(#prsClip)">
+    <rect x="-70" y="146" width="700" height="112" fill="url(#prsCeleste)" transform="rotate(-24 256 256)"/>
+    <rect x="-70" y="196" width="700" height="12" fill="#FFFFFF" transform="rotate(-24 256 256)"/>
+  </g>
+
+  <!-- Sol de Mayo -->
+  <g transform="translate(256,252)" fill="#E2B64C" stroke="#1A2B45" stroke-width="1.5" stroke-linejoin="round">
+    <g>
+      <path d="M0,-60 L9,-28 L-9,-28 Z"/>
+      <path d="M0,60 L9,28 L-9,28 Z"/>
+      <path d="M-60,0 L-28,9 L-28,-9 Z"/>
+      <path d="M60,0 L28,9 L28,-9 Z"/>
+    </g>
+    <g transform="rotate(45)">
+      <path d="M0,-60 L9,-28 L-9,-28 Z"/>
+      <path d="M0,60 L9,28 L-9,28 Z"/>
+      <path d="M-60,0 L-28,9 L-28,-9 Z"/>
+      <path d="M60,0 L28,9 L28,-9 Z"/>
+    </g>
+    <circle r="40" fill="url(#prsSun)" stroke="#1A2B45" stroke-width="1.5"/>
+    <circle cx="-11" cy="-7" r="5.5" fill="#1A2B45" stroke="none"/>
+    <circle cx="11" cy="-7" r="5.5" fill="#1A2B45" stroke="none"/>
+    <path d="M-10,9 Q0,17 10,9" fill="none" stroke="#1A2B45" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Estrella superior -->
+  <g transform="translate(256,86)">
+    <path d="M0,-15 L4.6,-5 L15,-5 L7,2 L10,12.5 L0,7.5 L-10,12.5 L-7,2 L-15,-5 L-4.6,-5 Z" fill="url(#prsGold)" stroke="#1A2B45" stroke-width="1.5" stroke-linejoin="round"/>
+  </g>
+</svg>
+        </div>
+        <div class="label">mandate-badge-president.svg</div>
+      </article>
+      <article class="card size-1024">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="pf-gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6e7b0"/>
+      <stop offset="0.55" stop-color="#e2bd5c"/>
+      <stop offset="1" stop-color="#c9a23c"/>
+    </linearGradient>
+    <linearGradient id="pf-gold-leaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f2dfa0"/>
+      <stop offset="1" stop-color="#caa33a"/>
+    </linearGradient>
+    <radialGradient id="pf-sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f9edc4"/>
+      <stop offset="1" stop-color="#e2bd5c"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Cuerpo del marco ovalado (centro transparente vía evenodd) -->
+  <path fill-rule="evenodd" fill="url(#pf-gold)"
+    d="M512,54 A380,458 0 0 1 892,512 A380,458 0 0 1 512,970 A380,458 0 0 1 132,512 A380,458 0 0 1 512,54 Z
+       M512,134 A300,378 0 0 1 812,512 A300,378 0 0 1 512,890 A300,378 0 0 1 212,512 A300,378 0 0 1 512,134 Z"/>
+
+  <!-- Contornos finos -->
+  <path d="M512,54 A380,458 0 0 1 892,512 A380,458 0 0 1 512,970 A380,458 0 0 1 132,512 A380,458 0 0 1 512,54 Z" fill="none" stroke="#16283f" stroke-width="2.5"/>
+  <path d="M512,134 A300,378 0 0 1 812,512 A300,378 0 0 1 512,890 A300,378 0 0 1 212,512 A300,378 0 0 1 512,134 Z" fill="none" stroke="#f8eec9" stroke-width="1.5" opacity="0.85"/>
+  <path d="M512,146 A288,366 0 0 1 800,512 A288,366 0 0 1 512,878 A288,366 0 0 1 224,512 A288,366 0 0 1 512,146 Z" fill="none" stroke="#caa33a" stroke-width="1.2" opacity="0.7"/>
+
+  <!-- Sol de Mayo superior, fino -->
+  <g transform="translate(512,92)">
+    <g stroke="#caa33a" stroke-width="3" stroke-linecap="round">
+      <line x1="0" y1="-40" x2="0" y2="-54"/>
+      <line x1="0" y1="-40" x2="0" y2="-54" transform="rotate(45)"/>
+      <line x1="0" y1="-40" x2="0" y2="-54" transform="rotate(90)"/>
+      <line x1="0" y1="-40" x2="0" y2="-54" transform="rotate(135)"/>
+      <line x1="0" y1="-40" x2="0" y2="-54" transform="rotate(180)"/>
+      <line x1="0" y1="-40" x2="0" y2="-54" transform="rotate(225)"/>
+      <line x1="0" y1="-40" x2="0" y2="-54" transform="rotate(270)"/>
+      <line x1="0" y1="-40" x2="0" y2="-54" transform="rotate(315)"/>
+    </g>
+    <circle r="28" fill="url(#pf-sun)" stroke="#16283f" stroke-width="2"/>
+    <circle cx="-7" cy="-4" r="2.5" fill="#16283f"/>
+    <circle cx="7" cy="-4" r="2.5" fill="#16283f"/>
+    <path d="M-6,6 Q0,12 6,6" fill="none" stroke="#16283f" stroke-width="1.8" stroke-linecap="round"/>
+  </g>
+
+  <!-- Laurel izquierdo, minimalista -->
+  <g transform="translate(168,528)" fill="none">
+    <path d="M0,0 C-4,-52 -8,-104 -2,-160" stroke="url(#pf-gold)" stroke-width="2.5" stroke-linecap="round"/>
+    <g fill="url(#pf-gold-leaf)" stroke="#16283f" stroke-width="1.3">
+      <path d="M-2,-38 C-16,-50 -18,-72 -4,-86 C10,-72 10,-50 -2,-38 Z"/>
+      <path d="M-3,-86 C-17,-98 -19,-120 -5,-134 C9,-120 9,-98 -3,-86 Z"/>
+      <path d="M-2,-128 C-12,-136 -14,-150 -6,-158 C2,-150 2,-136 -2,-128 Z"/>
+    </g>
+  </g>
+
+  <!-- Laurel derecho, minimalista -->
+  <g transform="translate(856,528) scale(-1,1)" fill="none">
+    <path d="M0,0 C-4,-52 -8,-104 -2,-160" stroke="url(#pf-gold)" stroke-width="2.5" stroke-linecap="round"/>
+    <g fill="url(#pf-gold-leaf)" stroke="#16283f" stroke-width="1.3">
+      <path d="M-2,-38 C-16,-50 -18,-72 -4,-86 C10,-72 10,-50 -2,-38 Z"/>
+      <path d="M-3,-86 C-17,-98 -19,-120 -5,-134 C9,-120 9,-98 -3,-86 Z"/>
+      <path d="M-2,-128 C-12,-136 -14,-150 -6,-158 C2,-150 2,-136 -2,-128 Z"/>
+    </g>
+  </g>
+
+  <!-- Cinta base, simplificada -->
+  <g transform="translate(512,938)">
+    <rect x="-150" y="-14" width="300" height="28" rx="6" fill="url(#pf-gold)" stroke="#16283f" stroke-width="2"/>
+    <circle cx="0" cy="0" r="10" fill="url(#pf-sun)" stroke="#16283f" stroke-width="1.5"/>
+  </g>
+</svg>
+        </div>
+        <div class="label">presidential-portrait-frame.svg</div>
+      </article>
+      <article class="card size-banner full-width">
+        <div class="preview">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 480">
+  <defs>
+    <linearGradient id="vb-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8cc3e8"/>
+      <stop offset="0.5" stop-color="#6aa8d6"/>
+      <stop offset="1" stop-color="#3f7fae"/>
+    </linearGradient>
+    <linearGradient id="vb-gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f2dfa0"/>
+      <stop offset="1" stop-color="#caa33a"/>
+    </linearGradient>
+    <radialGradient id="vb-sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f9edc4"/>
+      <stop offset="1" stop-color="#e0b83e"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Cinta principal -->
+  <rect x="80" y="96" width="1760" height="288" rx="20" fill="url(#vb-bg)" stroke="#16283f" stroke-width="2.5"/>
+
+  <!-- Bordes finos -->
+  <rect x="96" y="112" width="1728" height="256" rx="14" fill="none" stroke="url(#vb-gold)" stroke-width="2"/>
+  <rect x="104" y="120" width="1712" height="240" rx="10" fill="none" stroke="#caa33a" stroke-width="1" opacity="0.65"/>
+
+  <!-- Destellos sutiles -->
+  <g stroke="#ffffff" stroke-width="1.5" opacity="0.07" stroke-linecap="round">
+    <line x1="320" y1="240" x2="1240" y2="140"/>
+    <line x1="320" y1="240" x2="1280" y2="240"/>
+    <line x1="320" y1="240" x2="1240" y2="340"/>
+  </g>
+
+  <!-- Sol de Mayo, fino -->
+  <g transform="translate(320,240)">
+    <g stroke="#caa33a" stroke-width="3" stroke-linecap="round">
+      <line x1="0" y1="-50" x2="0" y2="-64"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(45)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(90)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(135)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(180)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(225)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(270)"/>
+      <line x1="0" y1="-50" x2="0" y2="-64" transform="rotate(315)"/>
+    </g>
+    <circle r="42" fill="url(#vb-sun)" stroke="#16283f" stroke-width="2"/>
+    <circle cx="-10" cy="-6" r="4" fill="#16283f"/>
+    <circle cx="10" cy="-6" r="4" fill="#16283f"/>
+    <path d="M-9,8 Q0,18 9,8" fill="none" stroke="#16283f" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Acento inferior -->
+  <g transform="translate(960,368)">
+    <line x1="-220" y1="0" x2="220" y2="0" stroke="url(#vb-gold)" stroke-width="1.5"/>
+    <path d="M0,-6 L8,0 L0,6 L-8,0 Z" fill="url(#vb-gold)"/>
+  </g>
+</svg>
+        </div>
+        <div class="label">victory-banner.svg</div>
+      </article>
+    </div>
+  </section>
+
+</body>
+</html>

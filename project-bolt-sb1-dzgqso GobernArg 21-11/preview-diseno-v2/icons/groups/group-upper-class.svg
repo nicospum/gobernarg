@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="uppShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="uppSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="uppGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+  </defs>
+
+  <path d="M512,140 L812,300 L812,470 C812,622 696,736 512,880 C328,736 212,622 212,470 L212,300 Z" fill="url(#uppShield)" fill-opacity="0.14" stroke="url(#uppGold)" stroke-width="4" stroke-linejoin="round"/>
+
+  <g stroke-linejoin="round">
+    <line x1="512" y1="272" x2="512" y2="196" stroke="url(#uppGold)" stroke-width="4"/>
+    <path d="M512,180 L528,198 L512,216 L496,198 Z" fill="url(#uppGold)"/>
+    <path d="M512,272 L596,398 L428,398 Z" fill="#1a2b45" fill-opacity="0.88"/>
+    <rect x="428" y="398" width="168" height="294" fill="url(#uppSky)" fill-opacity="0.35" stroke="#1a2b45" stroke-width="4"/>
+    <g stroke="#4a90c9" stroke-width="3" opacity="0.85">
+      <line x1="456" y1="452" x2="568" y2="452"/>
+      <line x1="456" y1="512" x2="568" y2="512"/>
+      <line x1="456" y1="572" x2="568" y2="572"/>
+      <line x1="456" y1="632" x2="568" y2="632"/>
+    </g>
+    <path d="M476,692 L476,638 Q512,612 548,638 L548,692 Z" fill="url(#uppGold)" fill-opacity="0.9"/>
+  </g>
+</svg>

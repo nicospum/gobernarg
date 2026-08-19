@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="femShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="femSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="femGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+  </defs>
+
+  <path d="M512,140 L812,300 L812,470 C812,622 696,736 512,880 C328,736 212,622 212,470 L212,300 Z" fill="url(#femShield)" fill-opacity="0.14" stroke="url(#femGold)" stroke-width="4" stroke-linejoin="round"/>
+
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="512" cy="322" r="72" fill="url(#femSky)" fill-opacity="0.45" stroke="#1a2b45" stroke-width="4"/>
+    <line x1="512" y1="394" x2="512" y2="584" stroke="url(#femSky)" stroke-width="11"/>
+    <line x1="470" y1="548" x2="554" y2="548" stroke="url(#femGold)" stroke-width="11"/>
+  </g>
+
+  <path d="M438,716 L512,632 L586,716" fill="none" stroke="url(#femGold)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

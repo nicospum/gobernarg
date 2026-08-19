@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="cr-red" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d9594c"/>
+      <stop offset="0.55" stop-color="#c0392b"/>
+      <stop offset="1" stop-color="#9e2b23"/>
+    </linearGradient>
+    <linearGradient id="cr-navy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#0d1626"/>
+    </linearGradient>
+    <path id="cr-arc" d="M 96 256 A 160 160 0 0 1 416 256" fill="none"/>
+  </defs>
+
+  <!-- Sello -->
+  <circle cx="256" cy="256" r="222" fill="url(#cr-red)" stroke="#0d1626" stroke-width="1.5"/>
+  <circle cx="256" cy="256" r="208" fill="none" stroke="#9e2b23" stroke-width="3" stroke-dasharray="0.5 6.9" stroke-linecap="round" opacity="0.9"/>
+  <circle cx="256" cy="256" r="196" fill="url(#cr-navy)" stroke="#9e2b23" stroke-width="1.5"/>
+  <circle cx="256" cy="256" r="178" fill="none" stroke="#e07a6e" stroke-width="1.5" stroke-dasharray="1 9" stroke-linecap="round" opacity="0.8"/>
+
+  <!-- Chevrones descendentes -->
+  <g transform="translate(256,268)" fill="none" stroke="#e07a6e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M-56,-52 L0,-14 L56,-52"/>
+    <path d="M-42,-20 L0,18 L42,-20"/>
+    <path d="M-28,12 L0,50 L28,12"/>
+  </g>
+
+  <!-- Texto en arco -->
+  <text font-family="Georgia, serif" font-size="44" font-weight="bold" fill="#ffffff" letter-spacing="8">
+    <textPath href="#cr-arc" startOffset="50%" text-anchor="middle">CRISIS</textPath>
+  </text>
+</svg>

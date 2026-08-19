@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="envShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2c4e7a"/>
+      <stop offset="1" stop-color="#1a2b45"/>
+    </linearGradient>
+    <linearGradient id="envSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ab8e0"/>
+      <stop offset="1" stop-color="#4a90c9"/>
+    </linearGradient>
+    <linearGradient id="envGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4db82"/>
+      <stop offset="1" stop-color="#c29522"/>
+    </linearGradient>
+    <radialGradient id="envSun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f7e6a8"/>
+      <stop offset="1" stop-color="#e0b83e"/>
+    </radialGradient>
+  </defs>
+
+  <path d="M512,140 L812,300 L812,470 C812,622 696,736 512,880 C328,736 212,622 212,470 L212,300 Z" fill="url(#envShield)" fill-opacity="0.14" stroke="url(#envGold)" stroke-width="4" stroke-linejoin="round"/>
+
+  <g transform="translate(512,232)">
+    <circle r="44" fill="url(#envSun)"/>
+    <g stroke="url(#envGold)" stroke-width="4" stroke-linecap="round">
+      <line x1="0" y1="-56" x2="0" y2="-80"/>
+      <line x1="0" y1="56" x2="0" y2="80"/>
+      <line x1="-56" y1="0" x2="-80" y2="0"/>
+      <line x1="56" y1="0" x2="80" y2="0"/>
+      <line x1="-40" y1="-40" x2="-58" y2="-58"/>
+      <line x1="40" y1="-40" x2="58" y2="-58"/>
+      <line x1="-40" y1="40" x2="-58" y2="58"/>
+      <line x1="40" y1="40" x2="58" y2="58"/>
+    </g>
+  </g>
+
+  <g transform="translate(512,530) rotate(-14)">
+    <path d="M0,0 Q-66,-104 0,-208 Q66,-104 0,0 Z" fill="url(#envSky)" fill-opacity="0.55" stroke="#1a2b45" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M0,0 L0,-202" stroke="#1a2b45" stroke-width="4" stroke-linecap="round"/>
+    <g stroke="#1a2b45" stroke-width="3" stroke-linecap="round" opacity="0.7">
+      <path d="M0,-56 L-26,-84"/>
+      <path d="M0,-56 L26,-84"/>
+      <path d="M0,-118 L-20,-144"/>
+      <path d="M0,-118 L20,-144"/>
+    </g>
+  </g>
+</svg>
