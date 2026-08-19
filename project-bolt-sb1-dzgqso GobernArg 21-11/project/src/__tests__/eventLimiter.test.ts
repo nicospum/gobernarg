@@ -56,12 +56,12 @@ describe('resolveRandomEvents - limitador global', () => {
 });
 
 describe('pendingEvents registry', () => {
-  it('tiene eventos registrados pero desactivados por defecto', async () => {
+  it('tiene eventos registrados y 3 activos', async () => {
     const { PENDING_EVENTS, ENABLED_PENDING_EVENT_IDS, getEnabledPendingEvents } = await import('../data/events/pendingEvents');
 
     expect(Object.keys(PENDING_EVENTS).length).toBeGreaterThanOrEqual(12);
-    expect(ENABLED_PENDING_EVENT_IDS.length).toBe(0);
-    expect(getEnabledPendingEvents().length).toBe(0);
+    expect(ENABLED_PENDING_EVENT_IDS.length).toBe(3);
+    expect(getEnabledPendingEvents().length).toBe(3);
   });
 
   it('los eventos pendientes tienen estructura válida', async () => {
@@ -76,22 +76,19 @@ describe('pendingEvents registry', () => {
     }
   });
 
-  it('getAllEvents no incluye pendientes desactivados', async () => {
+  it('getAllEvents incluye los 3 pendientes activos y excluye los desactivados', async () => {
     const { getAllEvents } = await import('../data/events/index');
     const allEvents = getAllEvents();
 
-    // Solo los 6 eventos originales (economic 2 + political 2 + social 2)
-    // Los pendientes están desactivados
-    const pendingIds = [
-      'police_violence_scandal',
-      'debt_default',
-      'energy_crisis',
-      'general_strike',
-      'diplomatic_conflict',
-      'flood',
-    ];
+    // Activos: energy_crisis, diplomatic_conflict, police_violence_scandal
+    const activeIds = ['energy_crisis', 'diplomatic_conflict', 'police_violence_scandal'];
+    for (const id of activeIds) {
+      expect(allEvents.find(e => e.id === id)).toBeDefined();
+    }
 
-    for (const id of pendingIds) {
+    // Desactivados: debt_default, general_strike, flood, etc.
+    const inactiveIds = ['debt_default', 'general_strike', 'flood', 'drought', 'prison_riot', 'drug_wave', 'minister_resignation', 'heat_wave', 'external_sanctions'];
+    for (const id of inactiveIds) {
       expect(allEvents.find(e => e.id === id)).toBeUndefined();
     }
   });

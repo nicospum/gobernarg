@@ -566,7 +566,11 @@ export const PENDING_EVENTS: Record<string, GameEvent> = {
  * Para agregar un evento, agregá su ID a este array.
  * Se agregan UNO POR UNO para evitar cambios bruscos.
  */
-export const ENABLED_PENDING_EVENT_IDS: string[] = [];
+export const ENABLED_PENDING_EVENT_IDS: string[] = [
+  'energy_crisis',
+  'diplomatic_conflict',
+  'police_violence_scandal',
+];
 
 /**
  * Devuelve los eventos pendientes que están habilitados.
