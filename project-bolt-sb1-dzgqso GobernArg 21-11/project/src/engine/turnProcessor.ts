@@ -10,7 +10,7 @@ import { applyCrossGroupEffects } from '../utils/crossGroupEffects';
 import { MIDTERM_STRATEGY_EFFECTS } from '../data/midtermStrategies';
 import { getDifficultyModifiers } from './difficultyEngine';
 import { calculateLegitimacyChange } from './legitimacyEngine';
-import { applyAxisShift } from './axisEngine';
+import { applyAxisShift, getAxisModifiers } from './axisEngine';
 import { generateGroupAgendas, updateGroupMoods, applyGroupSatisfactionPenalty, resolvePendingNegotiations } from './groupAgendaEngine';
 import { applyArchetypePassives } from './archetypeEngine';
 import { getAvailableElectionOptions } from '../utils/electionSystem';
@@ -433,6 +433,32 @@ export function processEndTurn(gameState: GameState): import('./engineShared').T
   const adjustedDecay = naturalDecay * difficultyMods.popularityDecayMultiplier;
   state.popularity = Math.max(0, state.popularity - adjustedDecay);
   totalPopularityChange -= adjustedDecay;
+
+  // 4.0. Sprint 4: Efectos mecánicos de ejes ideológicos extremos (±80).
+  // getAxisModifiers devuelve {} cuando ningún eje está en extremo → sin efecto.
+  const axisModifiers = getAxisModifiers(state);
+  const axisStabilityModifier = axisModifiers.stabilityModifier ?? 0;
+  if (axisStabilityModifier !== 0) {
+    state.stability = clampValue(state.stability + axisStabilityModifier);
+  }
+  const axisRelationsModifier = axisModifiers.groupRelationsModifier ?? 0;
+  if (axisRelationsModifier !== 0) {
+    Object.keys(state.groupRelations).forEach(groupId => {
+      state.groupRelations[groupId] = Math.max(0, Math.min(100,
+        (state.groupRelations[groupId] ?? 50) + axisRelationsModifier
+      ));
+    });
+  }
+  if (axisStabilityModifier !== 0 || axisRelationsModifier !== 0) {
+    const axisParts: string[] = [];
+    if (axisStabilityModifier !== 0) {
+      axisParts.push(`estabilidad ${axisStabilityModifier > 0 ? '+' : ''}${axisStabilityModifier}`);
+    }
+    if (axisRelationsModifier !== 0) {
+      axisParts.push(`relaciones con grupos ${axisRelationsModifier > 0 ? '+' : ''}${axisRelationsModifier}`);
+    }
+    events.push(`Efecto de ejes ideológicos extremos: ${axisParts.join(' • ')}`);
+  }
 
   // 4. Eventos aleatorios y crisis
   const triggeredEvents = resolveRandomEvents(state);

@@ -1,6 +1,7 @@
 import { GameState, GameAction, PendingEffect, ActionCategory, AdvisorWithStatus } from '../types/game';
 import { MIDTERM_STRATEGY_EFFECTS } from '../data/midtermStrategies';
 import { getGlobalTurn } from '../engine/engineShared';
+import { getAxisModifiers } from '../engine/axisEngine';
 
 interface ActionEffect {
   immediateEffects: {
@@ -60,9 +61,16 @@ export function calculateActionEffects(
   const groupEffects = calculateGroupEffects(action, gameState);
   const reunionMultiplier = calculateReunionMultiplier(gameState, groupEffects);
 
+  // Sprint 4: Modificadores por ejes ideológicos extremos (±80).
+  // getAxisModifiers devuelve {} cuando ningún eje está en extremo → sin efecto.
+  const axisModifiers = getAxisModifiers(gameState);
+  // actionCostModifier se expresa en puntos porcentuales: -1 → -1% costo (×0.99), +1 → +1% costo (×1.01)
+  const axisCostMultiplier = 1 + ((axisModifiers.actionCostModifier?.[action.category] ?? 0) / 100);
+  const axisEffectivenessMultiplier = axisModifiers.effectivenessMultiplier?.[action.category] ?? 1;
+
   const immediateEffects = {
-    popularityChange: effectivePopularityChange * archetypeMultiplier * advisorMultiplier * strategyMultiplier * reunionMultiplier * POPULARITY_GLOBAL_FACTOR * diminishingFactor,
-    budgetChange: action.budgetChange * diminishingFactor * costMultiplier,
+    popularityChange: effectivePopularityChange * archetypeMultiplier * advisorMultiplier * strategyMultiplier * reunionMultiplier * POPULARITY_GLOBAL_FACTOR * diminishingFactor * axisEffectivenessMultiplier,
+    budgetChange: action.budgetChange * diminishingFactor * costMultiplier * axisCostMultiplier,
     stabilityChange: (action.multiEffects?.stabilityChange ?? 0) * diminishingFactor,
     legitimacyChange: (action.multiEffects?.legitimacyChange ?? 0) * diminishingFactor,
     votingIntentionChange: (action.multiEffects?.votingIntentionChange ?? 0) * diminishingFactor,

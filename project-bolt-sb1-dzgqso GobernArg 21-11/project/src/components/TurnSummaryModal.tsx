@@ -8,6 +8,7 @@ import {
   Newspaper,
   CalendarDays,
 } from 'lucide-react';
+import { motion } from 'motion/react';
 import { TurnSummary } from '../types/game';
 import { IMAGES } from '../utils/imageAssets';
 import { fmtBudgetDelta } from '@/lib/format';
@@ -24,7 +25,12 @@ export function TurnSummaryModal({ summary, onClose }: TurnSummaryModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-card border border-border rounded-xl w-full max-w-2xl overflow-hidden shadow-2xl">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.2 }}
+        className="bg-card border border-border rounded-xl w-full max-w-2xl overflow-hidden shadow-2xl"
+      >
         {/* Header visual */}
         <div className="relative h-36 md:h-44">
           <img
@@ -152,7 +158,7 @@ export function TurnSummaryModal({ summary, onClose }: TurnSummaryModalProps) {
             </button>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Toaster, toast } from 'sonner';
 import { GameHeader } from './components/GameHeader';
 import { CharacterCreation } from './components/CharacterCreation';
 import { ControlPanel } from './components/ControlPanel';
@@ -111,6 +112,8 @@ function App() {
     const result = processEndTurn(gameState);
     setGameState(result.state);
 
+    toast(`Turno finalizado — Año ${result.summary.year}, Trimestre ${result.summary.quarter}`);
+
     // Si hay estrategia pendiente, mostrar modal
     if (result.state.pendingMidtermStrategy) {
       setShowMidtermStrategy(true);
@@ -176,6 +179,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <Toaster theme="dark" position="bottom-right" />
       <GameHeader
         gameState={gameState}
         availableActions={gameState.actions}
