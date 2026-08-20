@@ -2,7 +2,15 @@
 
 > Documento consolidado de propuestas de diseño visual para completar la identidad del juego.
 > Basado en análisis de 6 agentes sobre los 59 assets existentes y los 40+ componentes UI.
-> **Ninguna pieza fue creada todavía.** Este documento es el backlog de diseño.
+>
+> **ESTADO ACTUAL (20/08/2026):** las **66 piezas del master ya existen** en `src/assets/images/`
+> (integradas el 19-20/08, inventario en `INVENTORY.md`). Detalle por grupo (ver `piezas-diseno-master.md`):
+> - **Grupos A, B, C, D, F y G integrados** — iconos de arquetipos, categorías y grupos de interés,
+>   imágenes de los 12 eventos pendientes, fondos, personajes y avatares.
+> - **Grupo E (10 elementos de UI** — marcos, banners, sellos, medallas) **pendiente de generar.**
+> - **Grupo H (18 mejoras de código en componentes)** — mayormente completado (tema oscuro, iconos propios).
+> Este documento queda como **backlog histórico de diseño**: las secciones 1-7 describen lo que ya se
+> generó; la sección 8 (gaps en componentes UI) y el Grupo E son lo que resta.
 
 ---
 

@@ -4,6 +4,21 @@
 > Todos los hallazgos fueron VERIFICADOS contra el código real.
 > Fecha: 19/08/2026
 
+> **PROGRESO (20/08/2026)**
+>
+> - [x] **Fase 1 ✅ completa** — turnos globales, objetivos/victoria, efectos de eventos, toolchain.
+> - [x] **Fase 2 ✅ completa** — mutaciones React, pasivas de arquetipo, bono de reunión, dificultad
+>       conectada (excepto los 2 pendientes de abajo), eventos `triggered`, UI tema oscuro, fórmulas
+>       de voto unificadas, deps eliminadas, registry/categories unificados.
+> - [x] **Fase 3 ✅ completa (3.4 incluido)** — datos, dead code, UI/UX y tests.
+> - [x] **Fase 4 ✅ completa (4.1-4.4)** — instalación, configuración, tests nuevos (183 en total) y
+>       documentación actualizada (este documento incluido).
+>
+> **Pendientes menores:**
+> - Lint con **11 errores de estilo** (6 `no-explicit-any` + 5 `no-unused-vars`; más 3 puntuales:
+>   1 `rules-of-hooks`, 2 `prefer-const` — total 14).
+> - `baseActionsModifier` e `ironman` de dificultad: documentados pero **sin consumir** en runtime.
+
 ---
 
 ## Resumen ejecutivo

@@ -2,6 +2,14 @@
 
 > Documento de diseño v2. Propuesta completa para ampliar de 12 a 28 eventos.
 > Arquitectura actual: `src/data/events/*.ts` + `src/engine/eventResolver.ts` + `src/data/calendar.ts`
+>
+> **ESTADO ACTUAL (20/08/2026):** los **12 eventos de este documento están activos en el juego con
+> imágenes propias** (activados el 19/08): default de deuda, crisis energética, paro general, ola de
+> calor, conflicto diplomático, sanciones externas, inundación, sequía, motín carcelario, ola de
+> narcotráfico, violencia policial y renuncia de ministro. **Restan 10 eventos de la propuesta original**
+> (crisis de gabinete, burbuja financiera, elecciones anticipadas, traición de aliado, espionaje,
+> espionaje estudiantil, cumbre internacional, pandemia, corrupción contextual y aliados incómodos)
+> como ideas para futuras versiones.
 
 ---
 

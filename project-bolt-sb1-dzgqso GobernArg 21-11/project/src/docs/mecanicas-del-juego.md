@@ -52,12 +52,13 @@ Si la estabilidad baja de 20 **y además** tu popularidad está por debajo de 10
 Refleja cuán legítimo es tu gobierno. Sube con acciones de cultura y diplomacia (+3). Baja con decretos forzosos (-8) y acciones impopulares. Si llega a **0**, todas tus acciones cuestan **el doble** de puntos de acción.
 
 ### Intención de voto (0 a 100%)
-Se calcula con 5 factores:
+Se calcula con 6 factores:
 - **Popularidad:** 35% — promedio de los últimos 4 turnos
-- **Presupuesto:** 20% — cuánto creció tu economía
-- **Apoyo de grupos:** 25% — promedio de relaciones sectoriales
+- **Presupuesto:** 15% — cuánto creció tu economía
+- **Apoyo de grupos:** 15% — promedio de relaciones sectoriales
 - **Objetivos cumplidos:** 15% — proporción de objetivos del mandato
-- **Estabilidad:** 5% — bonus si no tuviste crisis de popularidad ni déficit
+- **Estabilidad:** 5% — tu estabilidad actual
+- **Actividad:** 15% — proporción de acciones tomadas sobre las esperadas (16 turnos); penaliza la inacción
 
 Necesitás **45% o más** para ganar una elección.
 
@@ -77,13 +78,13 @@ Son a todo o nada. Tu intención de voto se ajusta según lo que elijas:
 - Ascenso a gobernador: -15
 - Ascenso a presidente: -40
 
-Además, si tenés varios mandatos acumulados, hay una penalización multiplicativa (hasta 40% para intendente que aspira a presidente sin experiencia).
+Además, si tenés varios mandatos acumulados, hay una penalización multiplicativa por ascenso que baja con la experiencia (chapa): hasta **30%** para un intendente que aspira a presidente sin experiencia, y menos cuantos más mandatos completaste. La inacción durante el mandato también pesa: el factor de actividad (15%) castiga a los gobiernos que toman pocas decisiones.
 
 **No hay segunda vuelta.** Con 45% ganás, con menos perdés.
 
 ---
 
-## Los 19 grupos de interés
+## Los 18 subgrupos de interés
 
 Están organizados en 5 familias. Cada subgrupo tiene:
 - **Influencia** (estrellas ⭐, de 1 a 10): a más influencia, más caro interactuar y más impacto electoral
@@ -103,14 +104,21 @@ Están organizados en 5 familias. Cada subgrupo tiene:
 **Conceder** (+15 apoyo, cuesta $50 × influencia):
 - El grupo queda satisfecho **4 turnos** (un año entero)
 - Es caro pero te compra tiempo y paz social
+- Está **limitado a 4 concesiones por mandato**
+- Requiere trabajo previo: al menos 1 reunión o 1 negociación con el grupo en el mandato actual
+- Tiene **costo cruzado**: los demás grupos pierden apoyo (proporcional a la influencia del grupo beneficiado)
 
 ### Demandas de grupos
-Los grupos generan demandas automáticamente. Si no las cumplís antes del plazo, perdés **-8 de apoyo** con ese grupo.
+Las demandas son **eventos raros**: probabilidad base de **8%** por turno (hasta 25% con condiciones) y **máximo 2 demandas activas** a la vez. Si no las cumplís antes del plazo, perdés apoyo con ese grupo **proporcional a su influencia**.
 
 Si las cumplís (botón verde):
-- +10 apoyo
+- **Consume 1 acción**
+- +5 apoyo al grupo
 - El grupo vuelve a estar contento
-- +2 popularidad general
+- +1 popularidad general
+- Sus antagonistas pierden apoyo (impacto cruzado)
+
+Si ya ejecutaste la acción pedida dentro del plazo, la demanda se cumple automáticamente con **+10 apoyo** al grupo.
 
 ### Antagonismos
 Los grupos no son islas: cuando un grupo gana apoyo, sus rivales pierden automáticamente. Por ejemplo, si los empresarios ganan +10, los sindicatos pierden -5.
@@ -119,7 +127,7 @@ Los grupos no son islas: cuando un grupo gana apoyo, sus rivales pierden automá
 
 ## Las acciones políticas
 
-Tenés 58 acciones en 9 categorías. Cada acción:
+Tenés **61 acciones en 9 categorías** (registradas en `actionRegistry.ts`). Cada acción:
 - Cuesta presupuesto y puntos de acción
 - Tiene efectos inmediatos en popularidad, presupuesto, estabilidad, legitimidad
 - Afecta a los grupos según sus intereses
@@ -139,28 +147,36 @@ Los beneficios activos se muestran en el panel "Beneficios activos" de la barra 
 ## Los 4 arquetipos
 
 ### Político de Raza
-- **Habilidad activa:** Discurso Patriótico (+12 pop, +5 estabilidad, +8 legitimidad, cooldown 4 turnos)
+- **Habilidades activas:**
+  - Discurso Patriótico (+12 pop, +5 estabilidad, +8 legitimidad, cooldown 4 turnos)
+  - Pacto de Gobernabilidad (+10 estabilidad, +5 legitimidad, aliados +5, opositores +5, cooldown 5 turnos)
 - **Pasiva 1:** +10% retención de voto en reelección
 - **Pasiva 2:** Reuniones con aliados no cuestan acción
 - **Fuerte en:** Diplomacia (×1.2)
 - **Estilo:** Construye poder político, negocia, suma aliados
 
 ### Empresario
-- **Habilidad activa:** Inversión Privada (+$400M, -3 popularidad, cooldown 5 turnos)
+- **Habilidades activas:**
+  - Inversión Privada (+$400M, -3 popularidad, cooldown 5 turnos)
+  - Llamado a Inversores (+$500M, -5 legitimidad, empresarios +8, sector financiero +5, cooldown 6 turnos)
 - **Pasiva 1:** Economía genera +20% presupuesto
 - **Pasiva 2:** Puede tomar 1 préstamo extra (máximo 4)
 - **Fuerte en:** Economía (×1.3), penalizado en el resto (×0.9)
 - **Estilo:** Genera riqueza pero puede generar desigualdad
 
 ### Sindicalista
-- **Habilidad activa:** Movilización Social (+8 pop, -5 estabilidad, +5 legitimidad, cooldown 4 turnos)
+- **Habilidades activas:**
+  - Movilización Social (+8 pop, -5 estabilidad, +5 legitimidad, cooldown 4 turnos)
+  - Paro Controlado (+5 pop, -8 estabilidad, sindicatos +15, sectores populares +15, empresarios -10, cooldown 5 turnos)
 - **Pasiva 1:** Reuniones con sindicatos y sectores populares no cuestan acción
 - **Pasiva 2:** +1 acción base
 - **Fuerte en:** Social (×1.3), penalizado en el resto (×0.9)
 - **Estilo:** Base popular sólida, pero tensión con sectores económicos
 
 ### Comunicador
-- **Habilidad activa:** Campaña Mediática (+10 pop, cooldown 3 turnos)
+- **Habilidades activas:**
+  - Campaña Mediática (+10 pop, cooldown 3 turnos)
+  - Gira de Medios (+15 pop, clase media +4, aliados +3, cooldown 6 turnos)
 - **Pasiva 1:** Eventos negativos tienen -30% impacto
 - **Pasiva 2:** Todas las acciones rinden ×1.1
 - **Fuerte en:** Todo (×1.1)

@@ -1,5 +1,29 @@
 # GobernArg — Rediseño Integral: Plan de Implementación
 
+> **ESTADO REAL (20/08/2026)** — Estado de cada task al día de hoy, verificado contra el código:
+
+**Implementado:**
+- ✅ Task 1A (parcial): el cambio de `requiredGroups` del evento de coalición (`partidos` → `aliados`) SÍ se aplicó. El cambio de `emitir_dinero.popularityChange` de +3 a -3 **NO**: el valor sigue en **+3** (revertido, decisión de balance).
+- ✅ Task 1B (parcial): `PROMOTION_MIN_POPULARITY['promote-governor']` SÍ pasó a 45; el apoyo de grupos se pondera por influencia; el bonus de estabilidad usa `state.stability`. La promoción a presidente **NO bajó a -25**: `PROMOTION_DIFFICULTY['promote-president']` se mantiene en **-40** (revertido).
+- ✅ Task 1D: `src/data/actionRegistry.ts` creado, hoy con **61 acciones** (acciónRegistry como fuente única).
+- ✅ Task 2A: efectos diferidos reales (incomeModifier, costReduction, stabilityChange, futureEffects).
+- ✅ Task 2B: rediseño de interacciones (reunión/negociar/conceder con límites y costo cruzado).
+- ✅ Task 2C: demandas conectadas vía `demandActionIds` + `completedActions`.
+- ✅ Task 2D: **2 habilidades activas por arquetipo** (8 en total) + pasivas conectadas al runtime.
+- ✅ Task 3A: tooltips contextuales (`Tooltip.tsx`, `ErrorBoundary`).
+- ✅ Task 3B: `ManagementNotebook.tsx` creado.
+- ✅ Task 3C/3D: estilos e iconos por categoría (`categoryStyles.ts`, imágenes por evento).
+- ✅ Task 3F: `src/engine/narrativeEngine.ts` creado e integrado.
+
+**Cambios deliberados (no aplicados a propósito):**
+- 🔶 Task 3E: el decay quedó en **5/7/10** (intendente/gobernador/presidente) en lugar de 3/5/6 — decisión deliberada de balance; el neto del presidente también se ajustó.
+
+**No aplicados:**
+- ❌ Task 1C: hiperinflación sigue en **7 emisiones** (no 4) y el cooldown de `emitir_dinero` sigue en **4** (no 2) — las condiciones de derrota se mantuvieron conservadoras.
+- ❌ Task 1B (resto): `ASCENSION_PENALTY` no se tocó con los valores propuestos; hoy `calculatePromotionPenalty` usa su propia tabla (intendente→presidente 0.30/0.30/0.20/0.12).
+
+---
+
 > **For agentic workers:** Use subagent-driven-development. Steps use checkbox syntax.
 
 **Goal:** Implementar las 3 fases del rediseño: arreglar indicadores/elecciones/derrotas, enriquecer gameplay con interacciones/demandas/diferidos/arquetipos, pulir UI/tooltips/narrativa.

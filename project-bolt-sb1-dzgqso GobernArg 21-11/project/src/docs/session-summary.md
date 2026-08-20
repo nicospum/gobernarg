@@ -1,141 +1,89 @@
 # Estado del proyecto — GobernArg V2
 
-> Última actualización: 23 de junio de 2026 — Fase 2 completada
+> Última actualización: **20 de agosto de 2026**
 
 ---
 
-## Lo que se hizo en la Fase 2 (segunda sesión)
+## Estado actual
 
-### 🔴 Bugfixes críticos (post-Sprint 4 Fase 1)
-- **Crash al cumplir demanda:** `satisfyGroupDemand` tenía `const newState` reasignado → cambiado a `let`
-- **Derrota prematura (1 turno en vez de 2):** `checkAllDefeatConditions` sumaba `+1` redundante
-- **Corrupción de estado React:** mutación in-place de `groupRelations` → deep clone en `processEndTurn`
-- **Campos stale post-reelección:** `resolvePendingElection` no reseteaba 15 campos → ahora los resetea todos
-- **ErrorBoundary:** captura crashes y muestra pantalla amigable en vez de pantalla blanca
-- Blindaje defensivo en `satisfyGroupDemand`: optional chaining y fallbacks
+**GobernArg es un MVP funcional y testeable centrado en un solo cargo: PRESIDENTE.** El juego tiene un ciclo de mandato completo de 16 turnos (4 años), victoria y derrota posibles, y 183 tests que verifican las mecánicas centrales.
 
-### 🟢 Sprint 1 — Tooltips y Claridad Visual
-- **Nuevo:** `Tooltip.tsx` — componente reutilizable con Tailwind (hover)
-- **Nuevo:** `ErrorBoundary.tsx` — pantalla de error amigable
-- Tooltips numéricos en: ActionCard (flechas → valor real, $ → monto), IndicatorsPanel (thresholds de barras), VotingIntentionPanel (pesos electorales), ElectionResultsModal (desglose), PoliticalCalendarWidget (apoyo legislativo), AxisBars (explicación de ejes)
-- `main.tsx` envuelto con ErrorBoundary
+### Lo que está implementado y funcionando
 
-### 🟡 Sprint 2 — Efectos Diferidos y Recompensas Estratégicas
-- **Nuevo:** `ActiveBenefits.tsx` — panel de beneficios activos en sidebar
-- Nuevos campos en `PendingEffect`: `incomeModifier`, `costReductionCategory`, `costReductionPercent`, `stabilityChange`
-- `processEndTurn`: aplica `incomeModifiers` activos al calcular ingresos
-- `calculateActionEffects`: aplica `costReduction` a acciones de categoría matching
-- `processPendingEffects`: soporta `stabilityChange` al activarse
-- `futureEffects` agregados a: estudio_factibilidad, mejorar_recaudacion, fomento_emprendimiento
+**(a) MVP solo presidente**
+- La partida se juega como presidente, con mandato de 16 turnos, elecciones de medio término (año 2) y generales (año 4).
+- Los cargos de intendente y gobernador existen en la estructura (`careerRules.ts`) y en los textos narrativos, pero el flujo de juego actual es presidente directo.
 
-### 🟠 Sprint 3 — Profundización de Interacciones con Grupos
-- **Reunión:** pausa demandas del grupo por 2 turnos
-- **Negociar:** genera demanda concreta en 1-2 turnos, deadline 4 turnos
-- **Conceder:** bloquea demandas 4 turnos (1 año) + +15 apoyo
-- Nuevos campos: `demandPausedUntil`, `negotiationPending`
-- `resolvePendingNegotiations`: genera demandas cuando vence el plazo de negociación
-- `generateGroupAgendas`: respeta `demandPausedUntil`
+**(b) 18 eventos activos con imágenes propias**
+- 6 económicos + 6 políticos + 6 sociales, cada uno con imagen propia en `src/assets/images/events/`.
+- `getEventImage()` mapea por `event.id` (prioridad sobre la categoría), con las 12 imágenes de la tanda de eventos nuevos (19/08) ya integradas.
 
-### 🔴 Sprint 4 — Arquetipos, Ejes y Contenido
-- **Habilidades pasivas por arquetipo** (`ARCHETYPE_PASSIVES`):
-  - Político: +10% retención voto, reuniones aliados gratis
-  - Empresario: +20% income economía, +1 préstamo extra
-  - Sindicalista: reuniones sindicatos/populares gratis, +1 acción base
-  - Comunicador: -30% impacto eventos negativos, ×1.1 en popularidad
-- **Ejes contradictorios con efectos mecánicos** (`getAxisModifiers`):
-  - ±80 en cada eje modifica costos, efectividad, estabilidad y relaciones grupales
+**(c) Concesiones limitadas**
+- Máximo **4 concesiones por mandato** (`concessionsThisTerm`).
+- Requieren trabajo previo: al menos 1 reunión o 1 negociación con el grupo en el mandato actual.
+- Tienen **costo cruzado**: conceder penaliza al resto de los grupos con `max(2, influencia × 0.5)`.
 
-### 🟢 Sprint 5+6 — GameLog y Documentación
-- **Nuevo:** `GameLog.tsx` — historial de gestión con línea de tiempo (modal)
-- Botón "Historial de gestión" en sidebar
-- **Nuevo:** `docs/mecanicas-del-juego.md` — manual completo en castellano explicando todas las mecánicas, variables, reglas y estrategia
-- **Nuevo:** `referencias/` — capturas de pantalla para referencia visual
+**(d) Demandas raras y acotadas**
+- Probabilidad base **8%** por turno (máximo 25% con modificadores).
+- Máximo **2 demandas activas simultáneas**.
+- Satisfacer una demanda **consume 1 acción**, da +5 apoyo al grupo y +1 de popularidad, con impacto cruzado sobre los antagonistas.
+
+**(e) Limitador global de eventos**
+- Cooldown de **3 turnos** entre eventos aleatorios/crisis (`GLOBAL_COOLDOWN_TURNS`).
+- Máximo **5 eventos aleatorios por mandato** (`MAX_RANDOM_EVENTS_PER_TERM`).
+- Los eventos contextuales (`triggered`) y de calendario no están limitados.
+
+**(f) Pasivas de arquetipo funcionando**
+- Las 4 pasivas por arquetipo están conectadas al runtime: retención de voto (político), resistencia a eventos negativos (comunicador), interacciones gratis (político/sindicalista), préstamo extra (empresario) y acciones extra (sindicalista).
+- Cada arquetipo tiene **2 habilidades activas** (8 en total).
+
+**(g) Dificultad con efectos reales**
+- `popularityDecayMultiplier`, `crisisProbabilityMultiplier`, `incomeMultiplier` y `loansAvailable` se consumen en el runtime.
+- Pendiente documentado: `baseActionsModifier` e `ironman` aún no se consumen.
+
+**(h) 183 tests**
+- Suite de Vitest con cobertura de turnos globales, victoria/derrota, eventos, demandas, elecciones, efectos diferidos, dificultad y UI.
+- `npm run test` pasa completo.
+
+**(i) 56+ assets visuales integrados**
+- Fondos por cargo, iconos propios de grupos/arquetipos/categorías, 18 imágenes de eventos, avatares y asesores, marcos/banners de UI.
+- Inventario en `src/assets/images/INVENTORY.md`.
+
+**(j) Turnos globales arreglados**
+- Deadlines, cooldowns y efectos diferidos usan el turno global `(year - 1) * 4 + turn` en lugar de aritmética cíclica. Demandas, negociaciones y cooldowns de eventos vencen correctamente a través de los años.
+
+**(k) Victoria posible**
+- Los objetivos usan `groupRelations` (keyed por subgrupo) — los objetivos de gobernador y presidente se completan y la victoria es alcanzable.
 
 ---
 
-## Commits de la Fase 2
+## Historia reciente
 
+### Auditoría integral (agosto 2026) — 4 fases de fixes
+
+1. **Turnos globales** — unificación de la aritmética de turnos; desbloqueó demandas, negociaciones, cooldowns y economía.
+2. **Victoria y derrota** — objetivos corregidos, condiciones de impeachment/golpe/hiperinflación verificadas.
+3. **Eventos y estado** — 17 efectos de eventos que se descartaban en silencio ahora aplican; mutaciones de estado React eliminadas (deep clones en `processEndTurn`, `useSpecialAbility`, `applyEventChoice`, `recordElectionOutcome`).
+4. **Pasivas, dificultad, UI dark y dead code** — pasivas conectadas al runtime, modificadores de dificultad consumidos, componentes migrados a tema oscuro, dependencias y componentes muertos eliminados.
+
+### Fase 2 (junio 2026, sesión anterior)
+
+Sprints de tooltips, efectos diferidos, interacciones con grupos, arquetipos con pasivas y GameLog — todo esto sigue vigente.
+
+---
+
+## Cómo verificar
+
+```bash
+npm run test        # 183 tests
+npx tsc --noEmit    # tipos
 ```
-4b07c82 docs: capturas de referencia para mejoras visuales
-9ebb484 fix: 'Assignment to constant variable' en satisfyGroupDemand
-cf16bf3 fix: blindaje defensivo en satisfyGroupDemand contra crashes
-4192cf9 feat: Sprint 5+6 - GameLog, Documentación y Balance Final
-8b56f1b feat: Sprint 4 - Arquetipos, Ejes y Contenido
-0758503 feat: Sprint 3 - Profundización de Interacciones con Grupos
-ba85ae0 feat: Sprint 2 - Efectos Diferidos y Recompensas Estratégicas
-340fe42 feat: Sprint 1 - Tooltips y Claridad Visual
-```
 
 ---
 
-## Archivos creados en la Fase 2
+## Pendientes
 
-| Archivo | Propósito |
-|---------|-----------|
-| `src/components/Tooltip.tsx` | Sistema de tooltips reutilizable con hover |
-| `src/components/ErrorBoundary.tsx` | Captura errores, evita pantalla blanca |
-| `src/components/ActiveBenefits.tsx` | Panel de beneficios diferidos activos |
-| `src/components/GameLog.tsx` | Historial de gestión (timeline) |
-| `src/docs/mecanicas-del-juego.md` | Manual completo en lenguaje natural |
-
-## Archivos modificados en la Fase 2
-
-| Archivo | Cambios principales |
-|---------|-------------------|
-| `src/main.tsx` | ErrorBoundary wrapper |
-| `src/App.tsx` | ActiveBenefits, GameLog, try/catch en satisfyDemand |
-| `src/types/game.ts` | incomeModifier, costReduction, stabilityChange, demandPausedUntil, negotiationPending |
-| `src/engine/gameEngine.ts` | incomeModifiers en ingresos, applyInteraction (reunión/negociar/conceder), satisfyGroupDemand blindado |
-| `src/utils/actionEffects.ts` | costReduction en calculateActionEffects, stabilityChange en processPendingEffects |
-| `src/utils/victoryConditions.ts` | Fix +1 redundante en checkAllDefeatConditions |
-| `src/engine/groupAgendaEngine.ts` | demandPausedUntil, resolvePendingNegotiations, fix mutación in-place |
-| `src/engine/axisEngine.ts` | getAxisModifiers con efectos mecánicos reales |
-| `src/data/actionCategories.ts` | futureEffects en 3 acciones |
-| `src/data/specialAbilities.ts` | ARCHETYPE_PASSIVES con 8 pasivas |
-| `src/components/ActionCard.tsx` | Tooltips en flechas, $, badges |
-| `src/components/IndicatorsPanel.tsx` | Tooltips en barras y ejes |
-| `src/components/VotingIntentionPanel.tsx` | Tooltips con pesos electorales |
-| `src/components/ElectionResultsModal.tsx` | Tooltips en desglose |
-| `src/components/PoliticalCalendarWidget.tsx` | Tooltip en apoyo legislativo |
-| `src/components/ObjectivesPanel.tsx` | Fix countdown 3→2 turnos |
-| `src/components/GameOverModal.tsx` | defeatReason + consejos |
-| `src/components/LegacyScreen.tsx` | Badge derrota + perfil ideológico |
-| `src/utils/careerLog.ts` | Texto narrativo por defeatReason |
-
----
-
-## Próximos pasos
-
-### 🔴 Urgente — Visual y experiencia
-- Mejorar la presentación visual general (layout, colores, jerarquía de información)
-- Íconos faltantes: 2 arquetipos, 14 grupos, 7 eventos nuevos (~23 piezas)
-- Revisar los mocks de referencia en `referencias/`
-
-### 🟡 Balance
-- El juego volvió a ser fácil. Ajustar: desgaste de popularidad, ingresos por cargo, costos de acciones
-- Diferenciar ingreso neto de presidente vs gobernador (hoy ambos +150M)
-
-### 🟢 Contenido pendiente del plan
-- 10 nuevas acciones (reforma laboral, desregulación, etc.)
-- 7 nuevos eventos (escándalo, conflicto sindical, boom exportador, etc.)
-- Sistema de sucesión partidaria
-- Pesos electorales diferenciados por grupo
-- Ventaja del oficialismo escalonada
-
----
-
-## Archivos creados en la Fase 1 (sesión anterior)
-
-| Archivo | Propósito |
-|---|---|
-| `src/docs/difficulty-analysis.md` | Diagnóstico + plan de 4 fases + 7 mecánicas nuevas |
-| `src/docs/phase-1-plan.md` | Plan detallado Fase 1 |
-| `src/data/groupAntagonists.ts` | Matriz de antagonismos entre grupos |
-| `src/data/midtermStrategies.ts` | Efectos de 4 estrategias post-legislativas |
-| `src/data/specialAbilities.ts` | 4 habilidades de arquetipos |
-| `src/engine/axisEngine.ts` | Ejes contradictorios |
-| `src/engine/difficultyEngine.ts` | 4 niveles de dificultad |
-| `src/engine/groupAgendaEngine.ts` | Agendas, moods y radicalización |
-| `src/engine/legitimacyEngine.ts` | Cálculo de legitimidad |
-| `src/utils/ascensionPenalty.ts` | Penalización por ascenso |
-| `src/utils/crossGroupEffects.ts` | Efectos cruzados entre grupos |
+- **Lint:** 14 errores, 11 de estilo (6 `no-explicit-any`, 5 `no-unused-vars`) + 3 puntuales (1 `rules-of-hooks`, 2 `prefer-const`).
+- `baseActionsModifier` e `ironman` de dificultad documentados pero sin consumir en runtime.
+- Grupo E de piezas de diseño (UI: marcos, sellos, medallas, estados vacíos) pendiente de generar.
+- Roadmap: Fase 6 (sonidos, tutorial, responsive) sin empezar.
