@@ -232,7 +232,7 @@ function BudgetIndicatorCard({ budget, trend }: { budget: number; trend: number 
 }
 
 export function IndicatorsPanel({ gameState }: IndicatorsPanelProps) {
-  const thresholds = POSITION_THRESHOLDS[gameState.position] ?? POSITION_THRESHOLDS.intendente;
+  const thresholds = POSITION_THRESHOLDS[gameState.position] ?? POSITION_THRESHOLDS.presidente;
   const conflicto = deriveConflictoSocial(gameState);
   const popTrend = seriesTrend(gameState.historicalPopularity);
   const budgetTrend = seriesTrend(gameState.historicalBudget);

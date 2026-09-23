@@ -67,7 +67,11 @@ export const actionDefinitions: ActionDefinition[] = [
     category: 'economia',
     requirements: { minBudget: 0 },
     availableForPositions: ['presidente'],
-    cooldown: 4,
+    // Cooldown 3 (antes 4): con 16 turnos y cooldown 4 el máximo teórico eran
+    // 4 emisiones y la derrota por hiperinflación (7) era inalcanzable.
+    // (El fix se había aplicado a actionCategories.ts, archivo zombie: ahora la
+    // única fuente de verdad es este registry.)
+    cooldown: 3,
     diminishingFactor: 0.65,
     multiEffects: {
       stabilityChange: -3,
@@ -109,6 +113,12 @@ export const actionDefinitions: ActionDefinition[] = [
     budgetChange: -300,
     category: 'economia',
     requirements: { minBudget: 300 },
+    explicitGroupEffects: [
+      { groupId: 'empresarios', supportChange: 8 },
+      { groupId: 'sindicatos', supportChange: 8 },
+      { groupId: 'sector-financiero', supportChange: -9 },
+      { groupId: 'ongs', supportChange: -6 }
+    ],
     affectedGroups: {
       supports: ['empresarios', 'sindicatos'],
       opposes: ['sector-financiero', 'ongs']
@@ -176,6 +186,11 @@ export const actionDefinitions: ActionDefinition[] = [
     budgetChange: -200,
     category: 'economia',
     requirements: { minBudget: 200 },
+    explicitGroupEffects: [
+      { groupId: 'empresarios', supportChange: 9.6 },
+      { groupId: 'cooperativas', supportChange: 6 },
+      { groupId: 'clase-media', supportChange: 8.4 }
+    ],
     futureEffects: [
       { delay: 4, budgetChange: 30, popularityChange: 0 },
       { delay: 5, budgetChange: 30, popularityChange: 0 },
@@ -292,6 +307,9 @@ export const actionDefinitions: ActionDefinition[] = [
     budgetChange: -400,
     category: 'social',
     requirements: { minBudget: 400 },
+    explicitGroupEffects: [
+      { groupId: 'sectores-populares', supportChange: 12 }
+    ],
     futureEffects: [
       { delay: 3, budgetChange: -50, popularityChange: 5 },
       { delay: 6, budgetChange: 0, popularityChange: 8 }
@@ -356,6 +374,9 @@ export const actionDefinitions: ActionDefinition[] = [
     budgetChange: -400,
     category: 'social',
     requirements: { minBudget: 400 },
+    explicitGroupEffects: [
+      { groupId: 'sectores-populares', supportChange: 12 }
+    ],
     affectedGroups: {
       supports: ['sectores-populares', 'ongs', 'cooperativas'],
       opposes: ['empresarios', 'clase-alta']
@@ -414,6 +435,11 @@ export const actionDefinitions: ActionDefinition[] = [
     budgetChange: -250,
     category: 'social',
     requirements: { minBudget: 250 },
+    explicitGroupEffects: [
+      { groupId: 'sectores-populares', supportChange: 9 },
+      { groupId: 'clase-media', supportChange: 10.5 },
+      { groupId: 'ongs', supportChange: 9 }
+    ],
     affectedGroups: {
       supports: ['sectores-populares', 'clase-media', 'ongs'],
       opposes: []
@@ -501,6 +527,9 @@ export const actionDefinitions: ActionDefinition[] = [
     budgetChange: -300,
     category: 'infraestructura',
     requirements: { minBudget: 300 },
+    explicitGroupEffects: [
+      { groupId: 'sectores-populares', supportChange: 9 }
+    ],
     affectedGroups: {
       supports: ['sector-agricola', 'sectores-populares'],
       opposes: []
@@ -813,6 +842,9 @@ export const actionDefinitions: ActionDefinition[] = [
     requirements: { minBudget: 400 },
     cooldown: 3,
     diminishingFactor: 0.85,
+    explicitGroupEffects: [
+      { groupId: 'clase-media', supportChange: 14 }
+    ],
     multiEffects: {
       stabilityChange: 10,
       legitimacyChange: 5,
@@ -885,6 +917,9 @@ export const actionDefinitions: ActionDefinition[] = [
     category: 'seguridad',
     requirements: { minBudget: 350 },
     availableForPositions: ['gobernador', 'presidente'],
+    explicitGroupEffects: [
+      { groupId: 'clase-media', supportChange: 10.5 }
+    ],
     affectedGroups: {
       supports: ['clase-media', 'empresarios'],
       opposes: ['ongs']

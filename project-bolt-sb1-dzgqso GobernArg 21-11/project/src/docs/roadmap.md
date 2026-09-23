@@ -49,7 +49,7 @@ Plan ordenado de mejoras para llevar el juego de "funcional pero austero" a "pul
 **Objetivo:** que la partida tenga un arco claro y ganas de volver a jugar.
 
 - [x] Pantalla de elecciones con mapa de Argentina y conteo de votos.
-- [ ] Modo campaña: ascender Intendente → Gobernador → Presidente.
+- [ ] Modo campaña (post-MVP): ascender Intendente → Gobernador → Presidente.
 - [x] Dificultades (Fácil, Normal, Difícil) que afecten presupuesto inicial y frecuencia de crisis.
 - [x] Epílogo de partida con resumen de legado.
 - [ ] Logros desbloqueables.

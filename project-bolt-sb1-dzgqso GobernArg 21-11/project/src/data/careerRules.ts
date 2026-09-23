@@ -1,4 +1,13 @@
+// MODO CAMPAÑA (RESERVADO POST-MVP): código de la carrera
+// intendente→gobernador→presidente. Hoy inalcanzable (MVP presidente-only,
+// STARTING_POSITION en este archivo) pero se conserva para el modo campaña
+// del roadmap.
 import { Position } from '../types/game';
+
+// Cargo inicial del MVP: el juego arranca directo como presidente.
+// Unificar acá los hardcodeos sueltos ('presidente' en CharacterCreation y
+// gameEngine) para que el futuro modo campaña tenga un único punto de cambio.
+export const STARTING_POSITION: Position = 'presidente';
 
 export const MAX_TERMS: Record<Position, number> = {
   intendente: 4,
@@ -36,7 +45,7 @@ export function getOptionLabel(option: ElectionOption): string {
 export function getOptionDescription(option: ElectionOption): string {
   switch (option) {
     case 'reelection':
-      return 'Ventaja por incumbencia, pero no avanzás en la carrera nacional.';
+      return 'Ventaja por incumbencia. Consolidá tu gestión con un segundo mandato.';
     case 'promote-governor':
       return 'Difícil pero posible. Necesitás apoyo provincial.';
     case 'promote-president':

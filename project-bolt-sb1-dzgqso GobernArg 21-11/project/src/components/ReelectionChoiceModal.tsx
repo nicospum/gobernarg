@@ -26,8 +26,10 @@ export function ReelectionChoiceModal({ gameState, onSelect }: ReelectionChoiceM
           </h2>
           <p className="text-foreground/80 text-sm">
             Terminaste tu mandato como{' '}
-            <span className="font-semibold capitalize text-accent">{gameState.position}</span>. ¿Qué
-            camino querés tomar ahora?
+            <span className="font-semibold capitalize text-accent">{gameState.position}</span>.
+            {options.length === 1
+              ? ' Tu mandato llega a su fin: ¿buscás la reelección?'
+              : ' ¿Qué camino querés tomar ahora?'}
           </p>
         </div>
 
@@ -71,11 +73,12 @@ export function ReelectionChoiceModal({ gameState, onSelect }: ReelectionChoiceM
                           <AlertTriangle className="w-3.5 h-3.5" />
                           {/* Punto 21: el mínimo se lee de careerRules (fuente
                               que usa canRunForOption) — antes estaba '75%'
-                              hardcodeado. */}
-                          Requiere al menos{' '}
+                              hardcodeado. Cuando el mínimo es 0 (reelección)
+                              el requisito no existe: el texto viejo decía
+                              "popularidad suficiente", que no informaba nada. */}
                           {PROMOTION_MIN_POPULARITY[option] > 0
-                            ? `${PROMOTION_MIN_POPULARITY[option]}%`
-                            : 'popularidad suficiente'}.
+                            ? `Requiere al menos ${PROMOTION_MIN_POPULARITY[option]}% de popularidad.`
+                            : 'Sin requisito mínimo de popularidad.'}
                         </p>
                       )}
                     </div>

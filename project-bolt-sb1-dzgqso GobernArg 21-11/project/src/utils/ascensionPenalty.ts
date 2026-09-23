@@ -1,3 +1,7 @@
+// MODO CAMPAÑA (RESERVADO POST-MVP): código de la carrera
+// intendente→gobernador→presidente. Hoy inalcanzable (MVP presidente-only,
+// STARTING_POSITION en careerRules.ts) pero se conserva para el modo campaña
+// del roadmap.
 import { Position } from '../types/game';
 
 /**

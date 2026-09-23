@@ -38,6 +38,9 @@ export function getAvailableElectionOptions(gameState: GameState): ElectionOptio
     options.push('reelection');
   }
 
+  // MODO CAMPAÑA (RESERVADO POST-MVP): las ramas promote-* son la carrera
+  // intendente→gobernador→presidente. Hoy inalcanzable (MVP presidente-only)
+  // pero se conservan para el modo campaña del roadmap.
   // Ascenso a gobernador solo desde intendente
   if (position === 'intendente') {
     options.push('promote-governor');

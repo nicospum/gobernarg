@@ -7,6 +7,8 @@
 
 GobernArg es un juego de estrategia política argentina. Vos sos un dirigente político — intendente, gobernador o presidente — y tenés que administrar recursos, construir poder político y sobrevivir a las presiones de los distintos sectores.
 
+> **Nota (MVP actual):** la carrera intendente → gobernador → presidente **no está disponible** en el MVP: se juega directo como presidente. El código de la carrera se conserva para el modo campaña futuro (ver `roadmap.md`).
+
 No alcanza con hacer "buenas políticas". También tenés que negociar, ceder cuando conviene, resistir cuando hace falta, y pensar las consecuencias de tus decisiones a varios turnos.
 
 ---

@@ -38,7 +38,9 @@ describe('POPULARITY_DECAY por cargo', () => {
 
 describe('creación del TurnLogEntry', () => {
   it('registra un entry con los campos requeridos', () => {
-    const result = processEndTurn(baseState('intendente'));
+    // Fixture presidente: el cargo es irrelevante para lo que se prueba
+    // (el MVP es presidente-only; el cargo solo importa en los tests de decay).
+    const result = processEndTurn(baseState('presidente'));
     const entry = result.state.turnLog[result.state.turnLog.length - 1];
 
     expect(entry).toBeDefined();
@@ -61,7 +63,8 @@ describe('creación del TurnLogEntry', () => {
   });
 
   it('registra actionsTaken y events como arrays', () => {
-    const result = processEndTurn(baseState('intendente'));
+    // Fixture presidente: el cargo es irrelevante para lo que se prueba.
+    const result = processEndTurn(baseState('presidente'));
     const entry = result.state.turnLog[result.state.turnLog.length - 1];
 
     expect(Array.isArray(entry.actionsTaken)).toBe(true);
@@ -83,7 +86,8 @@ describe('creación del TurnLogEntry', () => {
 
 describe('completedObjectives — anti mutación', () => {
   it('processEndTurn no muta completedObjectives del estado original', () => {
-    const state = baseState('intendente');
+    // Fixture presidente: el cargo es irrelevante para lo que se prueba.
+    const state = baseState('presidente');
     state.objectives = [
       {
         id: 'obj-test',

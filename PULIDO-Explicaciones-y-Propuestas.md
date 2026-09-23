@@ -191,7 +191,7 @@ Además de los puntos del checklist, un barrido de los reportes 8-12 encontró 2
 
 **Pospuestos a la sesión de dinámica/balance** (requieren decisión de diseño o tocan números):
 
-1. **Objetivo de intendente imposible** — `community-support` exige 2 acciones solo de gobernador/presidente. Hay que decidir qué acciones de intendente lo reemplazan.
+1. **Objetivo de intendente imposible** — `community-support` exige 2 acciones solo de gobernador/presidente. Hay que decidir qué acciones de intendente lo reemplazan. *(Con el MVP presidente-only quedó en código reservado; revisar si vuelve el modo campaña.)*
 2. **Demandas inejecutables** (Punto 11) — el filtro de agendas ignora minLegislativeSupport/minGroupSupport/minBudget.
 3. **"Probabilidad de éxito" de eventos decorativa** — la barra existe pero `applyEventChoice` no tira dados. Quitar la barra o implementar la tirada.
 4. **Campos de asesores sin efecto** — groupBonuses/policyModifiers/popularityEffect/etc. se muestran pero ningún engine los aplica.
@@ -199,4 +199,18 @@ Además de los puntos del checklist, un barrido de los reportes 8-12 encontró 2
 6. **Signo sospechoso en `coalition_opportunity`** — aceptar la coalición da `opositores +20`; probablemente era `aliados`.
 7. **Antagonistas con diminishingFactor desalineado** (~20% menor que la ganancia real).
 8. **`futureEffects` con delay 5-6 caen fuera del mandato** — se pierden al resetear pendingEffects en la elección.
-9. **Punto 6 Etapa 2** — balance de las 56 acciones restantes (tabla de propuesta para revisar).
+9. **Punto 6 Etapa 2** — balance de las acciones restantes (propuesta en `_analisis_gobernarg/etapa2_propuesta_groupEffects.md`, 5 decisiones del dueño pendientes).
+10. **Balance presidente-only (MVP)** — victoria final casi imposible (objetivos resetean por mandato; 10000M vs techo pasivo ~5900; 5 grupos 75-85 con clase-alta en 30) y 1 acción base/turno + decay 10 → outcome típico "sobrevivir la reelección". Pendiente decidir: acumulación de objetivos entre mandatos, suavizar objetivos, acciones/decay por turno.
+
+---
+
+## ADDENDUM 2 — Tanda presidente-only (P0/P1 mecánicos)
+
+Auditoría con 3 agentes del estado presidente-only + fixes aplicados (tsc limpio, 230/230):
+
+- **P0 — Registros unificados**: `actionRegistry.ts` única fuente de verdad; `actionCategories.ts` regenerado como derivado (mismas 61 ids, no puede diverger). Portados al vivo: `explicitGroupEffects` de las 8 acciones y cooldown 3 de `emitir_dinero` (ambos fixes habían caído en el zombie; la hiperinflación ahora SÍ es alcanzable en el juego real). Test de consistencia nuevo (`actionRegistry.test.ts`).
+- **P0 — Legado**: "Cargos ocupados: Ninguno" corregido (deriva de careerHistory) y `yearsInPower` off-by-one. Tests nuevos (`careerLog.test.ts`).
+- **P1 — Textos**: LegacyScreen ("Fin de tu gobierno"), ReelectionChoiceModal (copy single-option + "Sin requisito mínimo"), fallback `presidente` en IndicatorsPanel, reelección sin "carrera nacional".
+- **P1 — Carrera marcada reservada**: comentarios "MODO CAMPAÑA (RESERVADO POST-MVP)" sin borrar código; `STARTING_POSITION` constante en CharacterCreation/gameEngine.
+- **P1 — Tests**: fixtures migrados a presidente donde el cargo era incidental; tests de carrera conservados protegiendo código reservado; **cobertura nueva del path MVP** (`presidentialCareer.test.ts`): finalizePresidentialCareer victoria/derrota, cierre del 2º mandato, opciones electorales desde presidente.
+- **P1 — Docs**: mecánicas y roadmap aclaran que la carrera no está en el MVP.

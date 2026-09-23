@@ -4,6 +4,7 @@ import { Archetype, Position } from '../types/game';
 import { IMAGES, getPositionBackground } from '../utils/imageAssets';
 import { THUMBNAIL_ARCHETYPES } from '../utils/iconThumbnails';
 import { ARCHETYPE_PASSIVES } from '../data/specialAbilities';
+import { STARTING_POSITION } from '../data/careerRules';
 import { InfoTooltip } from './InfoTooltip';
 
 interface CharacterCreationProps {
@@ -29,7 +30,9 @@ const AVATARS = [
 ];
 
 export function CharacterCreation({ onComplete }: CharacterCreationProps) {
-  const position: Position = 'presidente';
+  // MVP presidente-only: el cargo inicial vive en careerRules (STARTING_POSITION)
+  // para que el futuro modo campaña tenga un único punto de cambio.
+  const position: Position = STARTING_POSITION;
   const [archetype, setArchetype] = useState<Archetype>('politico');
   const [governorName, setGovernorName] = useState('');
   const [avatar, setAvatar] = useState<string>(AVATARS[0].src);

@@ -11,6 +11,7 @@ import { actionCategories } from '../data/actionCategories';
 import { interestGroups } from '../data/interestGroups';
 import { GROUP_ANTAGONISTS } from '../data/groupAntagonists';
 import { ARCHETYPE_ABILITIES } from '../data/specialAbilities';
+import { STARTING_POSITION } from '../data/careerRules';
 import { calculateInteractionCost, calculateSupportGain, getInteractionCommitment } from '../utils/interactionCosts';
 import { getPositionObjectives } from '../utils/victoryConditions';
 import { calculateAvailableActions } from '../utils/actionCalculator';
@@ -71,7 +72,9 @@ export function getInitialGameState(): GameState {
   });
 
   const state: GameState = {
-    position: 'presidente',
+    // MVP presidente-only: el cargo inicial se lee de STARTING_POSITION
+    // (careerRules) en vez de un hardcodeo suelto.
+    position: STARTING_POSITION,
     archetype: 'politico',
     avatar: '',
     term: 1,
@@ -175,7 +178,8 @@ function cloneInterestGroups(): typeof interestGroups {
 }
 
 export function createNewGame(
-  position: Position = 'presidente',
+  // MVP presidente-only: default alineado a STARTING_POSITION (careerRules).
+  position: Position = STARTING_POSITION,
   archetype: Archetype,
   governorName: string,
   isAdminMode: boolean,

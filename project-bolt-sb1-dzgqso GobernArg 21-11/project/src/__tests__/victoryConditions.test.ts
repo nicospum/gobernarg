@@ -8,8 +8,10 @@ import {
 import type { GameState, Objective } from '../types/game';
 
 function baseState(overrides: Partial<GameState> = {}): GameState {
+  // Fixture presidente: el cargo es irrelevante para lo que se prueba
+  // (los tests de umbrales por cargo sobreescriben `position` explícitamente).
   return {
-    position: 'intendente',
+    position: 'presidente',
     archetype: 'politico',
     popularity: 50,
     budget: 500,

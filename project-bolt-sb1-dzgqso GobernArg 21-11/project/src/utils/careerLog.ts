@@ -83,16 +83,21 @@ export function generateLegacyText(gameState: GameState): string {
 }
 
 export function generateLegacyStats(gameState: GameState): { label: string; value: string }[] {
-  const { careerHistory, turnLog, popularity, termsByPosition } = gameState;
+  const { careerHistory, turnLog, popularity } = gameState;
 
-  const yearsInPower = Math.max(0, (careerHistory.length - 1) * 4 + (gameState.year - 1));
+  // FIX: un mandato completo es año 4 → 4 años. Antes `+ (year - 1)` daba 3
+  // años para un mandato cumplido (off-by-one).
+  const yearsInPower = Math.max(0, (careerHistory.length - 1) * 4 + gameState.year);
   const mandatesWon = careerHistory.filter(m => m.result === 'victory').length;
   const mandatesLost = careerHistory.filter(m => m.result === 'defeat').length;
   const totalProjects = turnLog.reduce((sum, log) => sum + log.projectsCompleted.length, 0);
   const totalCrises = turnLog.reduce((sum, log) => sum + log.crisesFaced.length, 0);
-  const positionsHeld = Object.entries(termsByPosition)
-    .filter(([, count]) => count > 0)
-    .map(([pos]) => capitalize(pos))
+  // FIX: derivar los cargos de los milestones de careerHistory, no de
+  // termsByPosition (que solo incrementa al GANAR una elección). Un presidente
+  // que pierde la reelección del mandato 1 mostraba "Ninguno" tras 4 años de
+  // gobierno. Los milestones se registran al asumir y al resolver cada elección.
+  const positionsHeld = Array.from(new Set(careerHistory.map(m => m.position)))
+    .map(pos => capitalize(pos))
     .join(', ');
 
   return [

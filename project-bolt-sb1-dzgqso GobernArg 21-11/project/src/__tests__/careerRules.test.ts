@@ -1,3 +1,6 @@
+// MODO CAMPAÑA (RESERVADO): testea el sistema de carrera, hoy inalcanzable
+// en el MVP presidente-only (STARTING_POSITION en careerRules.ts). Se conserva
+// para proteger el código reservado del modo campaña del roadmap.
 import { describe, it, expect } from 'vitest';
 import {
   MAX_TERMS,

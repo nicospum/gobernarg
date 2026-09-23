@@ -100,7 +100,7 @@ export function LegacyScreen({ gameState, onRestart, onClose }: LegacyScreenProp
               <Skull className="w-14 h-14 text-red-400 mb-2" />
             )}
             <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide">
-              {isVictory ? 'Fin de la carrera política' : 'Fin del gobierno'}
+              {isVictory ? 'Fin de tu gobierno' : 'Fin del gobierno'}
             </h2>
             <p className="text-foreground/85 mt-1 text-sm">{isVictivityMessage(gameState)}</p>
             {defeatConfig && (
@@ -221,7 +221,7 @@ export function LegacyScreen({ gameState, onRestart, onClose }: LegacyScreenProp
                 hiColor="bg-green-500"
               />
               <p className="text-[10px] text-muted-foreground mt-2 italic">
-                Refleja la orientación acumulada de tus políticas a lo largo de toda tu carrera.
+                Refleja la orientación acumulada de tus políticas a lo largo de tu gestión.
               </p>
             </div>
           </div>
@@ -306,5 +306,5 @@ function isVictivityMessage(gameState: GameState): string {
   if (gameState.position === 'presidente' && gameState.term >= 2) {
     return 'Completaste dos mandatos presidenciales y cerraste una carrera histórica.';
   }
-  return 'Ganaste las elecciones y tu carrera política sigue en pie.';
+  return 'El pueblo te renovó la confianza para un segundo mandato.';
 }

@@ -61,6 +61,9 @@ export function resolvePendingElection(gameState: GameState, option: ElectionOpt
     return recalcState(state);
   }
 
+  // MODO CAMPAÑA (RESERVADO POST-MVP): el bloque de promoción es la carrera
+  // intendente→gobernador→presidente. Hoy inalcanzable (MVP presidente-only)
+  // pero se conserva para el modo campaña del roadmap.
   // Victoria: definir nuevo cargo/mandato
   const previousPosition = state.position;
   const nextPosition = getNextPosition(option, state.position);

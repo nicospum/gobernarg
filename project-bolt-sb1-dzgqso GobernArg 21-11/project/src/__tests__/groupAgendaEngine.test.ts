@@ -7,8 +7,10 @@ function mood(groupId: string, ignoredTurns: number, initialMood: GroupMood['moo
 }
 
 function baseState(overrides: Partial<GameState> = {}): GameState {
+  // Fixture presidente: el cargo es irrelevante para lo que se prueba — el
+  // filtro de recencia que se ejerce acá es por mandato (term), no por cargo.
   return {
-    position: 'intendente',
+    position: 'presidente',
     archetype: 'politico',
     popularity: 50,
     budget: 500,
@@ -261,7 +263,7 @@ describe('generateGroupAgendas — acciones recientes filtradas por mandato', ()
     vi.spyOn(Math, 'random').mockReturnValue(0);
 
     const state = stateWithLog([
-      { year: 1, turn: 2, position: 'intendente', term: 1, actionsTaken: [ACTION_ID] },
+      { year: 1, turn: 2, position: 'presidente', term: 1, actionsTaken: [ACTION_ID] },
     ]);
 
     const agendas = generateGroupAgendas(state);
@@ -274,7 +276,7 @@ describe('generateGroupAgendas — acciones recientes filtradas por mandato', ()
     vi.spyOn(Math, 'random').mockReturnValue(0);
 
     const state = stateWithLog([
-      { year: 1, turn: 2, position: 'intendente', term: 2, actionsTaken: [ACTION_ID] },
+      { year: 1, turn: 2, position: 'presidente', term: 2, actionsTaken: [ACTION_ID] },
     ]);
 
     expect(generateGroupAgendas(state)).toHaveLength(0);

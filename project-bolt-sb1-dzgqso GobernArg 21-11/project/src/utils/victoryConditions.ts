@@ -147,6 +147,10 @@ export function updateObjectives(gameState: GameState): GameState {
   };
 }
 
+// MODO CAMPAÑA (RESERVADO POST-MVP): los objetivos/thresholds de intendente y
+// gobernador pertenecen a la carrera intendente→gobernador→presidente. Hoy
+// inalcanzables (MVP presidente-only) pero se conservan para el modo campaña
+// del roadmap.
 export function getPositionObjectives(position: string): Objective[] {
   switch (position) {
     case 'intendente':
