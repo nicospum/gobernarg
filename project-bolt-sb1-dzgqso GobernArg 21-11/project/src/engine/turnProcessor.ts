@@ -314,6 +314,11 @@ export function processEndTurn(gameState: GameState): import('./engineShared').T
   // 1. Aplicar efectos de acciones seleccionadas
   let totalPopularityChange = 0;
   let totalBudgetChange = 0;
+  // FIX (Punto 13): acumulación de los cambios grupales del paso 1 para la
+  // pasada de antagonistas del paso 1.5. Antes se recalculaba
+  // calculateActionEffects() en el 1.5 con actionUsageCount ya incrementado
+  // (doble pasada desalineada con el cálculo canónico de actionEffects).
+  const groupChanges: Record<string, number> = {};
 
   state.selectedActions.forEach(actionId => {
     const action = findActionById(actionId);
@@ -335,6 +340,7 @@ export function processEndTurn(gameState: GameState): import('./engineShared').T
       state.groupRelations[ge.groupId] = Math.min(100, Math.max(0,
         (state.groupRelations[ge.groupId] || 0) + ge.supportChange
       ));
+      groupChanges[ge.groupId] = (groupChanges[ge.groupId] || 0) + ge.supportChange;
     });
 
     effect.pendingEffects.forEach(pe => {
@@ -366,16 +372,11 @@ export function processEndTurn(gameState: GameState): import('./engineShared').T
     state = applyAxisShift(action, state);
   });
 
-  // 1.5. Fase 3: Aplicar impactos cruzados entre grupos antagónicos
-  const groupChanges: Record<string, number> = {};
-  state.selectedActions.forEach(actionId => {
-    const action = findActionById(actionId);
-    if (!action) return;
-    const effect = calculateActionEffects(action, state);
-    effect.immediateEffects.groupEffects.forEach(ge => {
-      groupChanges[ge.groupId] = (groupChanges[ge.groupId] || 0) + ge.supportChange;
-    });
-  });
+  // 1.5. Fase 3: Aplicar impactos cruzados entre grupos antagónicos.
+  // Una sola pasada sobre los cambios grupales YA calculados en el paso 1
+  // (valores canónicos de calculateActionEffects, con el estado pre-turno):
+  // la penalización al antagonista coincide con lo que el jugador veía en el
+  // tooltip y no se reduce de más por el contador de usos incrementado.
   if (Object.keys(groupChanges).length > 0) {
     state = applyCrossGroupEffects(state, groupChanges);
   }

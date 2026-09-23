@@ -1,7 +1,7 @@
 import type { GameState } from '../types/game';
 import { processElectionResultsForOption } from '../utils/electionSystem';
 import { ElectionOption, getNextPosition } from '../data/careerRules';
-import { getPositionObjectives, checkVictoryConditions } from '../utils/victoryConditions';
+import { getPositionObjectives, checkVictoryConditions, updateObjectives } from '../utils/victoryConditions';
 import { recalcState, POSITION_STARTING_BUDGET } from './engineShared';
 
 function recordElectionOutcome(
@@ -141,6 +141,12 @@ export function finalizePresidentialCareer(gameState: GameState): GameState {
   let state = { ...gameState };
   state = recordElectionOutcome(state, 'reelection', state.votingIntention, true);
   state.gameOver = true;
+  // FIX (off-by-one): processEndTurn llama a esta función en su paso 5 pero
+  // recién evalúa los objetivos en su paso 10. Sin esta re-evaluación, un
+  // objetivo cumplido con los efectos del último turno del 2º mandato no
+  // contaba para la victoria final. Se re-evalúan con el estado actual antes
+  // de fijar el resultado.
+  state = updateObjectives(state);
   state.victorious = checkVictoryConditions(state);
   return state;
 }

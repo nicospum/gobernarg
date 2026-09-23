@@ -2,7 +2,9 @@ import { afterEach, describe, it, expect, vi } from 'vitest';
 import { processEndTurn } from '../engine/turnProcessor';
 import { getInitialGameState } from '../engine/gameEngine';
 import { actionCategories } from '../data/actionCategories';
+import { actionDefinitions } from '../data/actionRegistry';
 import { interestGroups } from '../data/interestGroups';
+import { calculateActionEffects } from '../utils/actionEffects';
 import type { GameState, Position } from '../types/game';
 
 function baseState(position: Position): GameState {
@@ -171,5 +173,47 @@ describe('advertencia de popularidad crítica (Punto 10)', () => {
     // LOW_POPULARITY_TURNS = 2 (victoryConditions.ts); el texto viejo decía "Tres".
     expect(warning!.message).toContain('Dos turnos consecutivos');
     expect(warning!.importance).toBe('critical');
+  });
+});
+
+
+// ===== Regresión: penalización a antagonistas alineada al cálculo canónico (Punto 13) =====
+
+describe('antagonistas — alineados a calculateActionEffects (Punto 13)', () => {
+  it('la penalización al antagonista usa el groupEffects canónico aunque la acción ya se haya usado', () => {
+    // random = 0.999 → sin eventos aleatorios y sin agendas nuevas que
+    // modifiquen relaciones: corrida determinística.
+    vi.spyOn(Math, 'random').mockReturnValue(0.999);
+
+    // plan_viviendas: explicitGroupEffects → sectores-populares +12.
+    // Antagonistas de sectores-populares (groupAntagonists.ts):
+    // empresarios ×0.5, clase-alta ×0.4.
+    const action = actionDefinitions.find(a => a.id === 'plan_viviendas')!;
+    const state = baseState('presidente');
+    state.selectedActions = ['plan_viviendas'];
+    // Segundo uso: el contador YA arranca incrementado. La pasada vieja del
+    // paso 1.5 recalculaba los efectos con este contador incrementado de
+    // nuevo (doble pasada), descontando ~20-25% de más a los antagonistas.
+    state.actionUsageCount = { plan_viviendas: 1 };
+    state.groupRelations = {
+      ...state.groupRelations,
+      'sectores-populares': 50,
+      empresarios: 50,
+      'clase-alta': 50,
+    };
+
+    // Valor canónico: lo que calculateActionEffects calcula para ESTE estado
+    // (el mismo cálculo que ve el jugador en el tooltip, pre-turno).
+    const canonicalGain = calculateActionEffects(action, state)
+      .immediateEffects.groupEffects
+      .find(ge => ge.groupId === 'sectores-populares')!.supportChange;
+
+    const result = processEndTurn(state);
+
+    // Apoyo ganado y penalización a antagonistas derivan del efecto canónico
+    // del paso 1 (una sola pasada), sin reducción extra por uso repetido.
+    expect(result.state.groupRelations['sectores-populares']).toBeCloseTo(50 + canonicalGain, 5);
+    expect(result.state.groupRelations['empresarios']).toBeCloseTo(50 - Math.round(canonicalGain * 0.5), 5);
+    expect(result.state.groupRelations['clase-alta']).toBeCloseTo(50 - Math.round(canonicalGain * 0.4), 5);
   });
 });
