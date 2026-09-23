@@ -1,0 +1,65 @@
+DiseñoActualizadodel Juego: "Gobernarg"
+1. Introducción
+"Gobernarg" esunjuegodesimulaciónestratégicaygestiónpolíticaenel quelosjugadoresasumenel rol deIntendente, Gobernador oPresidente. El juegoseenfocaenlatomadedecisiones, lagestiónderecursosylainteraccióncondiversosactoresyeventosqueafectanal territoriogobernado. El objetivoesequilibrar lasnecesidadesydemandasdediferentesgruposdeinterésmientrassemantienelaestabilidadpolítica, económicaysocial.
+2. SeleccióndeCargoyExperienciadeJuegoDiferenciada
+a. CargosDisponibles
+● Intendente(Alcalde): Nivel deentrada(dificultadfácil).○ Mandatos: Posibilidaddereelecciónindefinida, dependiendodelasleyeslocales.● Gobernador: Nivel intermedio(dificultadmedia).○ Mandatos: Reelecciónlimitadasegúnlaconstituciónprovincial.● Presidente: Nivel avanzado(dificultaddifícil).○ Mandatos: Máximodedosmandatosde4añoscadauno, segúnlaconstituciónnacional.
+b. ProgresiónyOpcionesdeJuego
+● ProgresiónOpcional:○ El jugador puedeoptar por permanecer ensucargoactual oaspirar acargossuperiorescumpliendociertosrequisitos, comonivelesaltosdepopularidadologrosespecíficos.● AccionesDisponiblespor Cargo:○ AccionesExclusivas:■ Intendente: Programascomunitarios, mejoraseninfraestructuralocal, eventosvecinales.■ Gobernador: Gestiónderecursosprovinciales, coordinaciónintermunicipal, políticasregionales.■ Presidente: Políticasnacionaleseinternacionales, defensa, tratadosinternacionales.○ AccionesCompartidas:■ IntendenteyGobernador: Gestióndeseguridad, educaciónysaludanivel local yregional.■ Gobernador yPresidente: Desarrolloeconómico, inversionesextranjeras, infraestructuraagranescala.■ AccionesUniversales(paralostrescargos): Comunicaciónpública, gestióndecrisis, mejoradeserviciospúblicos.
+
+c. EficaciadeAccionesSegúnel Cargo
+● PresenciayCercanía:○ Intendente: Accionesdecercaníatienenunimpactopositivosignificativoyconstante. Puedenrepetirseconfrecuenciasinperder efectividad.○ Gobernador: Impactomoderado; el usoexcesivodisminuyesuefectividad.○ Presidente: Impactolimitado; el usorepetitivopuedeser contraproducente,restandopuntosdepopularidad.
+3. Personalizacióndel PersonajeyCaracterísticasEspeciales
+a. ArquetiposyCreaciónPersonalizada
+● OpcionesdeArquetipos:○ PolíticodeRaza:■ Ventajas: Bonusparatomar 2accionesadicionalespor turno.■ Desventajas: Puedegenerar desconfianzaenmovimientossocialesquebuscancambios.○ Sindicalista:■ Ventajas: Altoapoyodetrabajadoresysindicatos, 1acciónadicional por turno.■ Desventajas: Menor apoyodeempresariosysectoresconservadores.○ Empresario:■ Ventajas: Mayor capital inicial, habilidadeseconómicas, 1acciónadicional por turno.■ Desventajas: Desconfianzadesindicatosymovimientossociales.○ Comunicador/Famoso/Popular:■ Ventajas: Altocarismaypopularidadinicial.■ Desventajas: Faltadeexperienciapolítica; tienelacantidadbasedeaccionespor turno(5acciones).● Crear tuArquetipo:○ Personalización: El jugador puedemezclar característicasdelosdiferentesarquetipos.○ Restricciones: Debeelegir unacaracterísticadecadarango, sinpoderseleccionar todaslasmejores.
+b. CaracterísticasEspecialespor Rangos
+● Rango1(Elegir una):○ CarismaAlto○ HabilidadesAdministrativas○ EstrategaPolítico● Rango2(Elegir una):○ EmpatíaSocial○ VisiónEconómica○ Innovador Tecnológico
+
+● Rango3(Elegir una):○ ResistenciaalaCorrupción○ Líder Militar○ DiplomáticoHábil
+c. ImpactoenlaJugabilidad
+● CantidaddeAccionespor Turno:○ Base: 5accionespor turno.○ Bonificaciones:■ PolíticodeRaza: +2accionesadicionales.■ SindicalistayEmpresario: +1acciónadicional cadauno.■ Comunicador: Mantienelas5accionesbase.● InteracciónconActoresIA:○ LascaracterísticasyarquetiposinfluyenenlasrelacionesynegociacionescondiferentesgruposyactoresIA.
+4. GabineteyConsejeros
+a. Incorporacióndel Gabinete
+● Composición:○ 3ConsejerosIniciales: Otorgancaracterísticasadicionales, potencianaccionesybrindanasesoramiento.● FuncionesdelosConsejeros:○ AlertadeEventos: Notificansobreposiblescrisisooportunidades.○ Negociación: Ayudanamejorar relacionesconactoresIAespecíficos.○ Popularidad: Incrementanel apoyoendeterminadosgrupososectores.
+b. Expansióndel Gabinete
+● AdquisicióndeMásConsejeros:○ MedianteMonedadel Juego: Puedescontratar consejerosadicionalesconrecursosobtenidosenel juego.○ Microtransacciones(Opcional):■ ConsejerosEspeciales: Al pagar dineroreal, puedesincorporarpersonajeshistóricosconatributossuperiores.■ Ventajas: Ofrecenbonificacionesúnicasypotentesquepuedeninfluirsignificativamenteenlapartida.
+c. ImpactoenAccionespor Turno
+● BonificacionesAdicionales:○ Cadaconsejeropuedeotorgar +1acciónadicional por turno, dependiendodesushabilidades.● EstrategiaenlaSelección:
+
+○ Elegir consejerosquecomplemententuscaracterísticasynecesidadesactuales.
+5. ActoresIAyEventos
+a. GruposdeInterésyFacciones
+● SectoresEconómicos: Empresarios, agricultores, industriastecnológicas.● GruposSociales: Clasessociales, minoríasétnicas, organizacionesnogubernamentales.● MovimientosSociales: Ambientalistas, feministas, estudiantiles.● PartidosPolíticos: Aliadosyopositores.● ColectivosEspecíficos: Artistas, deportistas, académicos.
+b. EventosExternosyAleatorios
+● ClasificacióndeEventos:○ Por Tipo:■ Sociales: Protestas, migraciones, cambiosdemográficos.■ Económicos: Crisisfinancieras, inversionesextranjeras,fluctuacionesdemercado.■ Políticos: Escándalos, elecciones, cambioslegislativos.■ Naturales: Desastresnaturalescomosequías, inundaciones,terremotos.■ Internacionales: Conflictosbélicos, tratados, sanciones.○ Por MagnitudyAfectación:■ Locales: Afectanprincipalmenteal Intendente.■ Regionales: Impactanal Gobernador yparcialmenteal Intendente.■ Nacionales: Repercutenenel Presidenteylosotroscargos.■ Internacionales: Afectanmayormenteal Presidente.
+c. Interacciónconel Jugador
+● ReaccionesdeActoresIA:○ Positivas: Apoyo, colaboración, aumentodepopularidad.○ Negativas: Huelgas, protestas, bloqueos, campañasencontra.● IniciativasIndependientes:○ LosactoresIApuedengenerar eventosqueel jugador debemanejar,independientementedesusdecisionesprevias.● InfluenciadeCaracterísticasyArquetipos:○ Tuperfil afectacómolosactoresIAinteractúancontigo.○ Ejemplo: UnComunicador recibemásapoyodeartistasymedios.
+6. SistemadeLogros, RetosyDesbloqueables
+
+a. ImplementacióndeLogrosyRetos
+● Logros:○ ObjetivosEspecíficos: Completar misiones, alcanzar metaseconómicas,socialesopolíticas.○ Recompensas: Desbloqueodenuevasacciones, políticasomejoras.● Retos:○ DesafíosAdicionales: Situacionescomplejasqueponenapruebatushabilidadesdegestión.○ Beneficios: Aumentosignificativodepopularidad, recursosoaccesoaconsejerosespeciales.
+b. OpcionesBloqueadasyUpgrades
+● AccionesdeAltoImpacto:○ Inicialmentebloqueadasdebidoasugraninfluenciaenel juego.○ RequisitosparaDesbloqueo:■ Alcanzar ciertosnivelesdepopularidad.■ Acumular reservasfinancieras.■ Completar logrosoretosespecíficos.● EjemplosdeAccionesDesbloqueables:○ ReformasEstructurales: Cambiosprofundosenpolíticaseconómicasosociales.○ ProyectosdeInfraestructuraMasiva: Construccióndeaeropuertos,represas, sistemasdetransporte.○ PolíticasInternacionales: Firmar tratados, ingresar aorganizacionesinternacionales.
+7. Núcleodel JuegoyMensajeCentral
+a. Filosofíadel Juego
+● "El CaminoNoesRecto, SinoSinuoso":○ Destacalanecesidaddeadaptabilidadyequilibrio.○ Fomentalacomprensióndequenosiempresepuedeavanzar directamentehacialosobjetivosdeseados.
+b. ObjetivosyResultadosMúltiples
+● MúltiplesFormasdeGanar:○ Equilibrar lasnecesidadesdediversosgruposdeinterés.○ Mantener laestabilidadeconómica, social ypolítica.○ Lograr reeleccionesoascender acargossuperiores.● MúltiplesFormasdePerder:○ Crisisinsostenibles, pérdidadepopularidad, destitución.
+c. TomadeDecisionesEstratégicas
+
+● Importanciadel MomentoAdecuado:○ Decisionestomadasenel momentocorrectomaximizaránbeneficios.● EfectosdeUsoExcesivo:○ Accionesrepetitivaspuedenperder efectividadoser contraproducentes.● DecisionesDifíciles:○ Avecesesnecesarioimplementar medidasimpopularesparalograrbeneficiosalargoplazo.
+8. DiseñodeJuegoEnfocadoenDecisionesyConsecuencias
+a. SistemadeTomadeDecisiones
+● CantidaddeAccionespor Turno:○ BasedeAcciones: 5accionespor turno.○ Bonificacionespor ArquetipoyConsejeros:■ PolíticodeRaza: +2acciones.■ SindicalistayEmpresario: +1acción.■ Consejeros: Cadaunopuedeotorgar +1acciónadicionaldependiendodesushabilidades.● InterfazIntuitiva:○ Opcionesclarasconindicacionessobreposiblesconsecuencias.
+b. PlanificaciónyAdaptación
+● ProyectosaLargoPlazo:○ Requierenvariosturnosparacompletarse.● EventosInesperados:○ Necesidaddeajustar estrategiassobrelamarcha.● EstrategiaenlaSeleccióndeAcciones:○ Priorizar accionessegúnurgenciayimpactopotencial.
+9. FomentodelaRejugabilidadylaDiversión
+a. Variedaddesdeel Inicio
+● Personalizacióndel Personaje:○ Diversascombinacionesdearquetiposycaracterísticas.● Eleccióndel Cargo:○ Diferentesdesafíosyexperienciassegúnel nivel degobierno.
+b. DesarrollodeMúltiplesEstrategias
+● EnfoquesDiferentes:○ Económicos, sociales, políticos, ounacombinación.● ExploracióndeConsecuencias:
+
+○ Decisionescondiferentesresultadosencadapartida.
+10. FuturasExpansiones
+a. ModoMultijugador (Versión2)
+● Descripción:○ Posibilidaddejugar enlíneaenunmundocompartido.● Características:○ Interacciónconotrosjugadores, alianzas, competencias.● AdicióndeCampañaElectoral:○ Opciónde"Jugar laCampañaElectoral" antesdeasumir el cargo.
