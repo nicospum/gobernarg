@@ -14,6 +14,7 @@ import { getValueRisk, riskColor } from '@/lib/risk';
 interface LegacyScreenProps {
   gameState: GameState;
   onRestart: () => void;
+  onClose?: () => void;
 }
 
 interface PerformanceData {
@@ -61,7 +62,7 @@ function derivePerformance(state: GameState): PerformanceData {
   };
 }
 
-export function LegacyScreen({ gameState, onRestart }: LegacyScreenProps) {
+export function LegacyScreen({ gameState, onRestart, onClose }: LegacyScreenProps) {
   const isVictory = gameState.victorious;
   const reason = gameState.defeatReason;
   const defeatConfig = !isVictory && reason ? DEFEAT_REASON_CONFIG[reason] : null;
@@ -267,8 +268,16 @@ export function LegacyScreen({ gameState, onRestart }: LegacyScreenProps) {
             </div>
           )}
 
-          {/* Botón */}
-          <div className="text-center">
+          {/* Botones */}
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {onClose && (
+              <button
+                onClick={onClose}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded font-display font-bold uppercase tracking-wide transition-colors border border-border bg-white/10 hover:bg-white/15 text-foreground"
+              >
+                Volver
+              </button>
+            )}
             <button
               onClick={onRestart}
               className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded font-display font-bold uppercase tracking-wide transition-colors shadow-lg"

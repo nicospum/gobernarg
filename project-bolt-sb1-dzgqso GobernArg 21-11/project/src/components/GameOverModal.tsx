@@ -7,6 +7,7 @@ import { fmtBudget } from '@/lib/format';
 interface GameOverModalProps {
   gameState: GameState;
   onRestart: () => void;
+  onShowLegacy?: () => void;
 }
 
 const DEFEAT_ICONS: Record<DefeatReason, typeof Trophy> = {
@@ -18,7 +19,7 @@ const DEFEAT_ICONS: Record<DefeatReason, typeof Trophy> = {
   election_loss: Vote,
 };
 
-export function GameOverModal({ gameState, onRestart }: GameOverModalProps) {
+export function GameOverModal({ gameState, onRestart, onShowLegacy }: GameOverModalProps) {
   const isVictory = gameState.victorious;
   const reason = gameState.defeatReason;
   const defeatConfig = !isVictory && reason ? DEFEAT_REASON_CONFIG[reason] : null;
@@ -98,16 +99,26 @@ export function GameOverModal({ gameState, onRestart }: GameOverModalProps) {
             </div>
           </div>
 
-          <button
-            onClick={onRestart}
-            className={`px-8 py-3 rounded font-display font-bold uppercase tracking-wide transition-colors shadow-lg ${
-              isVictory
-                ? 'bg-accent hover:bg-accent/90 text-accent-foreground'
-                : 'bg-primary hover:bg-primary/90 text-primary-foreground'
-            }`}
-          >
-            Comenzar Nueva Partida
-          </button>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {onShowLegacy && (
+              <button
+                onClick={onShowLegacy}
+                className="px-8 py-3 rounded font-display font-bold uppercase tracking-wide transition-colors border border-border bg-white/10 hover:bg-white/15 text-foreground"
+              >
+                Ver tu legado
+              </button>
+            )}
+            <button
+              onClick={onRestart}
+              className={`px-8 py-3 rounded font-display font-bold uppercase tracking-wide transition-colors shadow-lg ${
+                isVictory
+                  ? 'bg-accent hover:bg-accent/90 text-accent-foreground'
+                  : 'bg-primary hover:bg-primary/90 text-primary-foreground'
+              }`}
+            >
+              Comenzar Nueva Partida
+            </button>
+          </div>
         </div>
       </div>
     </div>

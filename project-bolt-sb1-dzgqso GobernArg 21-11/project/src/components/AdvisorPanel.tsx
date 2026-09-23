@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { UserPlus, UserMinus, Star, TrendingUp, Award } from 'lucide-react';
+import { UserPlus, UserMinus, Star, TrendingUp, TrendingDown, Minus, Award } from 'lucide-react';
 import { GameState, AdvisorWithStatus } from '../types/game';
 import { AdvisorSelectionModal } from './AdvisorSelectionModal';
 import { AdvisorDismissModal } from './AdvisorDismissModal';
@@ -13,9 +13,17 @@ interface AdvisorPanelProps {
 }
 
 function getPopularityIndicator(popularityChange: number) {
-  if (popularityChange >= 20) return Array(3).fill(<TrendingUp className="w-4 h-4" />);
-  if (popularityChange >= 15) return Array(2).fill(<TrendingUp className="w-4 h-4" />);
-  return [<TrendingUp className="w-4 h-4" />];
+  // FIX (Punto 15): antes siempre devolvía TrendingUp verde, aunque el efecto
+  // del asesor fuera negativo o neutro. Ahora ícono y color reflejan el signo;
+  // la cantidad de íconos (1-3 por magnitud) se mantiene.
+  const count = popularityChange >= 20 ? 3 : popularityChange >= 15 ? 2 : 1;
+  if (popularityChange < 0) {
+    return Array(count).fill(<TrendingDown className="w-4 h-4 text-red-400" />);
+  }
+  if (popularityChange === 0) {
+    return Array(count).fill(<Minus className="w-4 h-4 text-muted-foreground" />);
+  }
+  return Array(count).fill(<TrendingUp className="w-4 h-4 text-emerald-400" />);
 }
 
 export function AdvisorPanel({ gameState, onHireAdvisor, onDismissAdvisor }: AdvisorPanelProps) {
@@ -101,7 +109,9 @@ export function AdvisorPanel({ gameState, onHireAdvisor, onDismissAdvisor }: Adv
                   </div>
                 </div>
                 <div className="mt-2 text-sm">
-                  <div className="flex items-center gap-1 text-emerald-400">
+                  {/* Punto 15: el color lo llevan los íconos (signo del efecto),
+                      no el contenedor — antes todo se veía verde. */}
+                  <div className="flex items-center gap-1">
                     <span>Popularidad</span>
                     {advisor.isActive && popularityIndicators.map((indicator, index) => (
                       <span key={index}>{indicator}</span>

@@ -6,6 +6,7 @@ import type {
   Notification,
   MidtermStrategy
 } from '../types/game';
+import type { GameEvent } from '../systems/events/types';
 import { calculatePopularidad } from '../utils/popularidad';
 import { calculateAvailableActions } from '../utils/actionCalculator';
 import { calculateVotingIntention as calculateElectionVotingIntention } from '../utils/electionSystem';
@@ -61,7 +62,9 @@ export const DEFEAT_POP_THRESHOLD: Record<Position, number> = {
 export interface TurnResult {
   state: GameState;
   summary: TurnSummary;
-  triggeredEvents: any[]; // GameEvent[]
+  // FIX (Punto 20): era any[] — el tipo real es el GameEvent del sistema de
+  // eventos (mismo que devuelve resolveRandomEvents y consume App.tsx).
+  triggeredEvents: GameEvent[];
   narrative?: string;
 }
 
@@ -91,7 +94,12 @@ export function addNotification(
   const newNotification: Notification = {
     ...notification,
     id: `${state.year}_${state.turn}_${Math.random().toString(36).slice(2, 8)}`,
-    timestamp: Date.now()
+    timestamp: Date.now(),
+    // FIX (Punto 13): congelar el año/turno de creación. El centro de
+    // notificaciones mostraba el turno vivo del estado, así una notificación
+    // vieja parecía recién emitida.
+    year: state.year,
+    turn: state.turn
   };
   return {
     ...state,

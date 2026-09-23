@@ -19,6 +19,7 @@ import {
   clampValue,
   addNotification,
   getGlobalTurn,
+  recalcState,
   POSITION_STARTING_BUDGET,
   ARCHETYPE_STARTING_POPULARITY,
 } from './engineShared';
@@ -130,6 +131,7 @@ export function getInitialGameState(): GameState {
     concessionsThisTerm: 0,
     interactionCountByGroup: {},
     lastRandomEventTurn: 0,
+    lastEventFiredTurns: {},
     randomEventsThisTerm: 0,
     // Fase 4: Profundidad
     difficulty: 'normal',
@@ -144,7 +146,12 @@ export function getInitialGameState(): GameState {
     defeatReason: null
   };
 
-  return applyArchetypePassives(state);
+  // Nota: las pasivas NO se aplican acá. getInitialGameState() devuelve el
+  // estado base pre-partida; las pasivas del arquetipo elegido se aplican una
+  // única vez en createNewGame() y luego cada inicio de turno en processEndTurn.
+  // (Antes se aplicaban acá con 'politico' y createNewGame las re-aplicaba:
+  // los shifts de ejes quedaban duplicados o contaminados por el arquetipo default.)
+  return state;
 }
 
 function getAllActionIds(): string[] {
@@ -344,21 +351,38 @@ export function hireAdvisors(
   advisors: Advisor[]
 ): GameState {
   if (gameState.advisorActionUsed) return gameState;
-  const totalCost = advisors.reduce((sum, a) => sum + a.cost, 0);
+
+  // Anti duplicados: ignorar asesores ya contratados (el UI permite
+  // seleccionarlos de nuevo y el engine los duplicaba, duplicando bonos).
+  const candidates = advisors.filter(
+    a => !gameState.advisors.some(existing => existing.id === a.id)
+  );
+
+  // Máximo 2 asesores simultáneos: contratar solo los que entren en los
+  // slots libres en lugar de rechazar toda la operación.
+  const MAX_ADVISORS = 2;
+  const slots = Math.max(0, MAX_ADVISORS - gameState.advisors.length);
+  const toHire = candidates.slice(0, slots);
+  if (toHire.length === 0) return gameState;
+
+  const totalCost = toHire.reduce((sum, a) => sum + a.cost, 0);
   if (gameState.budget < totalCost) return gameState;
 
-  const withStatus: AdvisorWithStatus[] = advisors.map(a => ({
+  const withStatus: AdvisorWithStatus[] = toHire.map(a => ({
     ...a,
     isActive: true,
     turnsInactive: 0
   }));
 
-  return {
+  // FIX (Punto 12): recalcular al contratar — sin esto las acciones extra del
+  // asesor no se veían hasta el próximo turno (recalcState suma el bonusActions
+  // de los asesores activos vía calculateAvailableActions).
+  return recalcState({
     ...gameState,
     advisors: [...gameState.advisors, ...withStatus],
     budget: gameState.budget - totalCost,
     advisorActionUsed: true
-  };
+  });
 }
 
 export function dismissAdvisor(
@@ -366,11 +390,13 @@ export function dismissAdvisor(
   advisorId: string
 ): GameState {
   if (gameState.advisorActionUsed) return gameState;
-  return {
+  // FIX (Punto 12): recalcular al despedir — sin esto el bono de acciones del
+  // asesor se conservaba durante el resto del turno actual.
+  return recalcState({
     ...gameState,
     advisors: gameState.advisors.filter(a => a.id !== advisorId),
     advisorActionUsed: true
-  };
+  });
 }
 
 export function markAllNotificationsRead(gameState: GameState): GameState {

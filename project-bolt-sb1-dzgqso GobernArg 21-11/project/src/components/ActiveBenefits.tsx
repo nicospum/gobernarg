@@ -15,9 +15,15 @@ const BENEFIT_ICONS: Record<string, typeof TrendingUp> = {
 
 export function ActiveBenefits({ gameState }: ActiveBenefitsProps) {
   const currentGlobalTurn = getGlobalTurn(gameState);
+  // FIX (Punto 16): el filtro viejo mezclaba criterios — excluía los efectos
+  // con stabilityChange recién activados y dejaba fuera los efectos vigentes
+  // con activationTurn < turno actual. Ahora un beneficio cuenta si está
+  // activo, con el mismo criterio que processPendingEffects (actionEffects.ts):
+  // activationTurn alcanzado y, si tiene duration, no expirado.
   const activeBenefits = gameState.pendingEffects.filter(
-    pe => pe.activationTurn >= currentGlobalTurn &&
-      (pe.incomeModifier || pe.costReductionCategory || (pe.stabilityChange && pe.activationTurn > currentGlobalTurn))
+    pe => (pe.incomeModifier || pe.costReductionCategory || pe.stabilityChange) &&
+      pe.activationTurn <= currentGlobalTurn &&
+      (pe.duration === undefined || pe.activationTurn + pe.duration > currentGlobalTurn)
   );
 
   if (activeBenefits.length === 0) return null;
@@ -30,7 +36,10 @@ export function ActiveBenefits({ gameState }: ActiveBenefitsProps) {
       </h3>
       <div className="space-y-1.5">
         {activeBenefits.map(benefit => {
-          const turnsLeft = benefit.activationTurn - currentGlobalTurn;
+          // Turnos restantes del beneficio (no "turnos hasta activarse": solo
+          // se listan efectos ya activos). Sin duration no hay badge — antes
+          // se renderizaba "0t" (Punto 16).
+          const turnsLeft = benefit.activationTurn + (benefit.duration ?? 0) - currentGlobalTurn;
           const Icon = benefit.incomeModifier ? BENEFIT_ICONS.incomeModifier :
                        benefit.costReductionCategory ? BENEFIT_ICONS.costReduction :
                        BENEFIT_ICONS.default;
@@ -52,7 +61,9 @@ export function ActiveBenefits({ gameState }: ActiveBenefitsProps) {
                 <Icon className="w-3 h-3" />
                 {label}
               </span>
-              <span className="text-emerald-400 font-medium">{turnsLeft}t</span>
+              {turnsLeft > 0 && (
+                <span className="text-emerald-400 font-medium">{turnsLeft}t</span>
+              )}
             </div>
           );
         })}

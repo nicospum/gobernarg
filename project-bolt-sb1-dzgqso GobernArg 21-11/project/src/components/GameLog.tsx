@@ -1,5 +1,6 @@
 import { ScrollText, TrendingUp, DollarSign, AlertTriangle } from 'lucide-react';
 import { GameState } from '../types/game';
+import { actionDefinitions } from '../data/actionRegistry';
 
 interface GameLogProps {
   gameState: GameState;
@@ -36,11 +37,19 @@ export function GameLog({ gameState, onClose }: GameLogProps) {
 
                   {entry.actionsTaken.length > 0 && (
                     <div className="flex flex-wrap gap-1 mb-1">
-                      {entry.actionsTaken.map((action, j) => (
-                        <span key={j} className="text-xs bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
-                          {action}
-                        </span>
-                      ))}
+                      {/* FIX (Punto 14): resolver el título desde el registry,
+                          igual que ManagementNotebook — antes se imprimía el id
+                          crudo (obra_publica_escuela) cuando la acción no estaba
+                          registrada. */}
+                      {entry.actionsTaken.map((actionId, j) => {
+                        const def = actionDefinitions.find(a => a.id === actionId);
+                        const name = def ? def.title : actionId;
+                        return (
+                          <span key={j} className="text-xs bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
+                            {name}
+                          </span>
+                        );
+                      })}
                     </div>
                   )}
 

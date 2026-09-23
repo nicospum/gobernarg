@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { updateGroupMoods, applyGroupSatisfactionPenalty } from '../engine/groupAgendaEngine';
-import type { GameState, GroupMood, InterestGroup } from '../types/game';
+import { afterEach, describe, it, expect, vi } from 'vitest';
+import { updateGroupMoods, applyGroupSatisfactionPenalty, generateGroupAgendas } from '../engine/groupAgendaEngine';
+import type { GameState, GroupMood, InterestGroup, TurnLogEntry } from '../types/game';
 
 function mood(groupId: string, ignoredTurns: number, initialMood: GroupMood['mood'] = 'neutral'): GroupMood {
   return { groupId, mood: initialMood, ignoredTurns, lastSatisfiedTurn: 0 };
@@ -226,5 +226,57 @@ describe('applyGroupSatisfactionPenalty', () => {
 
     expect(state.groupAgendas[0]).toBe(originalAgenda);
     expect(state.groupRelations.sindicatos).toBe(55);
+  });
+});
+
+
+// ===== Regresión: recentActionIds no cruza mandatos (Punto 9) =====
+
+describe('generateGroupAgendas — acciones recientes filtradas por mandato', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  // Acción del registry sin availableForPositions ni prerequisites: pasa todos
+  // los filtros de disponibilidad, así el único filtro en juego es el de recencia.
+  const ACTION_ID = 'plan_viviendas';
+
+  function stateWithLog(entries: Partial<TurnLogEntry>[]): GameState {
+    const subgroup = subgroupWithInfluence('sectores-populares', 8).subgroups[0];
+    return baseState({
+      term: 2,
+      year: 1,
+      turn: 3, // turno global 3 → la ventana "últimos 3 turnos" cubre globales 0,1,2
+      interestGroups: [
+        { id: 'group-test', name: 'Grupo test', subgroups: [{ ...subgroup, demandActionIds: [ACTION_ID] }] },
+      ],
+      turnLog: entries as TurnLogEntry[],
+    });
+  }
+
+  it('una acción del mandato anterior (año 1 del mandato previo) no veta la demanda', () => {
+    // El año vuelve a 1 tras cada elección: la entrada (año 1, turno 2) del
+    // mandato 1 cae en la ventana de recencia del mandato 2. El código viejo
+    // la contaba y vetaba la demanda; el filtro por mandato la descarta.
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+
+    const state = stateWithLog([
+      { year: 1, turn: 2, position: 'intendente', term: 1, actionsTaken: [ACTION_ID] },
+    ]);
+
+    const agendas = generateGroupAgendas(state);
+
+    expect(agendas).toHaveLength(1);
+    expect(agendas[0].demand).toBe(ACTION_ID);
+  });
+
+  it('una acción ejecutada en el mandato actual sí veta la demanda', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+
+    const state = stateWithLog([
+      { year: 1, turn: 2, position: 'intendente', term: 2, actionsTaken: [ACTION_ID] },
+    ]);
+
+    expect(generateGroupAgendas(state)).toHaveLength(0);
   });
 });

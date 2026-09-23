@@ -84,35 +84,55 @@ export function updateObjectives(gameState: GameState): GameState {
   const updatedObjectives = gameState.objectives.map(objective => {
     if (objective.completed) return objective;
 
-    let progress = 0;
-    let completed = false;
+    // FIX: los requisitos de un objetivo se combinan con AND — antes cada
+    // bloque pisaba al anterior, así que un objetivo {popularity, budget}
+    // se completaba cumpliendo solo uno de los dos.
+    const checks: { completed: boolean; progress: number }[] = [];
 
     if (objective.requirements.popularity) {
-      progress = (gameState.popularity / objective.requirements.popularity) * 100;
-      completed = gameState.popularity >= objective.requirements.popularity;
+      const required = objective.requirements.popularity;
+      checks.push({
+        completed: gameState.popularity >= required,
+        progress: (gameState.popularity / required) * 100
+      });
     }
 
-    if (objective.requirements.budget && !completed) {
-      progress = (gameState.budget / objective.requirements.budget) * 100;
-      completed = gameState.budget >= objective.requirements.budget;
+    if (objective.requirements.budget) {
+      const required = objective.requirements.budget;
+      checks.push({
+        completed: gameState.budget >= required,
+        progress: (gameState.budget / required) * 100
+      });
     }
 
-    if (objective.requirements.completedActions && !completed) {
-      const completedCount = objective.requirements.completedActions.filter(
+    if (objective.requirements.completedActions) {
+      const required = objective.requirements.completedActions;
+      const completedCount = required.filter(
         action => gameState.completedActions.includes(action)
       ).length;
-      progress = (completedCount / objective.requirements.completedActions.length) * 100;
-      completed = completedCount === objective.requirements.completedActions.length;
+      checks.push({
+        completed: completedCount === required.length,
+        progress: (completedCount / required.length) * 100
+      });
     }
 
-    if (objective.requirements.groupSupport && !completed) {
+    if (objective.requirements.groupSupport) {
       const groupProgress = Object.entries(objective.requirements.groupSupport).map(([groupId, required]) => {
         const currentSupport = gameState.groupRelations[groupId] ?? 0;
         return currentSupport >= required;
       });
-      completed = groupProgress.every(Boolean);
-      progress = (groupProgress.filter(Boolean).length / groupProgress.length) * 100;
+      checks.push({
+        completed: groupProgress.every(Boolean),
+        progress: groupProgress.length > 0
+          ? (groupProgress.filter(Boolean).length / groupProgress.length) * 100
+          : 0
+      });
     }
+
+    const completed = checks.length > 0 && checks.every(c => c.completed);
+    const progress = checks.length > 0
+      ? checks.reduce((sum, c) => sum + c.progress, 0) / checks.length
+      : 0;
 
     return {
       ...objective,

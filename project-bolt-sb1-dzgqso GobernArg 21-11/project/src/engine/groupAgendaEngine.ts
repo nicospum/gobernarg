@@ -49,9 +49,15 @@ export function generateGroupAgendas(state: GameState): GroupAgendaItem[] {
     const prob = Math.min(MAX_PROBABILITY, BASE_PROBABILITY + ignoreBonus);
 
     if (Math.random() < prob) {
-      // Obtener IDs de acciones ejecutadas en los últimos 3 turnos (turno global)
+      // Obtener IDs de acciones ejecutadas en los últimos 3 turnos (turno global).
+      // FIX (Punto 9): el año vuelve a 1 tras cada elección, así que sin filtrar
+      // por mandato las entradas del año 1 del mandato anterior colisionaban con
+      // las del mandato vigente y vetaban demandas como si fueran recientes.
+      // Mismo patrón que calculateActivityImpact (utils/electionSystem.ts):
+      // contar solo el mandato/cargo actual.
       const currentGlobalTurn = getGlobalTurn(state);
       const recentActionIds = state.turnLog
+        .filter(entry => entry.term === state.term && entry.position === state.position)
         .filter(entry =>
           (entry.year - 1) * 4 + entry.turn >= currentGlobalTurn - 3 &&
           (entry.year - 1) * 4 + entry.turn < currentGlobalTurn

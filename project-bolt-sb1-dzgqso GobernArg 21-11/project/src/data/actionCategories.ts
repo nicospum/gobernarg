@@ -59,7 +59,9 @@ export const actionCategories: ActionCategoryData[] = [
         category: 'economia',
         requirements: { minBudget: 0 },
         availableForPositions: ['presidente'],
-        cooldown: 4,
+        // Cooldown 3 (antes 4): con 16 turnos y cooldown 4 el máximo teórico eran
+        // 4 emisiones y la derrota por hiperinflación (7) era inalcanzable.
+        cooldown: 3,
         diminishingFactor: 0.65,
         multiEffects: {
           stabilityChange: -3,
@@ -91,7 +93,13 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 10,
         budgetChange: -300,
         category: 'economia',
-        requirements: { minBudget: 300 }
+        requirements: { minBudget: 300 },
+        explicitGroupEffects: [
+          { groupId: 'empresarios', supportChange: 8 },
+          { groupId: 'sindicatos', supportChange: 8 },
+          { groupId: 'sector-financiero', supportChange: -9 },
+          { groupId: 'ongs', supportChange: -6 }
+        ]
       },
       {
         id: 'reforma_impositiva',
@@ -138,6 +146,11 @@ export const actionCategories: ActionCategoryData[] = [
         budgetChange: -200,
         category: 'economia',
         requirements: { minBudget: 200 },
+        explicitGroupEffects: [
+          { groupId: 'empresarios', supportChange: 9.6 },
+          { groupId: 'cooperativas', supportChange: 6 },
+          { groupId: 'clase-media', supportChange: 8.4 }
+        ],
         futureEffects: [
           { delay: 4, budgetChange: 30, popularityChange: 0 },
           { delay: 5, budgetChange: 30, popularityChange: 0 },
@@ -227,7 +240,10 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 20,
         budgetChange: -400,
         category: 'social',
-        requirements: { minBudget: 400 }
+        requirements: { minBudget: 400 },
+        explicitGroupEffects: [
+          { groupId: 'sectores-populares', supportChange: 12 }
+        ]
       },
       {
         id: 'programa_educativo',
@@ -267,7 +283,10 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 20,
         budgetChange: -400,
         category: 'social',
-        requirements: { minBudget: 400 }
+        requirements: { minBudget: 400 },
+        explicitGroupEffects: [
+          { groupId: 'sectores-populares', supportChange: 12 }
+        ]
       },
       {
         id: 'alfabetizacion',
@@ -307,7 +326,12 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 15,
         budgetChange: -250,
         category: 'social',
-        requirements: { minBudget: 250 }
+        requirements: { minBudget: 250 },
+        explicitGroupEffects: [
+          { groupId: 'sectores-populares', supportChange: 9 },
+          { groupId: 'clase-media', supportChange: 10.5 },
+          { groupId: 'ongs', supportChange: 9 }
+        ]
       },
       {
         id: 'igualdad_genero',
@@ -365,7 +389,10 @@ export const actionCategories: ActionCategoryData[] = [
         popularityChange: 15,
         budgetChange: -300,
         category: 'infraestructura',
-        requirements: { minBudget: 300 }
+        requirements: { minBudget: 300 },
+        explicitGroupEffects: [
+          { groupId: 'sectores-populares', supportChange: 9 }
+        ]
       },
       {
         id: 'modernizacion_aeropuertos',
@@ -592,6 +619,9 @@ export const actionCategories: ActionCategoryData[] = [
         requirements: { minBudget: 400 },
         cooldown: 3,
         diminishingFactor: 0.85,
+        explicitGroupEffects: [
+          { groupId: 'clase-media', supportChange: 14 }
+        ],
         multiEffects: {
           stabilityChange: 10,
           legitimacyChange: 5,
@@ -640,7 +670,10 @@ export const actionCategories: ActionCategoryData[] = [
         budgetChange: -350,
         category: 'seguridad',
         requirements: { minBudget: 350 },
-        availableForPositions: ['gobernador', 'presidente']
+        availableForPositions: ['gobernador', 'presidente'],
+        explicitGroupEffects: [
+          { groupId: 'clase-media', supportChange: 10.5 }
+        ]
       },
       {
         id: 'policia_proximidad',

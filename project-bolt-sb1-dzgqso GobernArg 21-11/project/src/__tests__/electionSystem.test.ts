@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   processElectionResults,
+  calculateVotingIntention,
   calculateVotingIntentionForOption,
   getAvailableElectionOptions,
   canRunForOption,
@@ -155,5 +156,37 @@ describe('canRunForOption', () => {
   it('popularidad 74 no habilita presidente; 75 sí', () => {
     expect(canRunForOption(baseState({ popularity: 74 }), 'promote-president')).toBe(false);
     expect(canRunForOption(baseState({ popularity: 75 }), 'promote-president')).toBe(true);
+  });
+});
+
+
+describe('actividad electoral por mandato', () => {
+  // Base del fixture: pop 50*0.35 + budget 50*0.15 + grupos 50*0.15 + obj 0
+  // + estabilidad 50*0.05 + actividad 0 = 35
+  const BASE_INTENTION = 35;
+
+  function termLogEntry(position: string, term: number, actionsTaken: string[]) {
+    return { year: 1, turn: 1, position, term, actionsTaken, events: [] } as any;
+  }
+
+  it('actividad en 0 con turnLog vacío da la intención base', () => {
+    expect(calculateVotingIntention(baseState())).toBe(BASE_INTENTION);
+  });
+
+  it('el turnLog de mandatos ANTERIORES no suma actividad (bug: contaba toda la carrera)', () => {
+    const previousTermLog = Array.from({ length: 16 }, () =>
+      termLogEntry('intendente', 1, ['accion_previa'])
+    );
+    const state = baseState({ term: 2, turnLog: previousTermLog });
+    // Con el bug, actividad = 100 → +15 puntos; con el fix sigue en 35
+    expect(calculateVotingIntention(state)).toBe(BASE_INTENTION);
+  });
+
+  it('16 acciones en el mandato ACTUAL suman el bonus de actividad completo (+15)', () => {
+    const currentTermLog = Array.from({ length: 16 }, () =>
+      termLogEntry('intendente', 1, ['accion_actual'])
+    );
+    const state = baseState({ turnLog: currentTermLog });
+    expect(calculateVotingIntention(state)).toBe(BASE_INTENTION + 15);
   });
 });

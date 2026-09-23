@@ -298,7 +298,7 @@ export const interestGroups: InterestGroup[] = [
         description: 'Comunidad deportiva',
         influence: 6,
         popularity: 3,
-        interests: ['Infraestructura deportiva', 'apoyo'],
+        interests: ['Infraestructura deportiva'],
         demands: ['Instalaciones', 'programas deportivos'],
         baseSupport: 50,
         supportMultiplier: 1.1,

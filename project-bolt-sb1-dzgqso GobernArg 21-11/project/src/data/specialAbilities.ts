@@ -175,7 +175,7 @@ export interface ArchetypePassive {
 export const ARCHETYPE_PASSIVES: Record<import('../types/game').Archetype, ArchetypePassive[]> = {
   politico: [
     { name: 'Oficialismo', description: '+10% retención de voto en reelección', electionRetention: 0.10 },
-    { name: 'Constructor de alianzas', description: 'Reuniones con aliados no cuestan acción', freeInteractionGroups: ['aliados'] },
+    { name: 'Constructor de alianzas', description: 'Reuniones con aliados no cuestan dinero', freeInteractionGroups: ['aliados'] },
     { name: 'Consenso político', description: 'Eje conciliador +2 y convocante +1 por turno', radicalConciliadorShift: 2, cerradoConvocanteShift: 1 },
   ],
   empresario: [
@@ -184,7 +184,7 @@ export const ARCHETYPE_PASSIVES: Record<import('../types/game').Archetype, Arche
     { name: 'Ortodoxia económica', description: 'Eje técnico +2 y cerrado −1 por turno', populistaTecnicoShift: 2, cerradoConvocanteShift: -1 },
   ],
   sindicalista: [
-    { name: 'Base movilizada', description: 'Reuniones con sindicatos y sectores populares no cuestan acción', freeInteractionGroups: ['sindicatos', 'sectores-populares'] },
+    { name: 'Base movilizada', description: 'Reuniones con sindicatos y sectores populares no cuestan dinero', freeInteractionGroups: ['sindicatos', 'sectores-populares'] },
     { name: 'Piso de contención', description: '+1 acción base por apoyo popular', extraActions: 1 },
     { name: 'Lucha obrera', description: 'Eje radical −2 y populista −2 por turno', radicalConciliadorShift: -2, populistaTecnicoShift: -2 },
   ],

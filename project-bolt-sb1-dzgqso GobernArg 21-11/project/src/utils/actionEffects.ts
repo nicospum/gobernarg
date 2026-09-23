@@ -142,6 +142,12 @@ function calculateAdvisorMultiplier(action: GameAction, advisors: AdvisorWithSta
 }
 
 function calculateGroupEffects(action: GameAction, gameState: GameState) {
+  // Punto 6 — Etapa 1: si la acción declara efectos grupales explícitos,
+  // son la fuente de verdad (el tooltip del jugador y el motor coinciden).
+  if (action.explicitGroupEffects && action.explicitGroupEffects.length > 0) {
+    return action.explicitGroupEffects.map(effect => ({ ...effect }));
+  }
+
   const effects: { groupId: string; supportChange: number; }[] = [];
 
   gameState.interestGroups?.forEach(group => {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Toaster, toast } from 'sonner';
 import { GameHeader } from './components/GameHeader';
 import { CharacterCreation } from './components/CharacterCreation';
@@ -55,6 +55,9 @@ function App() {
   const [showMidtermStrategy, setShowMidtermStrategy] = useState(false);
   const [showGameLog, setShowGameLog] = useState(false);
   const [showNotebook, setShowNotebook] = useState(false);
+  const [showLegacy, setShowLegacy] = useState(false);
+  // Anti doble-clic en eventos: id del último evento cuya elección se procesó.
+  const lastProcessedEventRef = useRef<string | null>(null);
 
   const handleStart = (_isAdmin: boolean) => {
     setShowWelcomeScreen(false);
@@ -126,16 +129,29 @@ function App() {
     }
 
     if (result.triggeredEvents.length > 0) {
-      setPendingEvents(result.triggeredEvents.filter(e => e.choices && e.choices.length > 0));
+      lastProcessedEventRef.current = null;
+      // Concatenar en vez de reemplazar: si quedara un evento sin responder
+      // de un turno anterior, no se descarta en silencio (Punto 15).
+      setPendingEvents(prev => [
+        ...prev,
+        ...result.triggeredEvents.filter(e => e.choices && e.choices.length > 0),
+      ]);
     }
   };
 
   const handleEventChoice = (choiceId: string) => {
-    const [currentEvent, ...rest] = pendingEvents;
+    const [currentEvent] = pendingEvents;
     if (!currentEvent) return;
+    // Anti doble-clic: dos clics rápidos aplicaban los efectos del evento 2 veces.
+    if (lastProcessedEventRef.current === currentEvent.id) return;
+    lastProcessedEventRef.current = currentEvent.id;
 
     setGameState(prev => applyEventChoice(prev, currentEvent, choiceId));
-    setPendingEvents(rest);
+    setPendingEvents(prev => {
+      const remaining = prev.slice(1);
+      if (remaining.length === 0) lastProcessedEventRef.current = null;
+      return remaining;
+    });
   };
 
   const handleElectionChoice = (option: ElectionOption) => {
@@ -153,6 +169,7 @@ function App() {
     setShowTurnSummary(false);
     setTurnSummary(null);
     setPendingEvents([]);
+    setShowLegacy(false);
   };
 
   if (showWelcomeScreen) {
@@ -270,7 +287,10 @@ function App() {
         <EventModal
           event={currentEvent}
           onChoice={handleEventChoice}
-          onClose={() => setPendingEvents(prev => prev.slice(1))}
+          onClose={() => {
+            lastProcessedEventRef.current = null;
+            setPendingEvents(prev => prev.slice(1));
+          }}
         />
       )}
 
@@ -281,17 +301,22 @@ function App() {
         />
       )}
 
-      {!gameState.pendingElection && gameState.electionResults && !gameState.gameOver && (
+      {!gameState.pendingElection && gameState.electionResults && (
         <ElectionResultsModal
           result={gameState.electionResults}
           onClose={handleCloseElectionResults}
         />
       )}
 
-      {gameState.gameOver && !gameState.victorious && (
+      {/* FIX (Punto 3): si el fin de turno dispara eventos Y gameOver a la vez,
+          GameOverModal (z-50, más abajo en el DOM) tapaba al EventModal y la
+          elección del jugador nunca se aplicaba. Se difiere el game over
+          mientras haya eventos pendientes de responder. */}
+      {gameState.gameOver && pendingEvents.length === 0 && !gameState.victorious && !showLegacy && !gameState.electionResults && (
         <GameOverModal
           gameState={gameState}
           onRestart={handleRestart}
+          onShowLegacy={() => setShowLegacy(true)}
         />
       )}
 
@@ -303,10 +328,11 @@ function App() {
         />
       )}
 
-      {gameState.gameOver && (
+      {gameState.gameOver && (gameState.victorious || showLegacy) && (
         <LegacyScreen
           gameState={gameState}
           onRestart={handleRestart}
+          onClose={gameState.victorious ? undefined : () => setShowLegacy(false)}
         />
       )}
 

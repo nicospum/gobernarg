@@ -1,5 +1,6 @@
 import { afterEach, describe, it, expect, vi } from 'vitest';
 import { calculateActionEffects, getDefaultCooldown, processPendingEffects } from '../utils/actionEffects';
+import { actionCategories } from '../data/actionCategories';
 import type { GameState, GameAction } from '../types/game';
 
 function makeAction(overrides: Partial<GameAction> = {}): GameAction {
@@ -216,5 +217,79 @@ describe('calculateActionEffects - mantenimiento diferido', () => {
     const result = calculateActionEffects(action, state);
 
     expect(result.pendingEffects.some(e => e.id.includes('maintenance'))).toBe(false);
+  });
+});
+
+
+// ===== Regresión: explicitGroupEffects como fuente de verdad (Punto 6) =====
+
+describe('explicitGroupEffects (Punto 6 — Etapa 1)', () => {
+  it('si la acción declara explicitGroupEffects, el matcher textual NO se usa', () => {
+    // Descripción con "apoyo": antes matcheaba al grupo deportistas en frío
+    const action = makeAction({
+      description: 'Apoyo económico al sector industrial',
+      popularityChange: 10,
+      explicitGroupEffects: [
+        { groupId: 'empresarios', supportChange: 8 },
+        { groupId: 'sindicatos', supportChange: 8 },
+        { groupId: 'sector-financiero', supportChange: -9 },
+        { groupId: 'ongs', supportChange: -6 }
+      ]
+    });
+    const state = baseState({
+      interestGroups: [
+        { id: 'g1', subgroups: [{ id: 'deportistas', interests: ['apoyo'], influence: 6 }] }
+      ] as any
+    });
+
+    const effects = calculateActionEffects(action, state);
+
+    expect(effects.immediateEffects.groupEffects).toEqual([
+      { groupId: 'empresarios', supportChange: 8 },
+      { groupId: 'sindicatos', supportChange: 8 },
+      { groupId: 'sector-financiero', supportChange: -9 },
+      { groupId: 'ongs', supportChange: -6 }
+    ]);
+  });
+
+  it('sin explicitGroupEffects el matcher textual sigue como fallback', () => {
+    const action = makeAction({ description: 'Mejorar la seguridad pública', popularityChange: 20 });
+    const state = baseState({
+      interestGroups: [
+        { id: 'g1', subgroups: [{ id: 'clase-media', interests: ['seguridad'], influence: 7 }] }
+      ] as any
+    });
+
+    const effects = calculateActionEffects(action, state);
+
+    expect(effects.immediateEffects.groupEffects).toEqual([
+      { groupId: 'clase-media', supportChange: 14 }
+    ]);
+  });
+
+  it('subsidios_industriales real: grupos declarados, cero deportistas', () => {
+    const action = actionCategories
+      .flatMap(c => c.actions)
+      .find(a => a.id === 'subsidios_industriales')!;
+
+    const effects = calculateActionEffects(action, baseState());
+
+    const ids = effects.immediateEffects.groupEffects.map(g => g.groupId);
+    expect(ids).toEqual(['empresarios', 'sindicatos', 'sector-financiero', 'ongs']);
+    expect(ids).not.toContain('deportistas');
+  });
+
+  it('tercera_edad real: sus 3 grupos declarados, cero deportistas', () => {
+    const action = actionCategories
+      .flatMap(c => c.actions)
+      .find(a => a.id === 'tercera_edad')!;
+
+    const effects = calculateActionEffects(action, baseState());
+
+    expect(effects.immediateEffects.groupEffects).toEqual([
+      { groupId: 'sectores-populares', supportChange: 9 },
+      { groupId: 'clase-media', supportChange: 10.5 },
+      { groupId: 'ongs', supportChange: 9 }
+    ]);
   });
 });

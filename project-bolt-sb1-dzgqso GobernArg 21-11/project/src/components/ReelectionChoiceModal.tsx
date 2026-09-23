@@ -7,6 +7,7 @@ import {
   canRunForOption,
   calculateVotingIntentionForOption,
 } from '../utils/electionSystem';
+import { PROMOTION_MIN_POPULARITY } from '../data/careerRules';
 
 interface ReelectionChoiceModalProps {
   gameState: GameState;
@@ -68,8 +69,13 @@ export function ReelectionChoiceModal({ gameState, onSelect }: ReelectionChoiceM
                       {!allowed && (
                         <p className="text-xs text-red-400 mt-2 flex items-center gap-1">
                           <AlertTriangle className="w-3.5 h-3.5" />
+                          {/* Punto 21: el mínimo se lee de careerRules (fuente
+                              que usa canRunForOption) — antes estaba '75%'
+                              hardcodeado. */}
                           Requiere al menos{' '}
-                          {option === 'promote-president' ? '75%' : 'popularidad suficiente'}.
+                          {PROMOTION_MIN_POPULARITY[option] > 0
+                            ? `${PROMOTION_MIN_POPULARITY[option]}%`
+                            : 'popularidad suficiente'}.
                         </p>
                       )}
                     </div>

@@ -13,13 +13,21 @@ function recordElectionOutcome(
   const lastIndex = state.careerHistory.length - 1;
   const lastMilestone = state.careerHistory[lastIndex];
   if (lastMilestone && lastMilestone.position === state.position && lastMilestone.term === state.term) {
+    // FIX (Punto 11): el tipo debe reflejar lo resuelto en la elección. Antes
+    // `state.term === 1` pisaba cualquier ascenso en el primer mandato (un
+    // intendente que ascendía a gobernador quedaba como 'initial' y el legacy
+    // no contaba el salto). Ahora: 'promotion' si hubo ascenso de cargo,
+    // 'initial' solo para el primer milestone de la carrera, 'reelection' en
+    // el resto (incluido el primer mandato después de un ascenso).
+    const isPromotion = getNextPosition(option, state.position) !== state.position;
+    const milestoneType = isPromotion ? 'promotion' : lastIndex === 0 ? 'initial' : 'reelection';
     state.careerHistory = state.careerHistory.map((m, i) =>
       i === lastIndex
         ? {
             ...m,
             endYear: state.year,
             result: victory ? 'victory' : 'defeat',
-            type: state.term === 1 ? 'initial' : option === 'reelection' ? 'reelection' : 'promotion',
+            type: milestoneType,
             votesPercentage,
           }
         : m
@@ -29,6 +37,10 @@ function recordElectionOutcome(
 }
 
 export function resolvePendingElection(gameState: GameState, option: ElectionOption): GameState {
+  // Anti doble-clic: si no hay elección pendiente (o ya fue resuelta), no-op.
+  // Sin esta guarda, un segundo clic aplicaba el reset de mandato dos veces.
+  if (!gameState.pendingElection || gameState.electionResults) return gameState;
+
   let state: GameState = {
     ...gameState,
     careerHistory: gameState.careerHistory.map(m => ({ ...m })),
@@ -92,6 +104,8 @@ export function resolvePendingElection(gameState: GameState, option: ElectionOpt
   state.interactionCountByGroup = {};
   state.lastRandomEventTurn = 0;
   state.randomEventsThisTerm = 0;
+  // El turno global se reinicia por mandato: los cooldowns por evento también.
+  state.lastEventFiredTurns = {};
   state.advisors = [];
   state.advisorActionUsed = false;
   state.moneyPrintingCount = 0;
@@ -112,6 +126,10 @@ export function resolvePendingElection(gameState: GameState, option: ElectionOpt
   state.abilityCooldowns = {};
   state.impeachmentConsecutiveTurns = 0;
   state.coupConsecutiveTurns = 0;
+  // Punto 14: el crecimiento presupuestario se mide contra el inicio del
+  // mandato actual, no contra el arranque de la carrera (historicalBudget[0]
+  // quedaba congelado y distorsionaba el budgetImpact de las elecciones).
+  state.historicalBudget = [state.budget];
 
   return recalcState(state);
 }

@@ -2,7 +2,8 @@ import { describe, it, expect } from 'vitest';
 import {
   POSITION_INCOME,
   POSITION_MAINTENANCE,
-  POSITION_STARTING_BUDGET
+  POSITION_STARTING_BUDGET,
+  addNotification
 } from '../engine/engineShared';
 import { getInitialGameState } from '../engine/gameEngine';
 
@@ -79,5 +80,29 @@ describe('getInitialGameState - flujo solo presidente', () => {
 
   it('arranca con el presupuesto inicial de presidente', () => {
     expect(getInitialGameState().budget).toBe(POSITION_STARTING_BUDGET.presidente);
+  });
+});
+
+
+// ===== Regresión: addNotification congela el turno de creación (Punto 13) =====
+
+describe('addNotification', () => {
+  it('guarda el year/turn del estado al crear la notificación', () => {
+    const state = { ...getInitialGameState(), year: 3, turn: 2 };
+
+    const result = addNotification(state, {
+      type: 'info',
+      title: 'Aviso de prueba',
+      message: 'Mensaje',
+      importance: 'low',
+    });
+
+    // El centro de notificaciones mostraba el turno vivo del estado; la
+    // notificación debe llevar el año/trimestre de cuando fue creada.
+    const notification = result.notifications[0];
+    expect(notification.year).toBe(3);
+    expect(notification.turn).toBe(2);
+    // No muta el estado original (patrón prev de React).
+    expect(state.notifications).toHaveLength(0);
   });
 });

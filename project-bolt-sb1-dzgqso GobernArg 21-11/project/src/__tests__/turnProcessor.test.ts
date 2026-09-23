@@ -1,6 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { afterEach, describe, it, expect, vi } from 'vitest';
 import { processEndTurn } from '../engine/turnProcessor';
 import { getInitialGameState } from '../engine/gameEngine';
+import { actionCategories } from '../data/actionCategories';
+import { interestGroups } from '../data/interestGroups';
 import type { GameState, Position } from '../types/game';
 
 function baseState(position: Position): GameState {
@@ -9,6 +11,10 @@ function baseState(position: Position): GameState {
     position,
   };
 }
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 describe('POPULARITY_DECAY por cargo', () => {
   it('intendente desgasta 5 puntos de popularidad por turno', () => {
@@ -69,5 +75,97 @@ describe('creación del TurnLogEntry', () => {
     expect(entry.popularityChange).toBe(-5);
     // Ingreso 200 - mantenimiento 120 = +80
     expect(entry.budgetChange).toBe(80);
+  });
+});
+
+
+// ===== Regresión: completedObjectives no se muta (Punto 9) =====
+
+describe('completedObjectives — anti mutación', () => {
+  it('processEndTurn no muta completedObjectives del estado original', () => {
+    const state = baseState('intendente');
+    state.objectives = [
+      {
+        id: 'obj-test',
+        title: 'Objetivo de prueba',
+        description: '',
+        requirements: { popularity: 1 },
+        reward: { budget: 100 },
+        completed: false,
+        progress: 0,
+      } as any,
+    ];
+    state.popularity = 80; // cumple el requisito → se otorga la recompensa
+
+    const before = state.completedObjectives;
+    const result = processEndTurn(state);
+
+    // El nuevo estado registra el objetivo completado...
+    expect(result.state.completedObjectives.some(o => o.id === 'obj-test')).toBe(true);
+    // ...pero el estado original (prev de React) queda intacto
+    expect(state.completedObjectives).toBe(before);
+    expect(state.completedObjectives.some(o => o.id === 'obj-test')).toBe(false);
+  });
+});
+
+
+// ===== Regresión: advertencias de emisión monetaria (Punto 10) =====
+
+describe('advertencias de emisión monetaria (Punto 10)', () => {
+  it('a las 3 emisiones avisa riesgo inflacionario (importance high)', () => {
+    const state = { ...baseState('presidente'), moneyPrintingCount: 3 };
+
+    const result = processEndTurn(state);
+
+    const warning = result.state.notifications.find(n => n.title === 'Riesgo inflacionario');
+    expect(warning).toBeDefined();
+    expect(warning!.importance).toBe('high');
+  });
+
+  it('a las 5 emisiones avisa riesgo de hiperinflación (importance critical)', () => {
+    const state = { ...baseState('presidente'), moneyPrintingCount: 5 };
+
+    const result = processEndTurn(state);
+
+    const warning = result.state.notifications.find(n => n.title === 'Riesgo de hiperinflación');
+    expect(warning).toBeDefined();
+    expect(warning!.importance).toBe('critical');
+    expect(warning!.message).toContain('7 emisiones');
+  });
+
+  it('emitir_dinero tiene cooldown 3: la derrota por hiperinflación ahora es alcanzable', () => {
+    const action = actionCategories
+      .flatMap(c => c.actions)
+      .find(a => a.id === 'emitir_dinero')!;
+
+    expect(action.cooldown).toBe(3);
+  });
+});
+
+
+// ===== Regresión: advertencia de popularidad alineada a la regla real (Punto 10) =====
+
+describe('advertencia de popularidad crítica (Punto 10)', () => {
+  it('usa el umbral del cargo (gobernador: 25) y avisa "Dos turnos consecutivos"', () => {
+    // random = 0.999 → sin eventos aleatorios ni agendas: corrida determinística.
+    vi.spyOn(Math, 'random').mockReturnValue(0.999);
+
+    // Relaciones en 0 → la popularidad recalculada queda igual a la política.
+    // 28 - 7 (desgaste de gobernador) = 21: bajo el umbral 25 de gobernador
+    // pero NO bajo el 20 fijo que usaba el aviso viejo — la advertencia debe
+    // aparecer igual, con el texto de la regla real (2 turnos, no 3).
+    const zeroRelations = Object.fromEntries(
+      interestGroups.flatMap(g => g.subgroups).map(sg => [sg.id, 0])
+    );
+    const state = { ...baseState('gobernador'), popularity: 28, groupRelations: zeroRelations };
+
+    const result = processEndTurn(state);
+
+    expect(result.state.popularity).toBe(21);
+    const warning = result.state.notifications.find(n => n.title === 'Popularidad crítica');
+    expect(warning).toBeDefined();
+    // LOW_POPULARITY_TURNS = 2 (victoryConditions.ts); el texto viejo decía "Tres".
+    expect(warning!.message).toContain('Dos turnos consecutivos');
+    expect(warning!.importance).toBe('critical');
   });
 });

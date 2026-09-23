@@ -253,3 +253,47 @@ describe('updateObjectives', () => {
     expect(updated.objectives[0].progress).toBe(100);
   });
 });
+
+
+describe('updateObjectives — objetivos con requisitos múltiples (AND)', () => {
+  it('no completa si solo se cumple UN requisito de varios (popularidad sí, presupuesto no)', () => {
+    const state = baseState({
+      popularity: 80,
+      budget: 500,
+      objectives: [makeObjective({ popularity: 70, budget: 10000 })],
+    });
+    const updated = updateObjectives(state);
+    expect(updated.objectives[0].completed).toBe(false);
+    // progress = promedio de ambos requisitos (clamp solo al final):
+    // 80/70 → 114 + 500/10000 → 5 → 119/2 = 59.6 → 60
+    expect(updated.objectives[0].progress).toBe(60);
+  });
+
+  it('completa solo cuando se cumplen TODOS los requisitos', () => {
+    const state = baseState({
+      popularity: 80,
+      budget: 10000,
+      objectives: [makeObjective({ popularity: 70, budget: 10000 })],
+    });
+    const updated = updateObjectives(state);
+    expect(updated.objectives[0].completed).toBe(true);
+    expect(updated.objectives[0].progress).toBe(100);
+  });
+
+  it('popularidad + apoyo grupal: completa solo con ambos cumplidos', () => {
+    const objective = makeObjective({ popularity: 70, groupSupport: { sindicatos: 60 } });
+    const incomplete = baseState({
+      popularity: 90,
+      groupRelations: { sindicatos: 30 },
+      objectives: [objective],
+    });
+    expect(updateObjectives(incomplete).objectives[0].completed).toBe(false);
+
+    const complete = baseState({
+      popularity: 90,
+      groupRelations: { sindicatos: 60 },
+      objectives: [objective],
+    });
+    expect(updateObjectives(complete).objectives[0].completed).toBe(true);
+  });
+});

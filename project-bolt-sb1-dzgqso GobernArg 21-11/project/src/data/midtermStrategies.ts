@@ -23,7 +23,11 @@ export const MIDTERM_STRATEGY_EFFECTS: Record<MidtermStrategy, MidtermStrategyEf
     stabilityPerTurn: +5,
     popularityPerTurn: +1,
     riskLevel: 'medium',
-    description: 'Armás coaliciones amplias. +estabilidad, mejor intención de voto a largo plazo. Costo: cedés apoyo en tu base (aliados).'
+    // Texto alineado al efecto real (turnProcessor.ts): +5 estabilidad y
+    // +1 popularidad por turno, acciones ×1.15 y -2 apoyo de aliados por
+    // turno. Antes prometía "mejor intención de voto a largo plazo", que el
+    // efecto no aplica.
+    description: 'Armás coaliciones amplias. +5 estabilidad y +1 popularidad por turno, y tus acciones rinden +15%. Costo: cedés apoyo en tu base (-2 aliados por turno).'
   },
   jugada_audaz: {
     actionMultiplier: 1.50,

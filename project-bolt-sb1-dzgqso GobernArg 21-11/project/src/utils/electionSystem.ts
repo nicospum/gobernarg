@@ -189,8 +189,13 @@ function calculateActivityImpact(gameState: GameState): number {
   const expectedActions = ELECTION_CONSTANTS.TOTAL_TURNS; // 16 turnos, 1 acción mínima por turno
   if (expectedActions <= 0) return 0;
 
-  const turnLog = gameState.turnLog ?? [];
-  const totalActionsTaken = turnLog.reduce(
+  // FIX: contar solo el mandato actual. El turnLog es histórico (toda la
+  // carrera); sin este filtro, desde el segundo mandato la actividad quedaba
+  // clavada en ~100 y regalaba +15 puntos de intención de voto.
+  const currentTermLog = (gameState.turnLog ?? []).filter(
+    entry => entry.position === gameState.position && entry.term === gameState.term
+  );
+  const totalActionsTaken = currentTermLog.reduce(
     (sum, entry) => sum + entry.actionsTaken.length,
     0
   );

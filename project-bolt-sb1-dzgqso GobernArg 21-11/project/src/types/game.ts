@@ -73,6 +73,13 @@ export interface GameAction {
   isLoan?: boolean;
   /** Factor de rendimiento decreciente. default 0.80 (pierde 20% cada uso repetido) */
   diminishingFactor?: number;
+  /**
+   * Efectos grupales explícitos (Punto 6 — Etapa 1). Si está definido,
+   * calculateGroupEffects lo usa como fuente de verdad y NO aplica el
+   * matching textual por descripción. supportChange se expresa en puntos
+   * de apoyo (misma escala que el matcher: popularityChange × influence/10).
+   */
+  explicitGroupEffects?: { groupId: string; supportChange: number }[];
   /** Prerrequisitos de desbloqueo (Fase 3). Diferente de requirements (que son de ejecución). */
   prerequisites?: {
     requiredActions?: string[];
@@ -412,6 +419,11 @@ export interface Notification {
   read?: boolean;
   dismissed?: boolean;
   requiresAcknowledgment?: boolean;
+  /** Año/trimestre del estado en el momento de crear la notificación.
+   *  Sin estos campos el centro de notificaciones mostraba el turno vivo
+   *  del estado actual, no el de creación (Punto 13). */
+  year?: number;
+  turn?: number;
 }
 
 // =====================
@@ -515,6 +527,12 @@ export interface GameState {
   interactionCountByGroup: Record<string, { reuniones: number; negociaciones: number }>;
   /** Turno en el que se disparó el último evento aleatorio (para cooldown global) */
   lastRandomEventTurn: number;
+  /**
+   * Turno global (dentro del mandato) en que se disparó cada evento por id.
+   * Se respeta el campo `cooldown` del evento — antes se ignoraba y los
+   * eventos triggered podían re-dispararse cada turno en loop.
+   */
+  lastEventFiredTurns?: Record<string, number>;
   /** Cantidad de eventos aleatorios disparados en el mandato actual */
   randomEventsThisTerm: number;
   // Internos para motores (no persistidos)

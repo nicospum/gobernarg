@@ -237,8 +237,19 @@ export function resolveRandomEvents(state: GameState): GameEvent[] {
   // ============================================================
   for (const event of allEvents) {
     if (event.type !== 'triggered') continue;
+    // FIX (Punto 1b): respetar el cooldown declarado por evento. Sin esto,
+    // un evento cuyas condiciones seguían cumpliéndose se re-disparaba cada
+    // turno en loop (el campo cooldown existía en los datos pero nadie lo leía).
+    const lastFired = state.lastEventFiredTurns?.[event.id];
+    if (lastFired !== undefined && getGlobalTurn(state) - lastFired < (event.cooldown ?? 0)) {
+      continue;
+    }
     if (checkEventConditions(event, state)) {
       triggered.push(event);
+      // Registrar el disparo: aplica tanto si el evento tiene choices (lo
+      // responde el jugador) como si se resuelve solo.
+      if (!state.lastEventFiredTurns) state.lastEventFiredTurns = {};
+      state.lastEventFiredTurns[event.id] = getGlobalTurn(state);
     }
   }
 
@@ -333,21 +344,38 @@ export function applyEventChoice(gameState: GameState, event: GameEvent, choiceI
   const choice = event.choices?.find(c => c.id === choiceId);
   if (!choice) return gameState;
 
-  const state: GameState = { ...gameState };
+  const state: GameState = {
+    ...gameState,
+    groupRelations: { ...gameState.groupRelations },
+  };
 
   choice.effects.immediate.forEach(effect => applyEventEffect(state, effect));
 
   if (choice.effects.delayed) {
-    state.pendingEffects = [...state.pendingEffects];
+    const pendingEffects = [...state.pendingEffects];
     choice.effects.delayed.forEach(effect => {
-      state.pendingEffects.push({
+      // FIX: traducir el efecto {target, value} al shape de PendingEffect que
+      // processPendingEffects realmente aplica. Antes se guardaba target/value
+      // sin traducir y el efecto diferido se descartaba en silencio.
+      const base = {
         id: `${event.id}_${choiceId}_${state.turn}_${Math.random().toString(36).slice(2, 8)}`,
         activationTurn: getGlobalTurn(state) + (effect.turnsUntil || 1),
-        target: effect.target,
-        value: effect.value,
         description: `Efecto diferido de ${event.title}`
-      });
+      };
+      const target = effect.target;
+      const value = effect.value ?? 0;
+      if (target === 'popularity') {
+        pendingEffects.push({ ...base, popularityChange: value });
+      } else if (target === 'budget') {
+        pendingEffects.push({ ...base, budgetChange: value });
+      } else if (target === 'stability') {
+        pendingEffects.push({ ...base, stabilityChange: value });
+      } else if (target) {
+        const groupId = target.startsWith('group_') ? target.slice(6) : target;
+        pendingEffects.push({ ...base, groupEffects: [{ groupId, supportChange: value }] });
+      }
     });
+    state.pendingEffects = pendingEffects;
   }
 
   return recalcState(state);

@@ -64,7 +64,9 @@ export function NotificationCenter({ gameState, onMarkRead, onDismiss }: Notific
               </div>
               <p className="text-sm text-muted-foreground mt-0.5">{notification.message}</p>
               <p className="text-xs text-muted-foreground mt-1">
-                Año {gameState.year} · Trimestre {gameState.turn}
+                {/* Punto 13: fecha de creación de la notificación (fallback al
+                    turno vivo para notificaciones viejas sin el campo). */}
+                Año {notification.year ?? gameState.year} · Trimestre {notification.turn ?? gameState.turn}
               </p>
             </div>
           </div>

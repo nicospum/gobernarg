@@ -27,7 +27,10 @@ export const DEFEAT_REASON_CONFIG: Record<DefeatReason, DefeatReasonConfig> = {
     title: 'Juicio Político',
     description: 'El Congreso te destituyó mediante un juicio político. La combinación de baja popularidad e inestabilidad resultó letal.',
     icon: 'Gavel',
-    advice: 'Mantené estabilidad por encima de todo. Cultivá apoyo legislativo y evitá que la popularidad caiga a niveles críticos.',
+    // El impeachment se declara por popularidad < 10% + estabilidad < 20%
+    // durante 2 turnos (victoryConditions.ts) — el apoyo legislativo es la
+    // palanca del golpe institucional, no de esta derrota.
+    advice: 'Cuidado con la combinación letal: popularidad bajo 10% y estabilidad bajo 20% durante 2 turnos te destituyen. Recuperá ambas antes de que avance el juicio.',
     severity: 'institutional',
   },
   institutional_coup: {
@@ -41,7 +44,8 @@ export const DEFEAT_REASON_CONFIG: Record<DefeatReason, DefeatReasonConfig> = {
     title: 'Hiperinflación',
     description: 'La emisión monetaria descontrolada destruyó la economía. El peso argentino colapsó y con él tu gobierno.',
     icon: 'Flame',
-    advice: 'No emitas dinero más de 3 veces. Buscá financiamiento alternativo y mantené el equilibrio fiscal.',
+    // La derrota es a las 7 emisiones (victoryConditions.ts), no a las 3.
+    advice: 'No emitas dinero más de 6 veces: la séptima emisión desata la hiperinflación. Buscá financiamiento alternativo y mantené el equilibrio fiscal.',
     severity: 'economic',
   },
   election_loss: {

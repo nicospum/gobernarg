@@ -26,12 +26,17 @@ import { generateTurnIntro } from './narrativeEngine';
 // ===========================
 
 function addWarningNotifications(state: GameState): GameState {
-  if (state.popularity < 20) {
+  // FIX (Punto 10): la derrota por popularidad es a los 2 turnos consecutivos
+  // (LOW_POPULARITY_TURNS en victoryConditions.ts) y el umbral depende del
+  // cargo (DEFEAT_POP_THRESHOLD, misma constante que usa checkDefeat).
+  // Antes el aviso decía "Tres turnos" y usaba un 20 fijo para todos los cargos.
+  const popThreshold = DEFEAT_POP_THRESHOLD[state.position] ?? 20;
+  if (state.popularity < popThreshold) {
     state = addNotification(state, {
       type: 'warning',
       category: 'political',
       title: 'Popularidad crítica',
-      message: 'Tu popularidad está muy baja. Tres turnos consecutivos así y podrías perder el gobierno.',
+      message: 'Tu popularidad está muy baja. Dos turnos consecutivos así y podrías perder el gobierno.',
       importance: 'critical'
     });
   }
@@ -56,7 +61,16 @@ function addWarningNotifications(state: GameState): GameState {
     });
   }
 
-  if (state.moneyPrintingCount >= 3) {
+  if (state.moneyPrintingCount >= 5) {
+    // Umbral de derrota por hiperinflación: 7 emisiones (victoryConditions.ts)
+    state = addNotification(state, {
+      type: 'warning',
+      category: 'economy',
+      title: 'Riesgo de hiperinflación',
+      message: `Has emitido dinero ${state.moneyPrintingCount} veces. A las 7 emisiones el país entra en hiperinflación y perderás el gobierno.`,
+      importance: 'critical'
+    });
+  } else if (state.moneyPrintingCount >= 3) {
     state = addNotification(state, {
       type: 'warning',
       category: 'economy',
@@ -256,11 +270,15 @@ export function processEndTurn(gameState: GameState): import('./engineShared').T
     groupMoods: gameState.groupMoods.map(m => ({ ...m })),
     pendingEffects: [...gameState.pendingEffects],
     completedActions: [...gameState.completedActions],
+    completedObjectives: [...gameState.completedObjectives],
     turnLog: [...gameState.turnLog],
     historicalPopularity: [...gameState.historicalPopularity],
     historicalBudget: [...gameState.historicalBudget],
     actionUsageCount: { ...gameState.actionUsageCount },
     actionCooldowns: { ...gameState.actionCooldowns },
+    // Clonar: resolveRandomEvents registra disparos acá (Punto 1b) y no debe
+    // mutar el estado prev de React.
+    lastEventFiredTurns: { ...gameState.lastEventFiredTurns },
     notifications: [...gameState.notifications],
   };
   const events: string[] = [];
