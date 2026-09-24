@@ -4,51 +4,51 @@
 
 @layer base {
   :root {
-    --background: 220 15% 8%;
+    --background: 216 44% 6%;
     --foreground: 217 25% 92%;
-    --card: 220 16% 12%;
+    --card: 218 36% 14%;
     --card-foreground: 217 25% 92%;
-    --popover: 220 16% 11%;
+    --popover: 218 36% 14%;
     --popover-foreground: 217 25% 92%;
-    --primary: 210 50% 45%;
+    --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 15% 18%;
+    --secondary: 217 33% 17%;
     --secondary-foreground: 214 20% 82%;
-    --muted: 220 14% 16%;
+    --muted: 217 33% 15%;
     --muted-foreground: 215 12% 60%;
     --accent: 42 70% 50%;
     --accent-foreground: 220 15% 8%;
     --destructive: 348 65% 40%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 14% 17%;
-    --input: 220 14% 15%;
-    --ring: 210 50% 50%;
-    --radius: 0.4rem;
+    --border: 217 30% 18%;
+    --input: 217 30% 18%;
+    --ring: 217 91% 60%;
+    --radius: 0.5rem;
   }
 
   .dark {
-    --background: 220 15% 8%;
+    --background: 216 44% 6%;
     --foreground: 217 25% 92%;
-    --card: 220 16% 12%;
+    --card: 218 36% 14%;
     --card-foreground: 217 25% 92%;
-    --popover: 220 16% 11%;
+    --popover: 218 36% 14%;
     --popover-foreground: 217 25% 92%;
-    --primary: 210 50% 45%;
+    --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 15% 18%;
+    --secondary: 217 33% 17%;
     --secondary-foreground: 214 20% 82%;
-    --muted: 220 14% 16%;
+    --muted: 217 33% 15%;
     --muted-foreground: 215 12% 60%;
     --accent: 42 70% 50%;
     --accent-foreground: 220 15% 8%;
     --destructive: 348 65% 40%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 14% 17%;
-    --input: 220 14% 15%;
-    --ring: 210 50% 50%;
+    --border: 217 30% 18%;
+    --input: 217 30% 18%;
+    --ring: 217 91% 60%;
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-[#070e17] text-foreground font-sans min-h-screen antialiased selection:bg-blue-500/30 selection:text-blue-200;
   }
 }

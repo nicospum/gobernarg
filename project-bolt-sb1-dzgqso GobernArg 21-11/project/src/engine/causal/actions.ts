@@ -8,6 +8,7 @@ import {
 } from '../../data/causal';
 import { evalCondition } from './dsl';
 import { countExecutions, decisionContext, effectiveLeg, flagValue, viewRef } from './context';
+import { projectCaja } from './fiscal';
 import type { CausalState } from './types';
 
 /** Una acción elegida en el turno. `viaDnu` = LEY habilitada por decreto. */
@@ -150,4 +151,30 @@ export function getAvailability(
 
 export function listPolicyAvailability(state: CausalState, selected: Selection[], paLeft: number, opts: { loansAllowed?: boolean } = {}): Availability[] {
   return POLICY_ACTIONS.map(a => getAvailability(state, a.id, selected, paLeft, opts)).filter(a => a.visible);
+}
+
+/** Gasto corriente permanente que agrega una acción al ejecutarse (offset 0). */
+export function immediateGastoDelta(actionId: string): number {
+  return immediateDelta(actionId, 'GASTO_CORR');
+}
+
+function immediateDelta(actionId: string, target: string, maxOffset = 0): number {
+  return (EFFECTS_BY_ACTION[actionId] ?? [])
+    .filter(r => r.target === target && r.offset <= maxOffset && (r.kind === 'IMMEDIATE' || r.kind === 'DELAYED') && r.magnitude !== null)
+    .reduce((a, r) => a + (r.magnitude as number), 0);
+}
+
+/**
+ * Proyección de caja al cierre con la selección actual: incluye el costo, el
+ * gasto permanente que agregan, los cambios de recaudación (alícuotas,
+ * retenciones, exenciones, próximos 2 turnos) y los intereses de la deuda nueva.
+ */
+export function projectedCloseCaja(state: CausalState, selected: Selection[]): { caja: number; structural: number } {
+  return projectCaja(state, selected, id => ({
+    caja: cajaCost(state, CAUSAL_ACTIONS_BY_ID[id]),
+    gasto: immediateDelta(id, 'GASTO_CORR'),
+    ingresoMult: immediateDelta(id, 'INGRESO_MULT', 2),
+    pres: immediateDelta(id, 'PRES', 1),
+    deuda: immediateDelta(id, 'DEUDA'),
+  }));
 }

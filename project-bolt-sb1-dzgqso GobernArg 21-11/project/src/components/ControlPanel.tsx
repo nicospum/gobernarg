@@ -5,8 +5,8 @@ import { ActionCard } from './ActionCard';
 import { getPolicyAvailability } from '../engine/gameEngine';
 import { UI_CATEGORY_STYLES } from '@/data/categoryStyles';
 import { ACTOR_IDS, PARAMS, UI_CATEGORIES, type ActorId, type UiCategory } from '@/data/causal';
-import { legForLaws, lawThreshold } from '@/engine/causal';
-import { fmtBudgetDelta } from '@/lib/format';
+import { legForLaws, lawThreshold, projectedCloseCaja } from '@/engine/causal';
+import { fmtBudget, fmtBudgetDelta } from '@/lib/format';
 
 interface ControlPanelProps {
   gameState: GameState;
@@ -45,75 +45,76 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
     .filter(av => gameState.selectedActions.includes(av.action.id))
     .reduce((acc, av) => acc + av.caja, 0);
 
+  const projection = projectedCloseCaja(causal, gameState.selectedActions.map(actionId => ({ actionId })));
   const leg = Math.round(legForLaws(causal));
   const threshold = lawThreshold(causal);
   const honeymoon = causal.turn - causal.mandateStart + 1 <= PARAMS.LUNA_MIEL;
   const hasMajority = leg >= threshold;
 
   return (
-    <div className="flex flex-col rounded-lg border border-border bg-card shadow-sm overflow-hidden">
+    <div className="flex flex-col rounded-xl border border-white/8 bg-[#0f1e38] shadow-xl overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-        <h2 className="font-display font-bold text-lg uppercase tracking-wide text-foreground">
-          Acciones Políticas
+      <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/8 bg-[#091422]">
+        <h2 className="font-['Barlow_Condensed'] font-bold text-xl uppercase tracking-wider text-white">
+          ACCIONES POLÍTICAS
         </h2>
-        <span className="text-[11px] text-muted-foreground font-mono">
-          {filtered.filter(a => a.available).length} disponibles · {filtered.length} en total
+        <span className="text-[11px] text-white/50 font-mono">
+          {filtered.filter(a => a.available).length} disponibles · {filtered.length} en categoría
         </span>
       </div>
 
-      {/* Congreso */}
-      <div className="mx-4 mt-3 px-3 py-2 rounded border border-border bg-white/3 text-[11px] flex items-start gap-2">
-        <Scale size={13} className={hasMajority ? 'text-emerald-300 mt-0.5' : 'text-amber-300 mt-0.5'} />
-        <p className={hasMajority ? 'text-emerald-300' : 'text-amber-300'}>
+      {/* Alerta de Congreso */}
+      <div className="mx-4 mt-3 px-3.5 py-2.5 rounded-lg border border-white/8 bg-white/4 text-[11px] flex items-start gap-2.5">
+        <Scale size={14} className={hasMajority ? 'text-emerald-400 flex-shrink-0 mt-0.5' : 'text-amber-400 flex-shrink-0 mt-0.5'} />
+        <p className={hasMajority ? 'text-emerald-300/90 leading-relaxed' : 'text-amber-300/90 leading-relaxed'}>
           {hasMajority
-            ? `Congreso: las leyes salen (${leg}% de apoyo; se necesita ${threshold}%).`
-            : `Congreso: sin mayoría para leyes (${leg}% de apoyo; se necesita ${threshold}%). Un DNU permite sacar una ley por decreto, con costo institucional.`}
-          {honeymoon && <span className="text-sky-300"> Luna de miel: el Congreso acompaña más los primeros turnos.</span>}
+            ? `Congreso favorable: mayorías para votar leyes (${leg}% de apoyo parlamentario; requere ${threshold}%).`
+            : `Congreso fragmentado (${leg}% de apoyo; requiere ${threshold}%). Las leyes complejas pueden enviarse por DNU con mayor costo político.`}
+          {honeymoon && <span className="text-cyan-300 font-semibold"> (Luna de miel activa)</span>}
         </p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex items-center gap-0.5 p-2 m-3 rounded bg-white/3 border border-border overflow-x-auto">
+      {/* Categorías Filter Tabs */}
+      <div className="flex items-center gap-1.5 p-2 mx-4 my-3 rounded-lg bg-[#070e17] border border-white/8 overflow-x-auto scrollbar-none">
         <button
           onClick={() => setSelectedCategory('todas')}
-          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded text-[11px] font-semibold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-bold transition-all whitespace-nowrap ${
             selectedCategory === 'todas'
-              ? 'bg-primary text-primary-foreground'
-              : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+              ? 'bg-blue-600 text-white shadow-md'
+              : 'text-white/60 hover:text-white hover:bg-white/6'
           }`}
         >
-          <LayoutGrid size={12} />
+          <LayoutGrid size={13} />
           Todas
         </button>
         {UI_CATEGORIES.filter(c => availability.some(av => av.action.category === c)).map((category) => {
           const style = UI_CATEGORY_STYLES[category];
+          const isActive = selectedCategory === category;
           return (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              title={category}
-              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded text-[11px] font-semibold transition-all whitespace-nowrap border ${
-                selectedCategory === category
-                  ? `border-transparent text-white ${style.bgColor.replace('/15', '/50')}`
-                  : 'text-muted-foreground hover:text-foreground hover:bg-white/5 border-transparent'
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-bold transition-all whitespace-nowrap border ${
+                isActive
+                  ? 'border-blue-500/40 bg-blue-500/20 text-white shadow-sm'
+                  : 'border-transparent text-white/60 hover:text-white hover:bg-white/6'
               }`}
             >
-              <img src={style.imageSrc} alt={style.label} className="w-3 h-3 object-contain" />
+              <img src={style.imageSrc} alt={style.label} className="w-3.5 h-3.5 object-contain" />
               {style.label}
             </button>
           );
         })}
       </div>
 
-      {/* Grid */}
-      <div className="flex-1 overflow-y-auto px-3 pb-3 max-h-[560px]">
+      {/* Grid de tarjetas */}
+      <div className="flex-1 overflow-y-auto px-4 pb-4 max-h-[620px]">
         {filtered.length === 0 ? (
-          <div className="text-center py-10 text-[12px] text-muted-foreground">
-            No hay acciones en esta categoría.
+          <div className="text-center py-12 text-[12px] text-white/40">
+            No hay acciones disponibles en esta categoría.
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {filtered.map((av) => (
               <ActionCard
                 key={av.action.id}
@@ -128,22 +129,25 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
         )}
       </div>
 
-      {/* Footer sumario */}
-      {gameState.selectedActions.length > 0 && (
-        <div className="px-4 py-2.5 border-t border-border bg-primary/5 text-[12px] flex items-center justify-between gap-3 flex-wrap">
-          <span className="font-semibold text-foreground">
-            {gameState.selectedActions.length}{' '}
-            {gameState.selectedActions.length === 1 ? 'acción seleccionada' : 'acciones seleccionadas'}
+      {/* Footer: proyección de caja */}
+      <div className={`px-5 py-3 border-t border-white/8 text-[12px] flex items-center justify-between gap-3 flex-wrap ${projection.caja < 0 ? 'bg-red-500/10' : 'bg-[#091422]'}`}>
+        <span className="font-bold text-white">
+          {gameState.selectedActions.length === 0
+            ? 'Sin acciones en agenda este turno'
+            : `${gameState.selectedActions.length} ${gameState.selectedActions.length === 1 ? 'acción elegida' : 'acciones elegidas'} (${fmtBudgetDelta(selectedCaja)})`}
+        </span>
+        <span className="text-white/60 font-mono text-[11px]">
+          Caja proyectada:{' '}
+          <span className={`font-bold ${projection.caja >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{fmtBudget(projection.caja)}</span>
+          {' · '}Balance estructural:{' '}
+          <span className={`font-bold ${projection.structural >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{fmtBudgetDelta(projection.structural)}/t</span>
+        </span>
+        {projection.caja < 0 && (
+          <span className="w-full text-[11px] text-red-300 font-semibold">
+            ⚠ Alerta fiscal: la caja caerá en déficit y el Tesoro emitirá moneda en el próximo turno.
           </span>
-          <span className="text-muted-foreground font-mono">
-            Caja del turno:{' '}
-            <span className={selectedCaja >= 0 ? 'text-emerald-400' : 'text-red-400'}>
-              {fmtBudgetDelta(selectedCaja)}
-            </span>
-            {' · '}Se ejecutan al finalizar el turno
-          </span>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

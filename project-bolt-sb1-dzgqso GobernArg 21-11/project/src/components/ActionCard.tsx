@@ -57,20 +57,29 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
   const timeline = actionTimeline(action.id);
   const notes = actionContextNotes(action.id);
   const { winners, losers } = affectedActors(action.id, SENSITIVITIES as Record<ActorId, { target: string; s: number }[]>);
-  const costLabel = caja < 0 ? `−${fmtBudget(Math.abs(caja))}` : caja > 0 ? `+${fmtBudget(caja)}` : 'Sin costo';
+  const costLabel = caja < 0 ? `−${fmtBudget(Math.abs(caja))}` : caja > 0 ? `+${fmtBudget(caja)}` : '$0';
   const requested = requestedBy.length > 0;
+
+  // Determinar nivel de riesgo visual para B0 badge
+  const riskLevel = action.risksText
+    ? action.risksText.toLowerCase().includes('alto') || action.risksText.toLowerCase().includes('paro') || action.risksText.toLowerCase().includes('crisis')
+      ? 'alto'
+      : action.risksText.toLowerCase().includes('crítico') || action.risksText.toLowerCase().includes('default')
+      ? 'critico'
+      : 'medio'
+    : 'bajo';
 
   return (
     <InfoTooltip
       content={
         <div className="flex flex-col gap-1.5 max-w-[280px]">
-          {action.strategic && <p className="text-[11px] text-foreground/80 leading-snug">{action.strategic}</p>}
+          {action.strategic && <p className="text-[11px] text-white/80 leading-snug">{action.strategic}</p>}
           {timeline.length > 0 && (
             <div>
-              <div className="font-semibold text-[11px] mb-0.5">Qué produce</div>
+              <div className="font-semibold text-[11px] text-white mb-0.5">Efectos previstos</div>
               {timeline.map(t => (
-                <div key={t.when} className="text-[10px] text-muted-foreground leading-snug">
-                  <span className="text-foreground/70">{t.when}:</span>{' '}
+                <div key={t.when} className="text-[10px] text-white/70 leading-snug">
+                  <span className="text-white/50">{t.when}:</span>{' '}
                   {t.chips.map((c, i) => (
                     <span key={i}>{i > 0 && ' · '}<ChipInline chip={c} /></span>
                   ))}
@@ -78,28 +87,13 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
               ))}
             </div>
           )}
-          {notes.conditional.length > 0 && (
-            <div>
-              <div className="font-semibold text-[11px] mb-0.5">Según el contexto</div>
-              {notes.conditional.slice(0, 3).map(n => <div key={n} className="text-[10px] text-muted-foreground">• {n}</div>)}
-            </div>
-          )}
-          {notes.repetition.length > 0 && (
-            <div>
-              <div className="font-semibold text-[11px] mb-0.5">Si se repite</div>
-              {notes.repetition.slice(0, 2).map(n => <div key={n} className="text-[10px] text-amber-300/80">• {n}</div>)}
-            </div>
-          )}
           {(winners.length > 0 || losers.length > 0) && (
-            <div className="text-[10px] text-muted-foreground">
-              {winners.length > 0 && <div><span className="text-emerald-300">Lo valorarían:</span> {winners.map(a => ACTORS[a].shortName).join(', ')}</div>}
-              {losers.length > 0 && <div><span className="text-red-300">Lo sufrirían:</span> {losers.map(a => ACTORS[a].shortName).join(', ')}</div>}
+            <div className="text-[10px] text-white/60">
+              {winners.length > 0 && <div><span className="text-emerald-400 font-semibold">Favorece:</span> {winners.map(a => ACTORS[a].shortName).join(', ')}</div>}
+              {losers.length > 0 && <div><span className="text-red-400 font-semibold">Perjudica:</span> {losers.map(a => ACTORS[a].shortName).join(', ')}</div>}
             </div>
           )}
-          {action.risksText && <div className="text-[10px] text-orange-300/80">Riesgo: {action.risksText}</div>}
-          <div className="text-[10px] text-muted-foreground">
-            {costLabel} · {pa} PA{action.cooldown > 1 ? ` · repetible cada ${action.cooldown} turnos` : ''}
-          </div>
+          {action.risksText && <div className="text-[10px] text-amber-300">Riesgo: {action.risksText}</div>}
         </div>
       }
     >
@@ -113,127 +107,108 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
             onSelect();
           }
         }}
-        className={`relative flex flex-col gap-2 rounded-lg border-l-4 border-y border-r p-3.5 transition-all duration-150 ${
-          blocked ? 'opacity-55 cursor-not-allowed' : ''
+        className={`relative flex flex-col justify-between gap-3 rounded-xl border p-4 transition-all duration-200 min-h-[160px] ${
+          blocked ? 'opacity-50 cursor-not-allowed bg-[#0b1626] border-white/6' : ''
         } ${
           isSelected
-            ? 'border-primary bg-primary/10 ring-1 ring-primary/40'
+            ? 'border-blue-500 bg-blue-500/10 ring-2 ring-blue-500/40 shadow-lg shadow-blue-500/10'
             : blocked
-              ? `${style.borderColor} border-y-border border-r-border bg-card`
-              : `${style.borderColor} border-y-border border-r-border bg-card hover:border-white/20 hover:bg-white/3 cursor-pointer`
+              ? 'border-white/6 bg-[#0c182b]'
+              : 'border-white/10 bg-[#0f1e38] hover:border-white/20 hover:bg-[#132545] cursor-pointer shadow-md'
         }`}
       >
-        {/* Badge de estado */}
-        <div className="absolute top-2.5 right-2.5 flex gap-1">
-          {requested && !blocked && (
-            <Tooltip content={<TooltipContent label="Lo piden" detail={requestedBy.map(a => ACTORS[a].shortName).join(', ')} />}>
-              <span className="inline-flex items-center gap-1 text-[10px] text-amber-300 bg-amber-400/12 border border-amber-400/20 px-1.5 py-0.5 rounded font-semibold uppercase tracking-wide">
-                <Star size={9} className="fill-amber-300" />
-                Pedida
+        {/* Cabecera: Badges de Categoría y Estado */}
+        <div>
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border ${style.color} ${style.bgColor} ${style.borderColor}`}>
+                {style.label}
               </span>
-            </Tooltip>
-          )}
-          {blocked && (
-            <Tooltip content={<TooltipContent label="Bloqueada" detail={blockReason ?? undefined} />}>
-              <span className="inline-flex items-center gap-1 text-[10px] text-red-400 bg-red-400/10 border border-red-400/20 px-1.5 py-0.5 rounded font-semibold uppercase tracking-wide">
-                <Lock size={9} />
-                BLQ
-              </span>
-            </Tooltip>
-          )}
-        </div>
-
-        {/* Categoría + título */}
-        <div className="pr-16">
-          <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
-            <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-semibold uppercase tracking-widest border ${style.color} ${style.bgColor} ${style.borderColor}`}>
-              <img src={style.imageSrc} alt={style.label} className="w-3 h-3 object-contain" />
-              {style.label}
-            </span>
-            {action.ley && (
-              <span className="inline-flex items-center gap-0.5 text-[8px] text-purple-300 bg-purple-400/10 border border-purple-400/20 px-1 py-0 rounded uppercase tracking-wide font-semibold">
-                <Scale size={8} />
-                {needsDnu && available ? 'Ley por DNU' : 'Ley'}
-              </span>
-            )}
-            {action.tags.map(t => (
-              <span key={t} className="text-[8px] text-muted-foreground bg-white/5 border border-border px-1 py-0 rounded uppercase tracking-wide">
-                {TAG_LABEL[t] ?? t}
-              </span>
-            ))}
-          </div>
-          <h3 className="font-display font-bold text-base text-foreground leading-tight">{action.name}</h3>
-          <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">{action.description}</p>
-        </div>
-
-        {/* Costos */}
-        <div className="flex items-center gap-2.5 flex-wrap">
-          <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-white/5 px-2 py-1">
-            <DollarSign size={12} className="text-muted-foreground" />
-            <span className={`font-mono font-bold text-[13px] ${caja > 0 ? 'text-emerald-400' : caja === 0 ? 'text-muted-foreground' : blockReason === 'No alcanza la caja.' ? 'text-red-400' : 'text-foreground/80'}`}>
-              {costLabel}
-            </span>
-          </span>
-          <span className="inline-flex items-center gap-1.5 rounded-md border border-primary/30 bg-primary/15 px-2 py-1 text-primary">
-            <Flag size={12} />
-            <span className="font-mono font-bold text-[13px]">{pa} PA</span>
-          </span>
-          {action.cooldown > 1 && (
-            <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-white/5 px-2 py-1 text-muted-foreground" title="Turnos entre usos">
-              <Clock size={11} />
-              <span className="font-mono text-[11px]">cada {action.cooldown}t</span>
-            </span>
-          )}
-        </div>
-
-        {/* Efectos en el tiempo (hasta 2 momentos) */}
-        <div className="space-y-1">
-          {timeline.slice(0, 2).map(t => (
-            <div key={t.when} className="flex gap-1.5 items-start text-[11px] leading-snug">
-              <span className="text-muted-foreground flex-shrink-0 w-[4.5rem] truncate">{t.when}</span>
-              <span className="flex flex-wrap gap-1">
-                {t.chips.slice(0, 3).map((c, i) => (
-                  <span key={i} className={`inline-flex items-center gap-1 px-1.5 py-0 rounded border text-[10px] ${toneChipClass(c.tone)}`}>
-                    {c.label} <span className="font-mono">{c.text}</span>
-                  </span>
-                ))}
-              </span>
-            </div>
-          ))}
-          {timeline.length > 2 && <div className="text-[10px] text-muted-foreground/70 pl-[4.5rem]">+ efectos posteriores</div>}
-        </div>
-
-        {/* Pie: aviso o actores afectados + CTA */}
-        <div className="flex items-center justify-between gap-2 pt-1 border-t border-border mt-auto">
-          <div className="inline-flex items-center gap-1.5 min-w-0">
-            {repetitionWarning ? (
-              <>
-                <AlertTriangle size={10} className="text-amber-400 flex-shrink-0" />
-                <span className="text-[10px] text-amber-300 truncate">{repetitionWarning}</span>
-              </>
-            ) : winners.length + losers.length > 0 ? (
-              <>
-                <Users size={10} className="text-muted-foreground flex-shrink-0" />
-                <span className="text-[10px] text-muted-foreground truncate">
-                  {winners.slice(0, 2).map(a => ACTORS[a].shortName).join(', ')}
-                  {winners.length > 0 && losers.length > 0 && ' · '}
-                  {losers.length > 0 && <span className="text-red-300/80">{losers.slice(0, 2).map(a => ACTORS[a].shortName).join(', ')} ↓</span>}
+              {action.isReform && (
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider text-purple-300 bg-purple-500/20 border border-purple-500/30">
+                  REFORMA
                 </span>
-              </>
-            ) : null}
+              )}
+              {action.ley && !action.isReform && (
+                <span className="inline-flex items-center gap-0.5 text-[8px] text-cyan-300 bg-cyan-500/10 border border-cyan-500/20 px-1 py-0.5 rounded uppercase font-semibold">
+                  <Scale size={8} />
+                  {needsDnu && available ? 'DNU' : 'LEY'}
+                </span>
+              )}
+            </div>
+
+            <div className="flex items-center gap-1">
+              {requested && !blocked && (
+                <span className="inline-flex items-center gap-1 text-[9px] text-amber-300 bg-amber-400/15 border border-amber-400/30 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+                  <Star size={9} className="fill-amber-300" />
+                  PEDIDA
+                </span>
+              )}
+              {blocked && (
+                <span className="inline-flex items-center gap-1 text-[9px] text-red-400 bg-red-400/15 border border-red-400/30 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+                  <Lock size={9} />
+                  BLOQUEADA
+                </span>
+              )}
+            </div>
           </div>
+
+          {/* Título y descripción */}
+          <h3 className="font-['Barlow_Condensed'] font-bold text-lg text-white leading-snug">{action.name}</h3>
+          <p className="text-[11px] text-white/60 leading-snug mt-1 line-clamp-2">{action.description}</p>
+        </div>
+
+        {/* Costos e impactos resumidos */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-3 font-mono text-[12px]">
+            <span className={`font-bold ${caja > 0 ? 'text-emerald-400' : caja === 0 ? 'text-white/40' : blockReason === 'No alcanza la caja.' ? 'text-red-400' : 'text-white/90'}`}>
+              $ {costLabel}
+            </span>
+            <span className="text-white/30">•</span>
+            <span className="text-blue-300 font-bold flex items-center gap-1">
+              <Flag size={10} />
+              {pa} acc.
+            </span>
+          </div>
+
+          {/* Lista rápida de chips de efectos */}
+          {timeline.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {timeline[0].chips.slice(0, 2).map((c, i) => (
+                <span key={i} className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] border font-mono ${toneChipClass(c.tone)}`}>
+                  ⚡ {c.label} {c.text}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Pie: Riesgo y CTA de Ejecutar */}
+        <div className="flex items-center justify-between gap-2 pt-2 border-t border-white/8 mt-1">
+          <div className="flex items-center gap-1 text-[10px]">
+            {action.risksText ? (
+              <span className={`flex items-center gap-1 font-semibold ${
+                riskLevel === 'critico' ? 'text-red-400' : riskLevel === 'alto' ? 'text-orange-400' : 'text-amber-400'
+              }`}>
+                <AlertTriangle size={10} />
+                Riesgo {riskLevel}
+              </span>
+            ) : (
+              <span className="text-white/40 font-mono text-[9px]">Riesgo bajo</span>
+            )}
+          </div>
+
           {isSelected ? (
-            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-primary font-display uppercase tracking-wide flex-shrink-0">
-              <Check size={11} />
-              Seleccionada
+            <span className="inline-flex items-center gap-1 text-[12px] font-bold text-emerald-400 font-['Barlow_Condensed'] uppercase tracking-wider">
+              <Check size={13} />
+              SELECCIONADA
             </span>
           ) : !blocked ? (
-            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-primary font-display uppercase tracking-wide flex-shrink-0">
-              Ejecutar
-              <ArrowRight size={11} />
+            <span className="inline-flex items-center gap-1 text-[12px] font-bold text-blue-400 font-['Barlow_Condensed'] uppercase tracking-wider hover:translate-x-0.5 transition-transform">
+              EJECUTAR →
             </span>
           ) : (
-            <span className="text-[10px] text-red-400/70 max-w-[170px] text-right truncate" title={blockReason ?? ''}>
+            <span className="text-[10px] text-red-400/80 truncate max-w-[140px]" title={blockReason ?? ''}>
               {blockReason}
             </span>
           )}

@@ -28,8 +28,8 @@ export function GameOverModal({ gameState, onRestart, onShowLegacy }: GameOverMo
   const DefeatIcon = !isVictory && reason ? DEFEAT_ICONS[reason] : null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="relative w-full max-w-2xl rounded-xl overflow-hidden shadow-2xl border border-border">
+    <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 p-4">
+      <div className="relative w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl border border-white/12 bg-[#0f1e38]">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${backgroundImage})` }}
@@ -37,64 +37,64 @@ export function GameOverModal({ gameState, onRestart, onShowLegacy }: GameOverMo
         <div
           className={`absolute inset-0 ${
             isVictory
-              ? 'bg-gradient-to-t from-[#0B1829]/98 via-[#0B1829]/80 to-[#0B1829]/60'
-              : 'bg-gradient-to-t from-[#0B1829]/98 via-red-950/70 to-[#0B1829]/60'
+              ? 'bg-gradient-to-t from-[#0f1e38]/98 via-[#0f1e38]/85 to-[#070e17]/80'
+              : 'bg-gradient-to-t from-[#0f1e38]/98 via-red-950/80 to-[#070e17]/85'
           }`}
         />
 
-        <div className="relative z-10 p-8 md:p-10 text-foreground text-center">
+        <div className="relative z-10 p-8 md:p-10 text-white text-center">
           {isVictory ? (
             <>
-              <Trophy className="w-16 h-16 text-accent mx-auto mb-4" />
-              <h2 className="font-display text-4xl font-bold text-accent mb-2 uppercase tracking-wide">
-                ¡Victoria!
+              <Trophy className="w-16 h-16 text-amber-400 mx-auto mb-4 drop-shadow-lg" />
+              <h2 className="font-['Barlow_Condensed'] text-4xl font-bold text-amber-400 mb-2 uppercase tracking-wider">
+                ¡VICTORIA HISTÓRICA!
               </h2>
-              <p className="text-lg text-foreground/85 mb-8">
-                Has completado tu gestión con éxito. ¡El pueblo te aclama!
+              <p className="text-base text-white/85 mb-8 leading-relaxed">
+                Completaste tu mandato de gobierno dejando huella institucional y apoyo popular.
               </p>
             </>
           ) : (
             <>
               {DefeatIcon ? (
-                <DefeatIcon className="w-16 h-16 text-red-400 mx-auto mb-4" />
+                <DefeatIcon className="w-16 h-16 text-red-400 mx-auto mb-4 drop-shadow-lg" />
               ) : (
-                <AlertOctagon className="w-16 h-16 text-red-400 mx-auto mb-4" />
+                <AlertOctagon className="w-16 h-16 text-red-400 mx-auto mb-4 drop-shadow-lg" />
               )}
-              <h2 className="font-display text-4xl font-bold text-red-400 mb-2 uppercase tracking-wide">
-                {defeatConfig?.title ?? 'Fin del Juego'}
+              <h2 className="font-['Barlow_Condensed'] text-4xl font-bold text-red-400 mb-2 uppercase tracking-wider">
+                {defeatConfig?.title ?? 'FIN DEL GOBIERNO'}
               </h2>
-              <p className="text-lg text-foreground/85 mb-4">
+              <p className="text-base text-white/85 mb-4 leading-relaxed">
                 {defeatConfig?.description ??
-                  'Tu gestión ha llegado a su fin. El pueblo demanda un cambio.'}
+                  'Tu gestión ha finalizado antes de concluir el mandato.'}
               </p>
               {defeatConfig?.advice && (
-                <div className="bg-white/8 backdrop-blur rounded-xl p-4 mb-6 border border-border inline-block text-left max-w-md">
-                  <p className="text-sm text-foreground/80 italic">
-                    Consejo: {defeatConfig.advice}
+                <div className="bg-[#091422]/90 backdrop-blur rounded-xl p-4 mb-6 border border-white/8 inline-block text-left max-w-md shadow-md">
+                  <p className="text-xs text-amber-200/90 leading-relaxed font-mono">
+                    💡 Consejo político: {defeatConfig.advice}
                   </p>
                 </div>
               )}
             </>
           )}
 
-          <div className="bg-white/8 backdrop-blur rounded-xl p-6 mb-8 border border-border">
-            <h3 className="font-display text-xl font-bold uppercase tracking-wide mb-4">
-              Resumen Final
+          <div className="bg-[#091422]/90 backdrop-blur rounded-xl p-6 mb-8 border border-white/8 shadow-md">
+            <h3 className="font-['Barlow_Condensed'] text-xl font-bold uppercase tracking-wider text-white mb-4">
+              BALANCE FINAL DE GESTIÓN
             </h3>
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-foreground/70 text-[12px] uppercase tracking-wide">
-                  Popularidad Final
+              <div className="bg-white/4 p-3 rounded-lg border border-white/6">
+                <p className="text-white/40 text-[10px] uppercase tracking-widest font-bold">
+                  Aprobación Final
                 </p>
-                <p className="font-mono text-3xl font-bold">
+                <p className="font-mono text-3xl font-bold text-emerald-400 mt-1">
                   {Math.round(gameState.popularity)}%
                 </p>
               </div>
-              <div>
-                <p className="text-foreground/70 text-[12px] uppercase tracking-wide">
-                  Presupuesto Final
+              <div className="bg-white/4 p-3 rounded-lg border border-white/6">
+                <p className="text-white/40 text-[10px] uppercase tracking-widest font-bold">
+                  Caja del Tesoro
                 </p>
-                <p className="font-mono text-3xl font-bold">{fmtBudget(gameState.budget)}</p>
+                <p className="font-mono text-3xl font-bold text-white mt-1">{fmtBudget(gameState.budget)}</p>
               </div>
             </div>
           </div>
@@ -103,18 +103,14 @@ export function GameOverModal({ gameState, onRestart, onShowLegacy }: GameOverMo
             {onShowLegacy && (
               <button
                 onClick={onShowLegacy}
-                className="px-8 py-3 rounded font-display font-bold uppercase tracking-wide transition-colors border border-border bg-white/10 hover:bg-white/15 text-foreground"
+                className="px-6 py-3 rounded-xl font-['Barlow_Condensed'] font-bold text-sm uppercase tracking-wider transition-colors border border-white/12 bg-white/6 hover:bg-white/12 text-white"
               >
                 Ver tu legado
               </button>
             )}
             <button
               onClick={onRestart}
-              className={`px-8 py-3 rounded font-display font-bold uppercase tracking-wide transition-colors shadow-lg ${
-                isVictory
-                  ? 'bg-accent hover:bg-accent/90 text-accent-foreground'
-                  : 'bg-primary hover:bg-primary/90 text-primary-foreground'
-              }`}
+              className="px-8 py-3 rounded-xl font-['Barlow_Condensed'] font-bold text-base uppercase tracking-wider transition-all shadow-lg bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/20"
             >
               Comenzar Nueva Partida
             </button>

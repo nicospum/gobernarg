@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "playtest": "vitest run -c vitest.playtest.config.ts playtest/report.playtest.ts"
   },
   "dependencies": {
     "@radix-ui/react-progress": "^1.1.10",

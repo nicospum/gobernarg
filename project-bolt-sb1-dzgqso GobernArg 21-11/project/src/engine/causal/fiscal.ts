@@ -59,3 +59,32 @@ export function closeFiscal(
     cajaDespues: state.caja,
   };
 }
+
+/**
+ * Estimación de la caja al cierre del turno con lo seleccionado (para avisar
+ * al jugador ANTES de cerrar): costo de las políticas + recaudación − gasto
+ * corriente (incluido el gasto permanente que agregan las políticas elegidas)
+ * − servicio de deuda. No incluye efectos diferidos ni eventos.
+ */
+export interface ProjectionDeltas {
+  caja: number;
+  gasto: number;
+  ingresoMult: number;
+  pres: number;
+  deuda: number;
+}
+
+export function projectCaja(state: CausalState, selections: { actionId: string }[], deltasOf: (id: string) => ProjectionDeltas): { caja: number; structural: number } {
+  const close = state.turn - 1;
+  const d: ProjectionDeltas = { caja: 0, gasto: 0, ingresoMult: 0, pres: 0, deuda: 0 };
+  for (const s of selections) {
+    const x = deltasOf(s.actionId);
+    d.caja += x.caja; d.gasto += x.gasto; d.ingresoMult += x.ingresoMult; d.pres += x.pres; d.deuda += x.deuda;
+  }
+  const actv = effective(state, 'ACTV', close);
+  const pres = Math.max(0, effective(state, 'PRES', close) + d.pres);
+  const infl = effective(state, 'INFL', close);
+  const ing = PARAMS.INGRESO_BASE * (0.7 + (0.3 * actv) / 50) * (pres / 50) * (state.ingresoMult + d.ingresoMult) * (1 - (0.15 * Math.max(0, infl - 60)) / 40);
+  const structural = ing - (state.gastoCorr + d.gasto) - PARAMS.TASA_DEUDA * (state.deuda + d.deuda);
+  return { caja: state.caja + d.caja + structural, structural };
+}

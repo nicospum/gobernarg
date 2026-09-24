@@ -57,7 +57,7 @@ export function GameLog({ gameState, onClose }: GameLogProps) {
                     {entry.popularityChange !== 0 && (
                       <span className={`flex items-center gap-0.5 ${entry.popularityChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                         <TrendingUp className="w-3 h-3" />
-                        {entry.popularityChange > 0 ? '+' : ''}{entry.popularityChange.toFixed(1)}% pop
+                        {entry.popularityChange > 0 ? '+' : ''}{entry.popularityChange.toFixed(1)} aprob.
                       </span>
                     )}
                     {entry.budgetChange !== 0 && (

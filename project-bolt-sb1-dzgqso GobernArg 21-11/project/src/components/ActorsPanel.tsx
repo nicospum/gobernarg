@@ -196,6 +196,9 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
         <div className="mb-1.5 px-2 py-1.5 rounded border border-primary/30 bg-primary/5 text-[10px] text-foreground/80 leading-snug">
           Aceptan acordar: vos te comprometés a <span className="font-semibold">{demandDef.name}</span> en {PARAMS.PLAZO_ACUERDO} turnos;
           ellos ofrecen: {agreementOffer(actor).toLowerCase()}. Incumplir rompe la relación.
+          {demandAv && !demandAv.available && (
+            <div className="mt-1 text-red-300">Ojo: hoy no podrías ejecutarla ({demandAv.reasons[0]})</div>
+          )}
         </div>
       )}
 
@@ -250,28 +253,28 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
 }
 
 export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }: ActorsPanelProps) {
-  const [expanded, setExpanded] = useState<Set<string>>(new Set(['produccion']));
+  const [expanded, setExpanded] = useState<Set<string>>(new Set(['produccion', 'sociedad']));
   const c = gameState.causal;
 
   return (
-    <section className="p-4">
-      <div className="flex items-center gap-2 mb-1">
-        <UsersIcon size={13} className="text-muted-foreground" />
-        <h3 className="font-display text-[11px] uppercase tracking-widest text-muted-foreground font-bold">
-          Actores
+    <section className="p-4 border-b border-white/8">
+      <div className="flex items-center gap-2 mb-1.5">
+        <UsersIcon size={14} className="text-blue-400" />
+        <h3 className="font-['Barlow_Condensed'] text-sm uppercase tracking-wider text-white font-bold">
+          ACTORES & GRUPOS DE INTERÉS
         </h3>
       </div>
-      <p className="text-[10px] text-muted-foreground/80 mb-2 flex items-start gap-1 leading-snug">
-        <Info size={10} className="mt-0.5 flex-shrink-0" />
-        Satisfacción = cómo les va con el país. Relación = tu vínculo con ellos. Reunite para saber qué les preocupa.
+      <p className="text-[10px] text-white/50 mb-3 flex items-start gap-1 leading-snug">
+        <Info size={11} className="mt-0.5 flex-shrink-0 text-blue-400" />
+        Relación = vínculo político con tu gobierno. Satisfacción = evaluación de gestión. Mantener reuniones revela demandas y preocupaciones.
       </p>
       {gameState.lastInteractionMessage && (
-        <div className="mb-2 px-2.5 py-1.5 rounded border border-primary/30 bg-primary/5 text-[10px] text-foreground/80 leading-snug">
+        <div className="mb-3 px-3 py-2 rounded-lg border border-blue-500/30 bg-blue-500/10 text-[11px] text-blue-200 font-medium leading-snug">
           {gameState.lastInteractionMessage}
         </div>
       )}
 
-      <div className="space-y-1.5">
+      <div className="space-y-2">
         {ACTOR_FAMILIES.map((family) => {
           const isOpen = expanded.has(family.id);
           const worst = family.members.reduce<Risk>((max, a) => {
@@ -284,7 +287,7 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }:
             return d && d.revealedTurn !== null && c.turn - d.revealedTurn < PARAMS.VENTANA_DEMANDA;
           }).length;
           return (
-            <div key={family.id} className="rounded-lg border border-border overflow-hidden bg-card">
+            <div key={family.id} className="rounded-xl border border-white/8 overflow-hidden bg-[#0f1e38] shadow-md">
               <button
                 onClick={() =>
                   setExpanded(prev => {
@@ -294,27 +297,27 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }:
                     return next;
                   })
                 }
-                className="w-full flex items-center justify-between gap-2 px-3 py-2.5 hover:bg-white/3 transition-colors text-left"
+                className="w-full flex items-center justify-between gap-2 px-3.5 py-2.5 hover:bg-white/4 transition-colors text-left"
               >
-                <div className="flex items-center gap-2 min-w-0">
-                  <div className="flex -space-x-1.5 flex-shrink-0">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="flex -space-x-2 flex-shrink-0">
                     {family.members.slice(0, 3).map(a => {
                       const src = getActorIcon(a);
-                      return src ? <img key={a} src={src} alt="" className="w-5 h-5 rounded-full object-contain bg-card border border-border" /> : null;
+                      return src ? <img key={a} src={src} alt="" className="w-6 h-6 rounded-full object-contain bg-[#070e17] border border-white/12" /> : null;
                     })}
                   </div>
                   <div className="min-w-0">
-                    <div className="font-display font-semibold text-[12px] text-foreground truncate">{family.name}</div>
-                    <div className="flex items-center gap-2 text-[9px]">
+                    <div className="font-['Barlow_Condensed'] font-bold text-sm text-white truncate">{family.name}</div>
+                    <div className="flex items-center gap-2 text-[9px] font-mono">
                       <span className={riskColor(worst)}>tensión {riskLabel(worst).toLowerCase()}</span>
-                      {demands > 0 && <span className="text-amber-300">{demands} pedido{demands > 1 ? 's' : ''}</span>}
+                      {demands > 0 && <span className="text-amber-300 font-bold">{demands} demanda{demands > 1 ? 's' : ''}</span>}
                     </div>
                   </div>
                 </div>
-                {isOpen ? <ChevronDown size={12} className="text-muted-foreground" /> : <ChevronRight size={12} className="text-muted-foreground" />}
+                {isOpen ? <ChevronDown size={14} className="text-white/40" /> : <ChevronRight size={14} className="text-white/40" />}
               </button>
               {isOpen && (
-                <div className="border-t border-border divide-y divide-border">
+                <div className="border-t border-white/8 divide-y divide-white/6 bg-[#070e17]/50">
                   {family.members.map(a => (
                     <ActorCard key={a} state={gameState} actor={a} onInteract={onInteract} onSelectAction={onSelectAction} disabled={disabled} />
                   ))}
@@ -324,12 +327,11 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }:
           );
         })}
       </div>
-      <p className="text-[9px] text-muted-foreground/60 mt-2">
+      <p className="text-[9px] font-mono text-white/40 mt-2.5">
         {c.perks.freeMeetingsPerTurn - c.freeMeetingsUsed > 0
-          ? `Te queda${c.perks.freeMeetingsPerTurn - c.freeMeetingsUsed > 1 ? 'n' : ''} ${c.perks.freeMeetingsPerTurn - c.freeMeetingsUsed} reunión${c.perks.freeMeetingsPerTurn - c.freeMeetingsUsed > 1 ? 'es' : ''} gratis este turno.`
-          : 'Las reuniones de este turno ya cuestan 1 PA.'}
+          ? `Disponibles: ${c.perks.freeMeetingsPerTurn - c.freeMeetingsUsed} reunión${c.perks.freeMeetingsPerTurn - c.freeMeetingsUsed > 1 ? 'es' : ''} gratis este turno.`
+          : 'Reuniones adicionales cuestan 1 PA.'}
       </p>
-      {void getValueRisk}
     </section>
   );
 }

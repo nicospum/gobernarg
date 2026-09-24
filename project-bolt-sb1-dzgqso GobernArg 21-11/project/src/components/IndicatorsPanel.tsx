@@ -53,46 +53,54 @@ function TrendChip({ value, inverse = false }: { value: number | null; inverse?:
 function IndicatorCardView({ card }: { card: IndicatorCard }) {
   const risk: Risk = getValueRisk(card.value, card.max, card.inverseRisk);
   const pct = Math.min(100, Math.max(0, (card.value / card.max) * 100));
-  const targetPct = Math.min(100, Math.max(0, (card.target / card.max) * 100));
+  const targetPct = card.target > 0 ? Math.min(100, Math.max(0, (card.target / card.max) * 100)) : 0;
   const displayLabel = card.inverseRisk
-    ? { bajo: 'Bajo', medio: 'Moderado', alto: 'Alto', critico: 'Crítico' }[risk]
-    : riskLabel(risk);
+    ? { bajo: 'BAJO', medio: 'MEDIO', alto: 'ALTO', critico: 'CRÍTICO' }[risk]
+    : riskLabel(risk).toUpperCase();
 
   return (
     <InfoTooltip
       content={
         <div className="flex flex-col gap-1 max-w-[260px]">
-          <div className="font-semibold text-xs">{card.label}</div>
-          <div className="text-[10px] text-muted-foreground/80">{card.tooltipDetail}</div>
+          <div className="font-semibold text-xs text-white">{card.label}</div>
+          <div className="text-[10px] text-white/70">{card.tooltipDetail}</div>
         </div>
       }
     >
-      <div className="flex-1 min-w-[150px] rounded-lg border border-border bg-card px-3.5 py-2.5 cursor-help">
-        <div className="flex items-center justify-between mb-1.5">
-          <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold flex items-center gap-1">
+      <div className="flex-1 min-w-[170px] rounded-xl border border-white/8 bg-[#0f1e38] p-3.5 shadow-lg cursor-help transition-all hover:border-white/15">
+        <div className="flex items-center justify-between mb-1">
+          <span className="text-[10px] text-white/40 uppercase tracking-widest font-bold flex items-center gap-1">
             {card.label}
-            <Info size={9} className="opacity-50" />
+            <Info size={10} className="opacity-40" />
           </span>
           <TrendChip value={card.trend} inverse={card.inverseRisk} />
         </div>
-        <div className="flex items-baseline gap-1 mb-2">
+        <div className="flex items-baseline gap-1 mb-2.5">
           <span className={`font-mono text-2xl font-bold leading-none ${riskColor(risk)}`}>
             {Math.round(card.value)}
           </span>
-          <span className="text-[11px] text-muted-foreground">{card.unit}</span>
+          <span className="text-[12px] font-semibold text-white/50">{card.unit}</span>
         </div>
-        <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+        <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-white/8">
           <div
             className={`absolute inset-y-0 left-0 rounded-full transition-all duration-500 ${riskColor(risk, 'bg')}`}
             style={{ width: `${pct}%` }}
           />
           {card.target > 0 && (
-            <div className="absolute inset-y-0 w-px bg-white/60" style={{ left: `${targetPct}%` }} title={card.targetLabel} />
+            <div
+              className="absolute inset-y-0 w-0.5 bg-white/70 shadow"
+              style={{ left: `${targetPct}%` }}
+              title={card.targetLabel}
+            />
           )}
         </div>
-        <div className="flex items-center justify-between mt-1.5">
-          <span className="text-[9px] text-muted-foreground">{card.targetLabel ?? ''}</span>
-          <span className={`text-[9px] font-semibold uppercase tracking-wide ${riskColor(risk)}`}>{displayLabel}</span>
+        <div className="flex items-center justify-between mt-2">
+          <span className="text-[9px] font-mono text-white/40">
+            {card.targetLabel ? card.targetLabel : `Escala 0-${card.max}`}
+          </span>
+          <span className={`text-[9px] font-bold uppercase tracking-wider ${riskColor(risk)}`}>
+            {displayLabel}
+          </span>
         </div>
       </div>
     </InfoTooltip>
@@ -110,40 +118,47 @@ function BudgetIndicatorCard({ gameState }: { gameState: GameState }) {
     <InfoTooltip
       content={
         <div className="flex flex-col gap-1 max-w-[260px]">
-          <div className="font-semibold text-xs">Caja del Tesoro</div>
+          <div className="font-semibold text-xs text-white">Caja del Tesoro</div>
           {last && (
-            <div className="text-[11px] text-muted-foreground space-y-0.5">
+            <div className="text-[11px] text-white/70 space-y-0.5 font-mono">
               <div>Recaudación: {fmtBudget(last.fiscal.ingresos)}</div>
               <div>Gasto corriente: −{fmtBudget(last.fiscal.gastoCorriente)}</div>
               <div>Intereses de deuda: −{fmtBudget(last.fiscal.servicioDeuda)}</div>
               {last.fiscal.costoAcciones !== 0 && <div>Políticas del turno: −{fmtBudget(last.fiscal.costoAcciones)}</div>}
-              {last.fiscal.financiamiento !== 0 && <div>Financiamiento (emisión/deuda): {fmtBudgetDelta(last.fiscal.financiamiento)}</div>}
+              {last.fiscal.financiamiento !== 0 && <div>Financiamiento: {fmtBudgetDelta(last.fiscal.financiamiento)}</div>}
             </div>
           )}
-          <div className="text-[10px] text-muted-foreground/70">
+          <div className="text-[10px] text-white/50 mt-1">
             Deuda: {fmtBudget(c.deuda)} (intereses {fmtBudget(debtService(c))}/turno). Gasto fijo: {fmtBudget(c.gastoCorr)}/turno.
-            {healthy ? '' : ' Con la caja en rojo, el Tesoro emite al turno siguiente: más inflación.'}
           </div>
         </div>
       }
     >
-      <div className="flex-1 min-w-[150px] rounded-lg border border-border bg-card px-3.5 py-2.5 cursor-help">
-        <div className="flex items-center justify-between mb-1.5">
-          <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold flex items-center gap-1">
+      <div className="flex-1 min-w-[170px] rounded-xl border border-white/8 bg-[#0f1e38] p-3.5 shadow-lg cursor-help transition-all hover:border-white/15">
+        <div className="flex items-center justify-between mb-1">
+          <span className="text-[10px] text-white/40 uppercase tracking-widest font-bold flex items-center gap-1">
             <Wallet size={10} className="opacity-60" />
-            Caja
-            <Info size={9} className="opacity-50" />
+            Presupuesto / Caja
+            <Info size={10} className="opacity-40" />
           </span>
         </div>
-        <div className="flex items-baseline gap-1 mb-2">
-          <span className={`font-mono text-2xl font-bold leading-none ${valueColor}`}>{fmtBudget(c.caja)}</span>
-        </div>
-        <div className="flex items-center justify-between mt-1.5">
-          <span className="text-[9px] text-muted-foreground">
-            {result === null ? 'Sin cierres aún' : `Resultado fiscal ${fmtBudgetDelta(result)}`}
+        <div className="flex items-baseline gap-1 mb-2.5">
+          <span className={`font-mono text-2xl font-bold leading-none ${valueColor}`}>
+            {fmtBudget(c.caja)}
           </span>
-          <span className={`text-[9px] font-semibold uppercase tracking-wide ${valueColor}`}>
-            {healthy ? 'Con fondos' : 'En rojo'}
+        </div>
+        <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-white/8">
+          <div
+            className={`absolute inset-y-0 left-0 rounded-full transition-all duration-500 ${healthy ? 'bg-emerald-400' : 'bg-red-400'}`}
+            style={{ width: `${Math.min(100, Math.max(10, (c.caja / 3000) * 100))}%` }}
+          />
+        </div>
+        <div className="flex items-center justify-between mt-2">
+          <span className="text-[9px] font-mono text-white/40">
+            {result === null ? 'Recaudación activa' : `Balance ${fmtBudgetDelta(result)}`}
+          </span>
+          <span className={`text-[9px] font-bold uppercase tracking-wider ${valueColor}`}>
+            {healthy ? 'OK' : 'EN ROJO'}
           </span>
         </div>
       </div>

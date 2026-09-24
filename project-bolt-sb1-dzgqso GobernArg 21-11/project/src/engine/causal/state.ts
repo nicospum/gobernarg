@@ -11,6 +11,7 @@ import {
 import { satisfactionTarget } from './actors';
 import { computeApro, recomputePolitical } from './political';
 import { pickDemand } from './relations';
+import { debtService, revenue } from './fiscal';
 import type { ActorState, CausalState, Perks } from './types';
 
 export function defaultPerks(): Perks {
@@ -114,6 +115,11 @@ export function createCausalState(opts: CreateOptions = {}): CausalState {
     if (ACTORS[a].family === 'Política') actors[a].sat = satisfactionTarget(state, a, 0);
   }
   recomputePolitical(state, 0);
+  // Historial fiscal heredado: el promedio de 3 turnos (RESULT3, R19) arranca
+  // con el resultado estructural inicial en lugar de vacío. Sin esto, un solo
+  // turno de inversión hundía la solvencia (calibración de playtest).
+  const inherited = revenue(state, 0) - state.gastoCorr - debtService(state);
+  state.fiscalHistory = [inherited, inherited];
   for (const a of ACTOR_IDS) {
     if (actors[a].rel !== null) actors[a].demand = { actionId: pickDemand(state, a, 0) ?? '', createdTurn: 0, revealedTurn: null };
     if (actors[a].demand && !actors[a].demand.actionId) actors[a].demand = null;

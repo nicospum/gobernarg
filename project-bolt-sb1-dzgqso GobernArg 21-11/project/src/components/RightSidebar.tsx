@@ -41,12 +41,12 @@ function turnsToNextElection(state: GameState): { label: string; turns: number }
 
 function ComponentBar({ label, value, weight, hint }: { label: string; value: number; weight: number; hint: string }) {
   return (
-    <div title={hint}>
-      <div className="flex items-center justify-between text-[9px] text-muted-foreground">
-        <span>{label} <span className="opacity-60">({Math.round(weight * 100)}%)</span></span>
-        <span className="font-mono text-foreground/80">{Math.round(value)}</span>
+    <div title={hint} className="space-y-0.5">
+      <div className="flex items-center justify-between text-[10px] text-white/50">
+        <span>{label} <span className="text-white/30">({Math.round(weight * 100)}%)</span></span>
+        <span className="font-mono text-white font-bold">{Math.round(value)}</span>
       </div>
-      <div className="h-1 w-full overflow-hidden rounded-full bg-white/10 mt-0.5">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/8">
         <div className={`h-full rounded-full ${riskColor(getValueRisk(value, 100), 'bg')}`} style={{ width: `${value}%` }} />
       </div>
     </div>
@@ -71,62 +71,68 @@ function SituacionElectoral({ state }: { state: GameState }) {
   const known = (a: ActorId) => c.actors[a].revealedUntil >= c.turn || c.perks.reveals.includes('encuestas');
 
   return (
-    <section className="p-4 border-b border-border space-y-3">
+    <section className="p-4 border-b border-white/8 space-y-3.5 bg-[#091422]">
       <div className="flex items-center gap-2">
-        <Vote size={13} className="text-muted-foreground" />
-        <h3 className="font-display text-[11px] uppercase tracking-widest text-muted-foreground font-bold">
-          Situación Electoral
+        <Vote size={14} className="text-blue-400" />
+        <h3 className="font-['Barlow_Condensed'] text-sm uppercase tracking-wider text-white font-bold">
+          SITUACIÓN ELECTORAL
         </h3>
-        <span className="ml-auto text-[9px] text-muted-foreground">{next.label} en {next.turns}t</span>
+        <span className="ml-auto text-[10px] font-mono text-white/50 bg-white/6 px-2 py-0.5 rounded border border-white/8">
+          {next.label} en {next.turns}t
+        </span>
       </div>
 
-      <div className="flex items-end justify-between gap-3">
+      <div className="flex items-end justify-between gap-3 bg-[#0f1e38] p-3 rounded-xl border border-white/8">
         <div>
-          <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Intención de voto</div>
-          <div className={`font-mono text-2xl font-bold leading-none ${riskColor(voteColor)}`}>
+          <div className="text-[9px] text-white/40 uppercase tracking-widest font-bold">Intención de voto</div>
+          <div className={`font-mono text-3xl font-bold leading-none mt-1 ${riskColor(voteColor)}`}>
             {Math.round(p.iv)}%
           </div>
-          <div className="text-[9px] text-muted-foreground mt-0.5">Para ganar: {PARAMS.VOTOS_PARA_GANAR}%</div>
+          <div className="text-[9px] text-white/40 mt-1 font-mono">Meta victoria: {PARAMS.VOTOS_PARA_GANAR}%</div>
         </div>
         <div className="text-right">
-          <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Riesgo derrota</div>
-          <span className={`inline-block text-[10px] font-bold uppercase tracking-wide ${riskColor(risk)}`}>
+          <div className="text-[9px] text-white/40 uppercase tracking-widest font-bold">Riesgo derrota</div>
+          <span className={`inline-block text-[11px] font-bold uppercase tracking-wider mt-1 ${riskColor(risk)}`}>
             {riskLabel(risk)}
           </span>
         </div>
       </div>
 
-      <div className="space-y-1.5">
+      <div className="space-y-2">
         <ComponentBar label="Humor social" value={p.apro} weight={PARAMS.PESO_APRO_EN_IV} hint="Aprobación: satisfacción de clase media, sectores populares y demás actores según su peso electoral" />
-        <ComponentBar label="Aparato político" value={p.estr} weight={PARAMS.PESO_ESTRUCTURA_EN_IV} hint="Estructura: oficialismo, aliados y gobernadores (satisfacción y relación)" />
-        <ComponentBar label="Imagen y campaña" value={p.otros} weight={PARAMS.PESO_OTROS_EN_IV} hint="Imagen presidencial: eventos, habilidades, estrategia y desgaste de gestión" />
+        <ComponentBar label="Aparato político" value={p.estr} weight={PARAMS.PESO_ESTRUCTURA_EN_IV} hint="Estructura: oficialismo, aliados y gobernadores" />
+        <ComponentBar label="Imagen y campaña" value={p.otros} weight={PARAMS.PESO_OTROS_EN_IV} hint="Imagen presidencial y desgastes de gestión" />
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <div className="text-[9px] text-emerald-400/70 uppercase tracking-wide font-semibold mb-1.5">A favor</div>
+      <div className="grid grid-cols-2 gap-3 pt-1">
+        <div className="bg-[#0f1e38] p-2.5 rounded-lg border border-white/6">
+          <div className="text-[9px] text-emerald-400 uppercase tracking-wider font-bold mb-1.5 border-b border-white/6 pb-1">
+            A favor
+          </div>
           {favor.length === 0 ? (
-            <div className="text-[10px] text-muted-foreground/60">—</div>
+            <div className="text-[10px] text-white/30">—</div>
           ) : (
             favor.map(a => (
-              <div key={a} className="flex items-center justify-between gap-1 mb-0.5">
-                <span className="text-[10px] text-foreground/70 truncate">{ACTORS[a].shortName}</span>
-                <span className="font-mono text-[10px] text-emerald-400 flex-shrink-0">{known(a) ? Math.round(c.actors[a].sat) : '·'}</span>
+              <div key={a} className="flex items-center justify-between gap-1 mb-1">
+                <span className="text-[10px] text-white/80 truncate font-medium">{ACTORS[a].shortName}</span>
+                <span className="font-mono text-[10px] font-bold text-emerald-400 flex-shrink-0">{known(a) ? Math.round(c.actors[a].sat) : '·'}</span>
               </div>
             ))
           )}
         </div>
-        <div>
-          <div className="text-[9px] text-red-400/70 uppercase tracking-wide font-semibold mb-1.5">En contra</div>
+        <div className="bg-[#0f1e38] p-2.5 rounded-lg border border-white/6">
+          <div className="text-[9px] text-red-400 uppercase tracking-wider font-bold mb-1.5 border-b border-white/6 pb-1">
+            En contra
+          </div>
           {contra.length === 0 ? (
-            <div className="text-[10px] text-muted-foreground/60">—</div>
+            <div className="text-[10px] text-white/30">—</div>
           ) : (
             contra.map(a => {
               const band = satisfactionBand(c.actors[a].sat);
               return (
-                <div key={a} className="flex items-center justify-between gap-1 mb-0.5">
-                  <span className="text-[10px] text-foreground/70 truncate">{ACTORS[a].shortName}</span>
-                  <span className={`font-mono text-[10px] flex-shrink-0 ${toneClass(band.tone)}`}>{known(a) ? Math.round(c.actors[a].sat) : '·'}</span>
+                <div key={a} className="flex items-center justify-between gap-1 mb-1">
+                  <span className="text-[10px] text-white/80 truncate font-medium">{ACTORS[a].shortName}</span>
+                  <span className={`font-mono text-[10px] font-bold flex-shrink-0 ${toneClass(band.tone)}`}>{known(a) ? Math.round(c.actors[a].sat) : '·'}</span>
                 </div>
               );
             })
@@ -136,8 +142,6 @@ function SituacionElectoral({ state }: { state: GameState }) {
     </section>
   );
 }
-
-// ─── Sección 2: Calendario Político ──────────────────────────────────
 
 function CalendarPanel({ state }: { state: GameState }) {
   const [open, setOpen] = useState(true);
@@ -151,28 +155,28 @@ function CalendarPanel({ state }: { state: GameState }) {
     .slice(0, 4);
 
   return (
-    <section className="border-b border-border">
+    <section className="border-b border-white/8">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-white/3 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/4 transition-colors text-left"
       >
         <div className="flex items-center gap-2">
-          <Calendar size={13} className="text-muted-foreground" />
-          <h3 className="font-display text-[11px] uppercase tracking-widest text-muted-foreground font-bold">
-            Calendario Político
+          <Calendar size={14} className="text-blue-400" />
+          <h3 className="font-['Barlow_Condensed'] text-sm uppercase tracking-wider text-white font-bold">
+            CALENDARIO POLÍTICO
           </h3>
         </div>
         {open ? (
-          <ChevronDown size={13} className="text-muted-foreground" />
+          <ChevronDown size={14} className="text-white/40" />
         ) : (
-          <ChevronRight size={13} className="text-muted-foreground" />
+          <ChevronRight size={14} className="text-white/40" />
         )}
       </button>
 
       {open && (
         <div className="px-4 pb-4 space-y-2">
           {upcoming.length === 0 ? (
-            <div className="text-[11px] text-muted-foreground py-2">Sin eventos próximos.</div>
+            <div className="text-[11px] text-white/40 py-2">Sin eventos próximos en agenda.</div>
           ) : (
             upcoming.map(({ ev, abs }) => {
               const diff = abs - current;
@@ -184,30 +188,30 @@ function CalendarPanel({ state }: { state: GameState }) {
                     : 'warning';
               const borderCls =
                 sev === 'critical'
-                  ? 'border-red-400/30 bg-red-400/5'
+                  ? 'border-red-500/30 bg-red-500/10'
                   : sev === 'warning'
-                    ? 'border-amber-400/25 bg-amber-400/5'
-                    : 'border-sky-400/25 bg-sky-400/5';
+                    ? 'border-amber-500/30 bg-amber-500/10'
+                    : 'border-blue-500/30 bg-blue-500/10';
               const turnCls =
                 sev === 'critical'
                   ? 'text-red-400'
                   : sev === 'warning'
                     ? 'text-amber-400'
-                    : 'text-sky-400';
+                    : 'text-blue-400';
               return (
-                <div key={ev.id} className={`rounded-lg border p-2.5 ${borderCls}`}>
+                <div key={ev.id} className={`rounded-xl border p-3 shadow-md ${borderCls}`}>
                   <div className="flex items-start justify-between gap-2">
-                    <div className="font-display font-semibold text-[12px] text-foreground leading-tight">
+                    <div className="font-['Barlow_Condensed'] font-bold text-sm text-white leading-tight">
                       {ev.title}
                     </div>
                     <div className="flex-shrink-0 text-right">
-                      <div className={`font-mono text-[11px] font-bold ${turnCls}`}>T{abs}</div>
-                      <div className="text-[9px] text-muted-foreground">
+                      <div className={`font-mono text-[12px] font-bold ${turnCls}`}>T{abs}</div>
+                      <div className="text-[9px] text-white/40 font-mono">
                         en {diff}t
                       </div>
                     </div>
                   </div>
-                  <p className="text-[10px] text-muted-foreground leading-snug mt-1">
+                  <p className="text-[11px] text-white/70 leading-snug mt-1">
                     {ev.description}
                   </p>
                 </div>
@@ -220,22 +224,6 @@ function CalendarPanel({ state }: { state: GameState }) {
   );
 }
 
-// ─── Sección 3: Noticias ──────────────────────────────────────────────
-
-function severityCls(notif: Notification): { border: string; text: string } {
-  const importance = notif.importance;
-  if (importance === 'critical' || importance === 'high') {
-    return { border: 'border-red-400/25 bg-red-400/5', text: 'text-red-400' };
-  }
-  if (importance === 'success') {
-    return { border: 'border-emerald-400/20 bg-emerald-400/5', text: 'text-emerald-400' };
-  }
-  if (importance === 'medium') {
-    return { border: 'border-amber-400/25 bg-amber-400/5', text: 'text-amber-400' };
-  }
-  return { border: 'border-border bg-card', text: 'text-muted-foreground' };
-}
-
 function NewsPanel({ state }: { state: GameState }) {
   const [open, setOpen] = useState(true);
   const news = (state.notifications ?? [])
@@ -243,47 +231,47 @@ function NewsPanel({ state }: { state: GameState }) {
     .slice(0, 5);
 
   return (
-    <section className="border-b border-border">
+    <section className="border-b border-white/8">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-white/3 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/4 transition-colors text-left"
       >
         <div className="flex items-center gap-2">
-          <Newspaper size={13} className="text-muted-foreground" />
-          <h3 className="font-display text-[11px] uppercase tracking-widest text-muted-foreground font-bold">
-            Noticias
+          <Newspaper size={14} className="text-blue-400" />
+          <h3 className="font-['Barlow_Condensed'] text-sm uppercase tracking-wider text-white font-bold">
+            NOTICIAS Y NOVEDADES
           </h3>
           {news.length > 0 && (
-            <span className="text-[9px] font-mono text-muted-foreground">{news.length}</span>
+            <span className="text-[10px] font-mono font-bold text-blue-300 bg-blue-500/20 px-1.5 py-0.5 rounded border border-blue-500/30">{news.length}</span>
           )}
         </div>
         {open ? (
-          <ChevronDown size={13} className="text-muted-foreground" />
+          <ChevronDown size={14} className="text-white/40" />
         ) : (
-          <ChevronRight size={13} className="text-muted-foreground" />
+          <ChevronRight size={14} className="text-white/40" />
         )}
       </button>
 
       {open && (
         <div className="px-4 pb-4 space-y-2">
           {news.length === 0 ? (
-            <div className="text-[11px] text-muted-foreground py-2 flex items-center gap-2">
-              <Bell size={11} />
-              Sin noticias por ahora.
+            <div className="text-[11px] text-white/40 py-2 flex items-center gap-2">
+              <Bell size={12} />
+              Sin noticias nuevas por el momento.
             </div>
           ) : (
             news.map((n) => {
               const sev = severityCls(n);
               return (
-                <div key={n.id} className={`rounded-lg border p-2.5 ${sev.border}`}>
-                  <div className="font-semibold text-[12px] text-foreground leading-tight">
+                <div key={n.id} className={`rounded-xl border p-3 shadow-md ${sev.border}`}>
+                  <div className="font-bold text-[12px] text-white leading-tight">
                     {n.title}
                   </div>
                   {n.message && (
-                    <p className="text-[10px] text-foreground/60 leading-snug mt-1">{n.message}</p>
+                    <p className="text-[11px] text-white/70 leading-snug mt-1">{n.message}</p>
                   )}
                   {n.category && (
-                    <span className={`inline-block text-[9px] uppercase tracking-wide mt-1 ${sev.text}`}>
+                    <span className={`inline-block text-[9px] uppercase tracking-wider font-bold mt-1.5 ${sev.text}`}>
                       {n.category}
                     </span>
                   )}
@@ -297,11 +285,9 @@ function NewsPanel({ state }: { state: GameState }) {
   );
 }
 
-// ─── RightSidebar ────────────────────────────────────────────────────
-
 export function RightSidebar({ gameState, onInteract, onSelectAction, interactionsDisabled }: RightSidebarProps) {
   return (
-    <aside className="w-full flex-none flex flex-col overflow-hidden rounded-lg border border-border bg-card max-h-[calc(100vh-5rem)]">
+    <aside className="w-full flex-none flex flex-col overflow-hidden rounded-xl border border-white/8 bg-[#0f1e38] shadow-xl max-h-[calc(100vh-5rem)]">
       <div className="flex-1 overflow-y-auto">
         <SituacionElectoral state={gameState} />
         <ActorsPanel

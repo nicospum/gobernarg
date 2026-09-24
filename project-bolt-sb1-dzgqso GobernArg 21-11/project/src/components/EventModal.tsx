@@ -49,36 +49,36 @@ export function EventModal({ event, onChoice, onClose }: EventModalProps) {
   const categoryLabel = CATEGORY_LABELS[event.category] || event.category;
 
   const severityClasses: Record<typeof event.severity, string> = {
-    critical: 'border-red-400/30 bg-red-400/8 text-red-300',
-    high: 'border-amber-400/25 bg-amber-400/8 text-amber-300',
-    medium: 'border-sky-400/25 bg-sky-400/8 text-sky-300',
-    low: 'border-emerald-400/25 bg-emerald-400/8 text-emerald-300',
+    critical: 'border-red-500/40 bg-red-500/15 text-red-300',
+    high: 'border-amber-500/40 bg-amber-500/15 text-amber-300',
+    medium: 'border-blue-500/40 bg-blue-500/15 text-blue-300',
+    low: 'border-emerald-500/40 bg-emerald-500/15 text-emerald-300',
   };
 
   const iconColor: Record<typeof event.severity, string> = {
     critical: 'text-red-400',
     high: 'text-amber-400',
-    medium: 'text-sky-400',
+    medium: 'text-blue-400',
     low: 'text-emerald-400',
   };
 
   const eventImage = getEventImage(event.category, event.severity, event.id);
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="w-full max-w-2xl rounded-xl shadow-2xl bg-card border border-border overflow-hidden">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+      <div className="w-full max-w-2xl rounded-2xl shadow-2xl bg-[#0f1e38] border border-white/12 overflow-hidden animate-in fade-in zoom-in-95">
         {/* ---------- Header image ---------- */}
-        <div className="relative h-48 md:h-56">
+        <div className="relative h-48 md:h-60">
           <img src={eventImage} alt={event.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-card via-card/60 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-4 text-foreground">
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0f1e38] via-[#0f1e38]/70 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
             <div className="flex items-start gap-3">
-              <SeverityIcon className={`w-7 h-7 flex-shrink-0 mt-1 ${iconColor[event.severity]}`} />
+              <SeverityIcon className={`w-8 h-8 flex-shrink-0 mt-0.5 ${iconColor[event.severity]}`} />
               <div>
-                <h3 className="font-display font-bold text-xl uppercase tracking-wide leading-tight">
+                <h3 className="font-['Barlow_Condensed'] font-bold text-2xl uppercase tracking-wider leading-tight text-white">
                   {event.title}
                 </h3>
-                <p className="text-sm text-foreground/80 mt-1">{event.description}</p>
+                <p className="text-xs text-white/80 mt-1 leading-relaxed">{event.description}</p>
               </div>
             </div>
           </div>
@@ -86,17 +86,17 @@ export function EventModal({ event, onChoice, onClose }: EventModalProps) {
 
         {/* ---------- Category + severity bar ---------- */}
         <div
-          className={`px-4 py-2 border-t border-b text-[11px] font-semibold uppercase tracking-wide flex items-center gap-2 ${severityClasses[event.severity]}`}
+          className={`px-5 py-2 border-t border-b text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 ${severityClasses[event.severity]}`}
         >
-          <CategoryIcon className="w-3.5 h-3.5 flex-shrink-0" />
-          <span>{categoryLabel}</span>
-          <span className="opacity-50">·</span>
-          <span>severidad {event.severity}</span>
+          <CategoryIcon className="w-4 h-4 flex-shrink-0" />
+          <span>EVENTO {categoryLabel.toUpperCase()}</span>
+          <span className="opacity-40">·</span>
+          <span>SEVERIDAD {event.severity.toUpperCase()}</span>
         </div>
 
         {/* ---------- Choices ---------- */}
         {event.choices && (
-          <div className="p-4 space-y-3">
+          <div className="p-5 space-y-3">
             {event.choices.map((choice) => {
               const chips = eventChoiceEffects(event, choice.id)
                 .filter(e => e.value !== 0)
@@ -105,20 +105,20 @@ export function EventModal({ event, onChoice, onClose }: EventModalProps) {
                 <button
                   key={choice.id}
                   onClick={() => onChoice(choice.id)}
-                  className="w-full p-3 text-left rounded-lg border border-border bg-card hover:border-white/20 hover:bg-white/3 transition-colors"
+                  className="w-full p-4 text-left rounded-xl border border-white/10 bg-[#091422] hover:border-blue-500/50 hover:bg-[#12223b] transition-all group shadow-md"
                 >
-                  <p className="font-medium text-foreground text-[13px]">{choice.text}</p>
+                  <p className="font-bold text-white text-[13px] group-hover:text-blue-300 transition-colors">{choice.text}</p>
                   {chips.length > 0 ? (
-                    <div className="flex flex-wrap gap-1.5 mt-2">
+                    <div className="flex flex-wrap gap-1.5 mt-2.5">
                       {chips.map((c, i) => (
-                        <span key={i} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[11px] font-semibold ${toneChipClass(c.tone)}`}>
-                          <span className="opacity-90">{c.label}</span>
-                          <span className="font-mono">{c.text}</span>
+                        <span key={i} className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border text-[11px] font-mono font-bold ${toneChipClass(c.tone)}`}>
+                          <span className="opacity-80">{c.label}</span>
+                          <span>{c.text}</span>
                         </span>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-[11px] text-muted-foreground mt-1.5">Sin consecuencias inmediatas.</p>
+                    <p className="text-[11px] text-white/40 mt-1.5 font-mono">Sin efectos inmediatos sobre indicadores.</p>
                   )}
                 </button>
               );
@@ -128,10 +128,10 @@ export function EventModal({ event, onChoice, onClose }: EventModalProps) {
 
         {/* ---------- No choices fallback ---------- */}
         {!event.choices && (
-          <div className="p-4">
+          <div className="p-5">
             <button
               onClick={onClose}
-              className="w-full py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded font-display font-bold text-sm uppercase tracking-wide transition-colors"
+              className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-['Barlow_Condensed'] font-bold text-base uppercase tracking-wider transition-colors shadow-lg shadow-blue-600/20"
             >
               Entendido
             </button>

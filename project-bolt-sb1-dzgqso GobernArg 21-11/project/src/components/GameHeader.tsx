@@ -46,7 +46,6 @@ export function GameHeader({
   onEndTurn,
   canEndTurn,
 }: GameHeaderProps) {
-  // Aprobación (APRO) rara vez supera 60: se evalúa sobre una escala 0-80.
   const popularityRisk = getValueRisk(gameState.popularity, 80);
   const stabilityRisk = getValueRisk(gameState.stability, 100);
   const absoluteTurn = (gameState.year - 1) * 4 + gameState.turn;
@@ -54,35 +53,39 @@ export function GameHeader({
   const popTrend = popularityTrend(gameState);
 
   return (
-    <header className="h-14 flex-none flex items-center px-5 gap-5 bg-card border-b border-border sticky top-0 z-50">
+    <header className="h-14 flex-none flex items-center px-4 md:px-6 gap-4 bg-[#091422] border-b border-white/8 sticky top-0 z-50">
       {/* Logo */}
-      <div className="flex items-center gap-2 flex-none">
+      <div className="flex items-center gap-2.5 flex-none">
         <img
           src={IMAGES.logo.primary}
           alt="GobernArg"
-          className="h-8 w-auto"
+          className="h-8 w-auto object-contain"
         />
-        <div className="font-display text-lg font-bold tracking-wider hidden sm:block">
-          GOBERN<span className="text-accent">ARG</span>
+        <div className="font-['Barlow_Condensed'] text-xl font-bold tracking-wider text-white hidden sm:block">
+          GOBERN<span className="text-blue-400">ARG</span>
         </div>
       </div>
 
       <Separator />
 
-      {/* Cargo + jugador */}
-      <div className="flex items-center gap-2 flex-none">
-        {gameState.avatar && (
+      {/* Gobernante + Cargo */}
+      <div className="flex items-center gap-2.5 flex-none">
+        {gameState.avatar ? (
           <img
             src={gameState.avatar}
             alt={gameState.governorName}
-            className="w-8 h-8 rounded-full object-cover border border-border"
+            className="w-8 h-8 rounded-full object-cover border border-white/12 shadow-sm"
           />
+        ) : (
+          <div className="w-8 h-8 rounded-full bg-blue-500/20 border border-blue-400/30 flex items-center justify-center font-bold text-blue-400 text-xs">
+            {gameState.governorName ? gameState.governorName[0] : 'G'}
+          </div>
         )}
         <div className="leading-tight">
-          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">
+          <div className="text-[9px] text-white/40 uppercase tracking-widest font-semibold">
             {positionLabel}
           </div>
-          <div className="text-[12px] font-semibold text-foreground truncate max-w-[120px]">
+          <div className="text-[12px] font-bold text-white truncate max-w-[120px]">
             {gameState.governorName || '—'}
           </div>
         </div>
@@ -90,54 +93,39 @@ export function GameHeader({
 
       <Separator />
 
-      {/* Año + trimestre destacados */}
-      <div className="flex items-center gap-2.5 flex-none">
-        <Clock size={13} className="text-muted-foreground" />
+      {/* Turno / Año / Trimestre */}
+      <div className="flex items-center gap-2 flex-none">
+        <Clock size={13} className="text-white/40" />
         <div className="leading-tight">
-          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Año</div>
-          <div className="font-display text-[15px] font-bold text-foreground leading-none">
-            {gameState.year}
+          <div className="text-[9px] text-white/40 uppercase tracking-widest font-semibold">Turno</div>
+          <div className="font-mono text-[13px] font-bold text-white">
+            {absoluteTurn}<span className="text-white/40 font-normal">/{MAX_TURNS}</span>
           </div>
         </div>
-        <div className="w-px h-6 bg-border" />
-        <div className="leading-tight">
-          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Trimestre</div>
-          <div className="font-mono text-[14px] font-bold text-accent leading-none">
-            {gameState.turn}
-          </div>
-        </div>
-        <div className="w-16 hidden md:block">
-          <div className="h-1 w-full overflow-hidden rounded-full bg-white/10">
-            <div
-              className="h-full rounded-full bg-primary transition-all duration-300"
-              style={{ width: `${Math.min(100, (absoluteTurn / MAX_TURNS) * 100)}%` }}
-            />
-          </div>
-          <div className="text-[9px] text-muted-foreground mt-0.5">
-            Mandato {gameState.term} · Turno {absoluteTurn}/{MAX_TURNS}
-          </div>
+        <div className="hidden lg:block text-[10px] font-mono text-white/50 bg-white/4 px-2 py-0.5 rounded border border-white/6 ml-1">
+          Año {gameState.year} · T{gameState.turn}
         </div>
       </div>
 
       <Separator />
 
-      {/* Acciones */}
-      <div className="flex items-center gap-2 flex-none">
-        <PlayCircle size={13} className="text-muted-foreground" />
+      {/* Acciones Disponibles */}
+      <div className="flex items-center gap-2 flex-none bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 rounded-md">
+        <PlayCircle size={13} className="text-blue-400" />
         <div className="leading-tight">
-          <div className="text-[9px] text-muted-foreground uppercase tracking-widest" title="Puntos de acción que quedan este turno">Acciones</div>
-          <div className="font-mono text-[12px] font-bold text-foreground">{availableActions}</div>
+          <div className="text-[8px] text-blue-300/70 uppercase tracking-widest font-bold">Acciones</div>
+          <div className="font-mono text-[13px] font-bold text-blue-300 leading-none">{availableActions}</div>
         </div>
       </div>
 
       <Separator />
 
       {/* Presupuesto */}
-      <div className="flex items-center gap-2 flex-none">
-        <Wallet size={13} className="text-muted-foreground" />
+      <div className="flex items-center gap-2 flex-none bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md">
+        <Wallet size={13} className="text-emerald-400" />
         <div className="leading-tight">
-          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Caja</div>
-          <div className="font-mono text-[12px] font-bold text-foreground">
+          <div className="text-[8px] text-emerald-300/70 uppercase tracking-widest font-bold">Presup.</div>
+          <div className="font-mono text-[13px] font-bold text-emerald-300 leading-none">
             {fmtBudget(gameState.budget)}
           </div>
         </div>
@@ -145,11 +133,11 @@ export function GameHeader({
 
       <Separator className="hidden lg:block" />
 
-      {/* Popularidad */}
+      {/* Popularidad rápida */}
       <div className="hidden lg:flex items-center gap-2 flex-none">
-        <Activity size={13} className="text-muted-foreground" />
+        <Activity size={13} className="text-white/40" />
         <div className="leading-tight">
-          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Aprobación</div>
+          <div className="text-[9px] text-white/40 uppercase tracking-widest font-semibold">Popular.</div>
           <div className={`font-mono text-[12px] font-bold ${riskColor(popularityRisk)}`}>
             {Math.round(gameState.popularity)}%
           </div>
@@ -157,11 +145,10 @@ export function GameHeader({
         {popTrend !== null && (
           <span
             className={`inline-flex items-center gap-0.5 font-mono text-[10px] ${
-              popTrend > 0 ? 'text-emerald-400' : popTrend < 0 ? 'text-red-400' : 'text-muted-foreground'
+              popTrend > 0 ? 'text-emerald-400' : popTrend < 0 ? 'text-red-400' : 'text-white/40'
             }`}
-            title={`Tendencia vs turno anterior: ${popTrend > 0 ? '+' : ''}${popTrend}`}
           >
-            {popTrend > 0 ? <TrendingUp size={11} /> : popTrend < 0 ? <TrendingDown size={11} /> : <Minus size={11} />}
+            {popTrend > 0 ? <TrendingUp size={10} /> : popTrend < 0 ? <TrendingDown size={10} /> : <Minus size={10} />}
             {popTrend !== 0 ? `${popTrend > 0 ? '+' : ''}${popTrend}` : '0'}
           </span>
         )}
@@ -169,11 +156,11 @@ export function GameHeader({
 
       <Separator className="hidden xl:block" />
 
-      {/* Estabilidad */}
+      {/* Estabilidad rápida */}
       <div className="hidden xl:flex items-center gap-2 flex-none">
-        <Shield size={13} className="text-muted-foreground" />
+        <Shield size={13} className="text-white/40" />
         <div className="leading-tight">
-          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Gobernab.</div>
+          <div className="text-[9px] text-white/40 uppercase tracking-widest font-semibold">Estabil.</div>
           <div className={`font-mono text-[12px] font-bold ${riskColor(stabilityRisk)}`}>
             {Math.round(gameState.stability)}
           </div>
@@ -182,11 +169,11 @@ export function GameHeader({
 
       <div className="flex-1 min-w-0" />
 
-      {/* Botones */}
+      {/* Botones de acción Header */}
       <button
         onClick={onRestart}
         title="Reiniciar juego"
-        className="flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded border border-transparent hover:border-border"
+        className="flex items-center gap-1.5 text-[11px] text-white/50 hover:text-white transition-colors px-2.5 py-1.5 rounded border border-white/8 hover:bg-white/5"
       >
         <RefreshCw size={12} />
         <span className="hidden md:inline">Reiniciar</span>
@@ -196,14 +183,14 @@ export function GameHeader({
         <button
           onClick={onEndTurn}
           disabled={!canEndTurn}
-          className={`flex items-center gap-2 px-4 py-2 rounded font-display text-[12px] font-bold uppercase tracking-wide transition-all ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-['Barlow_Condensed'] text-[13px] font-bold uppercase tracking-wider transition-all shadow-lg ${
             canEndTurn
-              ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-md'
-              : 'bg-white/5 text-muted-foreground cursor-not-allowed border border-border'
+              ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/20 active:translate-y-0.5'
+              : 'bg-white/5 text-white/30 cursor-not-allowed border border-white/8'
           }`}
         >
           Finalizar Turno
-          <ArrowRight size={13} />
+          <ArrowRight size={14} />
         </button>
       )}
     </header>
@@ -211,7 +198,7 @@ export function GameHeader({
 }
 
 function Separator({ className = '' }: { className?: string }) {
-  return <div className={`w-px h-7 bg-border ${className}`} />;
+  return <div className={`w-px h-6 bg-white/8 ${className}`} />;
 }
 
 // Re-export del icono Users por compat (no se usa en este componente pero alguien podría importarlo)

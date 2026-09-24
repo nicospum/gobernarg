@@ -45,35 +45,40 @@ export function AdvisorPanel({ gameState, onHireAdvisor, onDismissAdvisor }: Adv
   const maxAdvisorsToHire = 2 - gameState.advisors.length;
 
   return (
-    <div className="h-full">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Asesores ({gameState.advisors.length}/2)</h2>
+    <div className="bg-[#0f1e38] border border-white/8 rounded-xl p-4 shadow-xl space-y-4">
+      <div className="flex justify-between items-center pb-3 border-b border-white/8">
+        <div>
+          <h2 className="font-['Barlow_Condensed'] font-bold text-lg text-white uppercase tracking-wider">
+            GABINETE & ASESORES ({gameState.advisors.length}/2)
+          </h2>
+          <p className="text-[10px] text-white/50">Equipá tu gobierno con expertos en áreas clave</p>
+        </div>
         <div className="flex gap-2">
           {!gameState.advisorActionUsed && gameState.advisors.length > 0 && (
             <button
               onClick={() => setShowDismissModal(true)}
-              className="bg-destructive hover:bg-destructive/90 text-destructive-foreground px-4 py-2 rounded-lg flex items-center gap-2"
+              className="bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 px-3 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-colors"
             >
-              <UserMinus className="w-5 h-5" />
-              <span>Despedir Asesor</span>
+              <UserMinus className="w-3.5 h-3.5" />
+              <span>Despedir</span>
             </button>
           )}
           {!gameState.advisorActionUsed && gameState.advisors.length < 2 && (
             <button
               onClick={() => setShowHireModal(true)}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg flex items-center gap-2"
+              className="bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-600/20 px-3 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-colors"
             >
-              <UserPlus className="w-5 h-5" />
-              <span>Contratar Asesor{maxAdvisorsToHire > 1 ? 'es' : ''}</span>
+              <UserPlus className="w-3.5 h-3.5" />
+              <span>Contratar</span>
             </button>
           )}
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {gameState.advisors.length === 0 ? (
-          <p className="text-muted-foreground text-center py-8">
-            No hay asesores contratados. ¡Contrata hasta 2 asesores para mejorar tu gobierno!
+          <p className="text-white/40 text-center py-6 text-[12px] bg-[#070e17]/50 rounded-lg border border-white/6 p-4">
+            Sin asesores activos. Podés contratar hasta 2 asesores para potenciar la gestión y ganar bonificaciones.
           </p>
         ) : (
           gameState.advisors.map((advisor) => {
@@ -82,54 +87,55 @@ export function AdvisorPanel({ gameState, onHireAdvisor, onDismissAdvisor }: Adv
             return (
               <div
                 key={advisor.id}
-                className={`p-4 border border-border rounded-lg ${
-                  advisor.isActive ? 'bg-primary/10' : 'bg-muted'
-                }`}
+                className="p-3.5 border border-white/8 rounded-xl bg-[#091422] space-y-2.5 shadow-md"
               >
                 <div className="flex justify-between items-start gap-3">
                   <div className="flex gap-3">
                     <img
                       src={getAdvisorPortrait(advisor.specialty)}
                       alt={advisor.name}
-                      className="w-14 h-14 rounded-lg object-cover bg-muted flex-shrink-0"
+                      className="w-12 h-12 rounded-lg object-cover bg-white/5 border border-white/12 flex-shrink-0"
                     />
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="font-semibold">{advisor.name}</h3>
-                        <div className="flex items-center gap-1">
-                          <Award className="w-4 h-4 text-yellow-500" />
-                          <span className="text-sm font-medium">Nivel {advisor.level}</span>
+                        <h3 className="font-['Barlow_Condensed'] font-bold text-base text-white">{advisor.name}</h3>
+                        <div className="flex items-center gap-1 text-amber-400 bg-amber-400/10 px-1.5 py-0.2 rounded border border-amber-400/20 text-[10px] font-bold">
+                          <Award className="w-3 h-3" />
+                          <span>Nivel {advisor.level}</span>
                         </div>
                       </div>
-                      <p className="text-sm text-muted-foreground">{advisor.specialty}</p>
-                      <p className="text-sm text-muted-foreground mt-1">{advisor.description}</p>
+                      <p className="text-[11px] font-semibold text-blue-300">{advisor.specialty}</p>
+                      <p className="text-[11px] text-white/60 mt-0.5 line-clamp-2">{advisor.description}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 text-yellow-500 flex-shrink-0">
-                    <Star className="w-4 h-4 fill-current" />
-                    <span className="text-sm">{advisor.influence}</span>
+                  <div className="flex items-center gap-1 text-amber-400 flex-shrink-0 bg-white/4 px-2 py-1 rounded border border-white/8 font-mono text-[11px]">
+                    <Star className="w-3.5 h-3.5 fill-current" />
+                    <span>{advisor.influence}</span>
                   </div>
                 </div>
-                <div className="mt-2 text-sm">
-                  <div className="flex items-center gap-1">
-                    <span>Imagen al asumir</span>
+                <div className="pt-2 border-t border-white/6 text-[11px] space-y-1">
+                  <div className="flex items-center gap-1 text-white/70">
+                    <span>Impacto inicial:</span>
                     {popularityIndicators.map((indicator, index) => (
                       <span key={index}>{indicator}</span>
                     ))}
                   </div>
-                  <p className="text-muted-foreground text-[12px]">
-                    Sueldo: {fmtBudget(ADVISOR_ROLES[advisor.id]?.salary ?? 0)} por turno (gasto corriente)
-                  </p>
-                  <p className="text-emerald-400 text-[12px]">Estado: En funciones</p>
+                  <div className="flex items-center justify-between text-[11px] font-mono">
+                    <span className="text-white/40">Sueldo: {fmtBudget(ADVISOR_ROLES[advisor.id]?.salary ?? 0)}/t</span>
+                    <span className="text-emerald-400 font-bold uppercase tracking-wider">Activo</span>
+                  </div>
                   {ADVISOR_ROLES[advisor.id] && (
-                    <>
-                      <p className="mt-2 font-medium">Qué aporta:</p>
-                      <ul className="list-disc pl-5 space-y-1 text-[12px] text-foreground/80">
+                    <div className="mt-2 bg-white/4 p-2 rounded border border-white/6">
+                      <p className="font-bold text-white/90 text-[10px] uppercase tracking-wider mb-1">Aportes a la gestión:</p>
+                      <ul className="space-y-0.5 text-[11px] text-white/70">
                         {ADVISOR_ROLES[advisor.id].perks.map(perk => (
-                          <li key={perk}>{perk}</li>
+                          <li key={perk} className="flex items-center gap-1.5">
+                            <span className="w-1 h-1 rounded-full bg-blue-400 flex-shrink-0" />
+                            {perk}
+                          </li>
                         ))}
                       </ul>
-                    </>
+                    </div>
                   )}
                 </div>
               </div>

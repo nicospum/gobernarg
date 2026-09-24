@@ -186,7 +186,7 @@ function App() {
   const currentEvent = pendingEvents[0] || null;
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-[#070e17] text-white selection:bg-blue-500/30 selection:text-blue-200">
       <Toaster theme="dark" position="bottom-right" />
       <GameHeader
         gameState={gameState}
@@ -196,15 +196,16 @@ function App() {
         canEndTurn={!gameState.gameOver && !gameState.pendingElection}
       />
 
-      <main className="container mx-auto p-4 h-[calc(100vh-3.5rem)] overflow-y-auto">
-        {/* Indicadores horizontales arriba */}
+      <main className="max-w-[1680px] mx-auto p-4 md:p-6 space-y-5">
+        {/* Indicadores horizontales arriba (KPIs B0) */}
         <IndicatorsPanel gameState={gameState} />
-        <div className="mt-4">
-          <CountryPanel gameState={gameState} />
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
-          <div className="lg:col-span-2 space-y-4">
+        {/* Detalle Macro y Motor Causal */}
+        <CountryPanel gameState={gameState} />
+
+        {/* Grid Principal: 2/3 Dashboard Acciones + 1/3 Sidebar Electoral & Actores */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <div className="lg:col-span-2 space-y-5">
             <ControlPanel
               gameState={gameState}
               onActionSelect={handleActionSelect}
@@ -228,30 +229,33 @@ function App() {
             />
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-5">
             <RightSidebar
               gameState={gameState}
               onInteract={handleActorInteraction}
               onSelectAction={handleActionSelect}
               interactionsDisabled={gameState.gameOver || gameState.pendingElection}
             />
+
             <ActiveBenefits gameState={gameState} />
-            <div className="flex gap-2">
+
+            <div className="flex gap-3">
               <button
                 onClick={() => setShowGameLog(true)}
-                className="flex-1 text-left bg-card border border-border rounded-lg p-3 hover:bg-white/3 transition-colors flex items-center gap-2 text-sm font-medium text-foreground/80"
+                className="flex-1 bg-[#0f1e38] border border-white/8 rounded-xl p-3.5 hover:bg-white/4 transition-all flex items-center gap-2.5 text-xs font-bold text-white shadow-md"
               >
-                <span className="inline-flex w-5 h-5 items-center justify-center rounded bg-primary/15 text-primary font-bold text-[11px]">L</span>
-                Historial
+                <span className="inline-flex w-6 h-6 items-center justify-center rounded-lg bg-blue-500/20 text-blue-400 font-mono text-xs">L</span>
+                Historial de Gestión
               </button>
               <button
                 onClick={() => setShowNotebook(true)}
-                className="flex-1 text-left bg-card border border-border rounded-lg p-3 hover:bg-white/3 transition-colors flex items-center gap-2 text-sm font-medium text-foreground/80"
+                className="flex-1 bg-[#0f1e38] border border-white/8 rounded-xl p-3.5 hover:bg-white/4 transition-all flex items-center gap-2.5 text-xs font-bold text-white shadow-md"
               >
-                <span className="inline-flex w-5 h-5 items-center justify-center rounded bg-blue-400/15 text-blue-400 font-bold text-[11px]">C</span>
-                Cuaderno
+                <span className="inline-flex w-6 h-6 items-center justify-center rounded-lg bg-cyan-500/20 text-cyan-400 font-mono text-xs">C</span>
+                Cuaderno Político
               </button>
             </div>
+
             <AdvisorPanel
               gameState={gameState}
               onHireAdvisor={handleHireAdvisor}
