@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "gobernarg",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "project-bolt-sb1-dzgqso GobernArg 21-11/project", "--", "--port", "5191", "--strictPort", "--open", "false"],
+      "port": 5191
+    }
+  ]
+}
