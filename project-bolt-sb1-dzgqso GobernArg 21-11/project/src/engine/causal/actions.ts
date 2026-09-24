@@ -62,6 +62,12 @@ export interface Availability {
   needsDnu: boolean;
   /** Aviso de uso reiterado (rendimientos decrecientes o castigo por repetición). */
   repetitionWarning: string | null;
+  /**
+   * Bloqueo estructural: cooldown, requisito sin cumplir o ley sin mayoría que
+   * no admite DNU. No cuenta la falta de PA o de caja ni la ley que sale por DNU,
+   * que dependen de lo elegido este turno.
+   */
+  blocked: boolean;
 }
 
 /** Ventana de repetición más cercana a dispararse para esta acción (si la próxima ejecución la activa). */
@@ -92,6 +98,7 @@ export function getAvailability(
   const action = CAUSAL_ACTIONS_BY_ID[actionId];
   const ctx = decisionContext(state);
   const reasons: string[] = [];
+  let blocked = false;
   const pa = paCost(state, action);
   const caja = cajaCost(state, action);
   const isSelected = selected.some(s => s.actionId === actionId);
@@ -100,6 +107,7 @@ export function getAvailability(
 
   if (opts.loansAllowed === false && ['prestamo_internacional', 'prestamo_local'].includes(actionId)) {
     reasons.push('El modo de juego no permite préstamos.');
+    blocked = true;
   }
 
   // Cooldown: no se puede repetir antes de N turnos (cooldown 1 = no dos veces por turno).
@@ -108,11 +116,15 @@ export function getAvailability(
     if (recent) {
       const wait = recent.turn + action.cooldown - state.turn;
       reasons.push(wait <= 0 ? 'Ya se ejecutó este turno.' : `Disponible en ${wait} turno${wait === 1 ? '' : 's'}.`);
+      blocked = true;
     }
   }
 
   for (const req of action.requirements) {
-    if (!evalCondition(req.when, ctx)) reasons.push(req.reason);
+    if (!evalCondition(req.when, ctx)) {
+      reasons.push(req.reason);
+      blocked = true;
+    }
   }
 
   // Caja: el total de lo seleccionado no puede superar la caja disponible.
@@ -126,8 +138,10 @@ export function getAvailability(
   if (action.ley && legForLaws(state) < lawThreshold(state)) {
     const dnuSelected = selected.some(s => s.actionId === 'dnu');
     const dnuUsed = selected.some(s => s.viaDnu && s.actionId !== actionId);
-    if (action.leyNoDnu) reasons.push('Es ley: requiere mayoría en el Congreso (no admite DNU).');
-    else if (!dnuSelected || dnuUsed) {
+    if (action.leyNoDnu) {
+      reasons.push('Es ley: requiere mayoría en el Congreso (no admite DNU).');
+      blocked = true;
+    } else if (!dnuSelected || dnuUsed) {
       needsDnu = true;
       reasons.push('Es ley: el Congreso no la aprueba. Podés firmar un DNU este turno para sacarla por decreto.');
     } else {
@@ -146,6 +160,7 @@ export function getAvailability(
     caja,
     needsDnu,
     repetitionWarning: repetitionWarning(state, actionId),
+    blocked: blocked && !isSelected,
   };
 }
 

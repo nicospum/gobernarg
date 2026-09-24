@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { LayoutGrid, Scale } from 'lucide-react';
+import { Eye, EyeOff, LayoutGrid, Scale } from 'lucide-react';
 import { GameState } from '../types/game';
 import { ActionCard } from './ActionCard';
 import { getPolicyAvailability } from '../engine/gameEngine';
@@ -18,6 +18,7 @@ type TabValue = 'todas' | UiCategory;
 
 export function ControlPanel({ gameState, onActionSelect, canTakeAction }: ControlPanelProps) {
   const [selectedCategory, setSelectedCategory] = useState<TabValue>('todas');
+  const [showBlocked, setShowBlocked] = useState(false);
   const availability = getPolicyAvailability(gameState);
   const causal = gameState.causal;
 
@@ -33,8 +34,11 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
     return map;
   }, [causal]);
 
-  const filtered = availability
-    .filter(av => selectedCategory === 'todas' || av.action.category === selectedCategory)
+  const inCategory = availability
+    .filter(av => selectedCategory === 'todas' || av.action.category === selectedCategory);
+  const blockedCount = inCategory.filter(av => av.blocked).length;
+  const filtered = inCategory
+    .filter(av => showBlocked || !av.blocked)
     .sort((x, y) => {
       const sx = gameState.selectedActions.includes(x.action.id) ? 0 : x.available ? 1 : 2;
       const sy = gameState.selectedActions.includes(y.action.id) ? 0 : y.available ? 1 : 2;
@@ -59,7 +63,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
           Acciones Políticas
         </h2>
         <span className="text-[11px] text-muted-foreground font-mono">
-          {filtered.filter(a => a.available).length} disponibles · {filtered.length} en total
+          {inCategory.filter(a => a.available).length} disponibles · {inCategory.length} en total
         </span>
       </div>
 
@@ -107,11 +111,29 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
         })}
       </div>
 
+      {/* Bloqueadas: ocultas por defecto */}
+      {blockedCount > 0 && (
+        <div className="mx-3 mb-2 flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
+          <span>
+            {showBlocked
+              ? `Mostrando ${blockedCount} bloqueada${blockedCount === 1 ? '' : 's'} (requisitos, espera o Congreso).`
+              : `${blockedCount} bloqueada${blockedCount === 1 ? '' : 's'} oculta${blockedCount === 1 ? '' : 's'} (requisitos, espera o Congreso).`}
+          </span>
+          <button
+            onClick={() => setShowBlocked(v => !v)}
+            className="inline-flex items-center gap-1 px-2 py-1 rounded border border-border hover:bg-white/5 hover:text-foreground transition-colors whitespace-nowrap"
+          >
+            {showBlocked ? <EyeOff size={11} /> : <Eye size={11} />}
+            {showBlocked ? 'Ocultar bloqueadas' : 'Ver también las bloqueadas'}
+          </button>
+        </div>
+      )}
+
       {/* Grid */}
       <div className="flex-1 overflow-y-auto px-3 pb-3 max-h-[560px]">
         {filtered.length === 0 ? (
           <div className="text-center py-10 text-[12px] text-muted-foreground">
-            No hay acciones en esta categoría.
+            {inCategory.length === 0 ? 'No hay acciones en esta categoría.' : 'Todas las acciones de esta categoría están bloqueadas por ahora.'}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">

@@ -186,13 +186,13 @@ Detectadas en el playtest y corregidas con cambios mínimos:
 
 | Id | Tema | Estado en el código |
 |---|---|---|
-| R-21 | Fórmula final de IV y "otros componentes" (hoy OTROS = imagen presidencial) | Implementado con pesos del Excel 0,65/0,10/0,25; parametrizado en `PARAMS`. |
-| R-07 | Segmentar PODA en formal/vulnerable | No segmentado. |
-| R-17 | Fusión Derechos + Cultura como actor | Fusionado (`derechos_cultura`). |
+| R-21 | Fórmula final de IV y "otros componentes" (hoy OTROS = imagen presidencial) | Implementado con pesos del Excel 0,65/0,10/0,25; parametrizado en `PARAMS`. **Decidido** por el usuario: se mantiene 65/10/25. |
+| R-07 | Segmentar PODA en formal/vulnerable | **Decidido** por el usuario: un solo PODA. |
+| R-17 | Fusión Derechos + Cultura como actor | **Decidido** por el usuario: se mantienen juntos (`derechos_cultura`). |
 | R-22 | Visibilidad de indicadores | Propuesta del Excel implementada (bandas + ícono). |
 | R-23 | Plataforma del oficialismo | Propuesta implementada (5 plataformas, 3 indicadores). Confirmar. |
 | R-24 | Umbrales de derrota | **Decidido** por el usuario: propuesta del Excel. |
-| R-25 | 58 acciones visibles vs ~25 al inicio | Hoy se ven todas (con motivo de bloqueo); sólo `liberar_cambios` tiene visibilidad condicional. |
+| R-25 | 58 acciones visibles vs ~25 al inicio | **Decidido** por el usuario: las bloqueadas (espera, requisitos, ley sin DNU posible) se ocultan por defecto, con botón "Ver también las bloqueadas". Las que sólo esperan PA, caja o un DNU siguen visibles. |
 | R-26 | Efecto directo de transparencia sobre la relación con el oficialismo | Se conserva como en el Excel. |
 | Balance | Curva logística de APRO / dominancia del jugador adaptable | Sin tocar: requiere decisión de dificultad. |
 | Balance | Asimetría heterodoxo/ortodoxo (EXTE, R07/R17 de reglas) | Sin tocar: requiere decisión de diseño. |
