@@ -15,6 +15,7 @@ import { GameState } from '../types/game';
 import { IMAGES } from '../utils/imageAssets';
 import { getValueRisk, riskColor } from '@/lib/risk';
 import { fmtBudget } from '@/lib/format';
+import { getScenario } from '@/data/causal';
 
 interface GameHeaderProps {
   gameState: GameState;
@@ -113,7 +114,7 @@ export function GameHeader({
               style={{ width: `${Math.min(100, (absoluteTurn / MAX_TURNS) * 100)}%` }}
             />
           </div>
-          <div className="text-[9px] text-muted-foreground mt-0.5">
+          <div className="text-[9px] text-muted-foreground mt-0.5" title={`Escenario: ${getScenario(gameState.causal?.scenarioId).name}`}>
             Mandato {gameState.term} · Turno {absoluteTurn}/{MAX_TURNS}
           </div>
         </div>

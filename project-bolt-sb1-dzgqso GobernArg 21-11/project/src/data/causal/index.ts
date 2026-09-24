@@ -248,7 +248,23 @@ export const DEFAULT_PLATFORM_BY_ARCHETYPE: Record<string, string> = {
   comunicador: 'orden_y_estabilidad',
 };
 
+/**
+ * Plataforma desactivada (decisión del usuario: la plataforma es opcional).
+ * Sin plataforma, el oficialismo sólo mira tu aprobación: si sos popular te
+ * sigue, si no, te pasa factura.
+ */
+export const NO_PLATFORM_ID = 'ninguna';
+export const NO_PLATFORM: PlatformDef = {
+  id: NO_PLATFORM_ID,
+  name: 'Sin plataforma',
+  description: 'Tu partido sólo mira tu popularidad.',
+  items: [],
+};
+
+export * from './scenarios';
+
 export function getPlatform(id: string | null | undefined): PlatformDef {
+  if (id === NO_PLATFORM_ID) return NO_PLATFORM;
   return PLATFORMS.find(p => p.id === id) ?? PLATFORMS[0];
 }
 
@@ -348,7 +364,9 @@ const REQUIREMENTS: Record<string, Requirement[]> = {
     { when: 'FLAG(cepo)', reason: 'Sólo se puede liberar un cepo vigente.' },
     { when: 'EXTE>=45', reason: 'Primero hay que reconstruir reservas (sector externo más sólido).' },
   ],
+  prestamo_internacional: [{ when: 'not FLAG(default_deuda)', reason: 'País en default: sin acceso a organismos hasta renegociar.' }],
   prestamo_local: [
+    { when: 'not FLAG(default_deuda)', reason: 'País en default: el mercado local está cerrado.' },
     { when: 'SOLV>=25', reason: 'Con este riesgo país el mercado local está cerrado.' },
     { when: 'SAT(financiero)>=35', reason: 'El sector financiero cerró el grifo.' },
   ],
@@ -424,8 +442,19 @@ export const INFRA_DISCOUNT_ACTIONS = ['infraestructura_vial', 'infraestructura_
 
 // ─────────────────────────────── Efectos (05) ───────────────────────────────
 
-export const EFFECTS: EffectRow[] = EFFECT_ROWS;
-export const EFFECTS_BY_ACTION: Record<string, EffectRow[]> = EFFECT_ROWS.reduce((acc, e) => {
+/**
+ * Efectos del Excel desactivados por decisión de diseño.
+ * R-26: transparencia ya no baja la relación con el oficialismo (el malestar
+ * del partido pasa por la interna: popularidad y coaliciones, ver interna.ts).
+ */
+const REMOVED_EFFECTS: { actionId: string; target: string }[] = [
+  { actionId: 'transparencia_anticorrupcion', target: 'REL:oficialismo' },
+];
+
+const ACTIVE_EFFECT_ROWS = EFFECT_ROWS.filter(e => !REMOVED_EFFECTS.some(r => r.actionId === e.actionId && r.target === e.target));
+
+export const EFFECTS: EffectRow[] = ACTIVE_EFFECT_ROWS;
+export const EFFECTS_BY_ACTION: Record<string, EffectRow[]> = ACTIVE_EFFECT_ROWS.reduce((acc, e) => {
   (acc[e.actionId] ??= []).push(e);
   return acc;
 }, {} as Record<string, EffectRow[]>);

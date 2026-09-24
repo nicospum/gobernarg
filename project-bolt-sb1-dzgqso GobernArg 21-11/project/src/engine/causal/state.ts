@@ -5,6 +5,8 @@ import {
   INDICATORS,
   PARAMS,
   PLATFORMS,
+  DESIGN_SCENARIO_ID,
+  getScenario,
   type ActorId,
   type IndicatorId,
 } from '../../data/causal';
@@ -41,19 +43,22 @@ export interface CreateOptions {
   relBonus?: Partial<Record<ActorId, number>>;
   /** Desanclaje inicial (herencia). */
   desanclaje?: number;
+  /** Escenario de partida (por defecto, el del Excel: herencia pesada). */
+  scenarioId?: string;
 }
 
 /** Estado inicial del país (valores de 01_INDICADORES y 02_ACTORES). */
 export function createCausalState(opts: CreateOptions = {}): CausalState {
+  const scenario = getScenario(opts.scenarioId ?? DESIGN_SCENARIO_ID);
   const base = {} as Record<IndicatorId, number>;
-  for (const id of INDICATOR_IDS) base[id] = INDICATORS[id].initial;
+  for (const id of INDICATOR_IDS) base[id] = scenario.indicators?.[id] ?? INDICATORS[id].initial;
 
   const actors = {} as Record<ActorId, ActorState>;
   for (const a of ACTOR_IDS) {
     const rel0 = ACTORS[a].relInitial;
     actors[a] = {
       sat: 50,
-      rel: rel0 === null ? null : Math.min(100, Math.max(0, rel0 + (opts.relBonus?.[a] ?? 0))),
+      rel: rel0 === null ? null : Math.min(100, Math.max(0, rel0 + (opts.relBonus?.[a] ?? 0) + (scenario.relDelta?.[a] ?? 0))),
       lastContact: null,
       revealedUntil: 0,
       lastMeeting: null,
@@ -72,11 +77,11 @@ export function createCausalState(opts: CreateOptions = {}): CausalState {
     agenda: [],
     flags: {},
     costMult: {},
-    caja: PARAMS.CAJA_INICIAL,
-    gastoCorr: PARAMS.GASTO_CORR_INICIAL,
-    deuda: PARAMS.DEUDA_INICIAL,
-    ingresoMult: 1,
-    desanclaje: opts.desanclaje ?? PARAMS.DESANCLAJE_INICIAL,
+    caja: scenario.caja ?? PARAMS.CAJA_INICIAL,
+    gastoCorr: scenario.gastoCorr ?? PARAMS.GASTO_CORR_INICIAL,
+    deuda: scenario.deuda ?? PARAMS.DEUDA_INICIAL,
+    ingresoMult: scenario.ingresoMult ?? 1,
+    desanclaje: opts.desanclaje ?? scenario.desanclaje ?? PARAMS.DESANCLAJE_INICIAL,
     fiscalHistory: [],
     executions: [],
     actors,
@@ -85,10 +90,12 @@ export function createCausalState(opts: CreateOptions = {}): CausalState {
     saliency: [],
     modifiers: [],
     political: {
-      leg: 47, legAdj: 0, gob: 50, apro: 50, estr: 50, otros: 50, iv: 50,
-      imagen: opts.imagen ?? 50, umbralLey: PARAMS.UMBRAL_LEY,
+      leg: 47, legAdj: scenario.legAdj ?? 0, gob: 50, apro: 50, estr: 50, otros: 50, iv: 50,
+      imagen: opts.imagen ?? scenario.imagen ?? 50, umbralLey: PARAMS.UMBRAL_LEY,
+      interna: 0, coalicion: 0,
     },
     platformId: opts.platformId ?? PLATFORMS[0].id,
+    scenarioId: scenario.id,
     agreements: [],
     credibility: 0,
     paPenaltyNextTurn: 0,
@@ -103,6 +110,26 @@ export function createCausalState(opts: CreateOptions = {}): CausalState {
     rng: (opts.seed ?? 20260924) >>> 0,
     perks: opts.perks ?? defaultPerks(),
   };
+
+  // Condiciones vigentes del escenario (p. ej. default de deuda).
+  for (const [name, turns] of Object.entries(scenario.flags ?? {})) {
+    state.flags[name] = { value: 1, start: 1, end: turns === null ? null : turns, source: `escenario:${scenario.id}` };
+  }
+
+  if (scenario.emergencia) {
+    state.bonuses.push({
+      id: `escenario.${scenario.id}.GOB`, target: 'GOB', value: scenario.emergencia.gob,
+      start: 0, end: scenario.emergencia.turns - 1, source: 'escenario', label: 'Ley de emergencia',
+    });
+  }
+
+  (scenario.impulsos ?? []).forEach((imp, i) => {
+    state.agenda.push({
+      uid: `escenario.${scenario.id}.${i}`, effectId: `escenario.${scenario.id}.${i}`, actionId: 'escenario', originTurn: 0,
+      target: imp.target, mode: 'DELTA', magnitude: imp.perTurn, start: 1, end: imp.turns, everyTurn: true,
+      appliedTotal: 0, explanation: imp.label,
+    });
+  });
 
   // SAT inicial = objetivo con los indicadores iniciales (E = valor: sin componente relativo).
   // Primero los actores no políticos (APRO depende de ellos), después APRO y los políticos.

@@ -1,11 +1,19 @@
 import { useMemo, useState } from 'react';
-import { Eye, EyeOff, LayoutGrid, Scale } from 'lucide-react';
+import { Eye, EyeOff, LayoutGrid, Scale, Users } from 'lucide-react';
 import { GameState } from '../types/game';
 import { ActionCard } from './ActionCard';
 import { getPolicyAvailability } from '../engine/gameEngine';
 import { UI_CATEGORY_STYLES } from '@/data/categoryStyles';
 import { ACTOR_IDS, PARAMS, UI_CATEGORIES, type ActorId, type UiCategory } from '@/data/causal';
-import { legForLaws, lawThreshold, projectedCloseCaja } from '@/engine/causal';
+import {
+  internaCostMult,
+  internaEfficacy,
+  internaLawPlus,
+  internaLevel,
+  legForLaws,
+  lawThreshold,
+  projectedCloseCaja,
+} from '@/engine/causal';
 import { fmtBudget, fmtBudgetDelta } from '@/lib/format';
 
 interface ControlPanelProps {
@@ -54,6 +62,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
   const threshold = lawThreshold(causal);
   const honeymoon = causal.turn - causal.mandateStart + 1 <= PARAMS.LUNA_MIEL;
   const hasMajority = leg >= threshold;
+  const interna = causal.political.interna;
 
   return (
     <div className="flex flex-col rounded-lg border border-border bg-card shadow-sm overflow-hidden">
@@ -77,6 +86,22 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
           {honeymoon && <span className="text-sky-300"> Luna de miel: el Congreso acompaña más los primeros turnos.</span>}
         </p>
       </div>
+
+      {/* Interna del oficialismo */}
+      {interna >= 10 && (
+        <div
+          className={`mx-4 mt-2 px-3 py-2 rounded border text-[11px] flex items-start gap-2 ${interna >= 50 ? 'border-red-400/30 bg-red-400/5 text-red-300' : 'border-amber-400/30 bg-amber-400/5 text-amber-300'}`}
+          title="Sube cuando ampliás la coalición y cuando tu aprobación es baja; baja cuando sos popular."
+        >
+          <Users size={13} className="mt-0.5 flex-shrink-0" />
+          <p>
+            <span className="font-semibold">{internaLevel(interna).label}</span> ({Math.round(interna)}/100):
+            tus políticas rinden {Math.round((1 - internaEfficacy(causal)) * 100)}% menos, cuestan {Math.round((internaCostMult(causal) - 1) * 100)}% más
+            {internaLawPlus(causal) > 0 ? ` y las leyes necesitan ${internaLawPlus(causal)} punto${internaLawPlus(causal) > 1 ? 's' : ''} más de apoyo` : ''}.
+            {causal.political.coalicion > 0 ? ' Compartir poder con otros espacios alimenta la interna.' : ''}
+          </p>
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex items-center gap-0.5 p-2 m-3 rounded bg-white/3 border border-border overflow-x-auto">

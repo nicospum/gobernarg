@@ -14,6 +14,7 @@ import { applyAgenda, newAccumulator, scheduleActionEffects } from './effects';
 import { closeFiscal, type ActionCashFlows } from './fiscal';
 import { recomputePolitical, updateImagen } from './political';
 import { changeRel, processRelations } from './relations';
+import { COALITION_ACTIONS, expandCoalition, updateInterna } from './interna';
 import { Rng } from './rng';
 import { applyStructuralRules } from './rules';
 import type { CausalState, PoliticalState, TurnActionRecord, TurnRecord } from './types';
@@ -107,6 +108,7 @@ export function closeTurn(input: CausalState, selections: Selection[]): CloseRes
     else flows.ingresosAcciones += caja;
     state.executions.push({ actionId: sel.actionId, turn: c, forced: sel.forced });
     const scheduled = scheduleActionEffects(state, sel.actionId, c);
+    if (COALITION_ACTIONS[sel.actionId]) expandCoalition(state, COALITION_ACTIONS[sel.actionId]);
     actions.push({ actionId: sel.actionId, caja, scheduled: scheduled.map(s => s.effectId), forced: sel.forced });
   }
 
@@ -137,6 +139,7 @@ export function closeTurn(input: CausalState, selections: Selection[]): CloseRes
 
   // T.9 — relaciones.
   const { messages: relationEvents } = processRelations(state, c);
+  const interna = updateInterna(state);
 
   // T.10 — político, expectativas, contadores de derrota.
   updateImagen(state, c);
@@ -167,6 +170,7 @@ export function closeTurn(input: CausalState, selections: Selection[]): CloseRes
     relationEvents,
     events: channelEvents,
     notes,
+    internaReasons: interna.reasons,
   };
   state.records = [...state.records, record].slice(-40);
 

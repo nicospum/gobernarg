@@ -97,9 +97,18 @@ function snapshotIndicators(state: GameState): Record<string, number> {
   return out;
 }
 
-export function playGame(bot: Bot, seed: number, maxTurns = 40): GameOutcome {
+export interface PlayOptions {
+  /** Escenario (por defecto el del Excel: herencia pesada). */
+  scenarioId?: string;
+  /** Plataforma (por defecto la sugerida por el arquetipo; 'ninguna' la desactiva). */
+  platformId?: string;
+  maxTurns?: number;
+}
+
+export function playGame(bot: Bot, seed: number, opts: PlayOptions = {}): GameOutcome {
+  const maxTurns = opts.maxTurns ?? 40;
   return withSeededRandom(seed, () => {
-    let state = createNewGame('presidente', bot.archetype, `Bot ${bot.id}`, false, '', 'normal', undefined, seed);
+    let state = createNewGame('presidente', bot.archetype, `Bot ${bot.id}`, false, '', 'normal', opts.platformId, seed, opts.scenarioId);
     const log: TurnLog[] = [];
     const outcome: GameOutcome = {
       bot: bot.id, seed, turnsPlayed: 0, gameOver: false, victorious: false, defeatReason: null,

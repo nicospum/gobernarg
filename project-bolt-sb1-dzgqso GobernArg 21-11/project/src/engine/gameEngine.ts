@@ -189,9 +189,10 @@ export function createNewGame(
   difficulty: Difficulty = 'normal',
   platformId?: string,
   seed?: number,
+  scenarioId?: string,
 ): GameState {
   const base = getInitialGameState();
-  const causal = newCausalForGame(archetype, platformId, seed);
+  const causal = newCausalForGame(archetype, platformId, seed, scenarioId);
 
   let state: GameState = {
     ...base,

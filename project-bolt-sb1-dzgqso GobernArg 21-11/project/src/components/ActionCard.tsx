@@ -15,7 +15,7 @@ import { Tooltip, TooltipContent } from './Tooltip';
 import { fmtBudget } from '@/lib/format';
 import { UI_CATEGORY_STYLES } from '@/data/categoryStyles';
 import { ACTORS, SENSITIVITIES, type ActorId } from '@/data/causal';
-import type { Availability } from '@/engine/causal';
+import { COALITION_ACTIONS, type Availability } from '@/engine/causal';
 import {
   actionContextNotes,
   actionTimeline,
@@ -201,6 +201,11 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
             </div>
           ))}
           {timeline.length > 2 && <div className="text-[10px] text-muted-foreground/70">+ efectos posteriores (ver detalle)</div>}
+          {COALITION_ACTIONS[action.id] && (
+            <div className="text-[10px] text-amber-300 leading-snug">
+              Abre una interna en tu partido (+{COALITION_ACTIONS[action.id]}): tus políticas rinden menos y cuestan más.
+            </div>
+          )}
         </div>
 
         {/* Pie: aviso o actores afectados + CTA */}

@@ -11,6 +11,7 @@ import { effectChip, targetLabel, type EffectChip } from './causalText';
 function sourceName(actionId: string): string {
   if (actionId === 'acuerdo') return 'Acuerdo con un actor';
   if (actionId.startsWith('evento:')) return 'Consecuencia de un evento';
+  if (actionId === 'escenario') return 'Herencia del escenario';
   return CAUSAL_ACTIONS_BY_ID[actionId]?.name ?? actionId;
 }
 
@@ -20,6 +21,7 @@ function bonusTitle(source: string, label?: string): string {
     const actor = ACTORS[source.slice('channel:'.length) as ActorId];
     if (actor) return label ? `${actor.shortName}: ${label}` : `Presión de ${actor.shortName}`;
   }
+  if (source === 'escenario' && label) return label;
   return sourceName(source);
 }
 

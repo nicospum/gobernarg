@@ -50,6 +50,8 @@ export interface MidtermCausal {
   umbralLey?: number;
   /** Bancas que se suman una vez (coalición). */
   legOnce?: number;
+  /** Amplía la coalición: interna del oficialismo (ver engine/causal/interna.ts). */
+  coalitionShock?: number;
   imagenOnce?: number;
   /** Turnos de vigencia; null = resto del mandato. */
   duration: number | null;
@@ -76,9 +78,10 @@ export const MIDTERM_CAUSAL: Record<MidtermStrategy, MidtermCausal> = {
   abrirse: {
     efficacy: 1.1,
     legOnce: 4,
-    relPerTurn: { aliados: 1, oficialismo: -2 },
+    coalitionShock: 20,
+    relPerTurn: { aliados: 1 },
     duration: null,
-    bullets: ['Políticas +10% de eficacia', '+4 bancas por la coalición ampliada', 'Tu propio partido pierde cohesión'],
+    bullets: ['Políticas +10% de eficacia', '+4 bancas por la coalición ampliada', 'Se abre una interna en tu partido: rinde menos y cuesta más gobernar'],
   },
   jugada_audaz: {
     efficacy: 1.5,

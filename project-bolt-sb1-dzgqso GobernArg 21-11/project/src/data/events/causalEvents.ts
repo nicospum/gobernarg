@@ -70,7 +70,7 @@ export const EVENT_CAUSAL: Record<string, EventCausalDef> = {
     when: 'REL(aliados)>=45 and IV>=35',
     effects: [],
     choices: {
-      accept_coalition: [{ target: 'LEG', value: 4 }, { target: 'REL:aliados', value: 6 }, { target: 'REL:oficialismo', value: -2 }],
+      accept_coalition: [{ target: 'LEG', value: 4 }, { target: 'REL:aliados', value: 6 }, { target: 'REL:oficialismo', value: -2 }, { target: 'COALICION', value: 20 }],
       reject_coalition: [{ target: 'REL:aliados', value: -4 }],
     },
   },

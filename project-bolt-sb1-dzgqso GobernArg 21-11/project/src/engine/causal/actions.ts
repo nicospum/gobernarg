@@ -9,6 +9,7 @@ import {
 import { evalCondition } from './dsl';
 import { countExecutions, decisionContext, effectiveLeg, flagValue, viewRef } from './context';
 import { projectCaja } from './fiscal';
+import { internaCostMult, internaLawPlus } from './interna';
 import type { CausalState } from './types';
 
 /** Una acción elegida en el turno. `viaDnu` = LEY habilitada por decreto. */
@@ -32,6 +33,7 @@ export function cajaCost(state: CausalState, action: CausalActionDef): number {
   }
   if (action.tags.includes('AMBIENTAL') && state.actors.ambiente.sat < 35) cost *= 1.2;
   cost *= 1 - (state.perks.categoryCajaDiscount[action.category] ?? 0);
+  cost *= internaCostMult(state);
   return Math.round(cost);
 }
 
@@ -48,7 +50,7 @@ export function legForLaws(state: CausalState): number {
 }
 
 export function lawThreshold(state: CausalState): number {
-  return state.political.umbralLey;
+  return state.political.umbralLey + internaLawPlus(state);
 }
 
 export interface Availability {

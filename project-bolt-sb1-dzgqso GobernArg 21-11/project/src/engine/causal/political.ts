@@ -2,6 +2,7 @@ import { ACTOR_IDS, ACTORS, PARAMS, isOrganized, type ActorId } from '../../data
 import { operativeSat } from './actors';
 import { channelStatus } from './channels';
 import { bonusSum, clamp, effective } from './context';
+import { internaGobPenalty } from './interna';
 import type { CausalState } from './types';
 
 /**
@@ -116,6 +117,7 @@ export function recomputePolitical(state: CausalState, close: number): void {
     0.3 * legNorm(legEff)
     + 0.4 * computeCooperation(state, close)
     + 0.3 * (100 - effective(state, 'CONF', close))
-    + bonusSum(state, 'GOB', close),
+    + bonusSum(state, 'GOB', close)
+    - internaGobPenalty(state),
   );
 }

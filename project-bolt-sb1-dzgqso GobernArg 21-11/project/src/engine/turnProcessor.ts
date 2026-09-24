@@ -74,6 +74,14 @@ function addWarningNotifications(state: GameState): GameState {
   if (c.caja < 0) {
     state = addNotification(state, { type: 'warning', category: 'economy', title: 'Caja en rojo', message: 'Sin fondos, el Tesoro va a emitir para cubrir el déficit: eso alimenta la inflación.', importance: 'critical' });
   }
+  const last = c.records[c.records.length - 1];
+  const internaBefore = last?.politicalBefore.interna ?? 0;
+  const why = last?.internaReasons?.length ? ` Motivo: ${last.internaReasons.join(' y ')}.` : '';
+  if (internaBefore < 50 && c.political.interna >= 50) {
+    state = addNotification(state, { type: 'warning', category: 'political', title: 'Interna abierta en tu partido', message: `El oficialismo está en guerra interna: tus políticas rinden menos, cuestan más y la calle se calienta.${why}`, importance: 'high' });
+  } else if (internaBefore < 25 && c.political.interna >= 25) {
+    state = addNotification(state, { type: 'warning', category: 'political', title: 'Tensión en tu partido', message: `Tu propio partido empieza a pasarte factura.${why}`, importance: 'medium' });
+  }
   if (effective(c, 'SOLV', ref) < 25) {
     state = addNotification(state, { type: 'warning', category: 'economy', title: 'Riesgo país extremo', message: 'El mercado local de deuda está cerrado y las expectativas se despegan.', importance: 'high' });
   }
