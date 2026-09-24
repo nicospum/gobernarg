@@ -52,6 +52,7 @@ export function GameHeader({
   const absoluteTurn = (gameState.year - 1) * 4 + gameState.turn;
   const positionLabel = POSITION_LABEL[gameState.position] ?? gameState.position;
   const popTrend = popularityTrend(gameState);
+  const scenarioDef = getScenario(gameState.causal?.scenarioId);
 
   return (
     <header className="h-14 flex-none flex items-center px-4 md:px-6 gap-4 bg-[#091422] border-b border-white/8 sticky top-0 z-50">
@@ -103,28 +104,12 @@ export function GameHeader({
             {absoluteTurn}<span className="text-white/40 font-normal">/{MAX_TURNS}</span>
           </div>
         </div>
-<<<<<<< HEAD
-        <div className="hidden lg:block text-[10px] font-mono text-white/50 bg-white/4 px-2 py-0.5 rounded border border-white/6 ml-1">
+        <div
+          className="hidden lg:block text-[10px] font-mono text-white/50 bg-white/4 px-2 py-0.5 rounded border border-white/6 ml-1"
+          title={scenarioDef ? `Escenario: ${scenarioDef.name}` : ''}
+        >
           Año {gameState.year} · T{gameState.turn}
-=======
-        <div className="w-px h-6 bg-border" />
-        <div className="leading-tight">
-          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Trimestre</div>
-          <div className="font-mono text-[14px] font-bold text-accent leading-none">
-            {gameState.turn}
-          </div>
-        </div>
-        <div className="w-16 hidden md:block">
-          <div className="h-1 w-full overflow-hidden rounded-full bg-white/10">
-            <div
-              className="h-full rounded-full bg-primary transition-all duration-300"
-              style={{ width: `${Math.min(100, (absoluteTurn / MAX_TURNS) * 100)}%` }}
-            />
-          </div>
-          <div className="text-[9px] text-muted-foreground mt-0.5" title={`Escenario: ${getScenario(gameState.causal?.scenarioId).name}`}>
-            Mandato {gameState.term} · Turno {absoluteTurn}/{MAX_TURNS}
-          </div>
->>>>>>> origin/motor-causal
+          {scenarioDef && <span className="ml-1 text-blue-300">({scenarioDef.name})</span>}
         </div>
       </div>
 
@@ -222,5 +207,5 @@ function Separator({ className = '' }: { className?: string }) {
   return <div className={`w-px h-6 bg-white/8 ${className}`} />;
 }
 
-// Re-export del icono Users por compat (no se usa en este componente pero alguien podría importarlo)
+// Re-export del icono Users por compat
 export { Users };
