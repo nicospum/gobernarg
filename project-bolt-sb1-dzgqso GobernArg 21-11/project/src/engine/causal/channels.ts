@@ -1,6 +1,6 @@
 import type { ActorId } from '../../data/causal';
 import { operativeSat } from './actors';
-import { effective, flagValue } from './context';
+import { effective, flagValue, saturate } from './context';
 import type { Rng } from './rng';
 import type { CausalState, ChannelEffect, ChannelRecord } from './types';
 
@@ -208,7 +208,7 @@ export function applyChannelQueue(state: CausalState, close: number): ChannelRec
       });
     } else if (ch.target in state.base) {
       const t = ch.target as keyof typeof state.base;
-      state.base[t] = Math.min(100, Math.max(0, state.base[t] + ch.value));
+      state.base[t] = Math.min(100, Math.max(0, state.base[t] + saturate(state.base[t], ch.value)));
     }
     applied.push({ actor: ch.actor, label: ch.label, target: ch.target, value: ch.value, eventId: ch.eventId });
   }

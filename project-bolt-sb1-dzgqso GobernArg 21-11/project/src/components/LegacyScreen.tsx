@@ -1,5 +1,6 @@
 import { RotateCcw, Trophy, Skull, ScrollText, Award, Target } from 'lucide-react';
 import { GameState } from '../types/game';
+import { effective, viewRef } from '../engine/causal';
 import {
   generateLegacyText,
   generateLegacyStats,
@@ -25,34 +26,41 @@ interface PerformanceData {
 }
 
 function derivePerformance(state: GameState): PerformanceData {
-  const popularity = Math.max(0, Math.min(100, state.popularity));
-  const stability = Math.max(0, Math.min(100, state.stability));
-  const legitimacy = Math.max(0, Math.min(100, state.legitimacy));
+  // Motor causal: el desempeño sale de la aprobación, la gobernabilidad, las
+  // instituciones y las metas de gestión, más el estado final del país.
+  const c = state.causal;
+  const ref = viewRef(c);
+  const v = (id: Parameters<typeof effective>[1]) => effective(c, id, ref);
+  const popularity = c.political.apro;
+  const stability = c.political.gob;
+  const legitimacy = v('INST');
   const objectivesTotal = state.objectives?.length ?? 0;
-  const objectivesDone = state.completedObjectives?.length ?? 0;
+  const objectivesDone = state.objectives?.filter(o => o.completed).length ?? 0;
   const objectivesPct = objectivesTotal > 0 ? (objectivesDone / objectivesTotal) * 100 : 0;
 
-  // Rating sobre 10: promedio ponderado de pop, estab, legit y objetivos
-  const rating =
-    Math.round(((popularity + stability + legitimacy + objectivesPct) / 40) * 10) / 1;
+  // Rating sobre 10: aprobación, gobernabilidad, instituciones y metas.
+  const rating = ((popularity + stability + legitimacy + objectivesPct) / 40);
 
   const strengths: string[] = [];
   const weaknesses: string[] = [];
 
-  if (popularity >= 65) strengths.push('Alta Popularidad');
-  else if (popularity < 40) weaknesses.push('Baja Popularidad');
-
-  if (stability >= 65) strengths.push('Estabilidad Sólida');
-  else if (stability < 40) weaknesses.push('Inestabilidad');
-
-  if (legitimacy >= 65) strengths.push('Legitimidad Fuerte');
-  else if (legitimacy < 40) weaknesses.push('Falta de Legitimidad');
-
-  if (objectivesDone >= 5) strengths.push('Gestión Efectiva');
-  if (state.budget < 0) weaknesses.push('Crisis Fiscal');
-  else if (state.budget >= 2000) strengths.push('Solvencia Económica');
-
-  if (state.consecutiveLowPopularity >= 2) weaknesses.push('Erosión Sostenida');
+  if (popularity >= 55) strengths.push('Alta Aprobación');
+  else if (popularity < 35) weaknesses.push('Baja Aprobación');
+  if (stability >= 60) strengths.push('Gobernabilidad Sólida');
+  else if (stability < 35) weaknesses.push('Gobierno Débil');
+  if (v('INFL') <= 40) strengths.push('Inflación Controlada');
+  else if (v('INFL') >= 70) weaknesses.push('Inflación Descontrolada');
+  if (v('ACTV') >= 55) strengths.push('Economía en Crecimiento');
+  else if (v('ACTV') < 35) weaknesses.push('Recesión');
+  if (v('SOLV') >= 55) strengths.push('Cuentas en Orden');
+  else if (v('SOLV') < 30) weaknesses.push('Riesgo País Alto');
+  if (v('CONF') <= 30) strengths.push('Paz Social');
+  else if (v('CONF') >= 60) weaknesses.push('Calle Caliente');
+  if (c.deuda >= 5000) weaknesses.push('Endeudamiento');
+  const kept = c.agreements.filter(a => a.status === 'fulfilled').length;
+  const broken = c.agreements.filter(a => a.status === 'broken').length;
+  if (kept >= 3) strengths.push('Palabra Cumplida');
+  if (broken >= 2) weaknesses.push('Acuerdos Incumplidos');
 
   return {
     rating: Math.min(10, Math.max(0, rating)),
@@ -132,7 +140,7 @@ export function LegacyScreen({ gameState, onRestart, onClose }: LegacyScreenProp
               <div className="rounded-lg border border-border bg-white/3 p-4">
                 <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1">
                   <Target className="w-3 h-3" />
-                  Objetivos Cumplidos
+                  Metas de Gestión
                 </div>
                 <div className={`font-mono text-3xl font-bold ${riskColor(targetRisk)}`}>
                   {perf.targetAchievement}%
@@ -297,14 +305,18 @@ function isVictivityMessage(gameState: GameState): string {
     const reason = gameState.defeatReason;
     if (reason === 'low_popularity') return 'La popularidad se desplomó a niveles insostenibles.';
     if (reason === 'negative_budget') return 'El déficit fiscal colapsó las cuentas públicas.';
-    if (reason === 'impeachment') return 'El Congreso te removió del cargo.';
+    if (reason === 'impeachment') return 'Una crisis de gobernabilidad terminó en juicio político.';
     if (reason === 'institutional_coup') return 'Las instituciones quebraron bajo tu mandato.';
-    if (reason === 'hyperinflation') return 'La economía se destruyó por la inflación.';
-    if (reason === 'election_loss') return 'El pueblo eligió un nuevo rumbo en las urnas.';
+    if (reason === 'hyperinflation') return 'La hiperinflación destruyó la economía y tu gobierno.';
+    if (reason === 'election_loss') {
+      return gameState.term >= 2
+        ? 'Completaste dos mandatos, pero tu espacio perdió la sucesión presidencial.'
+        : 'El pueblo eligió un nuevo rumbo en las urnas.';
+    }
     return 'Tu gestión ha llegado a su fin.';
   }
   if (gameState.position === 'presidente' && gameState.term >= 2) {
-    return 'Completaste dos mandatos presidenciales y cerraste una carrera histórica.';
+    return 'Completaste dos mandatos presidenciales y tu espacio retiene el gobierno.';
   }
   return 'El pueblo te renovó la confianza para un segundo mandato.';
 }

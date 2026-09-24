@@ -187,10 +187,10 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
         </div>
 
         {/* Efectos en el tiempo (hasta 2 momentos) */}
-        <div className="space-y-1">
+        <div className="space-y-1.5">
           {timeline.slice(0, 2).map(t => (
-            <div key={t.when} className="flex gap-1.5 items-start text-[11px] leading-snug">
-              <span className="text-muted-foreground flex-shrink-0 w-[4.5rem] truncate">{t.when}</span>
+            <div key={t.when} className="text-[11px] leading-snug">
+              <div className="text-[9px] uppercase tracking-wide text-muted-foreground mb-0.5">{t.when}</div>
               <span className="flex flex-wrap gap-1">
                 {t.chips.slice(0, 3).map((c, i) => (
                   <span key={i} className={`inline-flex items-center gap-1 px-1.5 py-0 rounded border text-[10px] ${toneChipClass(c.tone)}`}>
@@ -200,7 +200,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
               </span>
             </div>
           ))}
-          {timeline.length > 2 && <div className="text-[10px] text-muted-foreground/70 pl-[4.5rem]">+ efectos posteriores</div>}
+          {timeline.length > 2 && <div className="text-[10px] text-muted-foreground/70">+ efectos posteriores (ver detalle)</div>}
         </div>
 
         {/* Pie: aviso o actores afectados + CTA */}

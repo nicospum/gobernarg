@@ -239,6 +239,8 @@ export function actionTimeline(actionId: string): TimedEffect[] {
   const order: string[] = [];
   for (const r of rows) {
     if (r.target.startsWith('FLAG:reunido') || r.target.startsWith('REL:[actor]')) continue;
+    // Las expectativas de inflación son una variable oculta del modelo (01: "se insinúa").
+    if (r.target === 'DESANCLAJE') continue;
     const when = timingLabel(r);
     if (!groups.has(when)) { groups.set(when, []); order.push(when); }
     groups.get(when)!.push(effectChip(r.target, r.magnitude!));

@@ -196,6 +196,9 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
         <div className="mb-1.5 px-2 py-1.5 rounded border border-primary/30 bg-primary/5 text-[10px] text-foreground/80 leading-snug">
           Aceptan acordar: vos te comprometés a <span className="font-semibold">{demandDef.name}</span> en {PARAMS.PLAZO_ACUERDO} turnos;
           ellos ofrecen: {agreementOffer(actor).toLowerCase()}. Incumplir rompe la relación.
+          {demandAv && !demandAv.available && (
+            <div className="mt-1 text-red-300">Ojo: hoy no podrías ejecutarla ({demandAv.reasons[0]})</div>
+          )}
         </div>
       )}
 

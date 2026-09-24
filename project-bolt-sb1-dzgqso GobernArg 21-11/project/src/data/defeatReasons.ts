@@ -25,12 +25,12 @@ export const DEFEAT_REASON_CONFIG: Record<DefeatReason, DefeatReasonConfig> = {
   },
   impeachment: {
     title: 'Juicio Político',
-    description: 'El Congreso te destituyó mediante un juicio político. La combinación de baja popularidad e inestabilidad resultó letal.',
+    description: 'El gobierno perdió la capacidad de gobernar: sin Congreso, sin cooperación de los actores y con la calle encendida, el Congreso avanzó con el juicio político.',
     icon: 'Gavel',
     // El impeachment se declara por popularidad < 10% + estabilidad < 20%
     // durante 2 turnos (victoryConditions.ts) — el apoyo legislativo es la
     // palanca del golpe institucional, no de esta derrota.
-    advice: 'Cuidado con la combinación letal: popularidad bajo 10% y estabilidad bajo 20% durante 2 turnos te destituyen. Recuperá ambas antes de que avance el juicio.',
+    advice: 'La gobernabilidad bajo 15 durante dos trimestres seguidos te destituye. Cuidá tus bancas, la relación con los actores organizados y la conflictividad social.',
     severity: 'institutional',
   },
   institutional_coup: {
@@ -42,17 +42,17 @@ export const DEFEAT_REASON_CONFIG: Record<DefeatReason, DefeatReasonConfig> = {
   },
   hyperinflation: {
     title: 'Hiperinflación',
-    description: 'La emisión monetaria descontrolada destruyó la economía. El peso argentino colapsó y con él tu gobierno.',
+    description: 'La inflación superó el umbral de hiperinflación dos trimestres seguidos. El peso colapsó y con él tu gobierno.',
     icon: 'Flame',
     // La derrota es a las 7 emisiones (victoryConditions.ts), no a las 3.
-    advice: 'No emitas dinero más de 6 veces: la séptima emisión desata la hiperinflación. Buscá financiamiento alternativo y mantené el equilibrio fiscal.',
+    advice: 'Emitir varias veces en pocos turnos desancla las expectativas; y con la caja en rojo el Tesoro emite solo. Cuidá el resultado fiscal y las divisas antes de que la inflación se acelere.',
     severity: 'economic',
   },
   election_loss: {
     title: 'Derrota Electoral',
     description: 'El pueblo eligió un nuevo rumbo en las urnas. Tu proyecto político no logró convencer a la mayoría.',
     icon: 'Vote',
-    advice: 'Trabajá en tu popularidad y cumplí tus objetivos de gestión. La intención de voto refleja tu desempeño.',
+    advice: 'La intención de voto sale de cuán satisfechos están los actores con peso electoral (65%), tu aparato político (10%) y tu imagen (25%). Mejorá lo que les importa a la clase media y a los sectores populares.',
     severity: 'political',
   },
 };

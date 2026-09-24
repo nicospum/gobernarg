@@ -84,7 +84,7 @@ export function GameOverModal({ gameState, onRestart, onShowLegacy }: GameOverMo
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-foreground/70 text-[12px] uppercase tracking-wide">
-                  Popularidad Final
+                  Aprobación Final
                 </p>
                 <p className="font-mono text-3xl font-bold">
                   {Math.round(gameState.popularity)}%
@@ -92,7 +92,7 @@ export function GameOverModal({ gameState, onRestart, onShowLegacy }: GameOverMo
               </div>
               <div>
                 <p className="text-foreground/70 text-[12px] uppercase tracking-wide">
-                  Presupuesto Final
+                  Caja Final
                 </p>
                 <p className="font-mono text-3xl font-bold">{fmtBudget(gameState.budget)}</p>
               </div>

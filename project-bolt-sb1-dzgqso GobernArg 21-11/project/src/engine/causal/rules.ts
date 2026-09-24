@@ -1,5 +1,5 @@
 import { INDICATOR_IDS, PARAMS, type IndicatorId } from '../../data/causal';
-import { clamp, effectiveAll, flagValue, result3 } from './context';
+import { clamp, effectiveAll, flagValue, result3, saturate } from './context';
 import type { CausalState, RuleRecord } from './types';
 
 /**
@@ -69,7 +69,9 @@ export function applyStructuralRules(state: CausalState, close: number): RuleRec
 
   for (const id of INDICATOR_IDS) {
     const total = d.filter(r => r.target === id).reduce((a, r) => a + r.delta, 0);
-    if (total !== 0) state.base[id] = clamp(state.base[id] + total);
+    // INFL (la hiperinflación es una derrota diseñada) y SOLV (derivado) no se saturan.
+    const applied = id === 'INFL' || id === 'SOLV' ? total : saturate(state.base[id], total);
+    if (total !== 0) state.base[id] = clamp(state.base[id] + applied);
   }
   // R20 — las expectativas se re-anclan lentamente.
   if (state.desanclaje > 0) {

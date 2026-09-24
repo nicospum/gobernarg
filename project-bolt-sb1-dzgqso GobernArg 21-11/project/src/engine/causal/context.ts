@@ -123,3 +123,18 @@ export function dslContext(state: CausalState, refs: ContextRefs): DslContext {
 export function decisionContext(state: CausalState): DslContext {
   return dslContext(state, { closeRef: viewRef(state), decisionRef: state.turn, currentTurn: state.turn });
 }
+
+/**
+ * Saturación anti-espiral (R-05, calibración de playtest): los empujes
+ * sistémicos (reglas estructurales y canales de poder) pierden fuerza cerca
+ * del piso o del techo. Sin esto, los círculos viciosos (desinversión →
+ * recesión → despidos → más desinversión) llevaban indicadores a 0.
+ * Las magnitudes de las acciones del Excel no se saturan.
+ */
+export const SATURATION_BAND = 30;
+
+export function saturate(current: number, delta: number): number {
+  if (delta < 0 && current < SATURATION_BAND) return delta * Math.max(0.1, current / SATURATION_BAND);
+  if (delta > 0 && current > 100 - SATURATION_BAND) return delta * Math.max(0.1, (100 - current) / SATURATION_BAND);
+  return delta;
+}

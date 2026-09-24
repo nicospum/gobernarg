@@ -5,8 +5,8 @@ import { ActionCard } from './ActionCard';
 import { getPolicyAvailability } from '../engine/gameEngine';
 import { UI_CATEGORY_STYLES } from '@/data/categoryStyles';
 import { ACTOR_IDS, PARAMS, UI_CATEGORIES, type ActorId, type UiCategory } from '@/data/causal';
-import { legForLaws, lawThreshold } from '@/engine/causal';
-import { fmtBudgetDelta } from '@/lib/format';
+import { legForLaws, lawThreshold, projectedCloseCaja } from '@/engine/causal';
+import { fmtBudget, fmtBudgetDelta } from '@/lib/format';
 
 interface ControlPanelProps {
   gameState: GameState;
@@ -45,6 +45,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
     .filter(av => gameState.selectedActions.includes(av.action.id))
     .reduce((acc, av) => acc + av.caja, 0);
 
+  const projection = projectedCloseCaja(causal, gameState.selectedActions.map(actionId => ({ actionId })));
   const leg = Math.round(legForLaws(causal));
   const threshold = lawThreshold(causal);
   const honeymoon = causal.turn - causal.mandateStart + 1 <= PARAMS.LUNA_MIEL;
@@ -128,22 +129,25 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
         )}
       </div>
 
-      {/* Footer sumario */}
-      {gameState.selectedActions.length > 0 && (
-        <div className="px-4 py-2.5 border-t border-border bg-primary/5 text-[12px] flex items-center justify-between gap-3 flex-wrap">
-          <span className="font-semibold text-foreground">
-            {gameState.selectedActions.length}{' '}
-            {gameState.selectedActions.length === 1 ? 'acción seleccionada' : 'acciones seleccionadas'}
+      {/* Footer: proyección de caja al cierre */}
+      <div className={`px-4 py-2.5 border-t border-border text-[12px] flex items-center justify-between gap-3 flex-wrap ${projection.caja < 0 ? 'bg-red-400/10' : 'bg-primary/5'}`}>
+        <span className="font-semibold text-foreground">
+          {gameState.selectedActions.length === 0
+            ? 'Sin políticas seleccionadas'
+            : `${gameState.selectedActions.length} ${gameState.selectedActions.length === 1 ? 'acción seleccionada' : 'acciones seleccionadas'} (${fmtBudgetDelta(selectedCaja)})`}
+        </span>
+        <span className="text-muted-foreground font-mono" title="Estimación: caja actual + costo de lo elegido + recaudación − gasto corriente − intereses. No incluye efectos diferidos ni eventos.">
+          Caja estimada al cierre:{' '}
+          <span className={projection.caja >= 0 ? 'text-emerald-400' : 'text-red-400'}>{fmtBudget(projection.caja)}</span>
+          {' · '}Resultado estructural:{' '}
+          <span className={projection.structural >= 0 ? 'text-emerald-400' : 'text-red-400'}>{fmtBudgetDelta(projection.structural)}/turno</span>
+        </span>
+        {projection.caja < 0 && (
+          <span className="w-full text-[11px] text-red-300">
+            Con esta selección la caja queda en rojo: el Tesoro emitirá el turno siguiente y eso empuja la inflación.
           </span>
-          <span className="text-muted-foreground font-mono">
-            Caja del turno:{' '}
-            <span className={selectedCaja >= 0 ? 'text-emerald-400' : 'text-red-400'}>
-              {fmtBudgetDelta(selectedCaja)}
-            </span>
-            {' · '}Se ejecutan al finalizar el turno
-          </span>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

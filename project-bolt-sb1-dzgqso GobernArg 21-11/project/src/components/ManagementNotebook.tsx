@@ -11,193 +11,106 @@ import {
   ScrollText,
   Activity,
 } from 'lucide-react';
-import type { GameState, GroupAgendaItem, PendingEffect } from '../types/game';
+import type { GameState } from '../types/game';
 import { actionDefinitions } from '../data/actionRegistry';
-import { FIXED_GROUPS } from '@/lib/groups-mapping';
-import { getGlobalTurn } from '../engine/engineShared';
+import { ACTOR_IDS, ACTORS, CAUSAL_ACTIONS_BY_ID, PARAMS } from '@/data/causal';
+import { runningEffects, upcomingEffects } from '@/lib/agendaView';
 
 interface ManagementNotebookProps {
   gameState: GameState;
   onClose: () => void;
 }
 
-// ─── Helpers ────────────────────────────────────────────────────────────
+// ─── Section 1: Acuerdos y pedidos (motor causal) ─────────────────────
 
-/** Resolve demand text: if it's an action ID, return the action title; otherwise return as-is */
-function resolveDemandName(demand: string): string {
-  const actionDef = actionDefinitions.find((a) => a.id === demand);
-  return actionDef ? actionDef.title : demand;
-}
+type AgreementStyle = { label: string; cls: string; Icon: typeof CheckCircle };
 
-/** Get group name for a subgroup ID */
-function getGroupName(subgroupId: string): string {
-  const allGroups = FIXED_GROUPS;
-  for (const g of allGroups) {
-    if (g.members.includes(subgroupId)) return g.name;
-  }
-  return subgroupId;
-}
-
-/** Compute penalty: proportional to subgroup influence */
-function computePenalty(
-  agenda: GroupAgendaItem,
-  gameState: GameState,
-): number {
-  const subgroup = (gameState.interestGroups ?? [])
-    .flatMap((g) => g.subgroups)
-    .find((sg) => sg.id === agenda.groupId);
-  return subgroup?.influence ?? 5;
-}
-
-type AgendaStatus = 'pendiente' | 'cumplida' | 'vencida';
-
-function getAgendaStatus(agenda: GroupAgendaItem, currentTurn: number): AgendaStatus {
-  if (agenda.satisfied) return 'cumplida';
-  if (agenda.penaltyApplied || currentTurn > agenda.deadline) return 'vencida';
-  return 'pendiente';
-}
-
-const STATUS_STYLES: Record<AgendaStatus, { label: string; cls: string; Icon: typeof CheckCircle }> = {
-  pendiente: {
-    label: 'Pendiente',
-    cls: 'text-amber-400 border-amber-400/30 bg-amber-400/5',
-    Icon: Clock,
-  },
-  cumplida: {
-    label: 'Cumplida',
-    cls: 'text-emerald-400 border-emerald-400/30 bg-emerald-400/5',
-    Icon: CheckCircle,
-  },
-  vencida: {
-    label: 'Vencida',
-    cls: 'text-red-400 border-red-400/30 bg-red-400/5',
-    Icon: XCircle,
-  },
+const AGREEMENT_STYLES: Record<'active' | 'fulfilled' | 'broken', AgreementStyle> = {
+  active: { label: 'Vigente', cls: 'text-amber-400 border-amber-400/30 bg-amber-400/5', Icon: Clock },
+  fulfilled: { label: 'Cumplido', cls: 'text-emerald-400 border-emerald-400/30 bg-emerald-400/5', Icon: CheckCircle },
+  broken: { label: 'Incumplido', cls: 'text-red-400 border-red-400/30 bg-red-400/5', Icon: XCircle },
 };
 
-// ─── Section 1: Compromisos Asumidos ────────────────────────────────────
-
 function CompromisosSection({ gameState }: { gameState: GameState }) {
-  const agendas = gameState.groupAgendas;
-  const active = agendas.filter((a) => !a.satisfied);
-  const completed = agendas.filter((a) => a.satisfied);
+  const c = gameState.causal;
+  const agreements = [...c.agreements].sort((a, b) => (a.status === 'active' ? -1 : 1) - (b.status === 'active' ? -1 : 1));
+  const requests = ACTOR_IDS
+    .map(a => ({ actor: a, demand: c.actors[a].demand }))
+    .filter(x => x.demand && x.demand.revealedTurn !== null && c.turn - x.demand.revealedTurn < PARAMS.VENTANA_DEMANDA);
 
   return (
     <section>
       <div className="flex items-center gap-2 mb-3">
         <Activity size={14} className="text-muted-foreground" />
         <h3 className="font-display text-xs uppercase tracking-widest text-muted-foreground font-bold">
-          Compromisos Asumidos
+          Acuerdos y Pedidos
         </h3>
         <span className="text-[10px] font-mono text-muted-foreground ml-auto">
-          {active.length} activos / {agendas.length} total
+          {agreements.filter(a => a.status === 'active').length} vigentes / {agreements.length} firmados
         </span>
       </div>
 
-      {agendas.length === 0 ? (
+      {agreements.length === 0 && requests.length === 0 ? (
         <p className="text-xs text-muted-foreground/60 py-2">
-          No hay compromisos pendientes. Los grupos no han hecho demandas todavía.
+          Todavía no hay acuerdos ni pedidos conocidos. Reunite con los actores para saber qué piden.
         </p>
       ) : (
         <div className="space-y-2">
-          {/* Active/pending first */}
-          {[...active, ...completed].map((agenda) => {
-            const status = getAgendaStatus(agenda, getGlobalTurn(gameState));
-            const st = STATUS_STYLES[status];
-            const turnsLeft = Math.max(0, agenda.deadline - getGlobalTurn(gameState));
-            const penalty = computePenalty(agenda, gameState);
-
+          {agreements.map(ag => {
+            const st = AGREEMENT_STYLES[ag.status];
+            const turnsLeft = Math.max(0, ag.deadline - c.turn);
             return (
-              <div
-                key={agenda.id}
-                className={`rounded-lg border p-3 ${st.cls}`}
-              >
+              <div key={ag.id} className={`rounded-lg border p-3 ${st.cls}`}>
                 <div className="flex items-start justify-between gap-2 mb-1">
                   <div className="min-w-0">
                     <div className="font-display font-semibold text-xs text-foreground leading-tight">
-                      {resolveDemandName(agenda.demand)}
+                      {CAUSAL_ACTIONS_BY_ID[ag.commitmentActionId]?.name ?? ag.commitmentActionId}
                     </div>
                     <div className="text-[10px] text-foreground/50 mt-0.5">
-                      {getGroupName(agenda.groupId)}
+                      Acuerdo con {ACTORS[ag.actor].shortName} · a cambio: {ag.offer.toLowerCase()}
                     </div>
                   </div>
                   <div className="flex-shrink-0 flex items-center gap-1.5">
-                    <st.Icon size={11} className={st.cls.replace(/border-\S+|bg-\S+/g, '').trim()} />
-                    <span className="text-[9px] font-semibold uppercase tracking-wide">
-                      {st.label}
-                    </span>
+                    <st.Icon size={11} />
+                    <span className="text-[9px] font-semibold uppercase tracking-wide">{st.label}</span>
                   </div>
                 </div>
-
-                <div className="flex items-center justify-between gap-2 mt-2 text-[10px]">
-                  <div className="flex items-center gap-1.5">
-                    <Clock size={9} className="text-muted-foreground" />
-                    <span className="text-muted-foreground">
-                      {status === 'pendiente'
-                        ? `Vence en ${turnsLeft} turno${turnsLeft !== 1 ? 's' : ''}`
-                        : status === 'cumplida'
-                          ? 'Completado'
-                          : 'Plazo vencido'}
+                {ag.status === 'active' && (
+                  <div className="flex items-center justify-between gap-2 mt-2 text-[10px]">
+                    <span className="text-muted-foreground flex items-center gap-1.5">
+                      <Clock size={9} />
+                      Vence en {turnsLeft} turno{turnsLeft !== 1 ? 's' : ''}
                     </span>
-                  </div>
-                  {status === 'pendiente' && (
                     <span className="text-red-400/70 flex items-center gap-1">
                       <AlertTriangle size={9} />
-                      Penaliza -{penalty} apoyo
+                      Incumplir rompe la relación
                     </span>
-                  )}
-                  {status === 'vencida' && !agenda.satisfied && (
-                    <span className="text-red-400/50 text-[9px]">
-                      Penalización aplicada
-                    </span>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             );
           })}
+          {requests.map(({ actor, demand }) => (
+            <div key={actor} className="rounded-lg border border-border bg-card p-2.5">
+              <div className="font-display font-semibold text-[11px] text-foreground leading-tight">
+                {CAUSAL_ACTIONS_BY_ID[demand!.actionId]?.name ?? demand!.actionId}
+              </div>
+              <div className="text-[9px] text-muted-foreground mt-0.5">
+                Lo pide {ACTORS[actor].shortName} (revelado en la reunión del turno {demand!.revealedTurn})
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </section>
   );
 }
 
-// ─── Section 2: Efectos Diferidos Activos ───────────────────────────────
-
-function describeDeferredEffect(pe: PendingEffect): string {
-  const parts: string[] = [];
-  if (pe.incomeModifier) {
-    parts.push(`+${Math.round(pe.incomeModifier * 100)}% ingresos`);
-  }
-  if (pe.costReductionCategory && pe.costReductionPercent) {
-    const cat =
-      pe.costReductionCategory === 'infraestructura'
-        ? 'Infraestructura'
-        : pe.costReductionCategory;
-    parts.push(`-${Math.round(pe.costReductionPercent * 100)}% costo ${cat}`);
-  }
-  if (pe.stabilityChange) {
-    parts.push(`${pe.stabilityChange > 0 ? '+' : ''}${pe.stabilityChange} estabilidad`);
-  }
-  if (pe.popularityChange) {
-    parts.push(`${pe.popularityChange > 0 ? '+' : ''}${pe.popularityChange} popularidad`);
-  }
-  if (pe.budgetChange) {
-    parts.push(`${pe.budgetChange > 0 ? '+' : ''}$${Math.abs(pe.budgetChange)}M`);
-  }
-  if (parts.length === 0 && pe.description) {
-    parts.push(pe.description);
-  }
-  return parts.join(' · ') || 'Efecto en curso';
-}
+// ─── Section 2: Efectos en camino y en curso (agenda del motor) ───────
 
 function EfectosDiferidosSection({ gameState }: { gameState: GameState }) {
-  const effects = gameState.pendingEffects;
-  const currentGlobalTurn = getGlobalTurn(gameState);
-
-  // Separate: effects that haven't started yet (activationTurn > currentTurn)
-  // and effects that are currently active and ending soon
-  const pending = effects.filter((pe) => pe.activationTurn > currentGlobalTurn);
-  const active = effects.filter((pe) => pe.activationTurn <= currentGlobalTurn);
+  const upcoming = upcomingEffects(gameState.causal);
+  const running = runningEffects(gameState.causal);
 
   return (
     <section>
@@ -207,80 +120,52 @@ function EfectosDiferidosSection({ gameState }: { gameState: GameState }) {
           Efectos Diferidos
         </h3>
         <span className="text-[10px] font-mono text-muted-foreground ml-auto">
-          {effects.length}
+          {upcoming.length + running.length}
         </span>
       </div>
 
-      {effects.length === 0 ? (
+      {upcoming.length + running.length === 0 ? (
         <p className="text-xs text-muted-foreground/60 py-2">
           No hay efectos diferidos activos.
         </p>
       ) : (
         <div className="space-y-2">
-          {pending.length > 0 && (
+          {upcoming.length > 0 && (
             <div className="space-y-1.5">
               <h4 className="text-[9px] uppercase tracking-widest text-amber-400/60 font-semibold px-0.5">
-                Próximos a activarse
+                Próximos a llegar
               </h4>
-              {pending.map((pe) => {
-                const turnsUntil = pe.activationTurn - currentGlobalTurn;
-                return (
-                  <div
-                    key={pe.id}
-                    className="rounded-lg border border-border bg-card p-2.5"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0">
-                        <div className="font-display font-semibold text-[11px] text-foreground leading-tight">
-                          {describeDeferredEffect(pe)}
-                        </div>
-                        {pe.source && (
-                          <div className="text-[9px] text-muted-foreground mt-0.5 truncate">
-                            {pe.source}
-                          </div>
-                        )}
+              {upcoming.map(item => (
+                <div key={item.key} className="rounded-lg border border-border bg-card p-2.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <div className="font-display font-semibold text-[11px] text-foreground leading-tight">{item.title}</div>
+                      <div className="text-[9px] text-muted-foreground mt-0.5">
+                        {item.chips.map(ch => `${ch.label} ${ch.text}`).join(' · ')}
                       </div>
-                      <span className="flex-shrink-0 text-[10px] font-mono text-amber-400">
-                        en {turnsUntil}t
-                      </span>
                     </div>
+                    <span className="flex-shrink-0 text-[10px] font-mono text-amber-400">en {item.inTurns}t</span>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           )}
-
-          {active.length > 0 && (
+          {running.length > 0 && (
             <div className="space-y-1.5">
-              {pending.length > 0 && (
-                <h4 className="text-[9px] uppercase tracking-widest text-emerald-400/60 font-semibold px-0.5">
-                  Activos ahora
-                </h4>
-              )}
-              {active.map((pe) => {
-                return (
-                  <div
-                    key={pe.id}
-                    className="rounded-lg border border-emerald-400/15 bg-emerald-400/5 p-2.5"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0">
-                        <div className="font-display font-semibold text-[11px] text-foreground leading-tight">
-                          {describeDeferredEffect(pe)}
-                        </div>
-                        {pe.source && (
-                          <div className="text-[9px] text-muted-foreground mt-0.5 truncate">
-                            {pe.source}
-                          </div>
-                        )}
-                      </div>
-                      <span className="flex-shrink-0 text-[10px] font-mono text-emerald-400">
-                        activo
-                      </span>
+              <h4 className="text-[9px] uppercase tracking-widest text-emerald-400/60 font-semibold px-0.5">
+                En curso
+              </h4>
+              {running.map(item => (
+                <div key={item.key} className="rounded-lg border border-emerald-400/15 bg-emerald-400/5 p-2.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <div className="font-display font-semibold text-[11px] text-foreground leading-tight">{item.title}</div>
+                      <div className="text-[9px] text-muted-foreground mt-0.5">{item.detail}</div>
                     </div>
+                    <span className="flex-shrink-0 text-[10px] font-mono text-emerald-400">activo</span>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           )}
         </div>
@@ -355,7 +240,7 @@ function HistorialRecienteSection({ gameState }: { gameState: GameState }) {
                     >
                       <TrendingUp size={9} />
                       {entry.popularityChange > 0 ? '+' : ''}
-                      {entry.popularityChange.toFixed(1)}% pop
+                      {entry.popularityChange.toFixed(1)} aprob.
                     </span>
                   )}
                   {entry.budgetChange !== 0 && (
