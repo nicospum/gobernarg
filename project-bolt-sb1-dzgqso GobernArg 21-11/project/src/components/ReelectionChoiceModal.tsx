@@ -7,7 +7,7 @@ import {
   canRunForOption,
   calculateVotingIntentionForOption,
 } from '../utils/electionSystem';
-import { PROMOTION_MIN_POPULARITY } from '../data/careerRules';
+import { PROMOTION_MIN_POPULARITY, PROMOTION_DIFFICULTY } from '../data/careerRules';
 
 interface ReelectionChoiceModalProps {
   gameState: GameState;
@@ -22,13 +22,13 @@ export function ReelectionChoiceModal({ gameState, onSelect }: ReelectionChoiceM
       <div className="bg-card border border-border rounded-xl w-full max-w-2xl overflow-hidden shadow-2xl">
         <div className="border-b border-border p-6 text-center">
           <h2 className="font-display text-3xl font-bold uppercase tracking-wide text-foreground mb-2">
-            ¡Victoria electoral!
+            Fin del mandato
           </h2>
           <p className="text-foreground/80 text-sm">
             Terminaste tu mandato como{' '}
             <span className="font-semibold capitalize text-accent">{gameState.position}</span>.
             {options.length === 1
-              ? ' Tu mandato llega a su fin: ¿buscás la reelección?'
+              ? ' Llegan las elecciones presidenciales: ¿buscás la reelección?'
               : ' ¿Qué camino querés tomar ahora?'}
           </p>
         </div>
@@ -41,7 +41,10 @@ export function ReelectionChoiceModal({ gameState, onSelect }: ReelectionChoiceM
           ) : (
             options.map((option) => {
               const allowed = canRunForOption(gameState, option);
-              const projectedVotes = calculateVotingIntentionForOption(gameState, option);
+              // Motor causal: intención de voto actual + ventaja/desventaja de la opción.
+              const projectedVotes = gameState.causal
+                ? Math.max(0, Math.min(100, gameState.causal.political.iv + PROMOTION_DIFFICULTY[option]))
+                : calculateVotingIntentionForOption(gameState, option);
               const difficultyColor =
                 projectedVotes >= 45
                   ? 'text-emerald-400'

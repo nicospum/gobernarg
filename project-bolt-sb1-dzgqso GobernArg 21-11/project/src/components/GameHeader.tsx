@@ -46,7 +46,8 @@ export function GameHeader({
   onEndTurn,
   canEndTurn,
 }: GameHeaderProps) {
-  const popularityRisk = getValueRisk(gameState.popularity, 100);
+  // Aprobación (APRO) rara vez supera 60: se evalúa sobre una escala 0-80.
+  const popularityRisk = getValueRisk(gameState.popularity, 80);
   const stabilityRisk = getValueRisk(gameState.stability, 100);
   const absoluteTurn = (gameState.year - 1) * 4 + gameState.turn;
   const positionLabel = POSITION_LABEL[gameState.position] ?? gameState.position;
@@ -113,7 +114,7 @@ export function GameHeader({
             />
           </div>
           <div className="text-[9px] text-muted-foreground mt-0.5">
-            Turno {absoluteTurn}/{MAX_TURNS}
+            Mandato {gameState.term} · Turno {absoluteTurn}/{MAX_TURNS}
           </div>
         </div>
       </div>
@@ -124,7 +125,7 @@ export function GameHeader({
       <div className="flex items-center gap-2 flex-none">
         <PlayCircle size={13} className="text-muted-foreground" />
         <div className="leading-tight">
-          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Acciones</div>
+          <div className="text-[9px] text-muted-foreground uppercase tracking-widest" title="Puntos de acción que quedan este turno">Acciones</div>
           <div className="font-mono text-[12px] font-bold text-foreground">{availableActions}</div>
         </div>
       </div>
@@ -135,7 +136,7 @@ export function GameHeader({
       <div className="flex items-center gap-2 flex-none">
         <Wallet size={13} className="text-muted-foreground" />
         <div className="leading-tight">
-          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Presup.</div>
+          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Caja</div>
           <div className="font-mono text-[12px] font-bold text-foreground">
             {fmtBudget(gameState.budget)}
           </div>
@@ -148,7 +149,7 @@ export function GameHeader({
       <div className="hidden lg:flex items-center gap-2 flex-none">
         <Activity size={13} className="text-muted-foreground" />
         <div className="leading-tight">
-          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Popularidad</div>
+          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Aprobación</div>
           <div className={`font-mono text-[12px] font-bold ${riskColor(popularityRisk)}`}>
             {Math.round(gameState.popularity)}%
           </div>
@@ -172,7 +173,7 @@ export function GameHeader({
       <div className="hidden xl:flex items-center gap-2 flex-none">
         <Shield size={13} className="text-muted-foreground" />
         <div className="leading-tight">
-          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Estabilidad</div>
+          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Gobernab.</div>
           <div className={`font-mono text-[12px] font-bold ${riskColor(stabilityRisk)}`}>
             {Math.round(gameState.stability)}
           </div>

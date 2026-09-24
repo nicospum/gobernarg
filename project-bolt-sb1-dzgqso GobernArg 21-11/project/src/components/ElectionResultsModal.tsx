@@ -8,8 +8,51 @@ interface ElectionResultsModalProps {
   onClose: () => void;
 }
 
+function CausalBreakdown({ result }: { result: ElectionResults }) {
+  const b = result.causal!;
+  const tiles = [
+    { label: 'Humor social', value: b.apro, weight: '65%', detail: 'Satisfacción de los actores con peso electoral (clase media, sectores populares, trabajadores, PyMEs…).', Icon: Users, color: 'text-sky-400' },
+    { label: 'Aparato político', value: b.estructura, weight: '10%', detail: 'Oficialismo, aliados y gobernadores: su satisfacción y tu relación con ellos.', Icon: Shield, color: 'text-emerald-400' },
+    { label: 'Imagen y campaña', value: b.otros, weight: '25%', detail: 'Imagen presidencial: eventos, habilidades, estrategia y desgaste de gestión.', Icon: TrendingUp, color: 'text-purple-400' },
+  ];
+  return (
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+        {tiles.map(t => (
+          <Tooltip key={t.label} content={<TooltipContent value={`Peso: ${t.weight}`} label={t.label} detail={t.detail} />}>
+            <div className="flex items-center gap-3 cursor-help rounded-lg border border-border bg-white/3 p-3">
+              <t.Icon className={`w-5 h-5 flex-shrink-0 ${t.color}`} />
+              <div>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{t.label}</p>
+                <p className="font-mono font-bold text-lg text-foreground">{t.value.toFixed(0)}</p>
+              </div>
+            </div>
+          </Tooltip>
+        ))}
+      </div>
+      {b.incumbencia !== 0 && (
+        <p className="text-[11px] text-muted-foreground mb-3">
+          <Target className="w-3.5 h-3.5 inline mr-1" />
+          {b.incumbencia > 0 ? `Ventaja de ser gobierno: +${b.incumbencia} puntos.` : `Desventaja de la opción: ${b.incumbencia} puntos.`}
+        </p>
+      )}
+      <div className="grid grid-cols-2 gap-3 mb-6 text-[12px]">
+        <div>
+          <p className="text-[10px] uppercase tracking-wide text-emerald-400/80 font-semibold mb-1">Te votaron</p>
+          {b.aFavor.length === 0 ? <p className="text-muted-foreground">—</p> : b.aFavor.map(a => <p key={a.actor} className="text-foreground/80">{a.actor}</p>)}
+        </div>
+        <div>
+          <p className="text-[10px] uppercase tracking-wide text-red-400/80 font-semibold mb-1">Te castigaron</p>
+          {b.enContra.length === 0 ? <p className="text-muted-foreground">—</p> : b.enContra.map(a => <p key={a.actor} className="text-foreground/80">{a.actor}</p>)}
+        </div>
+      </div>
+    </>
+  );
+}
+
 export function ElectionResultsModal({ result, onClose }: ElectionResultsModalProps) {
   const { votesPercentage, victory, details } = result;
+  const succession = result.kind === 'succession';
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -32,7 +75,9 @@ export function ElectionResultsModal({ result, onClose }: ElectionResultsModalPr
                 victory ? 'text-accent' : 'text-red-400'
               }`}
             >
-              {victory ? '¡Victoria Electoral!' : 'Derrota Electoral'}
+              {succession
+                ? victory ? 'Tu espacio retiene el gobierno' : 'Tu espacio pierde la sucesión'
+                : victory ? '¡Victoria Electoral!' : 'Derrota Electoral'}
             </h2>
             <p className="font-mono text-2xl font-bold mt-1">{votesPercentage.toFixed(1)}%</p>
             <p className="text-xs text-foreground/70 uppercase tracking-widest">de los votos</p>
@@ -45,6 +90,7 @@ export function ElectionResultsModal({ result, onClose }: ElectionResultsModalPr
             Desglose del resultado
           </h3>
 
+          {result.causal ? <CausalBreakdown result={result} /> : (
           <div className="grid grid-cols-2 gap-4 mb-6">
             <Tooltip
               content={
@@ -134,6 +180,7 @@ export function ElectionResultsModal({ result, onClose }: ElectionResultsModalPr
               </div>
             </Tooltip>
           </div>
+          )}
 
           <div className="text-center">
             <button

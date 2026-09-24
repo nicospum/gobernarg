@@ -4,6 +4,8 @@ import { GameState, AdvisorWithStatus } from '../types/game';
 import { AdvisorSelectionModal } from './AdvisorSelectionModal';
 import { AdvisorDismissModal } from './AdvisorDismissModal';
 import { getAdvisorPortrait } from '../utils/imageAssets';
+import { ADVISOR_ROLES } from '../data/advisors';
+import { fmtBudget } from '@/lib/format';
 
 
 interface AdvisorPanelProps {
@@ -75,7 +77,7 @@ export function AdvisorPanel({ gameState, onHireAdvisor, onDismissAdvisor }: Adv
           </p>
         ) : (
           gameState.advisors.map((advisor) => {
-            const popularityIndicators = getPopularityIndicator(advisor.popularityEffect);
+            const popularityIndicators = getPopularityIndicator((ADVISOR_ROLES[advisor.id]?.imagenOnHire ?? 0) * 5);
             
             return (
               <div
@@ -109,31 +111,22 @@ export function AdvisorPanel({ gameState, onHireAdvisor, onDismissAdvisor }: Adv
                   </div>
                 </div>
                 <div className="mt-2 text-sm">
-                  {/* Punto 15: el color lo llevan los íconos (signo del efecto),
-                      no el contenedor — antes todo se veía verde. */}
                   <div className="flex items-center gap-1">
-                    <span>Popularidad</span>
-                    {advisor.isActive && popularityIndicators.map((indicator, index) => (
+                    <span>Imagen al asumir</span>
+                    {popularityIndicators.map((indicator, index) => (
                       <span key={index}>{indicator}</span>
                     ))}
                   </div>
-                  <p>Acciones extra: {advisor.isActive ? `+${advisor.bonusActions}` : '0'}</p>
-                  <p className={advisor.isActive ? 'text-emerald-400' : 'text-muted-foreground'}>
-                    Estado: {advisor.isActive ? 'Activo' : `Inactivo por ${advisor.turnsInactive} turnos más`}
+                  <p className="text-muted-foreground text-[12px]">
+                    Sueldo: {fmtBudget(ADVISOR_ROLES[advisor.id]?.salary ?? 0)} por turno (gasto corriente)
                   </p>
-                  {advisor.isActive && (
+                  <p className="text-emerald-400 text-[12px]">Estado: En funciones</p>
+                  {ADVISOR_ROLES[advisor.id] && (
                     <>
-                      <p className="mt-2 font-medium">Bonificaciones:</p>
-                      <ul className="list-disc pl-5 space-y-1">
-                        {Object.entries(advisor.policyModifiers).map(([category, modifier]) => (
-                          <li key={category}>
-                            +{Math.round((modifier - 1) * 100)}% efectividad en {category}
-                          </li>
-                        ))}
-                        {Object.entries(advisor.groupBonuses).map(([groupId, bonus]) => (
-                          <li key={groupId}>
-                            +{bonus}% relación con {groupId}
-                          </li>
+                      <p className="mt-2 font-medium">Qué aporta:</p>
+                      <ul className="list-disc pl-5 space-y-1 text-[12px] text-foreground/80">
+                        {ADVISOR_ROLES[advisor.id].perks.map(perk => (
+                          <li key={perk}>{perk}</li>
                         ))}
                       </ul>
                     </>

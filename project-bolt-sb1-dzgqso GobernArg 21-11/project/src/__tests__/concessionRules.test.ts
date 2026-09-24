@@ -43,7 +43,8 @@ describe('applyInteraction - reglas de concesiones', () => {
   it('máximo 4 concesiones por mandato', () => {
     const { state, subgroupId } = makeStateWithGroup();
     // Dar presupuesto suficiente para 4 concesiones
-    const richState = { ...state, budget: 5000 };
+    // Legacy: 1 reunión + 4 concesiones consumen 5 acciones.
+    const richState = { ...state, budget: 5000, actions: 10 };
 
     // Preparar: reunirse primero para desbloquear concesión
     let current = applyInteraction(richState, subgroupId, 'reunion');

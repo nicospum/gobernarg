@@ -1,8 +1,10 @@
-import type { GameState } from '../types/game';
+import type { ElectionResults, GameState } from '../types/game';
 import { processElectionResultsForOption } from '../utils/electionSystem';
-import { ElectionOption, getNextPosition } from '../data/careerRules';
+import { ElectionOption, getNextPosition, PROMOTION_DIFFICULTY } from '../data/careerRules';
 import { getPositionObjectives, checkVictoryConditions, updateObjectives } from '../utils/victoryConditions';
+import { PARAMS } from '../data/causal';
 import { recalcState, POSITION_STARTING_BUDGET } from './engineShared';
+import { paForTurn, presidentialVote, syncLegacy } from './causalBridge';
 
 function recordElectionOutcome(
   state: GameState,
@@ -13,12 +15,8 @@ function recordElectionOutcome(
   const lastIndex = state.careerHistory.length - 1;
   const lastMilestone = state.careerHistory[lastIndex];
   if (lastMilestone && lastMilestone.position === state.position && lastMilestone.term === state.term) {
-    // FIX (Punto 11): el tipo debe reflejar lo resuelto en la elección. Antes
-    // `state.term === 1` pisaba cualquier ascenso en el primer mandato (un
-    // intendente que ascendía a gobernador quedaba como 'initial' y el legacy
-    // no contaba el salto). Ahora: 'promotion' si hubo ascenso de cargo,
-    // 'initial' solo para el primer milestone de la carrera, 'reelection' en
-    // el resto (incluido el primer mandato después de un ascenso).
+    // 'promotion' si hubo ascenso de cargo, 'initial' solo para el primer
+    // milestone de la carrera, 'reelection' en el resto.
     const isPromotion = getNextPosition(option, state.position) !== state.position;
     const milestoneType = isPromotion ? 'promotion' : lastIndex === 0 ? 'initial' : 'reelection';
     state.careerHistory = state.careerHistory.map((m, i) =>
@@ -36,35 +34,57 @@ function recordElectionOutcome(
   return state;
 }
 
+/**
+ * Resultado electoral con el motor causal: IV (aprobación de actores +
+ * estructura + imagen) más la ventaja/desventaja de la opción (reelección +5
+ * por incumbencia). Umbral de victoria: 45%.
+ */
+function causalElectionResults(state: GameState, option: ElectionOption, kind: 'reelection' | 'succession'): ElectionResults {
+  const { votes, breakdown } = presidentialVote(state.causal, 'succession');
+  const bonus = kind === 'reelection' ? PROMOTION_DIFFICULTY[option] : 0;
+  const votesPercentage = Math.min(100, Math.max(0, votes + bonus));
+  return {
+    votesPercentage,
+    victory: votesPercentage >= PARAMS.VOTOS_PARA_GANAR,
+    details: {
+      popularityImpact: breakdown.apro,
+      budgetImpact: 0,
+      groupsSupport: breakdown.estructura,
+      completedObjectivesImpact: 0,
+      stabilityBonus: state.causal.political.gob,
+    },
+    causal: { ...breakdown, incumbencia: bonus },
+    kind,
+  };
+}
+
 export function resolvePendingElection(gameState: GameState, option: ElectionOption): GameState {
   // Anti doble-clic: si no hay elección pendiente (o ya fue resuelta), no-op.
-  // Sin esta guarda, un segundo clic aplicaba el reset de mandato dos veces.
   if (!gameState.pendingElection || gameState.electionResults) return gameState;
 
   let state: GameState = {
     ...gameState,
     careerHistory: gameState.careerHistory.map(m => ({ ...m })),
   };
-  const results = processElectionResultsForOption(state, option);
+  if (state.causal) state.causal = structuredClone(state.causal);
+  const results = state.causal
+    ? causalElectionResults(state, option, 'reelection')
+    : processElectionResultsForOption(state, option);
   state.electionResults = results;
   state.votingIntention = results.votesPercentage;
   state.pendingElection = false;
   state.pendingElectionOptions = [];
 
-  // Actualizar el milestone del mandato que termina
   state = recordElectionOutcome(state, option, results.votesPercentage, results.victory);
 
   if (!results.victory) {
     state.gameOver = true;
     state.victorious = false;
     state.defeatReason = 'election_loss';
-    return recalcState(state);
+    return state.causal ? state : recalcState(state);
   }
 
-  // MODO CAMPAÑA (RESERVADO POST-MVP): el bloque de promoción es la carrera
-  // intendente→gobernador→presidente. Hoy inalcanzable (MVP presidente-only)
-  // pero se conserva para el modo campaña del roadmap.
-  // Victoria: definir nuevo cargo/mandato
+  // MODO CAMPAÑA (RESERVADO POST-MVP): ascensos de cargo.
   const previousPosition = state.position;
   const nextPosition = getNextPosition(option, state.position);
   const isPromotion = nextPosition !== previousPosition;
@@ -81,7 +101,6 @@ export function resolvePendingElection(gameState: GameState, option: ElectionOpt
     [previousPosition]: (state.termsByPosition[previousPosition] || 0) + 1
   };
 
-  // Crear milestone para el nuevo mandato
   state.careerHistory.push({
     position: state.position,
     term: state.term,
@@ -92,36 +111,20 @@ export function resolvePendingElection(gameState: GameState, option: ElectionOpt
     votesPercentage: 0
   });
 
-  // Reset de mandato
+  // Nuevo mandato: el calendario (año/trimestre) vuelve a empezar.
   state.year = 1;
   state.turn = 1;
-  state.legislativeResults = null;
-  state.legislativeSupport = null;
-  state.popularity = Math.round(state.popularity * 0.7 + 30);
-  state.budget = POSITION_STARTING_BUDGET[state.position] + Math.round(state.budget * 0.1);
-  state.objectives = getPositionObjectives(state.position);
-  state.completedActions = [];
   state.pendingEffects = [];
   state.interactionHistory = {};
   state.concessionsThisTerm = 0;
   state.interactionCountByGroup = {};
   state.lastRandomEventTurn = 0;
   state.randomEventsThisTerm = 0;
-  // El turno global se reinicia por mandato: los cooldowns por evento también.
   state.lastEventFiredTurns = {};
-  state.advisors = [];
   state.advisorActionUsed = false;
-  state.moneyPrintingCount = 0;
   state.consecutiveLowPopularity = 0;
   state.consecutiveNegativeBudget = 0;
-  // Reset de features del mandato anterior
   state.groupAgendas = [];
-  state.groupMoods = [];
-  state.actionUsageCount = {};
-  state.actionCooldowns = {};
-  state.debtCount = 0;
-  state.debtServiceRatio = 0;
-  state.completedObjectives = [];
   state.midtermStrategy = null;
   state.pendingMidtermStrategy = false;
   state.availableMidtermStrategies = [];
@@ -129,23 +132,59 @@ export function resolvePendingElection(gameState: GameState, option: ElectionOpt
   state.abilityCooldowns = {};
   state.impeachmentConsecutiveTurns = 0;
   state.coupConsecutiveTurns = 0;
-  // Punto 14: el crecimiento presupuestario se mide contra el inicio del
-  // mandato actual, no contra el arranque de la carrera (historicalBudget[0]
-  // quedaba congelado y distorsionaba el budgetImpact de las elecciones).
-  state.historicalBudget = [state.budget];
+  state.completedActions = [];
 
+  if (state.causal) {
+    // Decisión de diseño (usuario): PAÍS CONTINUO. No se reinician indicadores,
+    // deuda, caja, relaciones, asesores ni efectos diferidos: el segundo
+    // mandato hereda las consecuencias del primero. Empieza una nueva luna de
+    // miel legislativa y se reinician las legislativas del nuevo mandato.
+    state.causal.mandateStart = state.causal.turn;
+    state.legislativeResults = null;
+    state.baseActions = paForTurn(state.causal);
+    state.actions = state.baseActions;
+    return syncLegacy(state);
+  }
+
+  // Estado legacy (modo campaña sin motor causal).
+  state.legislativeResults = null;
+  state.legislativeSupport = null;
+  state.popularity = Math.round(state.popularity * 0.7 + 30);
+  state.budget = POSITION_STARTING_BUDGET[state.position] + Math.round(state.budget * 0.1);
+  state.objectives = getPositionObjectives(state.position);
+  state.advisors = [];
+  state.moneyPrintingCount = 0;
+  state.groupMoods = [];
+  state.actionUsageCount = {};
+  state.actionCooldowns = {};
+  state.debtCount = 0;
+  state.debtServiceRatio = 0;
+  state.completedObjectives = [];
+  state.historicalBudget = [state.budget];
   return recalcState(state);
 }
 
+/**
+ * Fin del segundo mandato (sin reelección posible): elección de SUCESIÓN.
+ * Victoria final si el espacio político del presidente retiene el gobierno
+ * (IV ≥ 45, sin ventaja de incumbencia). Decisión del usuario.
+ */
 export function finalizePresidentialCareer(gameState: GameState): GameState {
   let state = { ...gameState };
+  if (state.causal) {
+    state.causal = structuredClone(state.causal);
+    state = updateObjectives(state);
+    const results = causalElectionResults(state, 'reelection', 'succession');
+    state = recordElectionOutcome(state, 'reelection', results.votesPercentage, true);
+    state.electionResults = results;
+    state.gameOver = true;
+    state.victorious = results.victory;
+    state.defeatReason = results.victory ? null : 'election_loss';
+    return syncLegacy(state);
+  }
+  // Estado legacy: victoria por objetivos (modo anterior).
   state = recordElectionOutcome(state, 'reelection', state.votingIntention, true);
   state.gameOver = true;
-  // FIX (off-by-one): processEndTurn llama a esta función en su paso 5 pero
-  // recién evalúa los objetivos en su paso 10. Sin esta re-evaluación, un
-  // objetivo cumplido con los efectos del último turno del 2º mandato no
-  // contaba para la victoria final. Se re-evalúan con el estado actual antes
-  // de fijar el resultado.
   state = updateObjectives(state);
   state.victorious = checkVictoryConditions(state);
   return state;

@@ -10,11 +10,14 @@ import type { GameEvent } from '../systems/events/types';
 import { calculatePopularidad } from '../utils/popularidad';
 import { calculateAvailableActions } from '../utils/actionCalculator';
 import { calculateVotingIntention as calculateElectionVotingIntention } from '../utils/electionSystem';
+import { applyMidtermStrategy, syncLegacy } from './causalBridge';
 
 // ===========================
 // Constantes de balance
 // ===========================
 
+// DEPRECADO con el motor causal (recaudación, gasto corriente y caja del Excel).
+// Se conservan para el modo campaña reservado y sus tests.
 export const POSITION_INCOME: Record<Position, number> = {
   intendente: 200,
   gobernador: 350,
@@ -108,6 +111,8 @@ export function addNotification(
 }
 
 export function recalcState(state: GameState): GameState {
+  // Motor causal: la fuente de verdad es state.causal; sólo se refresca el espejo.
+  if (state.causal) return syncLegacy(state);
   const { popularidadTotal, popularidadGrupos, popularidadPolitica } = calculatePopularidad(state);
   state.popularity = popularidadTotal;
   state.popularidadGrupos = popularidadGrupos;
@@ -146,11 +151,21 @@ export function filterAvailableMidtermStrategies(state: GameState): MidtermStrat
 }
 
 export function triggerMidtermStrategy(state: GameState, strategy: MidtermStrategy): GameState {
-  return {
+  let causal = state.causal;
+  if (causal) {
+    causal = structuredClone(causal);
+    applyMidtermStrategy(causal, strategy);
+  }
+  return syncLegacyIfCausal({
     ...state,
+    causal,
     midtermStrategy: strategy,
     pendingMidtermStrategy: false,
     availableMidtermStrategies: [],
     audazTurnsCount: 0,
-  };
+  });
+}
+
+function syncLegacyIfCausal(state: GameState): GameState {
+  return state.causal ? syncLegacy(state) : state;
 }

@@ -6,9 +6,10 @@ import { THUMBNAIL_ARCHETYPES } from '../utils/iconThumbnails';
 import { ARCHETYPE_PASSIVES } from '../data/specialAbilities';
 import { STARTING_POSITION } from '../data/careerRules';
 import { InfoTooltip } from './InfoTooltip';
+import { DEFAULT_PLATFORM_BY_ARCHETYPE, INDICATORS, PLATFORMS } from '../data/causal';
 
 interface CharacterCreationProps {
-  onComplete: (position: Position, archetype: Archetype, governorName: string, avatar: string) => void;
+  onComplete: (position: Position, archetype: Archetype, governorName: string, avatar: string, platformId: string) => void;
 }
 
 const AVATARS = [
@@ -34,6 +35,10 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
   // para que el futuro modo campaña tenga un único punto de cambio.
   const position: Position = STARTING_POSITION;
   const [archetype, setArchetype] = useState<Archetype>('politico');
+  // Plataforma del oficialismo (D-07): lo que tu propio partido espera ver.
+  // Cada perfil sugiere una; se puede cambiar.
+  const [platformId, setPlatformId] = useState<string>(DEFAULT_PLATFORM_BY_ARCHETYPE.politico);
+  const [platformTouched, setPlatformTouched] = useState(false);
   const [governorName, setGovernorName] = useState('');
   const [avatar, setAvatar] = useState<string>(AVATARS[0].src);
   const [showNameError, setShowNameError] = useState(false);
@@ -43,14 +48,14 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
       setShowNameError(true);
       return;
     }
-    onComplete(position, archetype, governorName, avatar);
+    onComplete(position, archetype, governorName, avatar, platformId);
   };
 
   const archetypes: { id: Archetype; title: string; bonus: string; description: string }[] = [
-    { id: 'politico', title: 'Político de Raza', bonus: '+2 acciones por turno', description: 'Experto en acuerdos y manejo institucional.' },
-    { id: 'sindicalista', title: 'Sindicalista', bonus: '+1 acción, apoyo sindical', description: 'Fortaleza en movimientos sociales.' },
-    { id: 'empresario', title: 'Empresario', bonus: '+1 acción, capital inicial', description: 'Visión económica y relación con el sector privado.' },
-    { id: 'comunicador', title: 'Comunicador', bonus: 'Alta popularidad inicial', description: 'Domina la agenda pública y los medios.' },
+    { id: 'politico', title: 'Político de Raza', bonus: 'Aparato propio y puentes con aliados y oposición', description: 'Experto en acuerdos y manejo institucional.' },
+    { id: 'sindicalista', title: 'Sindicalista', bonus: 'Buena relación con sindicatos y organizaciones', description: 'Fortaleza en movimientos sociales.' },
+    { id: 'empresario', title: 'Empresario', bonus: 'Credibilidad de mercado y mejor recaudación', description: 'Visión económica y relación con el sector privado.' },
+    { id: 'comunicador', title: 'Comunicador', bonus: 'Alta imagen inicial y encuestas gratis', description: 'Domina la agenda pública y los medios.' },
   ];
 
   return (
@@ -116,7 +121,10 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
                   }
                 >
                   <button
-                    onClick={() => setArchetype(arch.id)}
+                    onClick={() => {
+                      setArchetype(arch.id);
+                      if (!platformTouched) setPlatformId(DEFAULT_PLATFORM_BY_ARCHETYPE[arch.id]);
+                    }}
                     className={`flex flex-col items-center text-center p-5 rounded-xl border-2 transition-all ${
                       archetype === arch.id
                         ? 'bg-white/15 border-accent shadow-lg scale-[1.02]'
@@ -135,6 +143,33 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
                 </InfoTooltip>
               );
             })}
+          </div>
+
+          <h2 className="font-display text-xl font-semibold mb-1 uppercase tracking-wide">Plataforma de tu partido</h2>
+          <p className="text-white/70 text-sm mb-4">
+            Lo que el oficialismo espera ver en el país. Si gobernás en contra de tu plataforma, tu propio bloque pierde cohesión.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-10">
+            {PLATFORMS.map(pl => (
+              <button
+                key={pl.id}
+                onClick={() => {
+                  setPlatformId(pl.id);
+                  setPlatformTouched(true);
+                }}
+                className={`text-left p-4 rounded-xl border-2 transition-all ${
+                  platformId === pl.id
+                    ? 'bg-white/15 border-accent shadow-lg'
+                    : 'bg-white/5 border-white/20 hover:bg-white/10 hover:border-white/40'
+                }`}
+              >
+                <h3 className="font-bold text-sm">{pl.name}</h3>
+                <p className="text-xs opacity-80 mt-1 leading-snug">{pl.description}</p>
+                <p className="text-[10px] opacity-60 mt-2">
+                  {pl.items.map(it => `${INDICATORS[it.indicator].name} ${it.s > 0 ? '↑' : '↓'}`).join(' · ')}
+                </p>
+              </button>
+            ))}
           </div>
 
           <h2 className="font-display text-xl font-semibold mb-4 uppercase tracking-wide">Elegí tu Avatar</h2>

@@ -1,6 +1,6 @@
 import { AlertTriangle, Zap, Handshake, Users, Flame } from 'lucide-react';
 import { GameState, MidtermStrategy } from '../types/game';
-import { MIDTERM_STRATEGY_EFFECTS } from '../data/midtermStrategies';
+import { MIDTERM_STRATEGY_EFFECTS, MIDTERM_CAUSAL } from '../data/midtermStrategies';
 
 interface MidtermStrategyModalProps {
   availableStrategies: MidtermStrategy[];
@@ -121,57 +121,14 @@ export function MidtermStrategyModal({
                     {effect.description}
                   </p>
 
-                  <div className="grid grid-cols-2 gap-2 text-[11px]">
-                    <div className="rounded border border-border bg-white/3 px-2 py-1">
-                      <span className="text-muted-foreground text-[9px] uppercase tracking-wide">
-                        Efectividad
-                      </span>
-                      <p className="font-mono font-semibold text-foreground">
-                        ×{effect.actionMultiplier.toFixed(2)}
-                      </p>
-                    </div>
-                    <div className="rounded border border-border bg-white/3 px-2 py-1">
-                      <span className="text-muted-foreground text-[9px] uppercase tracking-wide">
-                        Estab./turno
-                      </span>
-                      <p
-                        className={`font-mono font-semibold ${
-                          effect.stabilityPerTurn > 0 ? 'text-emerald-400' : 'text-red-400'
-                        }`}
-                      >
-                        {effect.stabilityPerTurn > 0 ? '+' : ''}
-                        {effect.stabilityPerTurn}
-                      </p>
-                    </div>
-                    <div className="rounded border border-border bg-white/3 px-2 py-1">
-                      <span className="text-muted-foreground text-[9px] uppercase tracking-wide">
-                        Pop./turno
-                      </span>
-                      <p
-                        className={`font-mono font-semibold ${
-                          effect.popularityPerTurn > 0
-                            ? 'text-emerald-400'
-                            : effect.popularityPerTurn < 0
-                              ? 'text-red-400'
-                              : 'text-muted-foreground'
-                        }`}
-                      >
-                        {effect.popularityPerTurn > 0 ? '+' : ''}
-                        {effect.popularityPerTurn !== 0 ? effect.popularityPerTurn : '—'}
-                      </p>
-                    </div>
-                    {effect.actionCostModifier !== 0 && (
-                      <div className="rounded border border-border bg-white/3 px-2 py-1">
-                        <span className="text-muted-foreground text-[9px] uppercase tracking-wide">
-                          Costo extra
-                        </span>
-                        <p className="font-mono font-semibold text-orange-400">
-                          +{effect.actionCostModifier} acc.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
+                  <ul className="space-y-1 text-[11px]">
+                    {MIDTERM_CAUSAL[strategy].bullets.map(b => (
+                      <li key={b} className="flex items-start gap-1.5 text-foreground/80">
+                        <span className="w-1 h-1 rounded-full bg-primary mt-1.5 flex-shrink-0" />
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
                   {!isAvailable && (
                     <div className="mt-3 flex items-center gap-1 text-[10px] text-muted-foreground">
                       <AlertTriangle className="w-3 h-3" />

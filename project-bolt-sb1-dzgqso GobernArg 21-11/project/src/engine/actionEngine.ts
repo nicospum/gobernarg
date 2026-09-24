@@ -6,6 +6,8 @@ import type {
 import { actionDefinitions } from '../data/actionRegistry';
 import { POSITION_ACTION_EXCLUSIONS } from './engineShared';
 import { getDifficultyModifiers } from './difficultyEngine';
+import { CAUSAL_ACTIONS_BY_ID } from '../data/causal';
+import { getAvailability, legForLaws, lawThreshold, listPolicyAvailability, type Availability, type Selection } from './causal';
 
 const REFORM_CATEGORIES: ActionCategory[] = ['economia', 'infraestructura'];
 
@@ -21,10 +23,12 @@ function getLegislativePenalty(legislativeSupport: number | null): number {
   return 2;                                 // derrota: +2 acciones
 }
 
+/** DEPRECADO (catálogo viejo de 61 acciones): se conserva para módulos legacy y sus tests. */
 export function findActionById(actionId: string): GameAction | undefined {
   return actionDefinitions.find(action => action.id === actionId);
 }
 
+/** DEPRECADO: disponibilidad del catálogo viejo. La UI usa getPolicyAvailability. */
 export function getAvailableActionsForState(gameState: GameState): GameAction[] {
   const excluded = POSITION_ACTION_EXCLUSIONS[gameState.position] || [];
   const penalty = getLegislativePenalty(gameState.legislativeSupport);
@@ -94,23 +98,51 @@ export function getAvailableActionsForState(gameState: GameState): GameAction[] 
     });
 }
 
-export function toggleActionSelection(gameState: GameState, actionId: string): GameState {
-  const action = findActionById(actionId);
-  const availableAction = action ? getAvailableActionsForState(gameState).find(a => a.id === actionId) : undefined;
-  const actionCost = availableAction?.actionCost ?? 1;
+/** Selección actual en formato del motor (para validar disponibilidad y costos). */
+function currentSelections(gameState: GameState): Selection[] {
+  return gameState.selectedActions.map(actionId => ({ actionId }));
+}
 
+/** Disponibilidad de todas las políticas para la grilla de acciones. */
+export function getPolicyAvailability(gameState: GameState): Availability[] {
+  return listPolicyAvailability(gameState.causal, currentSelections(gameState), gameState.actions, {
+    loansAllowed: getDifficultyModifiers(gameState.difficulty).loansAvailable,
+  });
+}
+
+/**
+ * Seleccionar / deseleccionar una política del turno. El costo en PA se
+ * descuenta al seleccionar y se devuelve al deseleccionar; la caja se paga al
+ * cerrar el turno (pero la selección no puede superarla).
+ */
+export function toggleActionSelection(gameState: GameState, actionId: string): GameState {
+  const def = CAUSAL_ACTIONS_BY_ID[actionId];
+  if (!def || def.isSystem) return gameState;
+  const selections = currentSelections(gameState);
   const isSelected = gameState.selectedActions.includes(actionId);
   if (isSelected) {
-    return {
-      ...gameState,
-      selectedActions: gameState.selectedActions.filter(id => id !== actionId),
-      actions: gameState.actions + actionCost
-    };
+    const av = getAvailability(gameState.causal, actionId, selections, gameState.actions);
+    let selected = gameState.selectedActions.filter(id => id !== actionId);
+    let refund = av.pa;
+    // Sin DNU, las leyes sin mayoría seleccionadas dejan de ser viables.
+    if (actionId === 'dnu' && legForLaws(gameState.causal) < lawThreshold(gameState.causal)) {
+      for (const id of selected) {
+        const d = CAUSAL_ACTIONS_BY_ID[id];
+        if (d?.ley) {
+          refund += getAvailability(gameState.causal, id, selections, gameState.actions).pa;
+          selected = selected.filter(x => x !== id);
+        }
+      }
+    }
+    return { ...gameState, selectedActions: selected, actions: gameState.actions + refund };
   }
-  if (gameState.actions < actionCost) return gameState;
+  const av = getAvailability(gameState.causal, actionId, selections, gameState.actions, {
+    loansAllowed: getDifficultyModifiers(gameState.difficulty).loansAvailable,
+  });
+  if (!av.visible || !av.available) return gameState;
   return {
     ...gameState,
     selectedActions: [...gameState.selectedActions, actionId],
-    actions: gameState.actions - actionCost
+    actions: gameState.actions - av.pa,
   };
 }

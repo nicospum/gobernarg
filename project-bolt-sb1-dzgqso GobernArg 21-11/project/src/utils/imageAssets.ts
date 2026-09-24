@@ -253,6 +253,18 @@ export function getEventImage(category: string, _severity: string, eventId?: str
     drug_wave: IMAGES.events.drugWave,
     police_violence_scandal: IMAGES.events.policeViolenceScandal,
     minister_resignation: IMAGES.events.ministerResignation,
+    // Eventos de canal del motor causal (reutilizan imágenes existentes)
+    paro_agrario: IMAGES.events.drought,
+    corrida: IMAGES.events.debtDefault,
+    paro_docente: IMAGES.events.generalStrike,
+    cacerolazo: IMAGES.events.socialProtest,
+    estallido: IMAGES.events.socialProtest,
+    marcha_federal: IMAGES.events.socialProtest,
+    plan_de_lucha: IMAGES.events.socialProtest,
+    ruptura_oficialismo: IMAGES.events.ministerResignation,
+    salida_coalicion: IMAGES.events.ministerResignation,
+    inflation_crisis: IMAGES.events.economicCrisis,
+    healthcare_crisis: IMAGES.events.socialProtest,
   };
 
   if (eventId && eventIdMap[eventId]) {

@@ -7,8 +7,17 @@ import type { GameEvent } from '../systems/events/types';
 import { getAllEvents } from '../data/events';
 import { getCalendarEventForTurn } from '../data/calendar';
 import { oppositionEvents, overconfidenceEvents } from '../data/events/legislativeConsequences';
+import {
+  CHANNEL_DRIVEN_EVENT_IDS,
+  CHANNEL_GAME_EVENTS,
+  EVENT_CAUSAL,
+  type CausalEventEffect,
+} from '../data/events/causalEvents';
+import { LEGACY_ACTION_TO_NEW } from '../data/causal';
 import { addNotification, filterAvailableMidtermStrategies, getGlobalTurn, recalcState } from './engineShared';
 import { getDifficultyModifiers } from './difficultyEngine';
+import { decisionContext, evalCondition, FOREVER } from './causal';
+import { applyCausalEffects, legislativeElection, syncLegacy, translateLegacyEffect } from './causalBridge';
 
 // ===========================
 // Calendario político
@@ -33,99 +42,80 @@ function processCalendarEvent(state: GameState, event: CalendarEvent): GameState
   return state;
 }
 
+/**
+ * DEPRECADO para partidas con motor causal (ver legislativeElection en
+ * causalBridge). Se conserva para estados legacy y sus tests.
+ */
 export function calculateLegislativeResults(state: GameState): LegislativeResults {
-  // Base: promedio de popularidad en los últimos 4 trimestres
   const recentHistory = state.historicalPopularity.slice(-4);
   const avgPopularity = recentHistory.length > 0
     ? recentHistory.reduce((a, b) => a + b, 0) / recentHistory.length
     : state.popularity;
 
-  // Apoyo grupal promedio
   const groupScores = Object.values(state.groupRelations);
   const avgGroupSupport = groupScores.length > 0
     ? groupScores.reduce((a, b) => a + b, 0) / groupScores.length
     : 50;
 
-  // Objetivos cumplidos
   const objectiveBonus = state.objectives.length > 0
     ? (state.completedObjectives.length / state.objectives.length) * 10
     : 0;
 
-  // Estabilidad
   const stabilityBonus = (state.stability - 50) * 0.1;
 
-  // Cálculo de votos oficialismo (base 35 + factores)
   let officialismVotes = 35
     + (avgPopularity - 50) * 0.25
     + (avgGroupSupport - 50) * 0.15
     + objectiveBonus
     + stabilityBonus;
 
-  // Ruido electoral ±3%
   officialismVotes += (Math.random() - 0.5) * 6;
-
-  // Clamp realista
   officialismVotes = Math.min(58, Math.max(28, officialismVotes));
 
-  // Oposición aproximada (no exacta, modelo simple)
   const oppositionVotes = Math.min(65, Math.max(30, 100 - officialismVotes + (Math.random() - 0.5) * 4));
 
-  // Bancada estimada: asumimos que votos se traducen en bancada con algo de ventaja del oficialismo
   let legislativeSupport = officialismVotes * 1.1;
   legislativeSupport = Math.min(75, Math.max(25, legislativeSupport));
-
-  let outcome: LegislativeResults['outcome'];
-  let message: string;
-
-  if (officialismVotes > 45) {
-    outcome = 'landslide';
-    message = 'Victoria contundente. Mayoría propia amplia y gran capital político.';
-  } else if (officialismVotes > 42) {
-    outcome = 'clear';
-    message = 'Victoria clara. Mayoría propia cómoda para gobernar.';
-  } else if (officialismVotes > 37) {
-    outcome = 'tie';
-    message = 'Empate técnico. Quorum propio pero justo, la oposición presionará.';
-  } else if (officialismVotes > 34) {
-    outcome = 'minority';
-    message = 'Paridad de tercios. Sin quorum propio, deberás negociar.';
-  } else {
-    outcome = 'defeat';
-    message = 'Derrota clara. Congreso hostil y crisis de gobernabilidad.';
-  }
 
   return {
     officialismVotes: Math.round(officialismVotes * 10) / 10,
     oppositionVotes: Math.round(oppositionVotes * 10) / 10,
     legislativeSupport: Math.round(legislativeSupport * 10) / 10,
-    outcome,
-    message
+    ...legislativeOutcome(officialismVotes),
   };
 }
 
-function applyLegislativeOutcome(state: GameState, results: LegislativeResults): GameState {
-  state.legislativeResults = results;
-  state.legislativeSupport = results.legislativeSupport;
+function legislativeOutcome(votes: number): Pick<LegislativeResults, 'outcome' | 'message'> {
+  if (votes > 45) return { outcome: 'landslide', message: 'Victoria contundente. Mayoría propia amplia y gran capital político.' };
+  if (votes > 42) return { outcome: 'clear', message: 'Victoria clara. Mayoría propia cómoda para gobernar.' };
+  if (votes > 37) return { outcome: 'tie', message: 'Empate técnico. Quorum propio pero justo, la oposición presionará.' };
+  if (votes > 34) return { outcome: 'minority', message: 'Paridad de tercios. Sin quorum propio, deberás negociar.' };
+  return { outcome: 'defeat', message: 'Derrota clara. Congreso hostil y crisis de gobernabilidad.' };
+}
 
-  switch (results.outcome) {
-    case 'landslide':
-      state.stability = Math.min(100, state.stability + 10);
-      break;
-    case 'clear':
-      state.stability = Math.min(100, state.stability + 5);
-      break;
-    case 'tie':
-      state.stability = Math.max(0, state.stability - 3);
-      break;
-    case 'minority':
-      state.stability = Math.max(0, state.stability - 8);
-      break;
-    case 'defeat':
-      state.stability = Math.max(0, state.stability - 15);
-      break;
-  }
+/** Imagen del presidente según el resultado de las legislativas. */
+const LEGISLATIVE_IMAGE: Record<LegislativeResults['outcome'], number> = {
+  landslide: 3, clear: 1, tie: 0, minority: -2, defeat: -4,
+};
 
-  return state;
+/**
+ * Legislativas de medio término con el motor causal: los votos del
+ * oficialismo son la intención de voto del momento y renuevan la mitad del
+ * Congreso (LEG). El resultado mueve la imagen del presidente.
+ */
+function runLegislativeElection(state: GameState): GameState {
+  const causal = structuredClone(state.causal);
+  const out = legislativeElection(causal);
+  const { outcome, message } = legislativeOutcome(out.votes);
+  applyCausalEffects(causal, [{ target: 'imagen', value: LEGISLATIVE_IMAGE[outcome] }], 'legislativas');
+  const results: LegislativeResults = {
+    officialismVotes: Math.round(out.votes * 10) / 10,
+    oppositionVotes: Math.round(Math.max(20, 100 - out.votes - 15) * 10) / 10,
+    legislativeSupport: Math.round(out.newLeg * 10) / 10,
+    outcome,
+    message: `${message} El oficialismo y sus aliados quedan con ${Math.round(out.newLeg)}% de las bancas.`,
+  };
+  return syncLegacy({ ...state, causal, legislativeResults: results });
 }
 
 export function processCalendarEvents(state: GameState): GameState {
@@ -135,8 +125,10 @@ export function processCalendarEvents(state: GameState): GameState {
   state = processCalendarEvent(state, event);
 
   if (event.id === 'elecciones-medio-termino') {
-    const results = calculateLegislativeResults(state);
-    state = applyLegislativeOutcome(state, results);
+    state = state.causal
+      ? runLegislativeElection(state)
+      : { ...state, legislativeResults: calculateLegislativeResults(state) };
+    const results = state.legislativeResults!;
     state = addNotification(state, {
       type: 'event',
       category: 'political',
@@ -161,52 +153,27 @@ export function processCalendarEvents(state: GameState): GameState {
   return state;
 }
 
+/**
+ * Consecuencias del resultado legislativo (tras las elecciones de medio
+ * término): Congreso hostil → oposición activa; mayoría holgada → riesgo de
+ * sobreconfianza. Umbrales en la escala de bancas del motor causal.
+ */
 export function resolveLegislativeConsequences(state: GameState): GameState {
-  if (state.legislativeSupport === null) return state;
+  if (state.legislativeSupport === null || state.legislativeResults === null) return state;
 
   const support = state.legislativeSupport;
   const roll = Math.random();
 
-  if (support < 35) {
-    // Derrota clara: alta probabilidad de eventos de oposición
-    if (roll < 0.45) {
-      const event = oppositionEvents[Math.floor(Math.random() * oppositionEvents.length)];
-      applyImmediateEventEffects(state, event);
-      state = addNotification(state, {
-        type: 'crisis',
-        category: 'political',
-        title: event.title,
-        message: event.description,
-        importance: 'critical'
-      });
-    }
-  } else if (support < 38) {
-    // Paridad de tercios: probabilidad media
-    if (roll < 0.25) {
-      const event = oppositionEvents[Math.floor(Math.random() * oppositionEvents.length)];
-      applyImmediateEventEffects(state, event);
-      state = addNotification(state, {
-        type: 'warning',
-        category: 'political',
-        title: event.title,
-        message: event.description,
-        importance: 'high'
-      });
-    }
-  } else if (support > 45) {
-    // Victoria aplastante: riesgo de desgaste por sobreconfianza
-    if (roll < 0.25) {
-      const event = overconfidenceEvents[Math.floor(Math.random() * overconfidenceEvents.length)];
-      applyImmediateEventEffects(state, event);
-      state = addNotification(state, {
-        type: 'warning',
-        category: 'political',
-        title: event.title,
-        message: event.description,
-        importance: 'medium'
-      });
-    }
-  }
+  const fire = (pool: GameEvent[], prob: number, type: 'crisis' | 'warning', importance: 'critical' | 'high' | 'medium') => {
+    if (roll >= prob) return;
+    const event = pool[Math.floor(Math.random() * pool.length)];
+    applyImmediateEventEffects(state, event);
+    state = addNotification(state, { type, category: 'political', title: event.title, message: event.description, importance });
+  };
+
+  if (support < 42) fire(oppositionEvents, 0.45, 'crisis', 'critical');
+  else if (support < 46) fire(oppositionEvents, 0.25, 'warning', 'high');
+  else if (support > 56) fire(overconfidenceEvents, 0.25, 'warning', 'medium');
 
   return state;
 }
@@ -218,46 +185,32 @@ export function resolveLegislativeConsequences(state: GameState): GameState {
 export function resolveRandomEvents(state: GameState): GameEvent[] {
   const triggered: GameEvent[] = [];
 
-  // ============================================================
-  // LIMITADOR GLOBAL de eventos aleatorios
-  // Cuando un evento aleatorio/crisis se dispara, los demás
-  // quedan bloqueados por N turnos para evitar avalanchas.
-  // Los eventos contextuales (triggered/scheduled) NO están limitados.
-  // ============================================================
-  const GLOBAL_COOLDOWN_TURNS = 3;      // turnos sin eventos tras uno disparado
-  const MAX_RANDOM_EVENTS_PER_TERM = 5; // máx eventos aleatorios por mandato
+  // LIMITADOR GLOBAL de eventos aleatorios.
+  const GLOBAL_COOLDOWN_TURNS = 3;
+  const MAX_RANDOM_EVENTS_PER_TERM = 5;
 
-  const allEvents = getAllEvents();
+  // Los eventos que hoy dispara un canal de poder no participan del sorteo.
+  const allEvents = getAllEvents().filter(e => !CHANNEL_DRIVEN_EVENT_IDS.includes(e.id));
 
-  // ============================================================
-  // Eventos contextuales (triggered)
-  // Probabilidad 1: se disparan si sus condiciones se cumplen.
-  // No están limitados por el cooldown global ni por el máximo
-  // por mandato (ver nota de diseño arriba).
-  // ============================================================
+  // Eventos contextuales (triggered): se disparan si se cumplen sus condiciones.
   for (const event of allEvents) {
     if (event.type !== 'triggered') continue;
-    // FIX (Punto 1b): respetar el cooldown declarado por evento. Sin esto,
-    // un evento cuyas condiciones seguían cumpliéndose se re-disparaba cada
-    // turno en loop (el campo cooldown existía en los datos pero nadie lo leía).
     const lastFired = state.lastEventFiredTurns?.[event.id];
     if (lastFired !== undefined && getGlobalTurn(state) - lastFired < (event.cooldown ?? 0)) {
       continue;
     }
     if (checkEventConditions(event, state)) {
       triggered.push(event);
-      // Registrar el disparo: aplica tanto si el evento tiene choices (lo
-      // responde el jugador) como si se resuelve solo.
       if (!state.lastEventFiredTurns) state.lastEventFiredTurns = {};
       state.lastEventFiredTurns[event.id] = getGlobalTurn(state);
     }
   }
 
   if (state.lastRandomEventTurn > 0 && getGlobalTurn(state) - state.lastRandomEventTurn < GLOBAL_COOLDOWN_TURNS) {
-    return triggered; // en cooldown global
+    return triggered;
   }
   if (state.randomEventsThisTerm >= MAX_RANDOM_EVENTS_PER_TERM) {
-    return triggered; // límite por mandato alcanzado
+    return triggered;
   }
 
   // Crisis primero
@@ -266,13 +219,12 @@ export function resolveRandomEvents(state: GameState): GameEvent[] {
     if (checkEventConditions(event, state)) {
       const roll = Math.random();
       const baseProb = event.conditions?.probability ?? event.probability ?? 0;
-      // Multiplicador de dificultad: modula la probabilidad de las crisis
       const prob = baseProb * getDifficultyModifiers(state.difficulty).crisisProbabilityMultiplier;
       if (roll < prob) {
         triggered.push(event);
         state.lastRandomEventTurn = getGlobalTurn(state);
         state.randomEventsThisTerm += 1;
-        return triggered; // solo 1 evento por turno
+        return triggered;
       }
     }
   }
@@ -287,7 +239,7 @@ export function resolveRandomEvents(state: GameState): GameEvent[] {
         triggered.push(event);
         state.lastRandomEventTurn = getGlobalTurn(state);
         state.randomEventsThisTerm += 1;
-        return triggered; // solo 1 evento por turno
+        return triggered;
       }
     }
   }
@@ -295,25 +247,40 @@ export function resolveRandomEvents(state: GameState): GameEvent[] {
   return triggered;
 }
 
-export function checkEventConditions(event: GameEvent, state: GameState): boolean {
-  const cond = event.conditions;
-  if (cond.minPopularity !== undefined && state.popularity < cond.minPopularity) return false;
-  if (cond.maxPopularity !== undefined && state.popularity > cond.maxPopularity) return false;
-  if (cond.minBudget !== undefined && state.budget < cond.minBudget) return false;
-  if (cond.maxBudget !== undefined && state.budget > cond.maxBudget) return false;
-  if (cond.minStability !== undefined && state.stability < cond.minStability) return false;
-  if (cond.maxStability !== undefined && state.stability > cond.maxStability) return false;
-  if (cond.minMoneyPrinting !== undefined && state.moneyPrintingCount < cond.minMoneyPrinting) return false;
+function actionDone(state: GameState, legacyOrNewId: string): boolean {
+  if (state.completedActions.includes(legacyOrNewId)) return true;
+  const mapped = LEGACY_ACTION_TO_NEW[legacyOrNewId];
+  return !!mapped && state.completedActions.includes(mapped);
+}
 
-  // Verificar grupos requeridos
-  if (cond.requiredGroups) {
-    for (const groupId of cond.requiredGroups) {
-      const support = state.groupRelations[groupId] ?? 0;
-      if (support <= 0) return false;
+/**
+ * Condiciones de un evento. Con motor causal, la condición del evento es su
+ * `when` sobre indicadores/actores (data/events/causalEvents.ts) y los
+ * umbrales viejos de popularidad/estabilidad/presupuesto no se usan.
+ */
+export function checkEventConditions(event: GameEvent, state: GameState): boolean {
+  const cond = event.conditions ?? {};
+  const causalDef = EVENT_CAUSAL[event.id];
+  const causalMode = !!state.causal && !!causalDef;
+
+  if (causalMode) {
+    if (causalDef.when && !evalCondition(causalDef.when, decisionContext(state.causal))) return false;
+  } else {
+    if (cond.minPopularity !== undefined && state.popularity < cond.minPopularity) return false;
+    if (cond.maxPopularity !== undefined && state.popularity > cond.maxPopularity) return false;
+    if (cond.minBudget !== undefined && state.budget < cond.minBudget) return false;
+    if (cond.maxBudget !== undefined && state.budget > cond.maxBudget) return false;
+    if (cond.minStability !== undefined && state.stability < cond.minStability) return false;
+    if (cond.maxStability !== undefined && state.stability > cond.maxStability) return false;
+    if (cond.minMoneyPrinting !== undefined && state.moneyPrintingCount < cond.minMoneyPrinting) return false;
+    if (cond.requiredGroups) {
+      for (const groupId of cond.requiredGroups) {
+        const support = state.groupRelations[groupId] ?? 0;
+        if (support <= 0) return false;
+      }
     }
   }
 
-  // Verificar asesores requeridos
   if (cond.requiredAdvisors) {
     for (const advisorId of cond.requiredAdvisors) {
       const advisor = state.advisors.find(a => a.id === advisorId && a.isActive);
@@ -321,10 +288,9 @@ export function checkEventConditions(event: GameEvent, state: GameState): boolea
     }
   }
 
-  // Verificar acciones requeridas (deben haberse ejecutado previamente)
   if (cond.requiredActions) {
     for (const actionId of cond.requiredActions) {
-      if (!state.completedActions.includes(actionId)) return false;
+      if (!actionDone(state, actionId)) return false;
     }
   }
 
@@ -334,7 +300,32 @@ export function checkEventConditions(event: GameEvent, state: GameState): boolea
   return true;
 }
 
+/** Efectos causales de un evento al dispararse (explícitos o traducidos). */
+function eventTriggerEffects(event: GameEvent): CausalEventEffect[] {
+  const def = EVENT_CAUSAL[event.id];
+  if (def?.effects) return def.effects;
+  return event.effects.immediate
+    .map(e => translateLegacyEffect(e.target ?? '', e.value ?? 0))
+    .filter((e): e is CausalEventEffect => e !== null);
+}
+
+/** Efectos causales de una opción de un evento. */
+export function eventChoiceEffects(event: GameEvent, choiceId: string): CausalEventEffect[] {
+  const channel = CHANNEL_GAME_EVENTS[event.id]?.causal.choices?.[choiceId];
+  if (channel) return channel;
+  const explicit = EVENT_CAUSAL[event.id]?.choices?.[choiceId];
+  if (explicit) return explicit;
+  const choice = event.choices?.find(c => c.id === choiceId);
+  return (choice?.effects.immediate ?? [])
+    .map(e => translateLegacyEffect(e.target ?? '', e.value ?? 0))
+    .filter((e): e is CausalEventEffect => e !== null);
+}
+
 export function applyImmediateEventEffects(state: GameState, event: GameEvent): void {
+  if (state.causal) {
+    applyCausalEffects(state.causal, eventTriggerEffects(event), `evento:${event.id}`, state.causal.perks.eventResilience);
+    return;
+  }
   event.effects.immediate.forEach(effect => {
     applyEventEffect(state, effect);
   });
@@ -344,6 +335,33 @@ export function applyEventChoice(gameState: GameState, event: GameEvent, choiceI
   const choice = event.choices?.find(c => c.id === choiceId);
   if (!choice) return gameState;
 
+  if (gameState.causal) {
+    const causal = structuredClone(gameState.causal);
+    applyCausalEffects(causal, eventChoiceEffects(event, choiceId), `evento:${event.id}`, causal.perks.eventResilience);
+    // Efectos diferidos de la opción → agenda del motor.
+    for (const [i, effect] of (choice.effects.delayed ?? []).entries()) {
+      const translated = translateLegacyEffect(effect.target ?? '', effect.value ?? 0);
+      if (!translated) continue;
+      const start = causal.turn + ((effect as { turnsUntil?: number }).turnsUntil ?? 1) - 1;
+      causal.agenda.push({
+        uid: `${event.id}.${choiceId}.${causal.turn}.${i}`,
+        effectId: `${event.id}.${choiceId}`,
+        actionId: `evento:${event.id}`,
+        originTurn: causal.turn,
+        target: translated.target,
+        mode: 'DELTA',
+        magnitude: translated.value,
+        start,
+        end: Math.min(FOREVER, start),
+        everyTurn: false,
+        appliedTotal: 0,
+        explanation: `Efecto diferido de ${event.title}`,
+      });
+    }
+    return syncLegacy({ ...gameState, causal });
+  }
+
+  // Estado legacy (sin motor causal).
   const state: GameState = {
     ...gameState,
     groupRelations: { ...gameState.groupRelations },
@@ -354,12 +372,9 @@ export function applyEventChoice(gameState: GameState, event: GameEvent, choiceI
   if (choice.effects.delayed) {
     const pendingEffects = [...state.pendingEffects];
     choice.effects.delayed.forEach(effect => {
-      // FIX: traducir el efecto {target, value} al shape de PendingEffect que
-      // processPendingEffects realmente aplica. Antes se guardaba target/value
-      // sin traducir y el efecto diferido se descartaba en silencio.
       const base = {
         id: `${event.id}_${choiceId}_${state.turn}_${Math.random().toString(36).slice(2, 8)}`,
-        activationTurn: getGlobalTurn(state) + (effect.turnsUntil || 1),
+        activationTurn: getGlobalTurn(state) + ((effect as { turnsUntil?: number }).turnsUntil || 1),
         description: `Efecto diferido de ${event.title}`
       };
       const target = effect.target;
@@ -384,8 +399,6 @@ export function applyEventChoice(gameState: GameState, event: GameEvent, choiceI
 function applyEventEffect(state: GameState, effect: { target?: string; value?: number }): void {
   if (!effect.target || effect.value === undefined) return;
 
-  // Resiliencia de arquetipo: reduce los efectos negativos sobre
-  // popularidad/estabilidad según _archetypeEventResilience.
   let value = effect.value;
   if ((effect.target === 'popularity' || effect.target === 'stability') && value < 0) {
     value = value * (1 - (state._archetypeEventResilience ?? 0));

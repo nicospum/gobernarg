@@ -1,5 +1,6 @@
 import type { LucideIcon } from 'lucide-react';
 import type { ElectionOption } from '../data/careerRules';
+import type { CausalState } from '../engine/causal/types';
 
 // =====================
 // Cargos y arquetipos
@@ -171,6 +172,8 @@ export interface ObjectiveRequirements {
   budget?: number;
   completedActions?: string[];
   groupSupport?: Record<string, number>;
+  /** Metas de gestión del motor causal: rango de un indicador del país (valor efectivo). */
+  indicators?: Record<string, { min?: number; max?: number }>;
 }
 
 export interface ObjectiveReward {
@@ -203,6 +206,20 @@ export interface ElectionResults {
     completedObjectivesImpact: number;
     stabilityBonus: number;
   };
+  /** Desglose del motor causal (IV = APRO + ESTRUCTURA + OTROS). */
+  causal?: ElectionBreakdown;
+  /** 'reelection' = fin del 1er mandato · 'succession' = fin del 2º (elección del sucesor). */
+  kind?: 'reelection' | 'succession';
+}
+
+export interface ElectionBreakdown {
+  apro: number;
+  estructura: number;
+  otros: number;
+  incumbencia: number;
+  /** Actores del electorado que más empujan a favor / en contra (nombre + satisfacción). */
+  aFavor: { actor: string; sat: number }[];
+  enContra: { actor: string; sat: number }[];
 }
 
 // =====================
@@ -285,6 +302,8 @@ export interface TurnSummary {
     popularityChange: number;
     budgetChange: number;
   };
+  /** Turno absoluto cerrado (índice en causal.records). */
+  causalTurn?: number;
 }
 
 // =====================
@@ -542,4 +561,13 @@ export interface GameState {
   _archetypeEventResilience?: number;
   _archetypeFreeInteractions?: string[];
   _archetypeExtraActions?: number;
+  // Motor causal (GobernArg_Motor_Causal_v1). Fuente de verdad del país, los
+  // actores y la política; los campos legacy (popularity, budget, stability,
+  // legitimacy, votingIntention, legislativeSupport, groupRelations) son un
+  // espejo que mantiene engine/causalBridge.ts para las pantallas existentes.
+  causal: CausalState;
+  /** Plataforma del oficialismo elegida al inicio (D-07 / R-23). */
+  platformId: string;
+  /** Mensajes de la última interacción con actores (feedback inmediato en el panel). */
+  lastInteractionMessage?: string | null;
 }

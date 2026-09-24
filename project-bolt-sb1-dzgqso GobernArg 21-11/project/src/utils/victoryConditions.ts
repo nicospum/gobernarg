@@ -1,4 +1,6 @@
 import { GameState, Objective } from '../types/game';
+import { isIndicatorId } from '../data/causal';
+import { effective, viewRef } from '../engine/causal/context';
 
 const DEFEAT_CONDITIONS = {
   LOW_POPULARITY_THRESHOLD: {
@@ -114,6 +116,19 @@ export function updateObjectives(gameState: GameState): GameState {
         completed: completedCount === required.length,
         progress: (completedCount / required.length) * 100
       });
+    }
+
+    if (objective.requirements.indicators && gameState.causal) {
+      const c = gameState.causal;
+      for (const [id, range] of Object.entries(objective.requirements.indicators)) {
+        if (!isIndicatorId(id)) continue;
+        const v = effective(c, id, viewRef(c));
+        const okMin = range.min === undefined || v >= range.min;
+        const okMax = range.max === undefined || v <= range.max;
+        const target = range.min ?? range.max ?? v;
+        const progress = range.min !== undefined ? (v / target) * 100 : (target / Math.max(1, v)) * 100;
+        checks.push({ completed: okMin && okMax, progress: Math.min(100, progress) });
+      }
     }
 
     if (objective.requirements.groupSupport) {
@@ -265,4 +280,33 @@ export function getPositionObjectives(position: string): Objective[] {
     default:
       return [];
   }
+}
+
+/**
+ * Metas de gestión del presidente (motor causal). Reemplazan a los objetivos
+ * viejos ("10.000M y 80% de popularidad", "85 de apoyo en 5 grupos"), que el
+ * motor nuevo vuelve inalcanzables o sin sentido. Son logros de legado: no dan
+ * recompensas de popularidad (evita doble conteo en la elección) y no deciden
+ * la victoria (la decide la elección de sucesión).
+ */
+export function getPresidentialGoals(): Objective[] {
+  const goal = (id: string, title: string, description: string, indicators: Record<string, { min?: number; max?: number }>): Objective => ({
+    id, title, description, requirements: { indicators }, reward: {}, completed: false, progress: 0,
+  });
+  return [
+    goal('meta_inflacion', 'Inflación bajo control', 'Llevar la inflación a niveles moderados (índice ≤ 40, ~2% mensual).', { INFL: { max: 40 } }),
+    goal('meta_crecimiento', 'Economía en crecimiento', 'Actividad y empleo por encima de lo normal (≥ 55).', { ACTV: { min: 55 } }),
+    goal('meta_salario', 'Salario real recuperado', 'Poder adquisitivo de los hogares ≥ 50.', { PODA: { min: 50 } }),
+    goal('meta_solvencia', 'Cuentas en orden', 'Solvencia fiscal sólida (≥ 55): riesgo país bajo.', { SOLV: { min: 55 } }),
+    goal('meta_paz_social', 'Paz social', 'Conflictividad baja (≤ 30).', { CONF: { max: 30 } }),
+  ];
+}
+
+/** Derrotas anticipadas del motor causal (R-24, aceptadas por el usuario). */
+export function checkCausalDefeat(state: GameState): import('../types/game').DefeatReason | null {
+  const c = state.causal;
+  if (!c) return null;
+  if (c.hyperStreak >= 2) return 'hyperinflation';
+  if (c.govCrisisStreak >= 2) return 'impeachment';
+  return null;
 }

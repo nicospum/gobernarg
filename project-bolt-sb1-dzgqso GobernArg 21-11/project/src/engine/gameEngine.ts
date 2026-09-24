@@ -7,23 +7,24 @@ import type {
   InteractionType,
   Difficulty,
 } from '../types/game';
-import { actionCategories } from '../data/actionCategories';
 import { interestGroups } from '../data/interestGroups';
 import { GROUP_ANTAGONISTS } from '../data/groupAntagonists';
 import { ARCHETYPE_ABILITIES } from '../data/specialAbilities';
 import { STARTING_POSITION } from '../data/careerRules';
+import { ADVISOR_ROLES } from '../data/advisors';
+import { CAUSAL_ACTIONS_BY_ID, PARAMS, type ActorId } from '../data/causal';
 import { calculateInteractionCost, calculateSupportGain, getInteractionCommitment } from '../utils/interactionCosts';
-import { getPositionObjectives } from '../utils/victoryConditions';
-import { calculateAvailableActions } from '../utils/actionCalculator';
+import { getPresidentialGoals } from '../utils/victoryConditions';
 import { applyArchetypePassives } from './archetypeEngine';
+import { clampValue, addNotification, getGlobalTurn } from './engineShared';
+import { meet, negotiate, poll, signAgreement, type InteractionResult } from './causal';
 import {
-  clampValue,
-  addNotification,
-  getGlobalTurn,
-  recalcState,
-  POSITION_STARTING_BUDGET,
-  ARCHETYPE_STARTING_POPULARITY,
-} from './engineShared';
+  applyCausalEffects,
+  newCausalForGame,
+  paForTurn,
+  refreshPerks,
+  syncLegacy,
+} from './causalBridge';
 export type { TurnResult } from './engineShared';
 
 // Re-export from engineShared
@@ -37,6 +38,7 @@ export {
   findActionById,
   getAvailableActionsForState,
   toggleActionSelection,
+  getPolicyAvailability,
 } from './actionEngine';
 
 // Re-export from eventResolver
@@ -60,9 +62,13 @@ export {
 export { processEndTurn } from './turnProcessor';
 
 // ===========================
-// Funciones core (no movidas)
+// Creación de partida
 // ===========================
 
+/**
+ * Estado base pre-partida (antes de elegir arquetipo). Determinístico: el
+ * motor causal se crea con semilla fija; createNewGame crea el definitivo.
+ */
 export function getInitialGameState(): GameState {
   const groupRelations: Record<string, number> = {};
   interestGroups.forEach(group => {
@@ -71,9 +77,12 @@ export function getInitialGameState(): GameState {
     });
   });
 
+  const causal = newCausalForGame('politico', undefined, 1);
+  // Sin perks de arquetipo en el estado base: createNewGame los aplica una vez.
+  causal.perks = { ...causal.perks, structureMult: 1, freeMeetingActors: [] };
+
   const state: GameState = {
     // MVP presidente-only: el cargo inicial se lee de STARTING_POSITION
-    // (careerRules) en vez de un hardcodeo suelto.
     position: STARTING_POSITION,
     archetype: 'politico',
     avatar: '',
@@ -84,11 +93,11 @@ export function getInitialGameState(): GameState {
     popularity: 50,
     popularidadGrupos: 50,
     popularidadPolitica: 50,
-    budget: 3500,
+    budget: PARAMS.CAJA_INICIAL,
     turn: 1,
     year: 1,
-    actions: 5,
-    baseActions: 5,
+    actions: PARAMS.ACCIONES_POR_TURNO,
+    baseActions: PARAMS.ACCIONES_POR_TURNO,
     advisors: [],
     selectedActions: [],
     moneyPrintingCount: 0,
@@ -107,23 +116,21 @@ export function getInitialGameState(): GameState {
     pendingElectionOptions: [],
     legislativeResults: null,
     legislativeSupport: null,
-    historicalPopularity: [50],
-    historicalBudget: [3500],
+    historicalPopularity: [],
+    historicalBudget: [],
     completedActions: [],
     groupRelations,
     isAdminMode: false,
     stability: 50,
     pendingEffects: [],
     interestGroups,
-    unlockedActions: getAllActionIds(),
+    unlockedActions: [],
     notifications: [],
-    // Fase 2: Memoria de decisiones
     actionUsageCount: {},
     actionCooldowns: {},
     debtCount: 0,
     debtServiceRatio: 0,
-    legitimacy: 60,
-    // Fase 3: Estrategia y política
+    legitimacy: 50,
     midtermStrategy: null,
     pendingMidtermStrategy: false,
     availableMidtermStrategies: [],
@@ -136,7 +143,6 @@ export function getInitialGameState(): GameState {
     lastRandomEventTurn: 0,
     lastEventFiredTurns: {},
     randomEventsThisTerm: 0,
-    // Fase 4: Profundidad
     difficulty: 'normal',
     radicalConciliadorAxis: 0,
     populistaTecnicoAxis: 0,
@@ -146,25 +152,21 @@ export function getInitialGameState(): GameState {
     abilityCooldowns: {},
     impeachmentConsecutiveTurns: 0,
     coupConsecutiveTurns: 0,
-    defeatReason: null
+    defeatReason: null,
+    causal,
+    platformId: causal.platformId,
+    lastInteractionMessage: null,
   };
 
-  // Nota: las pasivas NO se aplican acá. getInitialGameState() devuelve el
-  // estado base pre-partida; las pasivas del arquetipo elegido se aplican una
-  // única vez en createNewGame() y luego cada inicio de turno en processEndTurn.
-  // (Antes se aplicaban acá con 'politico' y createNewGame las re-aplicaba:
-  // los shifts de ejes quedaban duplicados o contaminados por el arquetipo default.)
-  return state;
-}
-
-function getAllActionIds(): string[] {
-  return actionCategories.flatMap(category => category.actions.map(action => action.id));
+  // Las pasivas NO se aplican acá: createNewGame las aplica una única vez.
+  const synced = syncLegacy(state);
+  synced.historicalPopularity = [synced.popularity];
+  synced.historicalBudget = [synced.budget];
+  return synced;
 }
 
 function cloneInterestGroups(): typeof interestGroups {
-  // JSON.parse(JSON.stringify()) pierde las funciones `icon` (LucideIcon) de los
-  // subgrupos y structuredClone no funciona con componentes React (símbolos).
-  // Clonación manual: copia campos por valor y preserva la referencia de `icon`.
+  // Clonación manual: preserva la referencia de `icon` (componente React).
   return interestGroups.map(group => ({
     ...group,
     subgroups: group.subgroups.map(subgroup => ({
@@ -184,17 +186,14 @@ export function createNewGame(
   governorName: string,
   isAdminMode: boolean,
   avatar: string,
-  difficulty: Difficulty = 'normal'
+  difficulty: Difficulty = 'normal',
+  platformId?: string,
+  seed?: number,
 ): GameState {
   const base = getInitialGameState();
-  const groupRelations: Record<string, number> = {};
-  interestGroups.forEach(group => {
-    group.subgroups.forEach(subgroup => {
-      groupRelations[subgroup.id] = subgroup.baseSupport;
-    });
-  });
+  const causal = newCausalForGame(archetype, platformId, seed);
 
-  const state: GameState = {
+  let state: GameState = {
     ...base,
     position,
     archetype,
@@ -202,48 +201,62 @@ export function createNewGame(
     term: 1,
     termsByPosition: { intendente: 0, gobernador: 0, presidente: 0 },
     careerHistory: [
-      {
-        position,
-        term: 1,
-        startYear: 1,
-        endYear: 1,
-        result: 'victory',
-        type: 'initial',
-        votesPercentage: 50
-      }
+      { position, term: 1, startYear: 1, endYear: 1, result: 'victory', type: 'initial', votesPercentage: 50 },
     ],
     turnLog: [],
     governorName,
     isAdminMode,
-    popularity: ARCHETYPE_STARTING_POPULARITY[archetype],
-    budget: POSITION_STARTING_BUDGET[position] + (archetype === 'empresario' ? 500 : 0),
     pendingElection: false,
     pendingElectionOptions: [],
-    objectives: getPositionObjectives(position),
-    groupRelations,
+    objectives: getPresidentialGoals(),
     interestGroups: cloneInterestGroups(),
-    // Fase 4
     difficulty,
-    groupMoods: (interestGroups ?? []).flatMap(g =>
-      g.subgroups.map(sg => ({
-        groupId: sg.id,
-        mood: 'neutral' as const,
-        ignoredTurns: 0,
-        lastSatisfiedTurn: 0,
-      }))
-    )
+    causal,
+    platformId: causal.platformId,
   };
 
+  // Pasivas de arquetipo (acumuladores legacy + perfil de ejes narrativo).
+  state = applyArchetypePassives(state);
+  state = syncLegacy(state);
   state.historicalPopularity = [state.popularity];
   state.historicalBudget = [state.budget];
-  state.baseActions = calculateAvailableActions({ ...state, actions: 0, selectedActions: [] });
+  state.baseActions = paForTurn(state.causal);
   state.actions = state.baseActions;
-
-  // getInitialGameState() aplica las pasivas con 'politico' (valor por defecto),
-  // así que hay que re-aplicarlas con el arquetipo realmente elegido para que los
-  // acumuladores _archetype* (incomeBonus, extraActions, extraLoans, etc.) queden correctos.
-  return applyArchetypePassives(state);
+  return state;
 }
+
+// ===========================
+// Actores: reunión, negociación, acuerdo, encuesta (motor causal)
+// ===========================
+
+export type ActorInteraction = 'reunion' | 'negociar' | 'acuerdo' | 'encuesta';
+
+/**
+ * Interacciones con actores (08_REUNIONES). La reunión es la primera puerta:
+ * revela preocupaciones y demandas y habilita negociar; el acuerdo compromete.
+ */
+export function interactWithActor(state: GameState, actor: ActorId, kind: ActorInteraction): GameState {
+  if (state.gameOver || state.pendingElection) return state;
+  let result: InteractionResult;
+  switch (kind) {
+    case 'reunion': result = meet(state.causal, actor, state.actions); break;
+    case 'negociar': result = negotiate(state.causal, actor, state.actions); break;
+    case 'acuerdo': result = signAgreement(state.causal, actor); break;
+    case 'encuesta': result = poll(state.causal, actor); break;
+  }
+  if (!result.ok) return { ...state, lastInteractionMessage: result.message };
+  return syncLegacy({
+    ...state,
+    causal: result.state,
+    actions: state.actions - result.paSpent,
+    lastInteractionMessage: result.message,
+  });
+}
+
+// ===========================
+// Interacciones legacy (DEPRECADO: reemplazado por interactWithActor)
+// Se conserva por compatibilidad con sus tests; la UI ya no lo usa.
+// ===========================
 
 export function applyInteraction(
   gameState: GameState,
@@ -257,13 +270,10 @@ export function applyInteraction(
     .find(sg => sg.id === subgroupId);
   if (!subgroup) return gameState;
 
-  // Regla de diseño: concesiones limitadas a 4 por mandato
   if (type === 'conceder' && gameState.concessionsThisTerm >= 4) {
     return gameState;
   }
 
-  // Regla de diseño: concesión requiere trabajo previo con el grupo
-  // (al menos 1 reunión o 1 negociación en el mandato actual)
   if (type === 'conceder') {
     const prior = gameState.interactionCountByGroup[subgroupId] ?? { reuniones: 0, negociaciones: 0 };
     if (prior.reuniones === 0 && prior.negociaciones === 0) {
@@ -277,15 +287,12 @@ export function applyInteraction(
   const supportGain = calculateSupportGain(type, subgroup, gameState);
   const commitment = getInteractionCommitment(type, subgroup);
 
-  // Preparar mutaciones de estado
   const newDemandPausedUntil = { ...gameState.demandPausedUntil };
   const newNegotiationPending = { ...gameState.negotiationPending };
   const newTemporarySupportBonuses = { ...gameState.temporarySupportBonuses };
   const newGroupRelations = { ...gameState.groupRelations };
 
-  // Aplicar el compromiso según el tipo de interacción
   if (commitment.temporarySupport) {
-    // reunirse: bono temporal de apoyo + multiplicador en acciones del grupo
     newTemporarySupportBonuses[subgroupId] = {
       bonus: commitment.temporarySupport.bonus,
       expiresAt: getGlobalTurn(gameState) + commitment.temporarySupport.duration,
@@ -294,7 +301,6 @@ export function applyInteraction(
   }
 
   if (commitment.demandPending) {
-    // negociar: el grupo genera una demanda concreta en N turnos
     const [minDelay, maxDelay] = commitment.demandPending.turnsRange;
     const resolveTurn =
       getGlobalTurn(gameState) + minDelay + Math.floor(Math.random() * (maxDelay - minDelay + 1));
@@ -302,17 +308,14 @@ export function applyInteraction(
   }
 
   if (commitment.demandPause) {
-    // conceder: el grupo no genera demandas por N turnos
     newDemandPausedUntil[subgroupId] = getGlobalTurn(gameState) + commitment.demandPause;
   }
 
-  // Aplicar ganancia de apoyo al grupo objetivo
   newGroupRelations[subgroupId] = Math.min(
     100,
     Math.max(0, (newGroupRelations[subgroupId] || 0) + supportGain)
   );
 
-  // Costo cruzado: conceder genera rechazo en otros grupos
   if (type === 'conceder') {
     const crossPenalty = Math.max(2, Math.round(subgroup.influence * 0.5));
     for (const [otherId, relation] of Object.entries(newGroupRelations)) {
@@ -321,7 +324,6 @@ export function applyInteraction(
     }
   }
 
-  // Actualizar contadores de interacción
   const prevCount = gameState.interactionCountByGroup[subgroupId] ?? { reuniones: 0, negociaciones: 0 };
   const newInteractionCount = { ...gameState.interactionCountByGroup };
   if (type === 'reunion') {
@@ -350,27 +352,34 @@ export function applyInteraction(
   };
 }
 
+// ===========================
+// Asesores
+// ===========================
+
+/**
+ * Contratar asesores: se pagan de la caja, su sueldo pasa a ser gasto
+ * corriente y sus roles (eficacia, descuentos, información, negociación)
+ * entran como perks del motor causal.
+ */
 export function hireAdvisors(
   gameState: GameState,
   advisors: Advisor[]
 ): GameState {
   if (gameState.advisorActionUsed) return gameState;
 
-  // Anti duplicados: ignorar asesores ya contratados (el UI permite
-  // seleccionarlos de nuevo y el engine los duplicaba, duplicando bonos).
+  // Anti duplicados: ignorar asesores ya contratados.
   const candidates = advisors.filter(
     a => !gameState.advisors.some(existing => existing.id === a.id)
   );
 
-  // Máximo 2 asesores simultáneos: contratar solo los que entren en los
-  // slots libres en lugar de rechazar toda la operación.
+  // Máximo 2 asesores simultáneos.
   const MAX_ADVISORS = 2;
   const slots = Math.max(0, MAX_ADVISORS - gameState.advisors.length);
   const toHire = candidates.slice(0, slots);
   if (toHire.length === 0) return gameState;
 
   const totalCost = toHire.reduce((sum, a) => sum + a.cost, 0);
-  if (gameState.budget < totalCost) return gameState;
+  if (gameState.causal.caja < totalCost) return gameState;
 
   const withStatus: AdvisorWithStatus[] = toHire.map(a => ({
     ...a,
@@ -378,15 +387,25 @@ export function hireAdvisors(
     turnsInactive: 0
   }));
 
-  // FIX (Punto 12): recalcular al contratar — sin esto las acciones extra del
-  // asesor no se veían hasta el próximo turno (recalcState suma el bonusActions
-  // de los asesores activos vía calculateAvailableActions).
-  return recalcState({
+  const causal = structuredClone(gameState.causal);
+  causal.caja -= totalCost;
+  causal.immediateCosts += totalCost;
+  let imagen = 0;
+  for (const a of toHire) {
+    const role = ADVISOR_ROLES[a.id];
+    if (!role) continue;
+    causal.gastoCorr += role.salary;
+    imagen += role.imagenOnHire;
+  }
+  if (imagen !== 0) applyCausalEffects(causal, [{ target: 'imagen', value: imagen }], 'asesores');
+
+  const next = refreshPerks({
     ...gameState,
+    causal,
     advisors: [...gameState.advisors, ...withStatus],
-    budget: gameState.budget - totalCost,
-    advisorActionUsed: true
+    advisorActionUsed: true,
   });
+  return syncLegacy(next);
 }
 
 export function dismissAdvisor(
@@ -394,13 +413,17 @@ export function dismissAdvisor(
   advisorId: string
 ): GameState {
   if (gameState.advisorActionUsed) return gameState;
-  // FIX (Punto 12): recalcular al despedir — sin esto el bono de acciones del
-  // asesor se conservaba durante el resto del turno actual.
-  return recalcState({
+  const advisor = gameState.advisors.find(a => a.id === advisorId);
+  if (!advisor) return gameState;
+  const causal = structuredClone(gameState.causal);
+  causal.gastoCorr = Math.max(0, causal.gastoCorr - (ADVISOR_ROLES[advisorId]?.salary ?? 0));
+  const next = refreshPerks({
     ...gameState,
+    causal,
     advisors: gameState.advisors.filter(a => a.id !== advisorId),
-    advisorActionUsed: true
+    advisorActionUsed: true,
   });
+  return syncLegacy(next);
 }
 
 export function markAllNotificationsRead(gameState: GameState): GameState {
@@ -418,7 +441,7 @@ export function dismissNotification(gameState: GameState, notificationId: string
 }
 
 // ============================================================
-// Fase 4: Habilidad especial de arquetipo
+// Habilidades especiales de arquetipo (efectos en el motor causal)
 // ============================================================
 
 export function useSpecialAbility(state: GameState, abilityId: string): GameState {
@@ -433,65 +456,39 @@ export function useSpecialAbility(state: GameState, abilityId: string): GameStat
 
   const actionCost = ability.cost.actions ?? 0;
   if (state.actions < actionCost) return state;
-  if (ability.cost.budget && state.budget < ability.cost.budget) return state;
+  if (ability.cost.budget && state.causal.caja < ability.cost.budget) return state;
 
-  const newState = { ...state, groupRelations: { ...state.groupRelations } };
+  const causal = structuredClone(state.causal);
+  const effects = [...ability.effects];
+  if (ability.cost.budget) effects.push({ target: 'CAJA', value: -ability.cost.budget });
+  if (ability.cost.imagen) effects.push({ target: 'imagen', value: -ability.cost.imagen });
+  applyCausalEffects(causal, effects, `habilidad:${ability.id}`);
 
-  if (ability.effects.popularityChange) {
-    newState.popularity = clampValue(newState.popularity + ability.effects.popularityChange);
-  }
-  if (ability.effects.budgetChange) {
-    newState.budget += ability.effects.budgetChange;
-  }
-  if (ability.effects.stabilityChange) {
-    newState.stability = clampValue(newState.stability + ability.effects.stabilityChange);
-  }
-  if (ability.effects.legitimacyChange) {
-    newState.legitimacy = clampValue(newState.legitimacy + ability.effects.legitimacyChange);
-  }
-
-  ability.effects.groupEffects?.forEach(ge => {
-    newState.groupRelations[ge.groupId] = clampValue(
-      (newState.groupRelations[ge.groupId] ?? 50) + ge.supportChange
-    );
+  return syncLegacy({
+    ...state,
+    causal,
+    actions: state.actions - actionCost,
+    abilityCooldowns: { ...state.abilityCooldowns, [ability.id]: ability.cooldown },
   });
-
-  newState.actions -= actionCost;
-  if (ability.cost.budget) newState.budget -= ability.cost.budget;
-  if (ability.cost.popularity) {
-    newState.popularity = clampValue(newState.popularity + ability.cost.popularity);
-  }
-  if (ability.cost.legitimacy) {
-    newState.legitimacy = clampValue(newState.legitimacy + ability.cost.legitimacy);
-  }
-
-  newState.abilityCooldowns = {
-    ...newState.abilityCooldowns,
-    [ability.id]: ability.cooldown,
-  };
-
-  return newState;
 }
 
 // ============================================================
-// Fase 4: Satisfacer demandas de grupos de interés
+// Demandas de grupos (DEPRECADO: las demandas ahora las revela la reunión
+// y se atienden ejecutando la acción pedida). Se conserva con sus tests.
 // ============================================================
 
 export function satisfyGroupDemand(state: GameState, agendaId: string): GameState {
   const agenda = state.groupAgendas?.find(a => a.id === agendaId);
   if (!agenda || agenda.satisfied) return state;
 
-  // Regla de economía de acciones: satisfacer una demanda consume 1 acción
   if (state.actions <= 0) return state;
 
   let newState = { ...state, actions: state.actions - 1 };
 
-  // Marcar como satisfecha
   newState.groupAgendas = (state.groupAgendas || []).map(a =>
     a.id === agendaId ? { ...a, satisfied: true } : a
   );
 
-  // +5 apoyo al grupo (antes +10)
   const supportGain = 5;
   if (agenda.groupId in (newState.groupRelations || {})) {
     newState.groupRelations = {
@@ -500,7 +497,6 @@ export function satisfyGroupDemand(state: GameState, agendaId: string): GameStat
     };
   }
 
-  // Impacto cruzado obligatorio: los antagonistas del grupo satisfecho pierden apoyo
   const antagonists = GROUP_ANTAGONISTS[agenda.groupId] ?? {};
   for (const [antagonistId, ratio] of Object.entries(antagonists)) {
     const penalty = Math.round(supportGain * ratio);
@@ -512,17 +508,14 @@ export function satisfyGroupDemand(state: GameState, agendaId: string): GameStat
     };
   }
 
-  // Resetear mood del grupo
   newState.groupMoods = (state.groupMoods || []).map(m =>
     m.groupId === agenda.groupId
       ? { ...m, mood: 'contento' as const, lastSatisfiedTurn: state.turn, ignoredTurns: 0 }
       : m
   );
 
-  // +1 popularidad general (antes +2)
   newState.popularity = clampValue(newState.popularity + 1);
 
-  // Notificación
   newState = addNotification(newState, {
     type: 'success',
     category: 'social',
@@ -532,4 +525,9 @@ export function satisfyGroupDemand(state: GameState, agendaId: string): GameStat
   });
 
   return newState;
+}
+
+/** Nombre legible de una acción del catálogo causal. */
+export function actionName(actionId: string): string {
+  return CAUSAL_ACTIONS_BY_ID[actionId]?.name ?? actionId;
 }

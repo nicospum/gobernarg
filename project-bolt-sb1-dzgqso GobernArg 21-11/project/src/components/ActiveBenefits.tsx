@@ -1,72 +1,32 @@
-import { TrendingUp, Building2, Shield, Clock } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { GameState } from '../types/game';
-import { getGlobalTurn } from '../engine/engineShared';
+import { activeConditions } from '@/lib/agendaView';
 
 interface ActiveBenefitsProps {
   gameState: GameState;
 }
 
-const BENEFIT_ICONS: Record<string, typeof TrendingUp> = {
-  incomeModifier: TrendingUp,
-  costReduction: Building2,
-  stabilityChange: Shield,
-  default: Clock,
-};
-
+/** Condiciones vigentes: estudio de factibilidad, cepo, pacto social, luna de miel, estrategia… */
 export function ActiveBenefits({ gameState }: ActiveBenefitsProps) {
-  const currentGlobalTurn = getGlobalTurn(gameState);
-  // FIX (Punto 16): el filtro viejo mezclaba criterios — excluía los efectos
-  // con stabilityChange recién activados y dejaba fuera los efectos vigentes
-  // con activationTurn < turno actual. Ahora un beneficio cuenta si está
-  // activo, con el mismo criterio que processPendingEffects (actionEffects.ts):
-  // activationTurn alcanzado y, si tiene duration, no expirado.
-  const activeBenefits = gameState.pendingEffects.filter(
-    pe => (pe.incomeModifier || pe.costReductionCategory || pe.stabilityChange) &&
-      pe.activationTurn <= currentGlobalTurn &&
-      (pe.duration === undefined || pe.activationTurn + pe.duration > currentGlobalTurn)
-  );
-
-  if (activeBenefits.length === 0) return null;
+  const items = activeConditions(gameState.causal);
+  if (items.length === 0) return null;
 
   return (
-    <div className="bg-emerald-400/10 border border-emerald-400/20 rounded-lg p-3 mb-4">
+    <div className="bg-emerald-400/10 border border-emerald-400/20 rounded-lg p-3">
       <h3 className="text-sm font-semibold text-emerald-300 mb-2 flex items-center gap-1">
-        <TrendingUp className="w-4 h-4" />
-        Beneficios activos
+        <ShieldCheck className="w-4 h-4" />
+        Condiciones vigentes
       </h3>
       <div className="space-y-1.5">
-        {activeBenefits.map(benefit => {
-          // Turnos restantes del beneficio (no "turnos hasta activarse": solo
-          // se listan efectos ya activos). Sin duration no hay badge — antes
-          // se renderizaba "0t" (Punto 16).
-          const turnsLeft = benefit.activationTurn + (benefit.duration ?? 0) - currentGlobalTurn;
-          const Icon = benefit.incomeModifier ? BENEFIT_ICONS.incomeModifier :
-                       benefit.costReductionCategory ? BENEFIT_ICONS.costReduction :
-                       BENEFIT_ICONS.default;
-
-          let label = '';
-          if (benefit.incomeModifier) {
-            label = `+${Math.round(benefit.incomeModifier * 100)}% ingresos`;
-          } else if (benefit.costReductionCategory) {
-            const catName = benefit.costReductionCategory === 'infraestructura' ? 'Infraestructura' :
-                           benefit.costReductionCategory;
-            label = `-${Math.round((benefit.costReductionPercent ?? 0) * 100)}% costo ${catName}`;
-          } else if (benefit.description) {
-            label = benefit.description;
-          }
-
-          return (
-            <div key={benefit.id} className="flex items-center justify-between text-xs text-emerald-300">
-              <span className="flex items-center gap-1">
-                <Icon className="w-3 h-3" />
-                {label}
-              </span>
-              {turnsLeft > 0 && (
-                <span className="text-emerald-400 font-medium">{turnsLeft}t</span>
-              )}
+        {items.map(item => (
+          <div key={item.key} className="text-xs text-emerald-200/90" title={item.detail}>
+            <div className="flex items-center justify-between gap-2">
+              <span className="font-medium">{item.label}</span>
+              {item.turnsLeft !== null && <span className="text-emerald-400 font-mono">{item.turnsLeft}t</span>}
             </div>
-          );
-        })}
+            {item.detail && <p className="text-[10px] text-emerald-200/60 leading-snug">{item.detail}</p>}
+          </div>
+        ))}
       </div>
     </div>
   );

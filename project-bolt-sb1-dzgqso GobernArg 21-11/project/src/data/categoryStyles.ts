@@ -1,5 +1,6 @@
 import type { ActionCategory } from '../types/game';
-import { CATEGORY_ICONS } from '../utils/imageAssets';
+import { CATEGORY_ICONS, IMAGES } from '../utils/imageAssets';
+import type { UiCategory } from './causal';
 
 export interface CategoryStyle {
   /** Clase Tailwind para color de texto/foreground */
@@ -92,3 +93,20 @@ export const ALL_CATEGORIES: ActionCategory[] = [
   'turismo',
   'tecnologia',
 ];
+
+/**
+ * Estilos de las categorías de UI del catálogo nuevo (04_ACCIONES "Categoría UI").
+ * Reutilizan los íconos y la paleta de las categorías del juego.
+ */
+export const UI_CATEGORY_STYLES: Record<UiCategory, CategoryStyle> = {
+  'Economía y moneda': { ...CATEGORY_STYLES.economia, imageSrc: IMAGES.icons.categories.economy, label: 'Economía' },
+  'Impuestos': { color: 'text-lime-400', bgColor: 'bg-lime-400/15', borderColor: 'border-lime-400/40', imageSrc: IMAGES.icons.categories.governmentCongress, label: 'Impuestos' },
+  'Producción y trabajo': { color: 'text-amber-400', bgColor: 'bg-amber-400/15', borderColor: 'border-amber-400/40', imageSrc: IMAGES.icons.categories.economyGrowth, label: 'Producción' },
+  'Social y salud': { ...CATEGORY_STYLES.social, label: 'Social' },
+  'Educación, ciencia y cultura': { ...CATEGORY_STYLES.educacion, label: 'Educación' },
+  'Infraestructura': { ...CATEGORY_STYLES.infraestructura, label: 'Obras' },
+  'Seguridad y justicia': { ...CATEGORY_STYLES.seguridad, label: 'Seguridad' },
+  'Instituciones y ambiente': { color: 'text-teal-400', bgColor: 'bg-teal-400/15', borderColor: 'border-teal-400/40', imageSrc: IMAGES.icons.categories.government, label: 'Instituciones' },
+  'Exterior': { ...CATEGORY_STYLES.diplomacia, label: 'Exterior' },
+  'Política y relaciones': { color: 'text-violet-400', bgColor: 'bg-violet-400/15', borderColor: 'border-violet-400/40', imageSrc: IMAGES.icons.categories.diplomacyHandshake, label: 'Política' },
+};

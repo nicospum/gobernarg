@@ -9,8 +9,7 @@ import {
   type IndicatorId,
 } from '../../data/causal';
 import { satisfactionTarget } from './actors';
-import { computeApro } from './political';
-import { recomputePolitical } from './political';
+import { computeApro, recomputePolitical } from './political';
 import { pickDemand } from './relations';
 import type { ActorState, CausalState, Perks } from './types';
 
@@ -65,6 +64,7 @@ export function createCausalState(opts: CreateOptions = {}): CausalState {
 
   const state: CausalState = {
     turn: 1,
+    mandateStart: 1,
     base,
     expect: { ...base, APRO: 50 },
     bonuses: [],

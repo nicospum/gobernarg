@@ -2,84 +2,73 @@ import { useState } from 'react';
 import {
   ChevronDown,
   ChevronRight,
-  AlertTriangle,
   Vote,
   Calendar,
   Newspaper,
-  Users as UsersIcon,
-  MessageSquare,
-  Handshake,
-  Gift,
-  Check,
   Bell,
 } from 'lucide-react';
-import type { GameState, InteractionType, Subgroup, Notification } from '../types/game';
+import type { GameState, Notification } from '../types/game';
 import { POLITICAL_CALENDAR } from '../data/calendar';
-import { FIXED_GROUPS, SUBGROUP_TO_GROUP } from '@/lib/groups-mapping';
+import { ACTOR_IDS, ACTORS, PARAMS, type ActorId } from '@/data/causal';
 import { getValueRisk, riskColor, riskLabel, type Risk } from '@/lib/risk';
-import { getGlobalTurn } from '../engine/engineShared';
+import { satisfactionBand, toneClass } from '@/lib/causalText';
+import type { ActorInteraction } from '../engine/gameEngine';
+import { ActorsPanel } from './ActorsPanel';
 
 interface RightSidebarProps {
   gameState: GameState;
-  onInteraction: (subgroupId: string, type: InteractionType) => void;
-  onSatisfyDemand: (agendaId: string) => void;
+  onInteract: (actor: ActorId, kind: ActorInteraction) => void;
+  onSelectAction: (actionId: string) => void;
+  interactionsDisabled: boolean;
 }
 
-interface SubgroupWithRelation {
-  subgroup: Subgroup;
-  relation: number;
-  groupName: string;
-  groupId: string;
-}
-
-function flattenSubgroups(state: GameState): SubgroupWithRelation[] {
-  const all: SubgroupWithRelation[] = [];
-  const list = state.interestGroups ?? [];
-  for (const group of list) {
-    for (const sg of group.subgroups) {
-      // Los partidos políticos (aliados/opositores) no forman parte de los
-      // grupos de interés del acordeón; se muestran en Situación Electoral.
-      const groupId = SUBGROUP_TO_GROUP[sg.id];
-      if (!groupId) continue;
-      const relation = state.groupRelations[sg.id] ?? sg.baseSupport;
-      all.push({ subgroup: sg, relation, groupName: group.name, groupId });
-    }
-  }
-  return all;
-}
-
-function relationColor(value: number): string {
-  if (value >= 60) return 'text-emerald-400';
-  if (value >= 40) return 'text-amber-400';
-  return 'text-red-400';
-}
-
-function relationBarBg(value: number): string {
-  if (value >= 60) return 'bg-emerald-400';
-  if (value >= 40) return 'bg-amber-400';
-  return 'bg-red-400';
-}
-
+/** Riesgo de derrota según la distancia al umbral de victoria (45%). */
 function defeatRisk(voteIntent: number): Risk {
-  if (voteIntent >= 50) return 'bajo';
-  if (voteIntent >= 40) return 'medio';
-  if (voteIntent >= 30) return 'alto';
+  const t = PARAMS.VOTOS_PARA_GANAR;
+  if (voteIntent >= t + 3) return 'bajo';
+  if (voteIntent >= t) return 'medio';
+  if (voteIntent >= t - 5) return 'alto';
   return 'critico';
+}
+
+function turnsToNextElection(state: GameState): { label: string; turns: number } {
+  const inMandate = (state.year - 1) * 4 + state.turn;
+  if (inMandate <= 8) return { label: 'Legislativas', turns: 8 - inMandate };
+  return { label: state.term >= 2 ? 'Sucesión presidencial' : 'Presidenciales', turns: 16 - inMandate };
 }
 
 // ─── Sección 1: Situación Electoral ──────────────────────────────────
 
-function SituacionElectoral({ state, subgroups }: { state: GameState; subgroups: SubgroupWithRelation[] }) {
-  const aFavor = [...subgroups]
-    .filter((s) => s.relation >= 55 && !['aliados', 'opositores'].includes(s.subgroup.id))
-    .sort((a, b) => b.relation - a.relation)
+function ComponentBar({ label, value, weight, hint }: { label: string; value: number; weight: number; hint: string }) {
+  return (
+    <div title={hint}>
+      <div className="flex items-center justify-between text-[9px] text-muted-foreground">
+        <span>{label} <span className="opacity-60">({Math.round(weight * 100)}%)</span></span>
+        <span className="font-mono text-foreground/80">{Math.round(value)}</span>
+      </div>
+      <div className="h-1 w-full overflow-hidden rounded-full bg-white/10 mt-0.5">
+        <div className={`h-full rounded-full ${riskColor(getValueRisk(value, 100), 'bg')}`} style={{ width: `${value}%` }} />
+      </div>
+    </div>
+  );
+}
+
+function SituacionElectoral({ state }: { state: GameState }) {
+  const c = state.causal;
+  const p = c.political;
+  const risk = defeatRisk(p.iv);
+  const voteColor = getValueRisk(p.iv, 100, false);
+  const next = turnsToNextElection(state);
+  const electorate = ACTOR_IDS.filter(a => ACTORS[a].electoralMode === 'SATISFACCION' && ACTORS[a].electoralWeight >= 5);
+  const favor = electorate
+    .filter(a => c.actors[a].sat >= 50)
+    .sort((x, y) => c.actors[y].sat * ACTORS[y].electoralWeight - c.actors[x].sat * ACTORS[x].electoralWeight)
     .slice(0, 3);
-  const enContra = [...subgroups]
-    .filter((s) => s.relation < 45 && !['aliados', 'opositores'].includes(s.subgroup.id))
-    .sort((a, b) => a.relation - b.relation)
+  const contra = electorate
+    .filter(a => c.actors[a].sat < 45)
+    .sort((x, y) => (50 - c.actors[y].sat) * ACTORS[y].electoralWeight - (50 - c.actors[x].sat) * ACTORS[x].electoralWeight)
     .slice(0, 3);
-  const risk = defeatRisk(state.votingIntention);
-  const voteColor = getValueRisk(state.votingIntention, 100, false);
+  const known = (a: ActorId) => c.actors[a].revealedUntil >= c.turn || c.perks.reveals.includes('encuestas');
 
   return (
     <section className="p-4 border-b border-border space-y-3">
@@ -88,14 +77,16 @@ function SituacionElectoral({ state, subgroups }: { state: GameState; subgroups:
         <h3 className="font-display text-[11px] uppercase tracking-widest text-muted-foreground font-bold">
           Situación Electoral
         </h3>
+        <span className="ml-auto text-[9px] text-muted-foreground">{next.label} en {next.turns}t</span>
       </div>
 
       <div className="flex items-end justify-between gap-3">
         <div>
           <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Intención de voto</div>
           <div className={`font-mono text-2xl font-bold leading-none ${riskColor(voteColor)}`}>
-            {Math.round(state.votingIntention)}%
+            {Math.round(p.iv)}%
           </div>
+          <div className="text-[9px] text-muted-foreground mt-0.5">Para ganar: {PARAMS.VOTOS_PARA_GANAR}%</div>
         </div>
         <div className="text-right">
           <div className="text-[10px] text-muted-foreground uppercase tracking-wide">Riesgo derrota</div>
@@ -105,39 +96,40 @@ function SituacionElectoral({ state, subgroups }: { state: GameState; subgroups:
         </div>
       </div>
 
+      <div className="space-y-1.5">
+        <ComponentBar label="Humor social" value={p.apro} weight={PARAMS.PESO_APRO_EN_IV} hint="Aprobación: satisfacción de clase media, sectores populares y demás actores según su peso electoral" />
+        <ComponentBar label="Aparato político" value={p.estr} weight={PARAMS.PESO_ESTRUCTURA_EN_IV} hint="Estructura: oficialismo, aliados y gobernadores (satisfacción y relación)" />
+        <ComponentBar label="Imagen y campaña" value={p.otros} weight={PARAMS.PESO_OTROS_EN_IV} hint="Imagen presidencial: eventos, habilidades, estrategia y desgaste de gestión" />
+      </div>
+
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <div className="text-[9px] text-emerald-400/70 uppercase tracking-wide font-semibold mb-1.5">
-            A favor
-          </div>
-          {aFavor.length === 0 ? (
+          <div className="text-[9px] text-emerald-400/70 uppercase tracking-wide font-semibold mb-1.5">A favor</div>
+          {favor.length === 0 ? (
             <div className="text-[10px] text-muted-foreground/60">—</div>
           ) : (
-            aFavor.map((s) => (
-              <div key={s.subgroup.id} className="flex items-center justify-between gap-1 mb-0.5">
-                <span className="text-[10px] text-foreground/70 truncate">{s.subgroup.name}</span>
-                <span className="font-mono text-[10px] text-emerald-400 flex-shrink-0">
-                  {Math.round(s.relation)}
-                </span>
+            favor.map(a => (
+              <div key={a} className="flex items-center justify-between gap-1 mb-0.5">
+                <span className="text-[10px] text-foreground/70 truncate">{ACTORS[a].shortName}</span>
+                <span className="font-mono text-[10px] text-emerald-400 flex-shrink-0">{known(a) ? Math.round(c.actors[a].sat) : '·'}</span>
               </div>
             ))
           )}
         </div>
         <div>
-          <div className="text-[9px] text-red-400/70 uppercase tracking-wide font-semibold mb-1.5">
-            En contra
-          </div>
-          {enContra.length === 0 ? (
+          <div className="text-[9px] text-red-400/70 uppercase tracking-wide font-semibold mb-1.5">En contra</div>
+          {contra.length === 0 ? (
             <div className="text-[10px] text-muted-foreground/60">—</div>
           ) : (
-            enContra.map((s) => (
-              <div key={s.subgroup.id} className="flex items-center justify-between gap-1 mb-0.5">
-                <span className="text-[10px] text-foreground/70 truncate">{s.subgroup.name}</span>
-                <span className="font-mono text-[10px] text-red-400 flex-shrink-0">
-                  {Math.round(s.relation)}
-                </span>
-              </div>
-            ))
+            contra.map(a => {
+              const band = satisfactionBand(c.actors[a].sat);
+              return (
+                <div key={a} className="flex items-center justify-between gap-1 mb-0.5">
+                  <span className="text-[10px] text-foreground/70 truncate">{ACTORS[a].shortName}</span>
+                  <span className={`font-mono text-[10px] flex-shrink-0 ${toneClass(band.tone)}`}>{known(a) ? Math.round(c.actors[a].sat) : '·'}</span>
+                </div>
+              );
+            })
           )}
         </div>
       </div>
@@ -305,215 +297,21 @@ function NewsPanel({ state }: { state: GameState }) {
   );
 }
 
-// ─── Sección 4: Grupos de Interés ────────────────────────────────────
-
-function tensionFromMood(mood: string | undefined, relation: number): Risk {
-  if (mood === 'radicalizado') return 'critico';
-  if (mood === 'enojado' || relation < 30) return 'alto';
-  if (mood === 'disconforme' || relation < 50) return 'medio';
-  return 'bajo';
-}
-
-function GroupsAccordion({
-  state,
-  subgroups,
-  onInteraction,
-  onSatisfyDemand,
-}: {
-  state: GameState;
-  subgroups: SubgroupWithRelation[];
-  onInteraction: (id: string, type: InteractionType) => void;
-  onSatisfyDemand: (agendaId: string) => void;
-}) {
-  const [expanded, setExpanded] = useState<Set<string>>(new Set());
-
-  return (
-    <section className="p-4">
-      <div className="flex items-center gap-2 mb-3">
-        <UsersIcon size={13} className="text-muted-foreground" />
-        <h3 className="font-display text-[11px] uppercase tracking-widest text-muted-foreground font-bold">
-          Grupos de Interés
-        </h3>
-      </div>
-
-      <div className="space-y-1.5">
-        {FIXED_GROUPS.map((group) => {
-          const members = subgroups.filter((s) => s.groupId === group.id);
-          if (members.length === 0) return null;
-
-          const avg =
-            members.reduce((acc, m) => acc + m.relation, 0) / members.length;
-          const worstTension: Risk = members.reduce<Risk>((max, m) => {
-            const mood = state.groupMoods?.find((gm) => gm.groupId === m.subgroup.id)?.mood;
-            const t = tensionFromMood(mood, m.relation);
-            const order: Record<Risk, number> = { bajo: 0, medio: 1, alto: 2, critico: 3 };
-            return order[t] > order[max] ? t : max;
-          }, 'bajo');
-          const demandsCount = members.filter((m) =>
-            state.groupAgendas?.some((a) => a.groupId === m.subgroup.id && !a.satisfied),
-          ).length;
-          const isOpen = expanded.has(group.id);
-          const Icon = group.icon;
-
-          return (
-            <div key={group.id} className="rounded-lg border border-border overflow-hidden bg-card">
-              <button
-                onClick={() =>
-                  setExpanded((prev) => {
-                    const next = new Set(prev);
-                    if (next.has(group.id)) next.delete(group.id);
-                    else next.add(group.id);
-                    return next;
-                  })
-                }
-                className="w-full flex items-center justify-between gap-2 px-3 py-2.5 hover:bg-white/3 transition-colors text-left"
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <Icon size={14} className="text-muted-foreground flex-shrink-0" />
-                  <div className="min-w-0">
-                    <div className="font-display font-semibold text-[12px] text-foreground truncate">
-                      {group.name}
-                    </div>
-                    <div className="flex items-center gap-2 text-[9px]">
-                      <span className={riskColor(worstTension)}>
-                        tensión {riskLabel(worstTension).toLowerCase()}
-                      </span>
-                      {demandsCount > 0 && (
-                        <span className="text-orange-400">
-                          {demandsCount} demanda{demandsCount > 1 ? 's' : ''}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <span className={`font-mono text-sm font-bold ${relationColor(avg)}`}>
-                    {Math.round(avg)}
-                  </span>
-                  {isOpen ? (
-                    <ChevronDown size={12} className="text-muted-foreground" />
-                  ) : (
-                    <ChevronRight size={12} className="text-muted-foreground" />
-                  )}
-                </div>
-              </button>
-
-              {isOpen && (
-                <div className="border-t border-border divide-y divide-border">
-                  {members.map(({ subgroup, relation }) => {
-                    const mood = state.groupMoods?.find((gm) => gm.groupId === subgroup.id)?.mood;
-                    const agenda = state.groupAgendas?.find(
-                      (a) => a.groupId === subgroup.id && !a.satisfied,
-                    );
-                    const agendaTurnsLeft = agenda
-                      ? agenda.deadline - getGlobalTurn(state)
-                      : 0;
-                    const interactionLock = state.interactionHistory?.[subgroup.id];
-                    const locked = interactionLock && interactionLock.turnsLeft > 0;
-
-                    return (
-                      <div key={subgroup.id} className="px-3 py-2.5 hover:bg-white/2 transition-colors">
-                        <div className="flex items-start justify-between gap-2 mb-1">
-                          <div className="font-medium text-[12px] text-foreground leading-tight">
-                            {subgroup.name}
-                          </div>
-                          <span className={`font-mono text-[12px] font-bold ${relationColor(relation)}`}>
-                            {Math.round(relation)}
-                          </span>
-                        </div>
-
-                        <div className="h-1 w-full overflow-hidden rounded-full bg-white/10 mb-1.5">
-                          <div
-                            className={`h-full rounded-full transition-all duration-500 ${relationBarBg(relation)}`}
-                            style={{ width: `${Math.max(0, Math.min(100, relation))}%` }}
-                          />
-                        </div>
-
-                        {mood && (
-                          <div className="text-[10px] text-muted-foreground mb-1">
-                            Ánimo: <span className="font-semibold">{mood}</span>
-                          </div>
-                        )}
-
-                        {agenda && (
-                          <div className="mt-1.5 mb-1.5 px-2 py-1.5 rounded border border-orange-400/20 bg-orange-400/5">
-                            <div className="flex items-start gap-1.5">
-                              <AlertTriangle size={9} className="text-orange-400 flex-shrink-0 mt-0.5" />
-                              <div className="min-w-0">
-                                <div className="text-[10px] text-orange-300/90 leading-snug">
-                                  {agenda.demand}
-                                </div>
-                                <div className="text-[9px] text-orange-400/60 mt-0.5">
-                                  {agendaTurnsLeft >= 0
-                                    ? `Vence en ${agendaTurnsLeft} turno${agendaTurnsLeft !== 1 ? 's' : ''}`
-                                    : 'Vencida'}
-                                </div>
-                              </div>
-                            </div>
-                            <button
-                              onClick={() => onSatisfyDemand(agenda.id)}
-                              className="mt-1.5 w-full inline-flex items-center justify-center gap-1 text-[10px] font-semibold text-orange-300 border border-orange-400/30 hover:bg-orange-400/10 rounded py-1 transition-colors"
-                            >
-                              <Check size={10} />
-                              Satisfacer demanda
-                            </button>
-                          </div>
-                        )}
-
-                        <div className="flex gap-1.5 mt-2">
-                          {(
-                            [
-                              { type: 'reunion', icon: <MessageSquare size={9} />, label: 'Reunirse' },
-                              { type: 'negociar', icon: <Handshake size={9} />, label: 'Negociar' },
-                              { type: 'conceder', icon: <Gift size={9} />, label: 'Conceder' },
-                            ] as { type: InteractionType; icon: JSX.Element; label: string }[]
-                          ).map((btn) => (
-                            <button
-                              key={btn.type}
-                              onClick={() => !locked && onInteraction(subgroup.id, btn.type)}
-                              disabled={!!locked}
-                              title={
-                                locked
-                                  ? `Bloqueado ${interactionLock?.turnsLeft}t`
-                                  : `Interacción: ${btn.label}`
-                              }
-                              className="flex-1 inline-flex items-center justify-center gap-1 text-[9px] text-muted-foreground hover:text-foreground border border-border hover:border-white/20 px-2 py-1 rounded transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-                            >
-                              {btn.icon}
-                              {btn.label}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
 // ─── RightSidebar ────────────────────────────────────────────────────
 
-export function RightSidebar({ gameState, onInteraction, onSatisfyDemand }: RightSidebarProps) {
-  const subgroups = flattenSubgroups(gameState);
-
+export function RightSidebar({ gameState, onInteract, onSelectAction, interactionsDisabled }: RightSidebarProps) {
   return (
-    <aside className="w-full lg:w-80 flex-none flex flex-col overflow-hidden rounded-lg border border-border bg-card max-h-[calc(100vh-5rem)]">
+    <aside className="w-full flex-none flex flex-col overflow-hidden rounded-lg border border-border bg-card max-h-[calc(100vh-5rem)]">
       <div className="flex-1 overflow-y-auto">
-        <SituacionElectoral state={gameState} subgroups={subgroups} />
+        <SituacionElectoral state={gameState} />
+        <ActorsPanel
+          gameState={gameState}
+          onInteract={onInteract}
+          onSelectAction={onSelectAction}
+          disabled={interactionsDisabled}
+        />
         <CalendarPanel state={gameState} />
         <NewsPanel state={gameState} />
-        <GroupsAccordion
-          state={gameState}
-          subgroups={subgroups}
-          onInteraction={onInteraction}
-          onSatisfyDemand={onSatisfyDemand}
-        />
       </div>
     </aside>
   );

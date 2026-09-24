@@ -22,15 +22,17 @@ import { GameLog } from './components/GameLog';
 import { MidtermStrategyModal } from './components/MidtermStrategyModal';
 import { NotificationCenter } from './components/NotificationCenter';
 import { ManagementNotebook } from './components/ManagementNotebook';
+import { CountryPanel } from './components/CountryPanel';
 
-import type { Position, Archetype, AdvisorWithStatus, InteractionType, TurnSummary, MidtermStrategy } from './types/game';
+import type { Position, Archetype, AdvisorWithStatus, TurnSummary, MidtermStrategy } from './types/game';
+import type { ActorId } from './data/causal';
 import type { ElectionOption } from './data/careerRules';
 import type { GameEvent } from './systems/events/types';
 import {
   getInitialGameState,
   createNewGame,
   toggleActionSelection,
-  applyInteraction,
+  interactWithActor,
   hireAdvisors,
   dismissAdvisor,
   processEndTurn,
@@ -38,11 +40,10 @@ import {
   resolvePendingElection,
   markAllNotificationsRead,
   dismissNotification,
-  useSpecialAbility,
-  satisfyGroupDemand,
-  triggerMidtermStrategy
+  useSpecialAbility as activateSpecialAbility,
+  triggerMidtermStrategy,
+  type ActorInteraction,
 } from './engine/gameEngine';
-import { getGlobalTurn } from './engine/engineShared';
 
 function App() {
   const [gameState, setGameState] = useState(() => getInitialGameState());
@@ -67,10 +68,11 @@ function App() {
     position: Position,
     archetype: Archetype,
     governorName: string,
-    avatar: string
+    avatar: string,
+    platformId: string
   ) => {
     if (!governorName.trim()) return;
-    const newState = createNewGame(position, archetype, governorName, false, avatar);
+    const newState = createNewGame(position, archetype, governorName, false, avatar, 'normal', platformId);
     setGameState(newState);
     setShowWelcome(true);
   };
@@ -80,18 +82,7 @@ function App() {
   };
 
   const handleUseSpecialAbility = (abilityId: string) => {
-    setGameState(prev => useSpecialAbility(prev, abilityId));
-  };
-
-  const handleSatisfyDemand = (agendaId: string) => {
-    try {
-      setGameState(prev => {
-        if (!prev || !prev.groupAgendas) return prev;
-        return satisfyGroupDemand(prev, agendaId);
-      });
-    } catch (err) {
-      console.error('[GobernArg] Error en satisfyGroupDemand:', err);
-    }
+    setGameState(prev => activateSpecialAbility(prev, abilityId));
   };
 
   const handleSelectMidtermStrategy = (strategy: MidtermStrategy) => {
@@ -99,8 +90,8 @@ function App() {
     setShowMidtermStrategy(false);
   };
 
-  const handleInteraction = (subgroupId: string, type: InteractionType) => {
-    setGameState(prev => applyInteraction(prev, subgroupId, type));
+  const handleActorInteraction = (actor: ActorId, kind: ActorInteraction) => {
+    setGameState(prev => interactWithActor(prev, actor, kind));
   };
 
   const handleHireAdvisor = (advisors: AdvisorWithStatus[]) => {
@@ -208,6 +199,9 @@ function App() {
       <main className="container mx-auto p-4 h-[calc(100vh-3.5rem)] overflow-y-auto">
         {/* Indicadores horizontales arriba */}
         <IndicatorsPanel gameState={gameState} />
+        <div className="mt-4">
+          <CountryPanel gameState={gameState} />
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
           <div className="lg:col-span-2 space-y-4">
@@ -223,19 +217,9 @@ function App() {
               disabled={!(gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection)}
             />
 
-            {gameState.pendingEffects.length > 0 && (
-              <PendingEffectsPanel
-                effects={gameState.pendingEffects}
-                currentTurn={getGlobalTurn(gameState)}
-              />
-            )}
+            <PendingEffectsPanel gameState={gameState} />
 
-            {gameState.pendingEffects.length > 0 && (
-              <InformesPanel
-                effects={gameState.pendingEffects}
-                currentTurn={getGlobalTurn(gameState)}
-              />
-            )}
+            <InformesPanel gameState={gameState} />
 
             <NotificationCenter
               gameState={gameState}
@@ -247,8 +231,9 @@ function App() {
           <div className="space-y-4">
             <RightSidebar
               gameState={gameState}
-              onInteraction={handleInteraction}
-              onSatisfyDemand={handleSatisfyDemand}
+              onInteract={handleActorInteraction}
+              onSelectAction={handleActionSelect}
+              interactionsDisabled={gameState.gameOver || gameState.pendingElection}
             />
             <ActiveBenefits gameState={gameState} />
             <div className="flex gap-2">
@@ -279,6 +264,7 @@ function App() {
       {showTurnSummary && turnSummary && (
         <TurnSummaryModal
           summary={turnSummary}
+          gameState={gameState}
           onClose={() => setShowTurnSummary(false)}
         />
       )}
@@ -328,7 +314,7 @@ function App() {
         />
       )}
 
-      {gameState.gameOver && (gameState.victorious || showLegacy) && (
+      {gameState.gameOver && (gameState.victorious || showLegacy) && !gameState.electionResults && (
         <LegacyScreen
           gameState={gameState}
           onRestart={handleRestart}

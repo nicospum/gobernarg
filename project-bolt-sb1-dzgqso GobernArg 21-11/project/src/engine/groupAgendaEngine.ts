@@ -132,7 +132,7 @@ export function generateGroupAgendas(state: GameState): GroupAgendaItem[] {
 export function updateGroupMoods(state: GameState): GameState {
   const updatedMoods = state.groupMoods.map(mood => {
     const wasInteracted = (state.interactionHistory[mood.groupId]?.turnsLeft ?? 0) > 0;
-    let ignoredTurns = wasInteracted ? 0 : mood.ignoredTurns + 1;
+    const ignoredTurns = wasInteracted ? 0 : mood.ignoredTurns + 1;
 
     const support = state.groupRelations[mood.groupId] ?? 50;
     let newMood: GroupMood['mood'] = 'neutral';

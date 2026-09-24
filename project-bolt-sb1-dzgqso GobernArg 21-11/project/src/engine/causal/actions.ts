@@ -40,9 +40,9 @@ export function paCost(state: CausalState, action: CausalActionDef): number {
   return action.paCost;
 }
 
-/** Apoyo legislativo disponible para leyes (incluye luna de miel en los primeros turnos). */
+/** Apoyo legislativo disponible para leyes (incluye luna de miel en los primeros turnos de cada mandato). */
 export function legForLaws(state: CausalState): number {
-  const honeymoon = state.turn <= PARAMS.LUNA_MIEL ? PARAMS.LUNA_MIEL_LEG : 0;
+  const honeymoon = state.turn - state.mandateStart + 1 <= PARAMS.LUNA_MIEL ? PARAMS.LUNA_MIEL_LEG : 0;
   return effectiveLeg(state, viewRef(state)) + honeymoon;
 }
 

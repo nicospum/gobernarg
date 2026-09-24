@@ -3,6 +3,8 @@ import { X, Star, TrendingUp, TrendingDown, Minus, DollarSign, Award } from 'luc
 import { Advisor, AdvisorWithStatus, GameState } from '../types/game';
 import { availableAdvisors } from '../data/advisors';
 import { getAdvisorPortrait } from '../utils/imageAssets';
+import { ADVISOR_ROLES } from '../data/advisors';
+import { fmtBudget } from '@/lib/format';
 
 interface AdvisorSelectionModalProps {
   onClose: () => void;
@@ -68,12 +70,13 @@ export function AdvisorSelectionModal({ onClose, onHire, maxSelections, gameStat
   };
 
   const totalCost = selectedAdvisors.reduce((sum, advisor) => sum + advisor.cost, 0);
-  const canAfford = gameState.budget >= totalCost;
+  const canAfford = gameState.causal.caja >= totalCost;
 
   const isAdvisorAvailable = (advisor: Advisor) => {
     if (!advisor.unlockRequirement) return true;
     if (advisor.unlockRequirement.type === 'popularity') {
-      return gameState.popularity >= advisor.unlockRequirement.value;
+      // Se desbloquea con la aprobación de gestión (APRO).
+      return gameState.causal.political.apro >= advisor.unlockRequirement.value;
     }
     return true;
   };
@@ -94,7 +97,7 @@ export function AdvisorSelectionModal({ onClose, onHire, maxSelections, gameStat
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {availableForHire.map((advisor) => {
               const isSelected = selectedAdvisors.some(a => a.id === advisor.id);
-              const popularityIndicators = getPopularityIndicator(advisor.popularityEffect);
+              const popularityIndicators = getPopularityIndicator((ADVISOR_ROLES[advisor.id]?.imagenOnHire ?? 0) * 5);
               const budgetIndicators = getBudgetIndicator(advisor.cost);
               
               return (
@@ -137,11 +140,11 @@ export function AdvisorSelectionModal({ onClose, onHire, maxSelections, gameStat
                   
                   <div className="mt-2 space-y-2">
                     <div className="flex gap-4 text-sm">
-                      <span className="text-primary">+{advisor.bonusActions} acciones</span>
+                      <span className="text-muted-foreground">Sueldo {fmtBudget(ADVISOR_ROLES[advisor.id]?.salary ?? 0)}/turno</span>
                       {/* Punto 15: el color lo llevan los íconos (signo del
                           efecto), no el contenedor — antes todo se veía verde. */}
                       <div className="flex items-center gap-1">
-                        <span>Popularidad</span>
+                        <span>Imagen</span>
                         {popularityIndicators.map((indicator, index) => (
                           <span key={index}>{indicator}</span>
                         ))}
@@ -155,17 +158,10 @@ export function AdvisorSelectionModal({ onClose, onHire, maxSelections, gameStat
                     </div>
 
                     <div className="text-sm">
-                      <p className="font-medium">Bonificaciones:</p>
-                      <ul className="list-disc pl-5 space-y-1">
-                        {Object.entries(advisor.policyModifiers).map(([category, modifier]) => (
-                          <li key={category}>
-                            +{Math.round((modifier - 1) * 100)}% efectividad en {category}
-                          </li>
-                        ))}
-                        {Object.entries(advisor.groupBonuses).map(([groupId, bonus]) => (
-                          <li key={groupId}>
-                            +{bonus}% relación con {groupId}
-                          </li>
+                      <p className="font-medium">Qué aporta:</p>
+                      <ul className="list-disc pl-5 space-y-1 text-[12px] text-foreground/80">
+                        {(ADVISOR_ROLES[advisor.id]?.perks ?? []).map(perk => (
+                          <li key={perk}>{perk}</li>
                         ))}
                       </ul>
                     </div>

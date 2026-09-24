@@ -1,290 +1,134 @@
 import type {
   GameState,
-  Position,
   TurnSummary,
   TurnLogEntry,
 } from '../types/game';
 import type { GameEvent } from '../systems/events/types';
-import { calculateActionEffects, processPendingEffects, getDefaultCooldown } from '../utils/actionEffects';
-import { applyCrossGroupEffects } from '../utils/crossGroupEffects';
-import { MIDTERM_STRATEGY_EFFECTS } from '../data/midtermStrategies';
-import { getDifficultyModifiers } from './difficultyEngine';
-import { calculateLegitimacyChange } from './legitimacyEngine';
-import { applyAxisShift, getAxisModifiers } from './axisEngine';
-import { generateGroupAgendas, updateGroupMoods, applyGroupSatisfactionPenalty, resolvePendingNegotiations } from './groupAgendaEngine';
-import { applyArchetypePassives } from './archetypeEngine';
+import { getAllEvents } from '../data/events';
+import { CHANNEL_GAME_EVENTS, CHANNEL_TO_EVENT } from '../data/events/causalEvents';
+import { ACTORS, CAUSAL_ACTIONS_BY_ID } from '../data/causal';
 import { getAvailableElectionOptions } from '../utils/electionSystem';
-import { updateObjectives, checkAllDefeatConditions } from '../utils/victoryConditions';
-import { addNotification, clampValue, getGlobalTurn, recalcState, POSITION_INCOME, POSITION_MAINTENANCE, DEFEAT_POP_THRESHOLD } from './engineShared';
-import { findActionById } from './actionEngine';
+import { updateObjectives, checkCausalDefeat } from '../utils/victoryConditions';
+import { addNotification, type TurnResult } from './engineShared';
 import { processCalendarEvents, resolveLegislativeConsequences, resolveRandomEvents, applyImmediateEventEffects } from './eventResolver';
 import { finalizePresidentialCareer } from './electionEngine';
 import { generateTurnIntro } from './narrativeEngine';
+import { applyArchetypePassives } from './archetypeEngine';
+import { CHANNEL_EVENTS, closeTurn, countExecutions, effective, viewRef, type TurnRecord } from './causal';
+import { paForTurn, selectionsFor, syncLegacy } from './causalBridge';
 
 // ===========================
-// Notificaciones de advertencia
+// Perfil de gestión (narrativo)
+// ===========================
+
+/**
+ * Los ejes ideológicos ya no mueven mecánicas (D-07: los reemplaza la
+ * plataforma del oficialismo). Se conservan como PERFIL de gestión en la
+ * pantalla de legado, alimentado por las decisiones concretas.
+ * [radical(−)↔conciliador(+), populista(−)↔técnico(+), cerrado(−)↔convocante(+)]
+ */
+const PROFILE_SHIFTS: Record<string, [number, number, number]> = {
+  pacto_social: [6, 0, 3], acuerdo: [3, 0, 3], negociacion: [1, 0, 2], reunion: [0, 0, 1],
+  transparencia_anticorrupcion: [2, 1, 1], ampliar_coalicion: [2, 0, 3], transferencias_provincias: [0, -1, 1],
+  mano_dura: [-6, 0, -3], dnu: [-5, 0, -5], reforma_laboral: [-3, 2, -1], privatizacion: [-3, 3, 0],
+  control_cambios: [-2, -1, 0], subir_retenciones: [-2, -1, 0],
+  emitir_dinero: [0, -5, 0], congelar_tarifas: [0, -4, 0], control_precios: [0, -4, 0], bono_jubilados: [0, -3, 0],
+  aumento_salarial: [0, -2, 0], suba_salario_minimo: [0, -3, 0], asistencia_alimentaria: [0, -2, 0],
+  politica_monetaria_contractiva: [0, 5, 0], reduccion_gasto: [0, 4, -1], actualizar_tarifas: [0, 4, 0],
+  mejorar_recaudacion: [0, 3, 0], reforma_tributaria: [0, 3, 0], prestamo_internacional: [0, 2, 0],
+  financiamiento_ciencia: [0, 2, 0], liberar_cambios: [1, 3, 0],
+};
+
+function clampAxis(v: number): number {
+  return Math.max(-100, Math.min(100, v));
+}
+
+function applyProfile(state: GameState, actionIds: string[]): void {
+  for (const id of actionIds) {
+    const shift = PROFILE_SHIFTS[id];
+    if (!shift) continue;
+    state.radicalConciliadorAxis = clampAxis(state.radicalConciliadorAxis + shift[0]);
+    state.populistaTecnicoAxis = clampAxis(state.populistaTecnicoAxis + shift[1]);
+    state.cerradoConvocanteAxis = clampAxis(state.cerradoConvocanteAxis + shift[2]);
+  }
+}
+
+// ===========================
+// Advertencias
 // ===========================
 
 function addWarningNotifications(state: GameState): GameState {
-  // FIX (Punto 10): la derrota por popularidad es a los 2 turnos consecutivos
-  // (LOW_POPULARITY_TURNS en victoryConditions.ts) y el umbral depende del
-  // cargo (DEFEAT_POP_THRESHOLD, misma constante que usa checkDefeat).
-  // Antes el aviso decía "Tres turnos" y usaba un 20 fijo para todos los cargos.
-  const popThreshold = DEFEAT_POP_THRESHOLD[state.position] ?? 20;
-  if (state.popularity < popThreshold) {
-    state = addNotification(state, {
-      type: 'warning',
-      category: 'political',
-      title: 'Popularidad crítica',
-      message: 'Tu popularidad está muy baja. Dos turnos consecutivos así y podrías perder el gobierno.',
-      importance: 'critical'
-    });
+  const c = state.causal;
+  const ref = viewRef(c);
+  const infl = effective(c, 'INFL', ref);
+  if (c.hyperStreak === 1) {
+    state = addNotification(state, { type: 'warning', category: 'economy', title: 'Al borde de la hiperinflación', message: 'La inflación está fuera de control. Otro trimestre así y el gobierno cae.', importance: 'critical' });
+  } else if (infl >= 78) {
+    state = addNotification(state, { type: 'warning', category: 'economy', title: 'Inflación desbocada', message: 'Los precios se aceleran y erosionan salarios, crédito y recaudación.', importance: 'high' });
   }
-
-  if (state.budget < 0) {
-    state = addNotification(state, {
-      type: 'warning',
-      category: 'economy',
-      title: 'Déficit fiscal',
-      message: 'El presupuesto está en negativo. Si se prolonga, perderás estabilidad y legitimidad.',
-      importance: 'critical'
-    });
+  if (c.govCrisisStreak === 1) {
+    state = addNotification(state, { type: 'warning', category: 'political', title: 'Crisis de gobernabilidad', message: 'El gobierno perdió capacidad de gobernar. Si no se recupera el próximo trimestre, avanza el juicio político.', importance: 'critical' });
+  } else if (c.political.gob < 28) {
+    state = addNotification(state, { type: 'warning', category: 'political', title: 'Gobernabilidad en riesgo', message: 'Congreso, actores y calle te dan cada vez menos margen.', importance: 'high' });
   }
-
-  if (state.stability < 25) {
-    state = addNotification(state, {
-      type: 'warning',
-      category: 'political',
-      title: 'Inestabilidad política',
-      message: 'La estabilidad del país es muy baja. Eventos negativos serán más frecuentes.',
-      importance: 'high'
-    });
+  if (c.caja < 0) {
+    state = addNotification(state, { type: 'warning', category: 'economy', title: 'Caja en rojo', message: 'Sin fondos, el Tesoro va a emitir para cubrir el déficit: eso alimenta la inflación.', importance: 'critical' });
   }
-
-  if (state.moneyPrintingCount >= 5) {
-    // Umbral de derrota por hiperinflación: 7 emisiones (victoryConditions.ts)
-    state = addNotification(state, {
-      type: 'warning',
-      category: 'economy',
-      title: 'Riesgo de hiperinflación',
-      message: `Has emitido dinero ${state.moneyPrintingCount} veces. A las 7 emisiones el país entra en hiperinflación y perderás el gobierno.`,
-      importance: 'critical'
-    });
-  } else if (state.moneyPrintingCount >= 3) {
-    state = addNotification(state, {
-      type: 'warning',
-      category: 'economy',
-      title: 'Riesgo inflacionario',
-      message: 'Has emitido dinero varias veces. La inflación puede descontrolarse.',
-      importance: 'high'
-    });
-  }
-
-  // Ejes contradictorios extremos
-  if (state.radicalConciliadorAxis <= -80) {
-    state = addNotification(state, {
-      type: 'warning',
-      category: 'political',
-      title: 'Gobierno radicalizado',
-      message: 'Tus políticas se inclinan fuertemente hacia posiciones radicales. Los sectores moderados se están distanciando.',
-      importance: 'high'
-    });
-  } else if (state.radicalConciliadorAxis >= 80) {
-    state = addNotification(state, {
-      type: 'warning',
-      category: 'political',
-      title: 'Conciliación excesiva',
-      message: 'Tu gobierno es extremadamente conciliador. Los sectores que esperan firmeza están perdiendo la paciencia.',
-      importance: 'high'
-    });
-  }
-
-  if (state.populistaTecnicoAxis <= -80) {
-    state = addNotification(state, {
-      type: 'warning',
-      category: 'political',
-      title: 'Populismo extremo',
-      message: 'Tus decisiones son puramente populares pero carecen de sustento técnico. Los mercados y organismos internacionales lo notan.',
-      importance: 'high'
-    });
-  } else if (state.populistaTecnicoAxis >= 80) {
-    state = addNotification(state, {
-      type: 'warning',
-      category: 'political',
-      title: 'Tecnocracia distante',
-      message: 'Tu enfoque puramente técnico te está alejando de las demandas populares y la calle.',
-      importance: 'medium'
-    });
-  }
-
-  if (state.cerradoConvocanteAxis <= -80) {
-    state = addNotification(state, {
-      type: 'warning',
-      category: 'political',
-      title: 'Aislamiento político',
-      message: 'Tu gestión cerrada genera descontento en todos los sectores. Convocá al diálogo antes de que sea tarde.',
-      importance: 'high'
-    });
-  } else if (state.cerradoConvocanteAxis >= 80) {
-    state = addNotification(state, {
-      type: 'warning',
-      category: 'political',
-      title: 'Apertura total',
-      message: 'Tu extrema apertura al diálogo puede ser percibida como falta de rumbo. Definí una posición clara.',
-      importance: 'medium'
-    });
-  }
-
-  return state;
-}
-
-function addEventNotifications(state: GameState, triggeredEvents: GameEvent[]): GameState {
-  triggeredEvents.forEach(event => {
-    state = addNotification(state, {
-      type: event.type === 'crisis' ? 'crisis' : 'event',
-      category: event.category === 'political' ? 'political' : 'system',
-      title: event.title,
-      message: event.description,
-      importance: event.severity === 'critical' ? 'critical' : event.severity === 'high' ? 'high' : 'medium'
-    });
-  });
-  return state;
-}
-
-// ===========================
-// Verificación de derrota
-// ===========================
-
-function checkDefeat(state: GameState): GameState {
-  if (state.gameOver) return state;
-
-  let consecutiveLowPopularity = state.consecutiveLowPopularity;
-  let consecutiveNegativeBudget = state.consecutiveNegativeBudget;
-
-  const popThreshold = DEFEAT_POP_THRESHOLD[state.position] ?? 20;
-  if (state.popularity < popThreshold) {
-    consecutiveLowPopularity += 1;
-  } else {
-    consecutiveLowPopularity = 0;
-  }
-
-  if (state.budget < 0) {
-    consecutiveNegativeBudget += 1;
-  } else {
-    consecutiveNegativeBudget = 0;
-  }
-
-  state.consecutiveLowPopularity = consecutiveLowPopularity;
-  state.consecutiveNegativeBudget = consecutiveNegativeBudget;
-
-  // Fase 4: Tracking de impeachment y golpe
-  if (state.popularity < 10 && state.stability < 20) {
-    state.impeachmentConsecutiveTurns += 1;
-  } else {
-    state.impeachmentConsecutiveTurns = 0;
-  }
-  if (state.stability < 10 && (state.legislativeSupport ?? 100) < 25) {
-    state.coupConsecutiveTurns += 1;
-  } else {
-    state.coupConsecutiveTurns = 0;
-  }
-
-  // Fase 4: Verificar todas las vías de derrota
-  const defeatResult = checkAllDefeatConditions(state);
-  if (defeatResult.defeated) {
-    state.gameOver = true;
-    state.victorious = false;
-    state.defeatReason = defeatResult.reason;
-  }
-
-  return state;
-}
-
-// ===========================
-// Recompensas de objetivos
-// ===========================
-
-function applyObjectiveRewards(state: GameState): void {
-  state.objectives.forEach(obj => {
-    if (obj.completed && !state.completedObjectives.some(co => co.id === obj.id)) {
-      state.completedObjectives.push(obj);
-      if (obj.reward.popularity) state.popularity = Math.min(100, state.popularity + obj.reward.popularity);
-      if (obj.reward.budget) state.budget += obj.reward.budget;
-    }
-  });
-}
-
-// ===========================
-// Fase 2: Cooldowns e inflación
-// ===========================
-
-function updateActionCooldowns(state: GameState): GameState {
-  const updated: Record<string, number> = {};
-  for (const [actionId, turns] of Object.entries(state.actionCooldowns)) {
-    if (turns > 1) {
-      updated[actionId] = turns - 1;
-    }
-  }
-  return { ...state, actionCooldowns: updated };
-}
-
-function processInflation(state: GameState): GameState {
-  const count = state.moneyPrintingCount;
-  if (count >= 5) {
-    // Crisis inflacionaria: -20 popularidad, -300 presupuesto
-    state.popularity = Math.max(0, state.popularity - 20);
-    state.budget -= 300;
-    state = addNotification(state, {
-      type: 'crisis',
-      category: 'economy',
-      title: 'Crisis inflacionaria',
-      message: `La emisión descontrolada (${count} emisiones) provocó una crisis de inflación.`,
-      importance: 'critical'
-    });
-  } else if (count >= 3) {
-    // Inflación moderada: -5 popularidad/turno, -50 presupuesto/turno
-    state.popularity = Math.max(0, state.popularity - 5);
-    state.budget -= 50;
-    if (count === 3) {
-      state = addNotification(state, {
-        type: 'warning',
-        category: 'economy',
-        title: 'Presión inflacionaria',
-        message: `La emisión monetaria recurrente (${count} emisiones) está generando inflación.`,
-        importance: 'high'
-      });
-    }
+  if (effective(c, 'SOLV', ref) < 25) {
+    state = addNotification(state, { type: 'warning', category: 'economy', title: 'Riesgo país extremo', message: 'El mercado local de deuda está cerrado y las expectativas se despegan.', importance: 'high' });
   }
   return state;
+}
+
+// ===========================
+// Eventos de canal → eventos del juego (con imagen y opciones)
+// ===========================
+
+function channelGameEvents(ids: string[]): GameEvent[] {
+  const all = getAllEvents();
+  const out: GameEvent[] = [];
+  for (const id of ids) {
+    const mapped = CHANNEL_TO_EVENT[id];
+    const ev = mapped ? all.find(e => e.id === mapped) : CHANNEL_GAME_EVENTS[id];
+    if (ev) out.push(ev);
+  }
+  return out;
+}
+
+function recordLines(record: TurnRecord): string[] {
+  const lines: string[] = [];
+  for (const a of record.actions) {
+    const name = CAUSAL_ACTIONS_BY_ID[a.actionId]?.name ?? a.actionId;
+    if (a.suspended) lines.push(`${name}: ${a.suspended}`);
+  }
+  lines.push(...record.notes);
+  lines.push(...record.relationEvents);
+  for (const id of record.events) {
+    const def = CHANNEL_EVENTS[id];
+    if (def) lines.push(`${def.title} (${ACTORS[def.actor].shortName}).`);
+  }
+  return lines;
 }
 
 // ===========================
 // Procesar fin de turno
 // ===========================
 
-export function processEndTurn(gameState: GameState): import('./engineShared').TurnResult {
+export function processEndTurn(gameState: GameState): TurnResult {
   let state: GameState = {
     ...gameState,
-    groupRelations: { ...gameState.groupRelations },
-    groupAgendas: gameState.groupAgendas.map(a => ({ ...a })),
-    groupMoods: gameState.groupMoods.map(m => ({ ...m })),
-    pendingEffects: [...gameState.pendingEffects],
     completedActions: [...gameState.completedActions],
     completedObjectives: [...gameState.completedObjectives],
     turnLog: [...gameState.turnLog],
     historicalPopularity: [...gameState.historicalPopularity],
     historicalBudget: [...gameState.historicalBudget],
     actionUsageCount: { ...gameState.actionUsageCount },
-    actionCooldowns: { ...gameState.actionCooldowns },
-    // Clonar: resolveRandomEvents registra disparos acá (Punto 1b) y no debe
-    // mutar el estado prev de React.
     lastEventFiredTurns: { ...gameState.lastEventFiredTurns },
     notifications: [...gameState.notifications],
   };
-  const events: string[] = [];
   const narrative = generateTurnIntro(state);
 
-  // Bloquear avance si hay estrategia midterm pendiente
+  // Bloquear avance si hay estrategia post-legislativa pendiente.
   if (state.pendingMidtermStrategy) {
     return {
       state,
@@ -294,228 +138,70 @@ export function processEndTurn(gameState: GameState): import('./engineShared').T
         events: ['Definición de estrategia post-legislativa pendiente.'],
         popularityChange: 0,
         budgetChange: 0,
-        inflationEvent: { triggered: false, count: state.moneyPrintingCount },
-        immediateEffects: { popularityChange: 0, budgetChange: 0 }
+        inflationEvent: { triggered: false, count: 0 },
+        immediateEffects: { popularityChange: 0, budgetChange: 0 },
       },
       triggeredEvents: [],
-      narrative
+      narrative,
     };
   }
 
-  // 0. Procesar eventos de calendario político
+  const aproBefore = state.causal.political.apro;
+  const cajaBefore = state.causal.caja;
+  const closingYear = state.year;
+  const closingQuarter = state.turn;
+
+  // 1. Cierre del turno en el motor causal (T.2–T.10).
+  const selections = selectionsFor(state);
+  const { state: causal, record, channelEvents } = closeTurn(state.causal, selections);
+  state.causal = causal;
+  const executedIds = record.actions.filter(a => !a.suspended).map(a => a.actionId);
+  for (const id of executedIds) {
+    if (!state.completedActions.includes(id)) state.completedActions.push(id);
+    state.actionUsageCount[id] = (state.actionUsageCount[id] ?? 0) + 1;
+  }
+  const systemThisTurn = causal.executions.filter(e => e.turn === record.turn && ['reunion', 'negociacion', 'acuerdo'].includes(e.actionId)).map(e => e.actionId);
+  applyProfile(state, [...executedIds, ...systemThisTurn]);
+  state = syncLegacy(state);
+
+  // 2. Calendario político (legislativas con la IV de este cierre, estrategia).
   state = processCalendarEvents(state);
 
-  // 0.5. Aplicar consecuencias post-legislativas
+  // 3. Consecuencias del resultado legislativo.
+  state.causal = structuredClone(state.causal);
   state = resolveLegislativeConsequences(state);
 
-  // 0.6. Aplicar pasivas de arquetipo
-  state = applyArchetypePassives(state);
+  // 4. Eventos de canal (paro general, corrida, cacerolazo…) con opciones de respuesta.
+  const fromChannels = channelGameEvents(channelEvents);
 
-  // 1. Aplicar efectos de acciones seleccionadas
-  let totalPopularityChange = 0;
-  let totalBudgetChange = 0;
-  // FIX (Punto 13): acumulación de los cambios grupales del paso 1 para la
-  // pasada de antagonistas del paso 1.5. Antes se recalculaba
-  // calculateActionEffects() en el 1.5 con actionUsageCount ya incrementado
-  // (doble pasada desalineada con el cálculo canónico de actionEffects).
-  const groupChanges: Record<string, number> = {};
+  // 5. Eventos aleatorios y contextuales conectados a indicadores/actores.
+  const randomEvents = resolveRandomEvents(state);
+  for (const ev of randomEvents) applyImmediateEventEffects(state, ev);
+  const triggeredEvents = [...fromChannels, ...randomEvents];
 
-  state.selectedActions.forEach(actionId => {
-    const action = findActionById(actionId);
-    if (!action) return;
-
-    const effect = calculateActionEffects(action, state);
-    totalPopularityChange += effect.immediateEffects.popularityChange;
-    totalBudgetChange += effect.immediateEffects.budgetChange;
-
-    state.budget += effect.immediateEffects.budgetChange;
-    state.popularity += effect.immediateEffects.popularityChange;
-
-    // Fase 2: Aplicar efectos multidimensionales
-    state.stability = clampValue(state.stability + effect.immediateEffects.stabilityChange);
-    state.legitimacy = clampValue(state.legitimacy + effect.immediateEffects.legitimacyChange);
-    state.votingIntention = clampValue(state.votingIntention + effect.immediateEffects.votingIntentionChange);
-
-    effect.immediateEffects.groupEffects.forEach(ge => {
-      state.groupRelations[ge.groupId] = Math.min(100, Math.max(0,
-        (state.groupRelations[ge.groupId] || 0) + ge.supportChange
-      ));
-      groupChanges[ge.groupId] = (groupChanges[ge.groupId] || 0) + ge.supportChange;
-    });
-
-    effect.pendingEffects.forEach(pe => {
-      state.pendingEffects.push({
-        ...pe,
-        id: `${action.id}_${state.turn}_${Math.random().toString(36).slice(2, 8)}`
-      });
-    });
-
-    if (!state.completedActions.includes(actionId)) {
-      state.completedActions.push(actionId);
-    }
-
-    if (actionId === 'emitir_dinero') {
-      state.moneyPrintingCount += 1;
-    }
-
-    // Fase 2: Tracking de uso, cooldowns y deuda
-    state.actionUsageCount[actionId] = (state.actionUsageCount[actionId] || 0) + 1;
-    const cooldown = action.cooldown ?? getDefaultCooldown(action);
-    state.actionCooldowns[actionId] = cooldown;
-    if (action.isLoan) {
-      state.debtCount = Math.min(3, (state.debtCount || 0) + 1);
-      state.debtServiceRatio = state.debtCount * 0.10;
-    }
-    // Fase 4: Aplicar legitimidad y ejes contradictorios
-    const legitChange = calculateLegitimacyChange(action, state);
-    state.legitimacy = clampValue(state.legitimacy + legitChange);
-    state = applyAxisShift(action, state);
-  });
-
-  // 1.5. Fase 3: Aplicar impactos cruzados entre grupos antagónicos.
-  // Una sola pasada sobre los cambios grupales YA calculados en el paso 1
-  // (valores canónicos de calculateActionEffects, con el estado pre-turno):
-  // la penalización al antagonista coincide con lo que el jugador veía en el
-  // tooltip y no se reduce de más por el contador de usos incrementado.
-  if (Object.keys(groupChanges).length > 0) {
-    state = applyCrossGroupEffects(state, groupChanges);
-  }
-
-  // 2. Procesar efectos pendientes que activan este turno
-  state = processPendingEffects(state);
-
-  // 3. Ingreso base por cargo y gastos fijos de gobierno (con servicio de deuda Fase 2)
-  const baseIncome = POSITION_INCOME[state.position];
-  const maintenance = POSITION_MAINTENANCE[state.position];
-  const debtMultiplier = 1 - (state.debtServiceRatio || 0);
-  let effectiveIncome = Math.round(baseIncome * debtMultiplier);
-
-  // Sprint 2: Aplicar modificadores de ingreso por efectos diferidos activos
-  // El efecto aplica si ya se alcanzó su activationTurn (turno global) y no expiró
-  const currentGlobalTurn = getGlobalTurn(state);
-  const activeIncomeMods = state.pendingEffects
-    .filter(pe => pe.incomeModifier &&
-      pe.activationTurn <= currentGlobalTurn &&
-      (pe.duration === undefined || pe.activationTurn + pe.duration > currentGlobalTurn))
-    .reduce((sum, pe) => sum + (pe.incomeModifier ?? 0), 0);
-  if (activeIncomeMods > 0) {
-    effectiveIncome = Math.round(effectiveIncome * (1 + activeIncomeMods));
-  }
-
-  // Aplicar bonus de income por pasiva de arquetipo
-  const archetypeIncomeMultiplier = 1 + (state._archetypeIncomeBonus ?? 0);
-  effectiveIncome = Math.round(effectiveIncome * archetypeIncomeMultiplier);
-
-  // Fase 4: Modificador de ingreso por dificultad
-  const difficultyIncomeMods = getDifficultyModifiers(state.difficulty);
-  effectiveIncome = Math.round(effectiveIncome * difficultyIncomeMods.incomeMultiplier);
-
-  const netIncome = effectiveIncome - maintenance;
-  state.budget += netIncome;
-  totalBudgetChange += netIncome;
-  const debtNote = state.debtServiceRatio > 0 ? ` (servicio de deuda: -${Math.round(state.debtServiceRatio * 100)}%)` : '';
-  events.push(`Ingresos fiscales: +$${effectiveIncome}M • Gastos de gobierno: -$${maintenance}M${debtNote}`);
-
-  // 3.5. Fase 3: Aplicar efectos pasivos de la estrategia post-legislativa
-  if (state.midtermStrategy && state.year >= 3) {
-    const strategyEffect = MIDTERM_STRATEGY_EFFECTS[state.midtermStrategy];
-    state.stability = clampValue(state.stability + strategyEffect.stabilityPerTurn);
-    state.popularity = clampValue(state.popularity + strategyEffect.popularityPerTurn);
-    if (state.midtermStrategy === 'jugada_audaz') {
-      state.audazTurnsCount = (state.audazTurnsCount ?? 0) + 1;
-      if (state.audazTurnsCount >= 2) {
-        state.midtermStrategy = 'negociar';
-        state.audazTurnsCount = 0;
-        state = addNotification(state, {
-          type: 'warning',
-          category: 'political',
-          title: 'Fin de la Jugada Audaz',
-          message: 'Los efectos de tu movida arriesgada se agotaron. Ahora deberás negociar.',
-          importance: 'high'
-        });
-      }
-    }
-    if (state.midtermStrategy === 'abrirse') {
-      state.groupRelations['aliados'] = Math.max(0, (state.groupRelations['aliados'] || 70) - 2);
-    }
-  }
-
-  // 4. Desgaste natural de popularidad (inercia política, por cargo)
-  const POPULARITY_DECAY: Record<Position, number> = {
-    intendente: 5,
-    gobernador: 7,
-    presidente: 10
-  };
-  const naturalDecay = POPULARITY_DECAY[state.position] ?? 5;
-  // Fase 4: Modificador de dificultad
-  const difficultyMods = getDifficultyModifiers(state.difficulty);
-  const adjustedDecay = naturalDecay * difficultyMods.popularityDecayMultiplier;
-  state.popularity = Math.max(0, state.popularity - adjustedDecay);
-  totalPopularityChange -= adjustedDecay;
-
-  // 4.0. Sprint 4: Efectos mecánicos de ejes ideológicos extremos (±80).
-  // getAxisModifiers devuelve {} cuando ningún eje está en extremo → sin efecto.
-  const axisModifiers = getAxisModifiers(state);
-  const axisStabilityModifier = axisModifiers.stabilityModifier ?? 0;
-  if (axisStabilityModifier !== 0) {
-    state.stability = clampValue(state.stability + axisStabilityModifier);
-  }
-  const axisRelationsModifier = axisModifiers.groupRelationsModifier ?? 0;
-  if (axisRelationsModifier !== 0) {
-    Object.keys(state.groupRelations).forEach(groupId => {
-      state.groupRelations[groupId] = Math.max(0, Math.min(100,
-        (state.groupRelations[groupId] ?? 50) + axisRelationsModifier
-      ));
+  // 6. Noticias del turno.
+  for (const ev of triggeredEvents) {
+    state = addNotification(state, {
+      type: ev.type === 'crisis' ? 'crisis' : 'event',
+      category: ev.category === 'political' ? 'political' : ev.category === 'economic' ? 'economy' : 'social',
+      title: ev.title,
+      message: ev.description,
+      importance: ev.severity === 'critical' ? 'critical' : ev.severity === 'high' ? 'high' : 'medium',
     });
   }
-  if (axisStabilityModifier !== 0 || axisRelationsModifier !== 0) {
-    const axisParts: string[] = [];
-    if (axisStabilityModifier !== 0) {
-      axisParts.push(`estabilidad ${axisStabilityModifier > 0 ? '+' : ''}${axisStabilityModifier}`);
-    }
-    if (axisRelationsModifier !== 0) {
-      axisParts.push(`relaciones con grupos ${axisRelationsModifier > 0 ? '+' : ''}${axisRelationsModifier}`);
-    }
-    events.push(`Efecto de ejes ideológicos extremos: ${axisParts.join(' • ')}`);
+  const lines = recordLines(record);
+  for (const msg of record.relationEvents) {
+    state = addNotification(state, { type: 'info', category: 'social', title: 'Relación con actores', message: msg, importance: 'medium' });
+  }
+  for (const note of record.notes) {
+    state = addNotification(state, { type: 'warning', category: 'economy', title: 'Aviso', message: note, importance: 'high' });
   }
 
-  // 4. Eventos aleatorios y crisis
-  const triggeredEvents = resolveRandomEvents(state);
-  const eventsWithChoices: GameEvent[] = [];
-
-  triggeredEvents.forEach(event => {
-    if (event.choices && event.choices.length > 0) {
-      eventsWithChoices.push(event);
-    } else {
-      applyImmediateEventEffects(state, event);
-    }
-    events.push(event.title);
-  });
-
-  // 4.1 Notificaciones de eventos
-  state = addEventNotifications(state, triggeredEvents);
-
-  // 4.2 Preparar datos para el registro histórico del turno
-  const actionTitles = state.selectedActions
-    .map(id => findActionById(id)?.title ?? id);
-  const projectActions = state.selectedActions
-    .filter(id => {
-      const action = findActionById(id);
-      return action && (action.category === 'infraestructura' || id.includes('vivienda') || id.includes('hospital') || id.includes('obra'));
-    })
-    .map(id => findActionById(id)?.title ?? id);
-  const crisisEvents = triggeredEvents
-    .filter(e => e.severity === 'high' || e.severity === 'critical')
-    .map(e => e.title);
-
-  // 5. Verificar fin de mandato (elección general)
+  // 7. Fin de mandato: elección presidencial (o de sucesión en el 2º mandato).
   const isEndOfTerm = state.year === 4 && state.turn === 4;
-
   if (isEndOfTerm) {
     state.pendingElection = true;
     state.pendingElectionOptions = getAvailableElectionOptions(state);
-
-    // Si es presidente en su último mandato, no hay opción: fin de carrera
     if (state.position === 'presidente' && state.pendingElectionOptions.length === 0) {
       state.pendingElection = false;
       state.pendingElectionOptions = [];
@@ -523,8 +209,8 @@ export function processEndTurn(gameState: GameState): import('./engineShared').T
     }
   }
 
-  // 6. Avanzar turno/año solo si no hay elección pendiente
-  if (!state.pendingElection) {
+  // 8. Avanzar calendario (salvo elección pendiente).
+  if (!state.pendingElection && !state.gameOver) {
     state.turn += 1;
     if (state.turn > 4) {
       state.turn = 1;
@@ -532,100 +218,72 @@ export function processEndTurn(gameState: GameState): import('./engineShared').T
     }
   }
 
-  // 7. Actualizar cooldowns de interacciones
-  const updatedHistory: GameState['interactionHistory'] = {};
-  for (const [key, record] of Object.entries(state.interactionHistory)) {
-    if (record.turnsLeft > 1) {
-      updatedHistory[key] = { ...record, turnsLeft: record.turnsLeft - 1 };
+  // 9. Recursos del turno siguiente: PA (paro general quita 1), habilidades, pasivas.
+  const abilityCooldowns: Record<string, number> = {};
+  for (const [id, cd] of Object.entries(state.abilityCooldowns)) if (cd > 1) abilityCooldowns[id] = cd - 1;
+  state.abilityCooldowns = abilityCooldowns;
+  state = applyArchetypePassives(state);
+  state.baseActions = paForTurn(state.causal);
+  state.actions = state.baseActions;
+  if (state.causal.paPenaltyNextTurn > 0) {
+    state = addNotification(state, { type: 'warning', category: 'political', title: 'Gestión paralizada', message: 'Atender el paro general te quita un punto de acción este turno.', importance: 'high' });
+    state.causal = { ...state.causal, paPenaltyNextTurn: 0 };
+  }
+
+  // 10. Espejo, derrotas, advertencias, metas e historial.
+  state = syncLegacy(state);
+  if (!state.gameOver) {
+    const defeat = checkCausalDefeat(state);
+    if (defeat) {
+      state.gameOver = true;
+      state.victorious = false;
+      state.defeatReason = defeat;
     }
   }
-  state.interactionHistory = updatedHistory;
-
-  // 7.1 Actualizar cooldowns de acciones (Fase 2)
-  state = updateActionCooldowns(state);
-
-  // 7.2 Aplicar inflación por emisión monetaria (Fase 2)
-  state = processInflation(state);
-
-  // 7.3 Fase 4: Agendas y estados de ánimo de grupos
-  state = updateGroupMoods(state);
-  state = resolvePendingNegotiations(state);
-  const newAgendas = generateGroupAgendas(state);
-  state.groupAgendas = [...state.groupAgendas, ...newAgendas];
-  state = applyGroupSatisfactionPenalty(state);
-
-  // 7.4 Fase 4: Decrementar cooldowns de habilidades
-  const updatedAbilityCooldowns: Record<string, number> = {};
-  for (const [id, cd] of Object.entries(state.abilityCooldowns)) {
-    if (cd > 1) updatedAbilityCooldowns[id] = cd - 1;
-  }
-  state.abilityCooldowns = updatedAbilityCooldowns;
-
-  // 8. Recalcular popularidad y acciones
-  state = recalcState(state);
-
-  // 9. Verificar derrota
-  state = checkDefeat(state);
-
-  // 9.1 Notificaciones de advertencia
   state = addWarningNotifications(state);
 
-  // 10. Actualizar objetivos y recompensas
-  const previouslyCompleted = new Set(state.completedObjectives.map(o => o.id));
+  const previouslyCompleted = new Set(state.objectives.filter(o => o.completed).map(o => o.id));
   state = updateObjectives(state);
-  applyObjectiveRewards(state);
-
-  // 10.1 Notificar objetivos recién completados
-  state.objectives.forEach(obj => {
+  for (const obj of state.objectives) {
     if (obj.completed && !previouslyCompleted.has(obj.id)) {
-      state = addNotification(state, {
-        type: 'success',
-        category: 'political',
-        title: 'Objetivo cumplido',
-        message: `${obj.title}. ${obj.description}`,
-        importance: 'success'
-      });
+      if (!state.completedObjectives.some(o => o.id === obj.id)) state.completedObjectives.push(obj);
+      state = addNotification(state, { type: 'success', category: 'political', title: 'Meta de gestión alcanzada', message: `${obj.title}. ${obj.description}`, importance: 'success' });
     }
-  });
+  }
 
-  // Historiales
   state.historicalPopularity.push(state.popularity);
   state.historicalBudget.push(state.budget);
 
-  // Registro detallado del turno
+  const actionTitles = executedIds.map(id => CAUSAL_ACTIONS_BY_ID[id]?.name ?? id);
   const turnLogEntry: TurnLogEntry = {
-    year: gameState.year,
-    turn: gameState.turn,
+    year: closingYear,
+    turn: closingQuarter,
     position: gameState.position,
     term: gameState.term,
     actionsTaken: actionTitles,
     events: triggeredEvents.map(e => e.title),
-    decisions: [], // se completan externamente cuando el jugador elige en eventos
-    popularityChange: totalPopularityChange,
-    budgetChange: totalBudgetChange,
-    projectsCompleted: projectActions,
-    crisesFaced: crisisEvents
+    decisions: [],
+    popularityChange: state.causal.political.apro - aproBefore,
+    budgetChange: state.causal.caja - cajaBefore,
+    projectsCompleted: executedIds.filter(id => CAUSAL_ACTIONS_BY_ID[id]?.category === 'Infraestructura').map(id => CAUSAL_ACTIONS_BY_ID[id].name),
+    crisesFaced: triggeredEvents.filter(e => e.severity === 'high' || e.severity === 'critical').map(e => e.title),
   };
   state.turnLog.push(turnLogEntry);
 
-  // Resetear selección y flags
   state.selectedActions = [];
   state.advisorActionUsed = false;
+  state.lastInteractionMessage = null;
 
+  const emissions = countExecutions(state.causal, 'emitir_dinero', 6, record.turn);
   const summary: TurnSummary = {
-    year: state.year,
-    quarter: state.turn,
-    events: events.length > 0 ? events : ['El trimestre transcurrió sin novedades destacadas.'],
-    popularityChange: totalPopularityChange,
-    budgetChange: totalBudgetChange,
-    inflationEvent: {
-      triggered: state.moneyPrintingCount >= 3,
-      count: state.moneyPrintingCount
-    },
-    immediateEffects: {
-      popularityChange: totalPopularityChange,
-      budgetChange: totalBudgetChange
-    }
+    year: closingYear,
+    quarter: closingQuarter,
+    events: [...lines, ...triggeredEvents.map(e => e.title)],
+    popularityChange: turnLogEntry.popularityChange,
+    budgetChange: turnLogEntry.budgetChange,
+    inflationEvent: { triggered: record.indicatorsAfter.INFL >= 70, count: emissions },
+    immediateEffects: { popularityChange: turnLogEntry.popularityChange, budgetChange: turnLogEntry.budgetChange },
+    causalTurn: record.turn,
   };
 
   return { state, summary, triggeredEvents, narrative };

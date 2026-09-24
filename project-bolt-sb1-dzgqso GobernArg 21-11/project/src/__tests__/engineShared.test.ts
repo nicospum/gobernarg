@@ -6,6 +6,7 @@ import {
   addNotification
 } from '../engine/engineShared';
 import { getInitialGameState } from '../engine/gameEngine';
+import { PARAMS } from '../data/causal';
 
 describe('POSITION_INCOME', () => {
   it('define el ingreso por turno para cada cargo', () => {
@@ -78,8 +79,9 @@ describe('getInitialGameState - flujo solo presidente', () => {
     expect(getInitialGameState().position).toBe('presidente');
   });
 
-  it('arranca con el presupuesto inicial de presidente', () => {
-    expect(getInitialGameState().budget).toBe(POSITION_STARTING_BUDGET.presidente);
+  it('arranca con la caja inicial del motor causal', () => {
+    expect(getInitialGameState().budget).toBe(PARAMS.CAJA_INICIAL);
+    expect(getInitialGameState().causal.caja).toBe(PARAMS.CAJA_INICIAL);
   });
 });
 

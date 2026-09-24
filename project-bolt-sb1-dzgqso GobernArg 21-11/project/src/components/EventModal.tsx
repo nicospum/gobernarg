@@ -4,7 +4,8 @@ import {
 } from 'lucide-react';
 import { GameEvent } from '../systems/events/types';
 import { getEventImage } from '../utils/imageAssets';
-import { Progress } from './ui/progress';
+import { eventChoiceEffects } from '../engine/eventResolver';
+import { effectChip, toneChipClass } from '@/lib/causalText';
 
 interface EventModalProps {
   event: GameEvent;
@@ -31,63 +32,6 @@ const CATEGORY_LABELS: Record<string, string> = {
   international: 'Internacional',
   natural: 'Natural',
 };
-
-/* ------------------------------------------------------------------ */
-/*  Effect classification helpers                                      */
-/* ------------------------------------------------------------------ */
-
-function isBudgetEffect(e: { target?: string }) {
-  return e.target === 'budget';
-}
-function isPopularityEffect(e: { target?: string }) {
-  return e.target === 'popularity';
-}
-function isStabilityEffect(e: { target?: string }) {
-  return e.target === 'stability';
-}
-function isGroupEffect(e: { target?: string }) {
-  return (
-    e.target !== undefined &&
-    !isBudgetEffect(e) &&
-    !isPopularityEffect(e) &&
-    !isStabilityEffect(e)
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  Badge component (inline for simplicity)                            */
-/* ------------------------------------------------------------------ */
-
-function CostBadge({
-  label,
-  value,
-  icon: Icon,
-  variant = 'default',
-}: {
-  label?: string;
-  value: number;
-  icon?: React.ComponentType<{ className?: string }>;
-  variant?: 'default' | 'group';
-}) {
-  const positive = value >= 0;
-  const colorClass = positive ? 'text-emerald-400 border-emerald-400/25 bg-emerald-400/8' : 'text-red-400 border-red-400/25 bg-red-400/8';
-  const groupColor = variant === 'group'
-    ? 'text-sky-300 border-sky-400/25 bg-sky-400/8'
-    : colorClass;
-
-  return (
-    <span
-      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[11px] font-semibold ${variant === 'group' ? groupColor : colorClass}`}
-    >
-      {Icon && <Icon className="w-3 h-3 flex-shrink-0" />}
-      {label && <span className="opacity-90">{label}</span>}
-      <span className="font-mono">
-        {positive && variant !== 'group' ? '+' : ''}
-        {value}
-      </span>
-    </span>
-  );
-}
 
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
@@ -154,100 +98,27 @@ export function EventModal({ event, onChoice, onClose }: EventModalProps) {
         {event.choices && (
           <div className="p-4 space-y-3">
             {event.choices.map((choice) => {
-              const budgetEffect = choice.effects.immediate.find(isBudgetEffect);
-              const popularityEffect = choice.effects.immediate.find(isPopularityEffect);
-              const stabilityEffect = choice.effects.immediate.find(isStabilityEffect);
-              const groupEffects = choice.effects.immediate.filter(isGroupEffect);
-              const showProbability =
-                choice.probability !== undefined && choice.probability < 1;
-
+              const chips = eventChoiceEffects(event, choice.id)
+                .filter(e => e.value !== 0)
+                .map(e => effectChip(e.target, e.value));
               return (
                 <button
                   key={choice.id}
                   onClick={() => onChoice(choice.id)}
                   className="w-full p-3 text-left rounded-lg border border-border bg-card hover:border-white/20 hover:bg-white/3 transition-colors"
                 >
-                  {/* Choice text */}
                   <p className="font-medium text-foreground text-[13px]">{choice.text}</p>
-
-                  {/* Cost preview badges */}
-                  {(budgetEffect || popularityEffect || stabilityEffect || groupEffects.length > 0) && (
+                  {chips.length > 0 ? (
                     <div className="flex flex-wrap gap-1.5 mt-2">
-                      {budgetEffect && (
-                        <CostBadge
-                          label="Presupuesto"
-                          value={budgetEffect.value}
-                          icon={DollarSign}
-                        />
-                      )}
-                      {popularityEffect && (
-                        <CostBadge
-                          label="Popularidad"
-                          value={popularityEffect.value}
-                          icon={Users}
-                        />
-                      )}
-                      {stabilityEffect && (
-                        <CostBadge
-                          label="Estabilidad"
-                          value={stabilityEffect.value}
-                        />
-                      )}
-                      {groupEffects.map((eff) => (
-                        <CostBadge
-                          key={eff.target}
-                          label={eff.target}
-                          value={eff.value}
-                          variant="group"
-                        />
+                      {chips.map((c, i) => (
+                        <span key={i} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[11px] font-semibold ${toneChipClass(c.tone)}`}>
+                          <span className="opacity-90">{c.label}</span>
+                          <span className="font-mono">{c.text}</span>
+                        </span>
                       ))}
                     </div>
-                  )}
-
-                  {/* Probability bar */}
-                  {showProbability && (
-                    <div className="mt-2">
-                      <div className="flex items-center justify-between text-[10px] text-muted-foreground mb-1">
-                        <span>Probabilidad de éxito</span>
-                        <span className="font-mono">{Math.round(choice.probability! * 100)}%</span>
-                      </div>
-                      <Progress
-                        value={choice.probability! * 100}
-                        className="h-1.5"
-                        indicatorClassName={
-                          (choice.probability! >= 0.7)
-                            ? 'bg-emerald-400'
-                            : (choice.probability! >= 0.4)
-                              ? 'bg-amber-400'
-                              : 'bg-red-400'
-                        }
-                      />
-                    </div>
-                  )}
-
-                  {/* Existing immediate effects list (detailed view) */}
-                  {choice.effects.immediate && choice.effects.immediate.length > 0 && (
-                    <div className="mt-2 text-[11px] text-muted-foreground">
-                      <p className="font-semibold uppercase tracking-wide text-[10px] mb-1">
-                        Efectos inmediatos
-                      </p>
-                      <ul className="space-y-0.5">
-                        {choice.effects.immediate.map((effect, index) => (
-                          <li key={index} className="flex items-center gap-1.5">
-                            <span className="inline-block w-1 h-1 rounded-full bg-muted-foreground/60" />
-                            <span>
-                              {effect.target}:{' '}
-                              <span
-                                className={`font-mono ${effect.value >= 0 ? 'text-emerald-400' : 'text-red-400'}`}
-                              >
-                                {effect.value > 0 ? '+' : ''}
-                                {effect.value}
-                              </span>
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                  ) : (
+                    <p className="text-[11px] text-muted-foreground mt-1.5">Sin consecuencias inmediatas.</p>
                   )}
                 </button>
               );

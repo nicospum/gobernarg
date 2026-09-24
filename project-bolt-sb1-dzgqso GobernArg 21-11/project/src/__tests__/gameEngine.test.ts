@@ -1,14 +1,17 @@
 import { describe, it, expect } from 'vitest';
 import { getInitialGameState, hireAdvisors, dismissAdvisor, useSpecialAbility, resolvePendingElection } from '../engine/gameEngine';
-import { availableAdvisors } from '../data/advisors';
-import { calculateAvailableActions } from '../utils/actionCalculator';
+import { availableAdvisors, ADVISOR_ROLES } from '../data/advisors';
 import { getPositionObjectives } from '../utils/victoryConditions';
 import type { GameState } from '../types/game';
 
-// getInitialGameState() devuelve un estado completo (arquetipo 'politico',
-// popularidad 50, estabilidad 50, legitimidad 60) sin aleatoriedad.
+// getInitialGameState() devuelve un estado completo (arquetipo 'politico') sin
+// aleatoriedad, con el motor causal inicializado con semilla fija.
+// `budget` se traduce a la caja del motor (fuente de verdad).
 function stateWith(overrides: Partial<GameState> = {}): GameState {
-  return { ...getInitialGameState(), ...overrides };
+  const base = getInitialGameState();
+  const causal = structuredClone(base.causal);
+  if (overrides.budget !== undefined) causal.caja = overrides.budget;
+  return { ...base, ...overrides, causal };
 }
 
 describe('hireAdvisors', () => {
@@ -50,55 +53,50 @@ describe('hireAdvisors', () => {
   });
 });
 
-describe('useSpecialAbility', () => {
+describe('useSpecialAbility (efectos en el motor causal)', () => {
   function abilityState(overrides: Partial<GameState> = {}): GameState {
-    return stateWith({
-      budget: 100,
-      actions: 2,
-      groupRelations: { aliados: 50, 'clase-media': 50 },
-      abilityCooldowns: {},
-      ...overrides,
-    });
+    return stateWith({ budget: 100, actions: 2, abilityCooldowns: {}, ...overrides });
   }
 
   it('aplica efectos y costos, y setea el cooldown', () => {
     const state = abilityState();
-    // discurso_patriotico: costo 30 presupuesto + 1 acción; efectos +12 pop, +5 estabilidad,
-    // +8 legitimidad, +8 aliados, +5 clase-media; cooldown 4
+    // discurso_patriotico: caja 30 + 1 acción; imagen +6, conflictividad −3 (2t),
+    // relación oficialismo +4 y aliados +4; cooldown 4.
     const result = useSpecialAbility(state, 'discurso_patriotico');
 
     expect(result).not.toBe(state);
-    expect(result.popularity).toBe(62);
-    expect(result.stability).toBe(55);
-    expect(result.legitimacy).toBe(68);
-    expect(result.groupRelations.aliados).toBe(58);
-    expect(result.groupRelations['clase-media']).toBe(55);
+    expect(result.causal.political.imagen).toBeCloseTo(state.causal.political.imagen + 6, 5);
+    expect(result.causal.actors.aliados.rel).toBe(state.causal.actors.aliados.rel! + 4);
+    expect(result.causal.actors.oficialismo.rel).toBe(Math.min(100, state.causal.actors.oficialismo.rel! + 4));
+    expect(result.causal.bonuses.some(b => b.target === 'CONF' && b.value === -3)).toBe(true);
     expect(result.budget).toBe(70);
     expect(result.actions).toBe(1);
     expect(result.abilityCooldowns['discurso_patriotico']).toBe(4);
+    // La intención de voto sube por la imagen (OTROS), no por indicadores.
+    expect(result.causal.political.iv).toBeGreaterThan(state.causal.political.iv);
 
     // el estado original no se modifica
     expect(state.budget).toBe(100);
-    expect(state.popularity).toBe(50);
     expect(state.abilityCooldowns).toEqual({});
   });
 
-  it('clampa popularidad y apoyo de grupos al rango 0-100', () => {
-    const state = abilityState({ popularity: 95, groupRelations: { aliados: 95, 'clase-media': 50 } });
+  it('clampa la imagen y la relación al rango 0-100', () => {
+    const state = abilityState();
+    state.causal.political.imagen = 98;
+    state.causal.actors.aliados.rel = 99;
     const result = useSpecialAbility(state, 'discurso_patriotico');
 
-    expect(result.popularity).toBe(100);
-    expect(result.groupRelations.aliados).toBe(100);
+    expect(result.causal.political.imagen).toBe(100);
+    expect(result.causal.actors.aliados.rel).toBe(100);
   });
 
-  it('aplica costo de popularidad y ganancia de presupuesto (empresario)', () => {
-    const state = abilityState({ archetype: 'empresario', popularity: 50 });
-    // inversion_privada: costo -3 popularidad + 1 acción; efectos +400 presupuesto, -3 estabilidad
+  it('empresario: resigna imagen y moviliza inversión y caja', () => {
+    const state = abilityState({ archetype: 'empresario' });
     const result = useSpecialAbility(state, 'inversion_privada');
 
-    expect(result.popularity).toBe(47);
-    expect(result.budget).toBe(500);
-    expect(result.stability).toBe(47);
+    expect(result.causal.political.imagen).toBeCloseTo(state.causal.political.imagen - 2, 5);
+    expect(result.budget).toBe(300);
+    expect(result.causal.base.INVC).toBe(state.causal.base.INVC + 4);
     expect(result.abilityCooldowns['inversion_privada']).toBe(5);
   });
 
@@ -107,7 +105,7 @@ describe('useSpecialAbility', () => {
     expect(useSpecialAbility(state, 'discurso_patriotico')).toBe(state);
   });
 
-  it('rechaza sin presupuesto devolviendo la misma referencia', () => {
+  it('rechaza sin caja devolviendo la misma referencia', () => {
     const state = abilityState({ budget: 29 }); // costo 30
     expect(useSpecialAbility(state, 'discurso_patriotico')).toBe(state);
   });
@@ -209,62 +207,58 @@ describe('resolvePendingElection — anti doble-clic', () => {
 });
 
 
-// ===== Regresión: reset de historicalBudget al cambiar de mandato (Punto 14) =====
+// ===== Decisión de diseño: país continuo entre mandatos =====
 
-describe('reset de mandato — historicalBudget (Punto 14)', () => {
-  it('al ganar la reelección, historicalBudget se resetea al presupuesto del nuevo mandato', () => {
-    const state = stateWith({
-      position: 'intendente',
-      term: 1,
-      popularity: 75,
-      budget: 600,
-      stability: 50,
-      historicalPopularity: [75, 74, 76, 75], // promedio 75 → victoria clara
-      historicalBudget: [500],
-      groupRelations: { aliados: 50 },
-      pendingElection: true,
-      electionResults: null,
-      turnLog: [],
-      termsByPosition: { intendente: 0, gobernador: 0, presidente: 0 },
-    });
+describe('reelección con país continuo', () => {
+  it('al ganar la reelección no se reinician caja, deuda, indicadores ni asesores', () => {
+    const state = stateWith({ pendingElection: true, electionResults: null });
+    state.causal.political.iv = 70;
+    state.causal.turn = 17;
+    state.causal.caja = 321;
+    state.causal.deuda = 4500;
+    state.causal.base.INFL = 77;
+    state.advisors = [{ ...availableAdvisors[0], isActive: true, turnsInactive: 0 }];
 
     const result = resolvePendingElection(state, 'reelection');
 
     expect(result.electionResults?.victory).toBe(true);
-    // Antes: historicalBudget quedaba [500, ...] de toda la carrera y el
-    // budgetImpact se medía contra el arranque como intendente.
-    expect(result.historicalBudget).toHaveLength(1);
-    expect(result.historicalBudget[0]).toBe(result.budget);
+    expect(result.term).toBe(2);
+    expect(result.year).toBe(1);
+    expect(result.causal.caja).toBe(321);
+    expect(result.causal.deuda).toBe(4500);
+    expect(result.causal.base.INFL).toBe(77);
+    expect(result.advisors).toHaveLength(1);
+    // Nueva luna de miel legislativa: el mandato empieza en el turno actual.
+    expect(result.causal.mandateStart).toBe(17);
   });
 });
 
 
-// ===== Regresión: hire/dismiss recalculan las acciones al instante (Punto 12) =====
+// ===== Asesores: rol en el motor causal (antes: +acciones por turno) =====
 
-describe('hireAdvisors / dismissAdvisor — recálculo inmediato (Punto 12)', () => {
-  it('contratar suma las acciones extra del asesor sin esperar al próximo turno', () => {
+describe('hireAdvisors / dismissAdvisor — rol del asesor en el motor', () => {
+  it('contratar suma el sueldo al gasto corriente y aplica el rol (eficacia y descuento de PA)', () => {
     const state = stateWith({ budget: 1000, advisors: [], advisorActionUsed: false });
-    const advisor = availableAdvisors[0]; // bonusActions: 2
+    const advisor = availableAdvisors[0]; // economista
 
     const result = hireAdvisors(state, [advisor]);
 
-    // recalcState corre dentro de hireAdvisors: baseActions ya incluye el bono
-    // del asesor (sin el fix, el bono no se veía hasta el próximo turno).
-    const baseSinAsesor = calculateAvailableActions({ ...result, advisors: [], actions: 0, selectedActions: [] });
-    expect(result.baseActions).toBe(baseSinAsesor + advisor.bonusActions);
-    expect(result.actions).toBe(result.baseActions);
+    expect(result.causal.gastoCorr).toBe(state.causal.gastoCorr + ADVISOR_ROLES[advisor.id].salary);
+    expect(result.causal.perks.categoryEfficacy['Economía y moneda']).toBeCloseTo(1.2, 5);
+    expect(result.causal.perks.paDiscountCategories).toContain('Impuestos');
+    // Ya no suma puntos de acción.
+    expect(result.actions).toBe(state.actions);
   });
 
-  it('despedir quita el bono de acciones en el turno actual', () => {
+  it('despedir quita el sueldo y el rol en el turno actual', () => {
     const advisor = { ...availableAdvisors[0], isActive: true, turnsInactive: 0 };
-    const state = stateWith({ budget: 1000, advisors: [advisor], advisorActionUsed: false });
+    const hired = hireAdvisors(stateWith({ budget: 1000, advisors: [], advisorActionUsed: false }), [advisor]);
+    const state = { ...hired, advisorActionUsed: false };
 
     const result = dismissAdvisor(state, advisor.id);
 
-    // Sin el fix, el bono del asesor despedido se conservaba el turno actual.
-    const baseSinAsesor = calculateAvailableActions({ ...result, actions: 0, selectedActions: [] });
-    expect(result.baseActions).toBe(baseSinAsesor);
-    expect(result.actions).toBe(result.baseActions);
+    expect(result.causal.gastoCorr).toBe(state.causal.gastoCorr - ADVISOR_ROLES[advisor.id].salary);
+    expect(result.causal.perks.categoryEfficacy['Economía y moneda']).toBeUndefined();
   });
 });
 
@@ -275,7 +269,7 @@ describe('resolvePendingElection — tipo de milestone (Punto 11)', () => {
   // Estado con intención de voto alta para que cualquier opción gane.
   function winningState(overrides: Partial<GameState> = {}): GameState {
     const objectives = getPositionObjectives('intendente');
-    return stateWith({
+    const s = stateWith({
       position: 'intendente',
       term: 1,
       popularity: 90,
@@ -307,6 +301,9 @@ describe('resolvePendingElection — tipo de milestone (Punto 11)', () => {
       termsByPosition: { intendente: 0, gobernador: 0, presidente: 0 },
       ...overrides,
     });
+    // La elección se decide con la intención de voto del motor causal.
+    s.causal.political.iv = 90;
+    return s;
   }
 
   it('ascender en el primer mandato registra el milestone como promotion, no initial', () => {

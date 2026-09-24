@@ -230,6 +230,8 @@ export interface TurnRecord {
 export interface CausalState {
   /** Turno absoluto de la fase de decisión actual (el próximo cierre). */
   turn: number;
+  /** Turno absoluto en que empezó el mandato actual (1, 17…): luna de miel por mandato. */
+  mandateStart: number;
   base: Record<IndicatorId, number>;
   expect: Record<string, number>;
   bonuses: Bonus[];

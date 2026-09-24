@@ -5,7 +5,6 @@ import {
   Clock,
   Coins,
   TrendingUp,
-  AlertTriangle,
   ChevronLeft,
   ChevronRight,
   Sparkles,
@@ -14,6 +13,7 @@ import { GameState, Archetype } from '../types/game';
 import type { SpecialAbility } from '../data/specialAbilities';
 import { ARCHETYPE_ABILITIES } from '../data/specialAbilities';
 import { fmtBudget } from '@/lib/format';
+import { effectChip, toneClass, type EffectChip } from '@/lib/causalText';
 
 interface SpecialAbilitiesPanelProps {
   gameState: GameState;
@@ -37,34 +37,17 @@ const ARCHETYPE_ACCENT: Record<Archetype, string> = {
 
 /**
  * Devuelve todas las habilidades del arquetipo actual.
- * Hoy hay 1 por arquetipo. El componente está preparado para múltiples (carrusel Embla).
+ * Hay 2 por arquetipo: se muestran en un carrusel Embla.
  */
 function getAbilitiesFor(archetype: Archetype): SpecialAbility[] {
   return ARCHETYPE_ABILITIES[archetype] ?? [];
 }
 
-function buildEffectsList(ability: SpecialAbility): string[] {
-  const effects: string[] = [];
-  const e = ability.effects;
-  if (e.popularityChange) {
-    effects.push(`${e.popularityChange > 0 ? '+' : ''}${e.popularityChange}% popular.`);
-  }
-  if (e.budgetChange) {
-    const sign = e.budgetChange > 0 ? '+' : '−';
-    effects.push(`${sign}${fmtBudget(Math.abs(e.budgetChange))} presup.`);
-  }
-  if (e.stabilityChange) {
-    effects.push(`${e.stabilityChange > 0 ? '+' : ''}${e.stabilityChange} estab.`);
-  }
-  if (e.legitimacyChange) {
-    effects.push(`${e.legitimacyChange > 0 ? '+' : ''}${e.legitimacyChange} legitim.`);
-  }
-  e.groupEffects?.forEach((ge) => {
-    effects.push(
-      `${ge.supportChange > 0 ? '+' : ''}${ge.supportChange} ${ge.groupId.replace(/-/g, ' ')}`,
-    );
+function buildEffectsList(ability: SpecialAbility): EffectChip[] {
+  return ability.effects.map(e => {
+    const chip = effectChip(e.target, e.value);
+    return e.mode === 'BONUS' ? { ...chip, text: `${chip.text} (${e.duration ?? 1}t)` } : chip;
   });
-  return effects;
 }
 
 interface AbilityCardProps {
@@ -80,11 +63,10 @@ function AbilityCard({ ability, archetype, gameState, onUseAbility, disabled }: 
   const isOnCooldown = cooldownLeft > 0;
   const costActions = ability.cost.actions ?? 0;
   const costBudget = ability.cost.budget ?? 0;
-  const costPopularity = ability.cost.popularity ?? 0;
-  const costLegitimacy = ability.cost.legitimacy ?? 0;
+  const costImagen = ability.cost.imagen ?? 0;
 
   const cantAffordActions = gameState.actions < costActions;
-  const cantAffordBudget = costBudget > 0 && gameState.budget < costBudget;
+  const cantAffordBudget = costBudget > 0 && gameState.causal.caja < costBudget;
   const canUse = !disabled && !isOnCooldown && !cantAffordActions && !cantAffordBudget;
 
   const effects = buildEffectsList(ability);
@@ -135,18 +117,10 @@ function AbilityCard({ ability, archetype, gameState, onUseAbility, disabled }: 
             {fmtBudget(costBudget)}
           </span>
         )}
-        {costPopularity !== 0 && (
+        {costImagen !== 0 && (
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] border border-border bg-white/3 text-muted-foreground">
             <TrendingUp size={9} />
-            {costPopularity > 0 ? '−' : '+'}
-            {Math.abs(costPopularity)}% pop.
-          </span>
-        )}
-        {costLegitimacy !== 0 && (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] border border-border bg-white/3 text-muted-foreground">
-            <AlertTriangle size={9} />
-            {costLegitimacy > 0 ? '−' : '+'}
-            {Math.abs(costLegitimacy)} legitim.
+            Imagen ↓
           </span>
         )}
       </div>
@@ -160,7 +134,7 @@ function AbilityCard({ ability, archetype, gameState, onUseAbility, disabled }: 
             {effects.map((effect, i) => (
               <li key={i} className="text-[11px] text-foreground/70 flex items-center gap-1.5">
                 <span className="w-1 h-1 rounded-full bg-emerald-400 inline-block flex-shrink-0" />
-                {effect}
+                {effect.label} <span className={`font-mono ${toneClass(effect.tone)}`}>{effect.text}</span>
               </li>
             ))}
           </ul>
