@@ -10,8 +10,8 @@
  "midtermVotes": [
   43.9
  ],
- "finalIv": 21.6,
- "minGob": 36.9,
+ "finalIv": 21.5,
+ "minGob": 36.5,
  "maxInfl": 100,
  "finalCaja": -2709,
  "finalDeuda": 4935,
@@ -1350,7 +1350,7 @@
    },
    "apro": 17.6,
    "iv": 26,
-   "gob": 45.1,
+   "gob": 44.9,
    "leg": 41.9,
    "imagen": 41.6,
    "caja": -2054,
@@ -1403,11 +1403,11 @@
     "PSOC": 54.7,
     "SEGU": 42.7,
     "INST": 51.4,
-    "CONF": 41.4
+    "CONF": 41.5
    },
    "causes": [
     "Sector externo y divisas -8.6 (Emitir dinero; Agro retiene la cosecha)",
-    "Actividad y empleo -5.6 (la inversión se volvió actividad; PyMEs: cierres y despidos)",
+    "Actividad y empleo -5.7 (la inversión se volvió actividad; PyMEs: cierres y despidos)",
     "Poder adquisitivo -5.6 (la inflación se comió los salarios)",
     "Inversión y crédito -5.2 (Emitir dinero; el clima de inversión)"
    ],
@@ -1493,8 +1493,8 @@
     }
    },
    "apro": 12.1,
-   "iv": 21.6,
-   "gob": 36.9,
+   "iv": 21.5,
+   "gob": 36.5,
    "leg": 31.9,
    "imagen": 39.7,
    "caja": -2709,

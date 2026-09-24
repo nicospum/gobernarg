@@ -11,7 +11,7 @@ Este documento resume qué se hizo, cómo está armado, qué se conservó/adapt�
 - El juego ahora corre sobre el motor causal del Excel: **acción → paquete de efectos → 15 indicadores → satisfacción de 17 actores → canales de poder → política (APRO/IV/GOB/LEG)**. Ninguna acción mueve popularidad o grupos "a mano".
 - **No se rehízo el juego**: se conservaron todas las pantallas, imágenes, asesores, habilidades, eventos, calendario, estrategia post-legislativa, cuaderno, legado, historial y la carrera de dos mandatos. Lo viejo se conectó al motor nuevo mediante un adaptador (`causalBridge.ts`).
 - **No se borró ningún archivo** (0 archivos eliminados en la rama). Los sistemas viejos que ya no gobiernan el juego quedan marcados `@deprecated` y con sus tests funcionando.
-- Estado de calidad al cierre: **lint limpio · typecheck limpio · 266 tests en 22 archivos OK · build OK · `npm run playtest` OK**.
+- Estado de calidad al cierre: **lint limpio · typecheck limpio · 279 tests en 23 archivos OK · build OK · `npm run playtest` OK**.
 - El motor reproduce las simulaciones S1–S3 del Excel (test `causalSimulations.test.ts`).
 
 ## 2. Arquitectura
@@ -73,7 +73,9 @@ Reglas que se respetaron:
 | Elecciones | Indicadores → satisfacción de actores → peso electoral. IV = 0,65·APRO + 0,10·ESTR + 0,25·OTROS. Sin doble conteo (test dedicado). | Excel (R-21 sigue abierta en pesos) |
 | Legislativas | Nuevo LEG = 0,5·LEG + 0,5·(votos + aliados). | Implementación |
 | Incumbencia | +5 puntos en la reelección (no en la sucesión). | Implementación |
-| Plataforma | Se elige al crear el personaje (5 plataformas, 3 indicadores con signo). Define qué le importa al oficialismo. Los ejes ideológicos se conservan como perfil narrativo. | Excel R-23 (propuesta) |
+| Plataforma | **Opcional** (interruptor al crear la partida, desactivada por defecto). Activada: 5 plataformas de 3 indicadores con signo que el oficialismo espera ver. Desactivada: el oficialismo sólo mira tu aprobación. Los ejes ideológicos se conservan como perfil narrativo. | Usuario (R-23) |
+| Oficialismo | "Si sos popular te sigue; si no, te pasa factura; y si compartís poder se enoja": **interna del oficialismo** (0–100). Ver §10b. | Usuario (R-26) |
+| Escenarios | 5 escenarios de partida con referencias históricas, desbloqueables ganando. Ver §10c. | Usuario |
 | Leyes | Acciones LEY requieren LEG ≥ umbral (45/50/55 según la oposición). El DNU permite sacar una por turno por decreto, con costo institucional y riesgo de suspensión judicial. | Excel |
 
 ## 4. Archivos principales
@@ -156,6 +158,44 @@ Excepción de datos: `CONDITION_OVERRIDES['reunion.02']` corrige una condición 
 - **Sucesión** (T32): IV ≥ 45 sin incumbencia ⇒ victoria de carrera.
 - Cadena sin doble conteo: indicadores → satisfacción de actores → APRO (ponderada por peso electoral) → IV. El test `elecciones sin doble conteo` lo verifica.
 
+## 10b. Interna del oficialismo (`engine/causal/interna.ts`)
+
+Reemplaza el efecto directo de transparencia sobre el oficialismo (R-26, eliminado en `REMOVED_EFFECTS` de `data/causal/index.ts`).
+
+- **Sube:**
+  - +25 al ampliar la coalición (acción), +20 al aceptar la coalición del evento y +20 con la estrategia post-legislativa "Abrirse".
+  - +1,5 por turno por cada ampliación vigente (tope 2), mientras los aliados sigan en el gobierno.
+  - +2 por turno con aprobación < 30 (no durante la luna de miel).
+- **Baja:** −3 por turno con aprobación ≥ 55; −1 por turno si no hay coalición ampliada y la aprobación está en zona media.
+- **Efectos (proporcionales a la interna):**
+  - Políticas hasta −30 % de eficacia y hasta +30 % de costo en caja.
+  - Umbral de las leyes +1 cada 15 puntos.
+  - Gobernabilidad −1 cada 10 puntos.
+  - Conflictividad +1,6 e instituciones −1,2 por turno con interna 100.
+- **UI:**
+  - Aviso en el panel de acciones con el nivel (alineado / tensión / interna abierta / fracturado) y los efectos en números.
+  - Notificaciones al cruzar 25 y 50.
+  - Nota en la carta de "Ampliar la coalición".
+- Parámetros en la constante `INTERNA` (ajustables).
+
+## 10c. Escenarios (`data/causal/scenarios.ts`)
+
+| Escenario | Referencia | Dificultad | Qué cambia | Desbloqueo |
+|---|---|---|---|---|
+| País en calma | Modo exploración | Exploración | Sin deuda, inflación baja, caja holgada | Libre |
+| Herencia pesada | Traspasos 2015/2019/2023 | Normal | Estado inicial del Excel (default del motor y del playtest de balance) | Libre |
+| Viento de cola | 2003, boom de la soja | Normal | Divisas y recaudación altas, pobreza y desempleo altos | Ganar Calma o Herencia |
+| Corralito | Diciembre de 2001 | Difícil | Default (8 turnos sin crédito ni intereses), conflicto y pobreza altos, ley de emergencia, rebote de actividad | Ganar Herencia o Viento de cola |
+| País en llamas | 1989, hiperinflación | Muy difícil | Inflación 72, expectativas desancladas, ley de emergencia, rebote si se calma la inflación | Ganar Corralito |
+
+- Los escenarios cambian sólo el **punto de partida**: indicadores, caja, deuda, gasto, recaudación, desanclaje, bancas, imagen, relaciones y condiciones. También pueden traer:
+  - una "ley de emergencia", con bonus de gobernabilidad por N turnos;
+  - "impulsos", deltas por turno durante N turnos que aparecen en Informes como "Herencia del escenario".
+- Las reglas del motor son las mismas en todos.
+- **Desbloqueo:** ganar la partida completa registra el escenario en el navegador (`lib/progress.ts`, `localStorage`, tolerante a fallos). Hay una casilla "Desbloquear todos los escenarios sin ganarlos".
+- El juego nuevo arranca por defecto en **País en calma**. `createCausalState()` sin opciones sigue creando **Herencia pesada**, para que las simulaciones del Excel y los tests de balance no cambien.
+- Calibración en `_analisis_gobernarg/playtest/ESCENARIOS.md` (se regenera con `npm run playtest`).
+
 ## 11. Calibración aplicada (fuera del Excel, documentada)
 
 Detectadas en el playtest y corregidas con cambios mínimos:
@@ -172,7 +212,8 @@ Detectadas en el playtest y corregidas con cambios mínimos:
 - **Metas de gestión** (5 metas por indicadores): reemplazan los objetivos viejos; son orientativas.
 - **Pesos del legado** (rating sobre 10).
 - **Ids de notificaciones** con secuencia local (no consumen `Math.random`), para que las partidas con semilla no cambien por cambios de UI.
-- **Sin persistencia**: el juego no guardaba partidas antes y sigue sin guardar (recargar la página reinicia). Si se agrega, `CausalState` es serializable (incluido el RNG).
+- **Sin persistencia de partidas**: el juego no guardaba partidas antes y sigue sin guardarlas (recargar la página reinicia). Sólo se guarda el progreso de escenarios ganados. Si se agrega guardado, `CausalState` es serializable (incluido el RNG).
+- **Valores de los escenarios** (calibrados con bots, no con jugadores reales).
 
 ## 13. Riesgos
 
@@ -190,10 +231,11 @@ Detectadas en el playtest y corregidas con cambios mínimos:
 | R-07 | Segmentar PODA en formal/vulnerable | **Decidido** por el usuario: un solo PODA. |
 | R-17 | Fusión Derechos + Cultura como actor | **Decidido** por el usuario: se mantienen juntos (`derechos_cultura`). |
 | R-22 | Visibilidad de indicadores | Propuesta del Excel implementada (bandas + ícono). |
-| R-23 | Plataforma del oficialismo | Propuesta implementada (5 plataformas, 3 indicadores). Confirmar. |
+| R-23 | Plataforma del oficialismo | **Decidido** por el usuario: opcional, desactivada por defecto. |
 | R-24 | Umbrales de derrota | **Decidido** por el usuario: propuesta del Excel. |
 | R-25 | 58 acciones visibles vs ~25 al inicio | **Decidido** por el usuario: las bloqueadas (espera, requisitos, ley sin DNU posible) se ocultan por defecto, con botón "Ver también las bloqueadas". Las que sólo esperan PA, caja o un DNU siguen visibles. |
-| R-26 | Efecto directo de transparencia sobre la relación con el oficialismo | Se conserva como en el Excel. |
+| R-26 | Efecto directo de transparencia sobre la relación con el oficialismo | **Decidido** por el usuario: eliminado. El malestar del partido pasa por la interna (popularidad y coaliciones). |
+| Escenarios | Desbloqueo ganando vs. elegir libremente | Implementado: desbloqueo ganando + casilla para desbloquear todo. Confirmar si la casilla queda en la versión final. |
 | Balance | Curva logística de APRO / dominancia del jugador adaptable | Sin tocar: requiere decisión de dificultad. |
 | Balance | Asimetría heterodoxo/ortodoxo (EXTE, R07/R17 de reglas) | Sin tocar: requiere decisión de diseño. |
 | Producto | Cantidad de PA por turno (4) | Sin tocar. |

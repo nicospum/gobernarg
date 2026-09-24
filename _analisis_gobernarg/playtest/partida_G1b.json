@@ -5,20 +5,20 @@
  "gameOver": true,
  "victorious": false,
  "defeatReason": "election_loss",
- "reelectionVotes": 18.998882633456663,
+ "reelectionVotes": 16.910402250087465,
  "successionVotes": null,
  "midtermVotes": [
-  36.2
+  35.7
  ],
- "finalIv": 15.5,
- "minGob": 21.5,
- "maxInfl": 65.6,
- "finalCaja": -168,
+ "finalIv": 13.4,
+ "minGob": 9.2,
+ "maxInfl": 67.3,
+ "finalCaja": -155,
  "finalDeuda": 3000,
  "meetings": 16,
  "agreementsSigned": 0,
  "agreementsBroken": 0,
- "channelEvents": 7,
+ "channelEvents": 9,
  "log": [
   {
    "turn": 1,
@@ -811,7 +811,7 @@
    },
    "apro": 34.5,
    "iv": 39.3,
-   "gob": 55.3,
+   "gob": 53.3,
    "leg": 51,
    "imagen": 46,
    "caja": 244,
@@ -851,23 +851,23 @@
    },
    "indicatorsAfter": {
     "INFL": 58.8,
-    "ACTV": 39.4,
-    "PODA": 46.1,
+    "ACTV": 39.3,
+    "PODA": 45.8,
     "INVC": 28.3,
-    "SOLV": 49.6,
+    "SOLV": 49.5,
     "EXTE": 32.5,
     "INFR": 35.4,
     "EDUC": 47.9,
-    "PSOC": 50.7,
+    "PSOC": 50.5,
     "SEGU": 42,
-    "INST": 49.8,
-    "CONF": 28.5
+    "INST": 49.6,
+    "CONF": 29
    },
    "causes": [
     "Inversión y crédito -3.5 (Industria posterga inversiones; Control de cambios (cepo) (decisión anterior))",
-    "Conflictividad social -3.5 (Asistencia alimentaria de emergencia)",
-    "Protección social y salud +2.7 (Asistencia alimentaria de emergencia)",
-    "Poder adquisitivo +2.1 (Suba del salario mínimo)"
+    "Conflictividad social -3.0 (Asistencia alimentaria de emergencia)",
+    "Protección social y salud +2.5 (Asistencia alimentaria de emergencia)",
+    "Solvencia fiscal +2.0 (las cuentas públicas)"
    ],
    "channels": [
     "Industria posterga inversiones (INVC -1.5)",
@@ -896,7 +896,7 @@
      "rel": 48
     },
     "clase_media": {
-     "sat": 46,
+     "sat": 45,
      "rel": null
     },
     "sectores_populares": {
@@ -944,15 +944,15 @@
      "rel": 48
     }
    },
-   "apro": 31.6,
-   "iv": 36.8,
-   "gob": 53.6,
+   "apro": 31.4,
+   "iv": 36.6,
+   "gob": 51.3,
    "leg": 48,
    "imagen": 45.9,
-   "caja": 249,
+   "caja": 236,
    "deuda": 3000,
    "gastoCorr": 1020,
-   "resultado": 6,
+   "resultado": -8,
    "financiamiento": 0,
    "pa": 2,
    "notes": []
@@ -972,34 +972,34 @@
    "events": [],
    "indicatorsBefore": {
     "INFL": 58.8,
-    "ACTV": 39.4,
-    "PODA": 46.1,
+    "ACTV": 39.3,
+    "PODA": 45.8,
     "INVC": 28.3,
-    "SOLV": 49.6,
+    "SOLV": 49.5,
     "EXTE": 32.5,
     "INFR": 35.4,
     "EDUC": 47.9,
-    "PSOC": 50.7,
+    "PSOC": 50.5,
     "SEGU": 42,
-    "INST": 49.8,
-    "CONF": 28.5
+    "INST": 49.6,
+    "CONF": 29
    },
    "indicatorsAfter": {
-    "INFL": 54.2,
-    "ACTV": 35.6,
-    "PODA": 46.5,
+    "INFL": 54.4,
+    "ACTV": 35.5,
+    "PODA": 46.1,
     "INVC": 24.4,
-    "SOLV": 49.9,
+    "SOLV": 49.8,
     "EXTE": 31.5,
     "INFR": 34.6,
     "EDUC": 47.6,
-    "PSOC": 50.2,
+    "PSOC": 50,
     "SEGU": 41.9,
-    "INST": 49.9,
-    "CONF": 28.9
+    "INST": 49.3,
+    "CONF": 29.6
    },
    "causes": [
-    "Inflación -4.6 (Control de precios; expectativas y fundamentos de la inflación)",
+    "Inflación -4.3 (Control de precios; expectativas y fundamentos de la inflación)",
     "Inversión y crédito -4.0 (Control de precios; Industria posterga inversiones)",
     "Actividad y empleo -3.8 (la inversión se volvió actividad; Suba del salario mínimo (decisión anterior))",
     "Sector externo y divisas -1.0 (Agro retiene la cosecha; Control de cambios (cepo) (decisión anterior))"
@@ -1023,7 +1023,7 @@
      "rel": 48
     },
     "sindicatos": {
-     "sat": 41,
+     "sat": 40,
      "rel": 55
     },
     "pymes": {
@@ -1031,7 +1031,7 @@
      "rel": 48
     },
     "clase_media": {
-     "sat": 47,
+     "sat": 46,
      "rel": null
     },
     "sectores_populares": {
@@ -1043,15 +1043,15 @@
      "rel": 47
     },
     "docentes": {
-     "sat": 48,
+     "sat": 47,
      "rel": 47
     },
     "cientificos": {
-     "sat": 43,
+     "sat": 42,
      "rel": 49
     },
     "org_sociales": {
-     "sat": 45,
+     "sat": 44,
      "rel": 66
     },
     "derechos_cultura": {
@@ -1079,15 +1079,15 @@
      "rel": 48
     }
    },
-   "apro": 30.3,
-   "iv": 35.2,
-   "gob": 52.1,
-   "leg": 46.6,
+   "apro": 29.7,
+   "iv": 34.7,
+   "gob": 49.4,
+   "leg": 46.4,
    "imagen": 43.8,
-   "caja": 263,
+   "caja": 241,
    "deuda": 3000,
    "gastoCorr": 1020,
-   "resultado": 14,
+   "resultado": 5,
    "financiamiento": 0,
    "pa": 2,
    "notes": []
@@ -1097,9 +1097,7 @@
    "term": 1,
    "year": 3,
    "quarter": 1,
-   "actions": [
-    "Incentivos a la exportación"
-   ],
+   "actions": [],
    "interactions": [
     "reunion Sindicatos: Reunión con Sindicatos. Otra reunión sin avances: empiezan a desconfiar."
    ],
@@ -1107,36 +1105,36 @@
     "Protestas Estudiantiles → Aumentar el presupuesto educativo"
    ],
    "indicatorsBefore": {
-    "INFL": 54.2,
-    "ACTV": 35.6,
-    "PODA": 46.5,
+    "INFL": 54.4,
+    "ACTV": 35.5,
+    "PODA": 46.1,
     "INVC": 24.4,
-    "SOLV": 49.9,
+    "SOLV": 49.8,
     "EXTE": 31.5,
     "INFR": 34.6,
     "EDUC": 47.6,
-    "PSOC": 50.2,
+    "PSOC": 50,
     "SEGU": 41.9,
-    "INST": 49.9,
-    "CONF": 28.9
+    "INST": 49.3,
+    "CONF": 29.6
    },
    "indicatorsAfter": {
-    "INFL": 53.2,
+    "INFL": 53.4,
     "ACTV": 27.5,
-    "PODA": 44.8,
-    "INVC": 22.5,
-    "SOLV": 49.5,
+    "PODA": 44.4,
+    "INVC": 22.4,
+    "SOLV": 50.6,
     "EXTE": 28.6,
     "INFR": 33.8,
     "EDUC": 49.3,
     "PSOC": 46.4,
     "SEGU": 41.5,
-    "INST": 49.9,
-    "CONF": 37.6
+    "INST": 49,
+    "CONF": 38.5
    },
    "causes": [
-    "Actividad y empleo -8.1 (la inversión se volvió actividad; PyMEs: cierres y despidos)",
-    "Protección social y salud -3.8 (el desempleo presiona la red social)",
+    "Actividad y empleo -8.0 (la inversión se volvió actividad; PyMEs: cierres y despidos)",
+    "Protección social y salud -3.6 (el desempleo presiona la red social)",
     "Conflictividad social +3.3",
     "Sector externo y divisas -2.9 (Agro retiene la cosecha; Control de cambios (cepo) (decisión anterior))"
    ],
@@ -1145,7 +1143,7 @@
     "Agro retiene la cosecha (EXTE -3.0)",
     "PyMEs: cierres y despidos (ACTV -2.0)"
    ],
-   "pendingEffects": 5,
+   "pendingEffects": 2,
    "actors": {
     "industria": {
      "sat": 22,
@@ -1160,7 +1158,7 @@
      "rel": 48
     },
     "sindicatos": {
-     "sat": 35,
+     "sat": 34,
      "rel": 52
     },
     "pymes": {
@@ -1172,7 +1170,7 @@
      "rel": null
     },
     "sectores_populares": {
-     "sat": 39,
+     "sat": 38,
      "rel": null
     },
     "estudiantes": {
@@ -1180,11 +1178,11 @@
      "rel": 52
     },
     "docentes": {
-     "sat": 46,
+     "sat": 45,
      "rel": 46
     },
     "cientificos": {
-     "sat": 42,
+     "sat": 41,
      "rel": 48
     },
     "org_sociales": {
@@ -1196,7 +1194,7 @@
      "rel": 47
     },
     "ambiente": {
-     "sat": 47,
+     "sat": 46,
      "rel": 46
     },
     "oficialismo": {
@@ -1204,29 +1202,29 @@
      "rel": 72
     },
     "aliados": {
-     "sat": 40,
+     "sat": 39,
      "rel": 67
     },
     "oposicion": {
-     "sat": 45,
+     "sat": 44,
      "rel": 33
     },
     "gobernadores": {
-     "sat": 23,
+     "sat": 22,
      "rel": 47
     }
    },
-   "apro": 24.7,
-   "iv": 30.4,
-   "gob": 48.3,
-   "leg": 45.6,
+   "apro": 24.1,
+   "iv": 30,
+   "gob": 45.2,
+   "leg": 45.4,
    "imagen": 40.6,
-   "caja": -121,
+   "caja": 57,
    "deuda": 3000,
    "gastoCorr": 1020,
-   "resultado": -84,
+   "resultado": 116,
    "financiamiento": 0,
-   "pa": 1,
+   "pa": 0,
    "notes": []
   },
   {
@@ -1240,38 +1238,38 @@
    ],
    "events": [],
    "indicatorsBefore": {
-    "INFL": 53.2,
+    "INFL": 53.4,
     "ACTV": 27.5,
-    "PODA": 44.8,
-    "INVC": 22.5,
-    "SOLV": 49.5,
+    "PODA": 44.4,
+    "INVC": 22.4,
+    "SOLV": 50.6,
     "EXTE": 28.6,
     "INFR": 33.8,
     "EDUC": 49.3,
     "PSOC": 46.4,
     "SEGU": 41.5,
-    "INST": 49.9,
-    "CONF": 37.6
+    "INST": 49,
+    "CONF": 38.5
    },
    "indicatorsAfter": {
-    "INFL": 56.5,
-    "ACTV": 24.4,
-    "PODA": 40.7,
+    "INFL": 56.7,
+    "ACTV": 24.3,
+    "PODA": 40.5,
     "INVC": 20.7,
-    "SOLV": 48.2,
-    "EXTE": 27,
+    "SOLV": 50,
+    "EXTE": 24.5,
     "INFR": 33,
     "EDUC": 49,
     "PSOC": 45.5,
     "SEGU": 41.1,
-    "INST": 49.9,
-    "CONF": 38.5
+    "INST": 48.7,
+    "CONF": 39.6
    },
    "causes": [
-    "Poder adquisitivo -4.1 (la inflación se comió los salarios; el empleo recompuso salarios)",
+    "Sector externo y divisas -4.1 (Agro retiene la cosecha; Giro de utilidades y dolarización de carteras)",
+    "Poder adquisitivo -3.9 (la inflación se comió los salarios; el empleo recompuso salarios)",
     "Inflación +3.3 (la falta de dólares)",
-    "Actividad y empleo -3.1 (la inversión se volvió actividad; PyMEs: cierres y despidos)",
-    "Inversión y crédito -1.7 (Industria posterga inversiones; Control de cambios (cepo) (decisión anterior))"
+    "Actividad y empleo -3.2 (la inversión se volvió actividad; PyMEs: cierres y despidos)"
    ],
    "channels": [
     "Industria posterga inversiones (INVC -1.5)",
@@ -1280,14 +1278,14 @@
     "Sindicatos: medidas de fuerza (CONF +2.2)",
     "PyMEs: cierres y despidos (ACTV -2.0)"
    ],
-   "pendingEffects": 3,
+   "pendingEffects": 1,
    "actors": {
     "industria": {
      "sat": 18,
      "rel": 47
     },
     "agro": {
-     "sat": 22,
+     "sat": 21,
      "rel": 40
     },
     "financiero": {
@@ -1295,7 +1293,7 @@
      "rel": 47
     },
     "sindicatos": {
-     "sat": 28,
+     "sat": 27,
      "rel": 49
     },
     "pymes": {
@@ -1303,7 +1301,7 @@
      "rel": 47
     },
     "clase_media": {
-     "sat": 42,
+     "sat": 41,
      "rel": null
     },
     "sectores_populares": {
@@ -1311,11 +1309,11 @@
      "rel": null
     },
     "estudiantes": {
-     "sat": 35,
+     "sat": 34,
      "rel": 52
     },
     "docentes": {
-     "sat": 43,
+     "sat": 42,
      "rel": 46
     },
     "cientificos": {
@@ -1327,15 +1325,15 @@
      "rel": 65
     },
     "derechos_cultura": {
-     "sat": 45,
+     "sat": 44,
      "rel": 47
     },
     "ambiente": {
-     "sat": 47,
+     "sat": 46,
      "rel": 46
     },
     "oficialismo": {
-     "sat": 31,
+     "sat": 30,
      "rel": 72
     },
     "aliados": {
@@ -1343,7 +1341,7 @@
      "rel": 66
     },
     "oposicion": {
-     "sat": 40,
+     "sat": 38,
      "rel": 32
     },
     "gobernadores": {
@@ -1351,12 +1349,12 @@
      "rel": 47
     }
    },
-   "apro": 19.1,
-   "iv": 26.4,
-   "gob": 46.5,
-   "leg": 44.6,
+   "apro": 18.5,
+   "iv": 26,
+   "gob": 43,
+   "leg": 44.4,
    "imagen": 40.3,
-   "caja": 16,
+   "caja": 194,
    "deuda": 3000,
    "gastoCorr": 1020,
    "resultado": -164,
@@ -1371,45 +1369,46 @@
    "quarter": 3,
    "actions": [
     "Subir retenciones a exportaciones",
-    "Suba del salario mínimo"
+    "Suba del salario mínimo",
+    "Ampliación de transferencias sociales"
    ],
    "interactions": [
     "reunion Sindicatos: Reunión con Sindicatos. Otra reunión sin avances: empiezan a desconfiar."
    ],
    "events": [],
    "indicatorsBefore": {
-    "INFL": 56.5,
-    "ACTV": 24.4,
-    "PODA": 40.7,
+    "INFL": 56.7,
+    "ACTV": 24.3,
+    "PODA": 40.5,
     "INVC": 20.7,
-    "SOLV": 48.2,
-    "EXTE": 27,
+    "SOLV": 50,
+    "EXTE": 24.5,
     "INFR": 33,
     "EDUC": 49,
     "PSOC": 45.5,
     "SEGU": 41.1,
-    "INST": 49.9,
-    "CONF": 38.5
+    "INST": 48.7,
+    "CONF": 39.6
    },
    "indicatorsAfter": {
-    "INFL": 57,
-    "ACTV": 23.3,
-    "PODA": 43.4,
-    "INVC": 18.1,
-    "SOLV": 50,
-    "EXTE": 24.7,
+    "INFL": 57.7,
+    "ACTV": 23.1,
+    "PODA": 43.8,
+    "INVC": 18,
+    "SOLV": 50.4,
+    "EXTE": 21.2,
     "INFR": 32.2,
     "EDUC": 48.7,
-    "PSOC": 44.5,
+    "PSOC": 48.9,
     "SEGU": 40.7,
-    "INST": 49.9,
-    "CONF": 42.7
+    "INST": 48.3,
+    "CONF": 41.5
    },
    "causes": [
-    "Conflictividad social +4.2 (Piquetes; Sindicatos: medidas de fuerza)",
     "Presión tributaria +4.0 (Subir retenciones a exportaciones)",
-    "Poder adquisitivo +2.7 (Suba del salario mínimo)",
-    "Inversión y crédito -2.7 (Industria posterga inversiones; Control de cambios (cepo) (decisión anterior))"
+    "Protección social y salud +3.5 (Ampliación de transferencias sociales)",
+    "Sector externo y divisas -3.3 (Agro retiene la cosecha; Giro de utilidades y dolarización de carteras)",
+    "Poder adquisitivo +3.3 (Suba del salario mínimo; Ampliación de transferencias sociales)"
    ],
    "channels": [
     "Industria posterga inversiones (INVC -1.5)",
@@ -1423,19 +1422,19 @@
    "pendingEffects": 3,
    "actors": {
     "industria": {
-     "sat": 15,
+     "sat": 14,
      "rel": 47
     },
     "agro": {
-     "sat": 19,
+     "sat": 18,
      "rel": 39
     },
     "financiero": {
-     "sat": 35,
+     "sat": 34,
      "rel": 47
     },
     "sindicatos": {
-     "sat": 24,
+     "sat": 25,
      "rel": 46
     },
     "pymes": {
@@ -1447,155 +1446,11 @@
      "rel": null
     },
     "sectores_populares": {
-     "sat": 31,
-     "rel": null
-    },
-    "estudiantes": {
-     "sat": 34,
-     "rel": 51
-    },
-    "docentes": {
-     "sat": 42,
-     "rel": 45
-    },
-    "cientificos": {
-     "sat": 41,
-     "rel": 48
-    },
-    "org_sociales": {
-     "sat": 30,
-     "rel": 64
-    },
-    "derechos_cultura": {
-     "sat": 45,
-     "rel": 46
-    },
-    "ambiente": {
-     "sat": 47,
-     "rel": 45
-    },
-    "oficialismo": {
-     "sat": 25,
-     "rel": 71
-    },
-    "aliados": {
-     "sat": 31,
-     "rel": 66
-    },
-    "oposicion": {
-     "sat": 34,
-     "rel": 32
-    },
-    "gobernadores": {
-     "sat": 15,
-     "rel": 46
-    }
-   },
-   "apro": 16.6,
-   "iv": 24.5,
-   "gob": 43.3,
-   "leg": 42.6,
-   "imagen": 39.9,
-   "caja": 403,
-   "deuda": 3000,
-   "gastoCorr": 1020,
-   "resultado": 388,
-   "financiamiento": 0,
-   "pa": 2,
-   "notes": []
-  },
-  {
-   "turn": 12,
-   "term": 1,
-   "year": 3,
-   "quarter": 4,
-   "actions": [
-    "Incentivos a la exportación",
-    "Control de precios"
-   ],
-   "interactions": [
-    "reunion Sindicatos: Reunión con Sindicatos. Otra reunión sin avances: empiezan a desconfiar."
-   ],
-   "events": [
-    "Paro agrario → Abrir una mesa de diálogo con las entidades",
-    "Ruptura del bloque oficialista → Reorganizar el bloque que queda",
-    "Bloqueo Legislativo → Negociar con la oposición"
-   ],
-   "indicatorsBefore": {
-    "INFL": 57,
-    "ACTV": 23.3,
-    "PODA": 43.4,
-    "INVC": 18.1,
-    "SOLV": 50,
-    "EXTE": 24.7,
-    "INFR": 32.2,
-    "EDUC": 48.7,
-    "PSOC": 44.5,
-    "SEGU": 40.7,
-    "INST": 49.9,
-    "CONF": 42.7
-   },
-   "indicatorsAfter": {
-    "INFL": 53,
-    "ACTV": 17,
-    "PODA": 43.8,
-    "INVC": 14.8,
-    "SOLV": 51,
-    "EXTE": 19,
-    "INFR": 31.4,
-    "EDUC": 48.4,
-    "PSOC": 43.3,
-    "SEGU": 40.1,
-    "INST": 49.9,
-    "CONF": 47.4
-   },
-   "causes": [
-    "Actividad y empleo -6.2 (la inversión se volvió actividad; Suba del salario mínimo (decisión anterior))",
-    "Sector externo y divisas -5.8 (Subir retenciones a exportaciones (decisión anterior); Agro retiene la cosecha)",
-    "Inflación -3.9 (Control de precios; expectativas y fundamentos de la inflación)",
-    "Inversión y crédito -3.3 (Control de precios; Industria posterga inversiones)"
-   ],
-   "channels": [
-    "Industria posterga inversiones (INVC -1.5)",
-    "Giro de utilidades y dolarización de carteras (EXTE -2.0)",
-    "Agro retiene la cosecha (EXTE -3.0)",
-    "Sindicatos: medidas de fuerza (CONF +2.3)",
-    "PyMEs: cierres y despidos (ACTV -2.0)",
-    "Estudiantes: tomas y marchas (CONF +2.0)",
-    "Piquetes (CONF +2.7)"
-   ],
-   "pendingEffects": 4,
-   "actors": {
-    "industria": {
-     "sat": 12,
-     "rel": 46
-    },
-    "agro": {
-     "sat": 17,
-     "rel": 44
-    },
-    "financiero": {
-     "sat": 33,
-     "rel": 46
-    },
-    "sindicatos": {
-     "sat": 22,
-     "rel": 43
-    },
-    "pymes": {
-     "sat": 12,
-     "rel": 46
-    },
-    "clase_media": {
-     "sat": 38,
-     "rel": null
-    },
-    "sectores_populares": {
-     "sat": 28,
-     "rel": null
-    },
-    "estudiantes": {
      "sat": 32,
+     "rel": null
+    },
+    "estudiantes": {
+     "sat": 33,
      "rel": 51
     },
     "docentes": {
@@ -1604,6 +1459,151 @@
     },
     "cientificos": {
      "sat": 41,
+     "rel": 48
+    },
+    "org_sociales": {
+     "sat": 32,
+     "rel": 64
+    },
+    "derechos_cultura": {
+     "sat": 45,
+     "rel": 46
+    },
+    "ambiente": {
+     "sat": 46,
+     "rel": 45
+    },
+    "oficialismo": {
+     "sat": 26,
+     "rel": 71
+    },
+    "aliados": {
+     "sat": 31,
+     "rel": 66
+    },
+    "oposicion": {
+     "sat": 32,
+     "rel": 32
+    },
+    "gobernadores": {
+     "sat": 15,
+     "rel": 46
+    }
+   },
+   "apro": 17,
+   "iv": 24.8,
+   "gob": 40.2,
+   "leg": 42.4,
+   "imagen": 39.9,
+   "caja": 297,
+   "deuda": 3000,
+   "gastoCorr": 1140,
+   "resultado": 103,
+   "financiamiento": 0,
+   "pa": 3,
+   "notes": []
+  },
+  {
+   "turn": 12,
+   "term": 1,
+   "year": 3,
+   "quarter": 4,
+   "actions": [
+    "Incentivos a la exportación"
+   ],
+   "interactions": [
+    "reunion Sindicatos: Reunión con Sindicatos. Otra reunión sin avances: empiezan a desconfiar."
+   ],
+   "events": [
+    "Paro agrario → Abrir una mesa de diálogo con las entidades",
+    "Ruptura del bloque oficialista → Reorganizar el bloque que queda",
+    "Renuncia de Ministro → Aceptar la renuncia",
+    "Bloqueo Legislativo → Negociar con la oposición"
+   ],
+   "indicatorsBefore": {
+    "INFL": 57.7,
+    "ACTV": 23.1,
+    "PODA": 43.8,
+    "INVC": 18,
+    "SOLV": 50.4,
+    "EXTE": 21.2,
+    "INFR": 32.2,
+    "EDUC": 48.7,
+    "PSOC": 48.9,
+    "SEGU": 40.7,
+    "INST": 48.3,
+    "CONF": 41.5
+   },
+   "indicatorsAfter": {
+    "INFL": 59.3,
+    "ACTV": 17,
+    "PODA": 41.1,
+    "INVC": 16.4,
+    "SOLV": 43.7,
+    "EXTE": 16.1,
+    "INFR": 31.4,
+    "EDUC": 48.4,
+    "PSOC": 47.5,
+    "SEGU": 40.2,
+    "INST": 47.9,
+    "CONF": 47.1
+   },
+   "causes": [
+    "Solvencia fiscal -6.7 (Sube el riesgo país; las cuentas públicas)",
+    "Actividad y empleo -6.0 (la inversión se volvió actividad; Suba del salario mínimo (decisión anterior))",
+    "Sector externo y divisas -5.0 (Subir retenciones a exportaciones (decisión anterior); Agro retiene la cosecha)",
+    "Conflictividad social +4.1 (Piquetes; Sindicatos: medidas de fuerza)"
+   ],
+   "channels": [
+    "Industria posterga inversiones (INVC -1.5)",
+    "Giro de utilidades y dolarización de carteras (EXTE -2.0)",
+    "Agro retiene la cosecha (EXTE -3.0)",
+    "Sube el riesgo país (SOLV -5.0)",
+    "Sindicatos: medidas de fuerza (CONF +2.3)",
+    "PyMEs: cierres y despidos (ACTV -2.0)",
+    "Estudiantes: tomas y marchas (CONF +2.0)",
+    "Piquetes (CONF +2.7)"
+   ],
+   "pendingEffects": 3,
+   "actors": {
+    "industria": {
+     "sat": 11,
+     "rel": 46
+    },
+    "agro": {
+     "sat": 15,
+     "rel": 44
+    },
+    "financiero": {
+     "sat": 28,
+     "rel": 46
+    },
+    "sindicatos": {
+     "sat": 21,
+     "rel": 43
+    },
+    "pymes": {
+     "sat": 12,
+     "rel": 46
+    },
+    "clase_media": {
+     "sat": 36,
+     "rel": null
+    },
+    "sectores_populares": {
+     "sat": 29,
+     "rel": null
+    },
+    "estudiantes": {
+     "sat": 31,
+     "rel": 51
+    },
+    "docentes": {
+     "sat": 41,
+     "rel": 45
+    },
+    "cientificos": {
+     "sat": 40,
      "rel": 47
     },
     "org_sociales": {
@@ -1615,37 +1615,37 @@
      "rel": 46
     },
     "ambiente": {
-     "sat": 47,
+     "sat": 46,
      "rel": 45
     },
     "oficialismo": {
      "sat": 22,
-     "rel": 74
+     "rel": 76
     },
     "aliados": {
-     "sat": 29,
+     "sat": 26,
      "rel": 68
     },
     "oposicion": {
-     "sat": 29,
+     "sat": 28,
      "rel": 39
     },
     "gobernadores": {
-     "sat": 12,
+     "sat": 13,
      "rel": 46
     }
    },
-   "apro": 15.2,
-   "iv": 21.9,
-   "gob": 35.6,
-   "leg": 32.6,
-   "imagen": 33.4,
-   "caja": 128,
+   "apro": 14.2,
+   "iv": 20.5,
+   "gob": 31.7,
+   "leg": 32.4,
+   "imagen": 30.4,
+   "caja": -69,
    "deuda": 3000,
-   "gastoCorr": 1020,
-   "resultado": -75,
+   "gastoCorr": 1140,
+   "resultado": -166,
    "financiamiento": 0,
-   "pa": 2,
+   "pa": 1,
    "notes": []
   },
   {
@@ -1653,49 +1653,47 @@
    "term": 1,
    "year": 4,
    "quarter": 1,
-   "actions": [
-    "Administración tributaria (lucha contra la evasión)"
-   ],
+   "actions": [],
    "interactions": [
     "reunion Sindicatos: Reunión con Sindicatos. Otra reunión sin avances: empiezan a desconfiar."
    ],
    "events": [
-    "Plan de lucha de las organizaciones sociales → Convocar una mesa con las organizaciones",
-    "Renuncia de Ministro → Aceptar la renuncia"
+    "Corrida cambiaria → Suba de tasas de emergencia",
+    "Plan de lucha de las organizaciones sociales → Convocar una mesa con las organizaciones"
    ],
    "indicatorsBefore": {
-    "INFL": 53,
+    "INFL": 59.3,
     "ACTV": 17,
-    "PODA": 43.8,
-    "INVC": 14.8,
-    "SOLV": 51,
-    "EXTE": 19,
+    "PODA": 41.1,
+    "INVC": 16.4,
+    "SOLV": 43.7,
+    "EXTE": 16.1,
     "INFR": 31.4,
     "EDUC": 48.4,
-    "PSOC": 43.3,
-    "SEGU": 40.1,
-    "INST": 49.9,
-    "CONF": 47.4
+    "PSOC": 47.5,
+    "SEGU": 40.2,
+    "INST": 47.9,
+    "CONF": 47.1
    },
    "indicatorsAfter": {
-    "INFL": 53.2,
-    "ACTV": 8.9,
-    "PODA": 41.4,
-    "INVC": 14.1,
-    "SOLV": 46.3,
-    "EXTE": 19.8,
+    "INFL": 58.8,
+    "ACTV": 7.2,
+    "PODA": 38.2,
+    "INVC": 12.6,
+    "SOLV": 42.3,
+    "EXTE": 21.2,
     "INFR": 30.6,
     "EDUC": 48.1,
-    "PSOC": 41.6,
-    "SEGU": 39.3,
-    "INST": 49.9,
-    "CONF": 56.4
+    "PSOC": 45.7,
+    "SEGU": 39.5,
+    "INST": 47.5,
+    "CONF": 56.8
    },
    "causes": [
-    "Actividad y empleo -8.2 (la inversión se volvió actividad; Paro agrario)",
-    "Conflictividad social +8.1 (Paro agrario; Piquetes)",
-    "Solvencia fiscal -4.7 (Sube el riesgo país)",
-    "Poder adquisitivo -2.4 (el empleo recompuso salarios; la inflación se comió los salarios)"
+    "Actividad y empleo -8.9 (la inversión se volvió actividad; Paro agrario)",
+    "Conflictividad social +8.8 (Paro agrario; Piquetes)",
+    "Poder adquisitivo -3.0 (el empleo recompuso salarios; la inflación se comió los salarios)",
+    "Protección social y salud -1.8 (el desempleo presiona la red social)"
    ],
    "channels": [
     "Industria posterga inversiones (INVC -1.5)",
@@ -1710,30 +1708,30 @@
     "Piquetes (CONF +2.7)",
     "Interpelaciones en el Congreso (GOB -3.0)"
    ],
-   "pendingEffects": 6,
+   "pendingEffects": 2,
    "actors": {
     "industria": {
      "sat": 9,
      "rel": 46
     },
     "agro": {
-     "sat": 16,
+     "sat": 14,
      "rel": 43
     },
     "financiero": {
-     "sat": 29,
+     "sat": 24,
      "rel": 46
     },
     "sindicatos": {
-     "sat": 19,
+     "sat": 17,
      "rel": 40
     },
     "pymes": {
-     "sat": 10,
+     "sat": 9,
      "rel": 45
     },
     "clase_media": {
-     "sat": 35,
+     "sat": 32,
      "rel": null
     },
     "sectores_populares": {
@@ -1741,15 +1739,15 @@
      "rel": null
     },
     "estudiantes": {
-     "sat": 30,
+     "sat": 29,
      "rel": 50
     },
     "docentes": {
-     "sat": 41,
+     "sat": 38,
      "rel": 44
     },
     "cientificos": {
-     "sat": 40,
+     "sat": 39,
      "rel": 47
     },
     "org_sociales": {
@@ -1757,11 +1755,11 @@
      "rel": 68
     },
     "derechos_cultura": {
-     "sat": 43,
+     "sat": 42,
      "rel": 45
     },
     "ambiente": {
-     "sat": 47,
+     "sat": 45,
      "rel": 44
     },
     "oficialismo": {
@@ -1769,29 +1767,29 @@
      "rel": 76
     },
     "aliados": {
-     "sat": 25,
+     "sat": 22,
      "rel": 68
     },
     "oposicion": {
-     "sat": 24,
+     "sat": 23,
      "rel": 38
     },
     "gobernadores": {
-     "sat": 10,
+     "sat": 11,
      "rel": 45
     }
    },
-   "apro": 13,
-   "iv": 19.1,
-   "gob": 28.2,
-   "leg": 30.6,
-   "imagen": 28.5,
-   "caja": 140,
+   "apro": 11.4,
+   "iv": 18,
+   "gob": 23.6,
+   "leg": 30.4,
+   "imagen": 28.6,
+   "caja": -106,
    "deuda": 3000,
-   "gastoCorr": 1020,
-   "resultado": -188,
+   "gastoCorr": 1140,
+   "resultado": -237,
    "financiamiento": 0,
-   "pa": 1,
+   "pa": 0,
    "notes": []
   },
   {
@@ -1800,8 +1798,7 @@
    "year": 4,
    "quarter": 2,
    "actions": [
-    "Suba del salario mínimo",
-    "Control de precios"
+    "Emitir dinero (forzada)"
    ],
    "interactions": [
     "reunion Sindicatos: Reunión con Sindicatos. Otra reunión sin avances: empiezan a desconfiar."
@@ -1810,324 +1807,38 @@
     "Paro General → Negociar"
    ],
    "indicatorsBefore": {
-    "INFL": 53.2,
-    "ACTV": 8.9,
-    "PODA": 41.4,
-    "INVC": 14.1,
-    "SOLV": 46.3,
-    "EXTE": 19.8,
+    "INFL": 58.8,
+    "ACTV": 7.2,
+    "PODA": 38.2,
+    "INVC": 12.6,
+    "SOLV": 42.3,
+    "EXTE": 21.2,
     "INFR": 30.6,
     "EDUC": 48.1,
-    "PSOC": 41.6,
-    "SEGU": 39.3,
-    "INST": 49.9,
-    "CONF": 56.4
+    "PSOC": 45.7,
+    "SEGU": 39.5,
+    "INST": 47.5,
+    "CONF": 56.8
    },
    "indicatorsAfter": {
-    "INFL": 53.3,
-    "ACTV": 10.1,
-    "PODA": 44.9,
-    "INVC": 10.5,
-    "SOLV": 44.5,
-    "EXTE": 19.4,
+    "INFL": 63.9,
+    "ACTV": 10.3,
+    "PODA": 35.9,
+    "INVC": 11.7,
+    "SOLV": 40.7,
+    "EXTE": 16.7,
     "INFR": 29.8,
     "EDUC": 47.8,
-    "PSOC": 40.1,
-    "SEGU": 38.6,
-    "INST": 49.9,
-    "CONF": 60.2
+    "PSOC": 44.1,
+    "SEGU": 38.9,
+    "INST": 47.1,
+    "CONF": 61.4
    },
    "causes": [
-    "Conflictividad social +3.8 (Plan de lucha; Sindicatos: medidas de fuerza)",
-    "Inversión y crédito -3.6 (Control de precios; Industria posterga inversiones)",
-    "Poder adquisitivo +2.5 (Suba del salario mínimo; Control de precios)",
-    "Presión tributaria +2.0 (Administración tributaria (lucha contra la evasión) (decisión anterior))"
-   ],
-   "channels": [
-    "Industria posterga inversiones (INVC -1.5)",
-    "Giro de utilidades y dolarización de carteras (EXTE -2.0)",
-    "Agro retiene la cosecha (EXTE -3.0)",
-    "Sube el riesgo país (SOLV -5.0)",
-    "Sindicatos: medidas de fuerza (CONF +2.4)",
-    "PyMEs: cierres y despidos (ACTV -2.0)",
-    "Estudiantes: tomas y marchas (CONF +2.0)",
-    "Plan de lucha (CONF +8.0)",
-    "Plan de lucha (ACTV -1.0)",
-    "Interpelaciones en el Congreso (GOB -3.0)"
-   ],
-   "pendingEffects": 5,
-   "actors": {
-    "industria": {
-     "sat": 8,
-     "rel": 46
-    },
-    "agro": {
-     "sat": 15,
-     "rel": 42
-    },
-    "financiero": {
-     "sat": 26,
-     "rel": 46
-    },
-    "sindicatos": {
-     "sat": 17,
-     "rel": 43
-    },
-    "pymes": {
-     "sat": 8,
-     "rel": 45
-    },
-    "clase_media": {
-     "sat": 33,
-     "rel": null
-    },
-    "sectores_populares": {
-     "sat": 24,
-     "rel": null
-    },
-    "estudiantes": {
-     "sat": 29,
-     "rel": 49
-    },
-    "docentes": {
-     "sat": 41,
-     "rel": 43
-    },
-    "cientificos": {
-     "sat": 40,
-     "rel": 47
-    },
-    "org_sociales": {
-     "sat": 23,
-     "rel": 68
-    },
-    "derechos_cultura": {
-     "sat": 43,
-     "rel": 45
-    },
-    "ambiente": {
-     "sat": 47,
-     "rel": 43
-    },
-    "oficialismo": {
-     "sat": 17,
-     "rel": 76
-    },
-    "aliados": {
-     "sat": 23,
-     "rel": 68
-    },
-    "oposicion": {
-     "sat": 21,
-     "rel": 37
-    },
-    "gobernadores": {
-     "sat": 9,
-     "rel": 45
-    }
-   },
-   "apro": 12,
-   "iv": 18.4,
-   "gob": 25.5,
-   "leg": 28.6,
-   "imagen": 28.8,
-   "caja": 76,
-   "deuda": 3000,
-   "gastoCorr": 1020,
-   "resultado": 86,
-   "financiamiento": 0,
-   "pa": 2,
-   "notes": []
-  },
-  {
-   "turn": 15,
-   "term": 1,
-   "year": 4,
-   "quarter": 3,
-   "actions": [],
-   "interactions": [
-    "reunion Sindicatos: Reunión con Sindicatos. Otra reunión sin avances: empiezan a desconfiar."
-   ],
-   "events": [
-    "Corrida cambiaria → Suba de tasas de emergencia",
-    "Crisis Energética → Invertir en infraestructura"
-   ],
-   "indicatorsBefore": {
-    "INFL": 53.3,
-    "ACTV": 10.1,
-    "PODA": 44.9,
-    "INVC": 10.5,
-    "SOLV": 44.5,
-    "EXTE": 19.4,
-    "INFR": 29.8,
-    "EDUC": 47.8,
-    "PSOC": 40.1,
-    "SEGU": 38.6,
-    "INST": 49.9,
-    "CONF": 60.2
-   },
-   "indicatorsAfter": {
-    "INFL": 57.2,
-    "ACTV": 1.6,
-    "PODA": 41.7,
-    "INVC": 6.9,
-    "SOLV": 43.9,
-    "EXTE": 21.1,
-    "INFR": 32,
-    "EDUC": 47.5,
-    "PSOC": 38.3,
-    "SEGU": 37.7,
-    "INST": 49.9,
-    "CONF": 69.1
-   },
-   "causes": [
-    "Actividad y empleo -5.5 (la inversión se volvió actividad; Paro general)",
-    "Conflictividad social +4.4 (Paro general; Piquetes)",
-    "Inflación +3.8 (Control de precios (decisión anterior); Suba del salario mínimo (decisión anterior))",
-    "Poder adquisitivo -3.2 (el empleo recompuso salarios; la inflación se comió los salarios)"
-   ],
-   "channels": [
-    "Industria posterga inversiones (INVC -1.5)",
-    "Giro de utilidades y dolarización de carteras (EXTE -2.0)",
-    "Agro retiene la cosecha (EXTE -3.0)",
-    "Sube el riesgo país (SOLV -5.0)",
-    "Paro general (ACTV -3.0)",
-    "Paro general (CONF +10.0)",
-    "PyMEs: cierres y despidos (ACTV -2.0)",
-    "Estudiantes: tomas y marchas (CONF +2.0)",
-    "Piquetes (CONF +2.6)",
-    "Interpelaciones en el Congreso (GOB -3.0)"
-   ],
-   "pendingEffects": 1,
-   "actors": {
-    "industria": {
-     "sat": 6,
-     "rel": 45
-    },
-    "agro": {
-     "sat": 14,
-     "rel": 42
-    },
-    "financiero": {
-     "sat": 23,
-     "rel": 45
-    },
-    "sindicatos": {
-     "sat": 15,
-     "rel": 40
-    },
-    "pymes": {
-     "sat": 7,
-     "rel": 44
-    },
-    "clase_media": {
-     "sat": 30,
-     "rel": null
-    },
-    "sectores_populares": {
-     "sat": 21,
-     "rel": null
-    },
-    "estudiantes": {
-     "sat": 28,
-     "rel": 49
-    },
-    "docentes": {
-     "sat": 39,
-     "rel": 43
-    },
-    "cientificos": {
-     "sat": 40,
-     "rel": 46
-    },
-    "org_sociales": {
-     "sat": 20,
-     "rel": 67
-    },
-    "derechos_cultura": {
-     "sat": 42,
-     "rel": 44
-    },
-    "ambiente": {
-     "sat": 47,
-     "rel": 43
-    },
-    "oficialismo": {
-     "sat": 15,
-     "rel": 76
-    },
-    "aliados": {
-     "sat": 21,
-     "rel": 67
-    },
-    "oposicion": {
-     "sat": 18,
-     "rel": 36
-    },
-    "gobernadores": {
-     "sat": 8,
-     "rel": 44
-    }
-   },
-   "apro": 10.4,
-   "iv": 16.5,
-   "gob": 21.5,
-   "leg": 27.6,
-   "imagen": 25.8,
-   "caja": -203,
-   "deuda": 3000,
-   "gastoCorr": 1020,
-   "resultado": -30,
-   "financiamiento": 0,
-   "pa": 0,
-   "notes": []
-  },
-  {
-   "turn": 16,
-   "term": 1,
-   "year": 4,
-   "quarter": 4,
-   "actions": [],
-   "interactions": [
-    "reunion Sindicatos: Reunión con Sindicatos. Otra reunión sin avances: empiezan a desconfiar."
-   ],
-   "events": [
-    "Cacerolazo → Cadena nacional para dar explicaciones",
-    "Plan de lucha de las organizaciones sociales → Convocar una mesa con las organizaciones"
-   ],
-   "indicatorsBefore": {
-    "INFL": 57.2,
-    "ACTV": 1.6,
-    "PODA": 41.7,
-    "INVC": 6.9,
-    "SOLV": 43.9,
-    "EXTE": 21.1,
-    "INFR": 32,
-    "EDUC": 47.5,
-    "PSOC": 38.3,
-    "SEGU": 37.7,
-    "INST": 49.9,
-    "CONF": 69.1
-   },
-   "indicatorsAfter": {
-    "INFL": 65.6,
-    "ACTV": 0.4,
-    "PODA": 35.1,
-    "INVC": 6.4,
-    "SOLV": 42.4,
-    "EXTE": 15.1,
-    "INFR": 31.2,
-    "EDUC": 47.2,
-    "PSOC": 36.4,
-    "SEGU": 36.7,
-    "INST": 49.9,
-    "CONF": 64.7
-   },
-   "causes": [
-    "Inflación +8.4 (Corrida cambiaria; la falta de dólares)",
-    "Poder adquisitivo -6.6 (la inflación se comió los salarios; el empleo recompuso salarios)",
-    "Sector externo y divisas -5.9 (Corrida cambiaria; Agro retiene la cosecha)",
-    "Conflictividad social -3.4 (la calle se calma sola o la exclusión la enciende)"
+    "Inflación +5.1 (Corrida cambiaria; Emitir dinero)",
+    "Conflictividad social +4.6 (Plan de lucha; Sindicatos: medidas de fuerza)",
+    "Sector externo y divisas -4.5 (Corrida cambiaria; Agro retiene la cosecha)",
+    "Poder adquisitivo -3.3 (la inflación se comió los salarios; el empleo recompuso salarios)"
    ],
    "channels": [
     "Industria posterga inversiones (INVC -1.5)",
@@ -2139,29 +1850,179 @@
     "Sindicatos: medidas de fuerza (CONF +2.4)",
     "PyMEs: cierres y despidos (ACTV -2.0)",
     "Estudiantes: tomas y marchas (CONF +2.0)",
-    "Piquetes (CONF +2.6)",
+    "Plan de lucha (CONF +8.0)",
+    "Plan de lucha (ACTV -1.0)",
     "Interpelaciones en el Congreso (GOB -3.0)"
    ],
-   "pendingEffects": 1,
+   "pendingEffects": 0,
    "actors": {
     "industria": {
-     "sat": 5,
-     "rel": 45
+     "sat": 7,
+     "rel": 46
     },
     "agro": {
      "sat": 13,
-     "rel": 41
+     "rel": 42
     },
     "financiero": {
      "sat": 19,
+     "rel": 46
+    },
+    "sindicatos": {
+     "sat": 13,
+     "rel": 43
+    },
+    "pymes": {
+     "sat": 7,
+     "rel": 45
+    },
+    "clase_media": {
+     "sat": 27,
+     "rel": null
+    },
+    "sectores_populares": {
+     "sat": 21,
+     "rel": null
+    },
+    "estudiantes": {
+     "sat": 27,
+     "rel": 49
+    },
+    "docentes": {
+     "sat": 33,
+     "rel": 43
+    },
+    "cientificos": {
+     "sat": 37,
+     "rel": 47
+    },
+    "org_sociales": {
+     "sat": 20,
+     "rel": 68
+    },
+    "derechos_cultura": {
+     "sat": 40,
+     "rel": 45
+    },
+    "ambiente": {
+     "sat": 45,
+     "rel": 43
+    },
+    "oficialismo": {
+     "sat": 16,
+     "rel": 76
+    },
+    "aliados": {
+     "sat": 19,
+     "rel": 68
+    },
+    "oposicion": {
+     "sat": 19,
+     "rel": 37
+    },
+    "gobernadores": {
+     "sat": 9,
+     "rel": 45
+    }
+   },
+   "apro": 8.9,
+   "iv": 16.4,
+   "gob": 20.1,
+   "leg": 28.4,
+   "imagen": 28.9,
+   "caja": -48,
+   "deuda": 3000,
+   "gastoCorr": 1140,
+   "resultado": -42,
+   "financiamiento": 250,
+   "pa": 0,
+   "notes": [
+    "Caja negativa: el Tesoro emitió para cubrir el déficit (emisión forzada)."
+   ]
+  },
+  {
+   "turn": 15,
+   "term": 1,
+   "year": 4,
+   "quarter": 3,
+   "actions": [],
+   "interactions": [
+    "reunion Sindicatos: Reunión con Sindicatos. Otra reunión sin avances: empiezan a desconfiar."
+   ],
+   "events": [
+    "Cacerolazo → Cadena nacional para dar explicaciones",
+    "Marcha federal educativa → Recibir a rectores y centros de estudiantes",
+    "Motín Carcelario → Negociar"
+   ],
+   "indicatorsBefore": {
+    "INFL": 63.9,
+    "ACTV": 10.3,
+    "PODA": 35.9,
+    "INVC": 11.7,
+    "SOLV": 40.7,
+    "EXTE": 16.7,
+    "INFR": 29.8,
+    "EDUC": 47.8,
+    "PSOC": 44.1,
+    "SEGU": 38.9,
+    "INST": 47.1,
+    "CONF": 61.4
+   },
+   "indicatorsAfter": {
+    "INFL": 63.6,
+    "ACTV": 6.9,
+    "PODA": 32.6,
+    "INVC": 10.8,
+    "SOLV": 39.5,
+    "EXTE": 14,
+    "INFR": 29,
+    "EDUC": 46.5,
+    "PSOC": 42.3,
+    "SEGU": 37.1,
+    "INST": 47.6,
+    "CONF": 68.2
+   },
+   "causes": [
+    "Conflictividad social +6.3 (Paro general; Piquetes)",
+    "Actividad y empleo -3.4 (la inversión se volvió actividad; Paro general)",
+    "Poder adquisitivo -3.3 (la inflación se comió los salarios; el empleo recompuso salarios)",
+    "Sector externo y divisas -2.6 (Agro retiene la cosecha; Giro de utilidades y dolarización de carteras)"
+   ],
+   "channels": [
+    "Industria posterga inversiones (INVC -1.5)",
+    "Giro de utilidades y dolarización de carteras (EXTE -2.0)",
+    "Agro retiene la cosecha (EXTE -3.0)",
+    "Sube el riesgo país (SOLV -5.0)",
+    "Paro general (ACTV -3.0)",
+    "Paro general (CONF +10.0)",
+    "PyMEs: cierres y despidos (ACTV -2.0)",
+    "Clase media dolariza sus ahorros (EXTE -2.0)",
+    "Estudiantes: tomas y marchas (CONF +2.0)",
+    "Paro docente (EDUC -1.0)",
+    "Paro docente (CONF +2.0)",
+    "Piquetes (CONF +2.6)",
+    "Interpelaciones en el Congreso (GOB -3.0)"
+   ],
+   "pendingEffects": 0,
+   "actors": {
+    "industria": {
+     "sat": 6,
+     "rel": 45
+    },
+    "agro": {
+     "sat": 12,
+     "rel": 42
+    },
+    "financiero": {
+     "sat": 16,
      "rel": 45
     },
     "sindicatos": {
      "sat": 11,
-     "rel": 37
+     "rel": 40
     },
     "pymes": {
-     "sat": 5,
+     "sat": 6,
      "rel": 44
     },
     "clase_media": {
@@ -2169,43 +2030,193 @@
      "rel": null
     },
     "sectores_populares": {
-     "sat": 16,
+     "sat": 18,
      "rel": null
     },
     "estudiantes": {
-     "sat": 26,
-     "rel": 48
+     "sat": 25,
+     "rel": 54
     },
     "docentes": {
-     "sat": 32,
-     "rel": 42
+     "sat": 29,
+     "rel": 45
     },
     "cientificos": {
-     "sat": 38,
+     "sat": 35,
      "rel": 46
     },
     "org_sociales": {
-     "sat": 16,
-     "rel": 72
+     "sat": 17,
+     "rel": 67
     },
     "derechos_cultura": {
-     "sat": 39,
+     "sat": 38,
      "rel": 44
     },
     "ambiente": {
-     "sat": 47,
-     "rel": 42
+     "sat": 45,
+     "rel": 43
     },
     "oficialismo": {
      "sat": 13,
-     "rel": 75
+     "rel": 76
     },
     "aliados": {
-     "sat": 19,
+     "sat": 17,
      "rel": 67
     },
     "oposicion": {
-     "sat": 17,
+     "sat": 16,
+     "rel": 36
+    },
+    "gobernadores": {
+     "sat": 8,
+     "rel": 44
+    }
+   },
+   "apro": 7.3,
+   "iv": 14.2,
+   "gob": 16.4,
+   "leg": 27.4,
+   "imagen": 24.9,
+   "caja": -221,
+   "deuda": 3000,
+   "gastoCorr": 1140,
+   "resultado": -224,
+   "financiamiento": 0,
+   "pa": 0,
+   "notes": []
+  },
+  {
+   "turn": 16,
+   "term": 1,
+   "year": 4,
+   "quarter": 4,
+   "actions": [
+    "Emitir dinero (forzada)"
+   ],
+   "interactions": [
+    "reunion Sindicatos: Reunión con Sindicatos. Otra reunión sin avances: empiezan a desconfiar."
+   ],
+   "events": [
+    "Paro docente por tiempo indeterminado → Reabrir la paritaria docente",
+    "Plan de lucha de las organizaciones sociales → Convocar una mesa con las organizaciones"
+   ],
+   "indicatorsBefore": {
+    "INFL": 63.6,
+    "ACTV": 6.9,
+    "PODA": 32.6,
+    "INVC": 10.8,
+    "SOLV": 39.5,
+    "EXTE": 14,
+    "INFR": 29,
+    "EDUC": 46.5,
+    "PSOC": 42.3,
+    "SEGU": 37.1,
+    "INST": 47.6,
+    "CONF": 68.2
+   },
+   "indicatorsAfter": {
+    "INFL": 67.3,
+    "ACTV": 7.9,
+    "PODA": 29.2,
+    "INVC": 9.8,
+    "SOLV": 39.3,
+    "EXTE": 12.1,
+    "INFR": 28.2,
+    "EDUC": 46.2,
+    "PSOC": 40.6,
+    "SEGU": 36.4,
+    "INST": 47,
+    "CONF": 71
+   },
+   "causes": [
+    "Inflación +3.7 (Emitir dinero; la falta de dólares)",
+    "Poder adquisitivo -3.4 (la inflación se comió los salarios; el empleo recompuso salarios)",
+    "Conflictividad social +2.8 (Cacerolazo; Piquetes)",
+    "Sector externo y divisas -2.0 (Agro retiene la cosecha; Giro de utilidades y dolarización de carteras)"
+   ],
+   "channels": [
+    "Industria posterga inversiones (INVC -1.5)",
+    "Giro de utilidades y dolarización de carteras (EXTE -2.0)",
+    "Agro retiene la cosecha (EXTE -3.0)",
+    "Sube el riesgo país (SOLV -5.0)",
+    "Sindicatos: medidas de fuerza (CONF +2.4)",
+    "PyMEs: cierres y despidos (ACTV -2.0)",
+    "Cacerolazo (CONF +6.0)",
+    "Cacerolazo (GOB -5.0)",
+    "Clase media dolariza sus ahorros (EXTE -2.0)",
+    "Estudiantes: tomas y marchas (CONF +2.0)",
+    "Paro docente (EDUC -1.0)",
+    "Paro docente (CONF +2.0)",
+    "Fuga de cerebros (CIEN -1.0)",
+    "Piquetes (CONF +2.6)",
+    "Interpelaciones en el Congreso (GOB -3.0)"
+   ],
+   "pendingEffects": 0,
+   "actors": {
+    "industria": {
+     "sat": 5,
+     "rel": 45
+    },
+    "agro": {
+     "sat": 11,
+     "rel": 41
+    },
+    "financiero": {
+     "sat": 14,
+     "rel": 45
+    },
+    "sindicatos": {
+     "sat": 9,
+     "rel": 37
+    },
+    "pymes": {
+     "sat": 5,
+     "rel": 44
+    },
+    "clase_media": {
+     "sat": 20,
+     "rel": null
+    },
+    "sectores_populares": {
+     "sat": 15,
+     "rel": null
+    },
+    "estudiantes": {
+     "sat": 23,
+     "rel": 53
+    },
+    "docentes": {
+     "sat": 24,
+     "rel": 50
+    },
+    "cientificos": {
+     "sat": 32,
+     "rel": 46
+    },
+    "org_sociales": {
+     "sat": 14,
+     "rel": 72
+    },
+    "derechos_cultura": {
+     "sat": 35,
+     "rel": 44
+    },
+    "ambiente": {
+     "sat": 45,
+     "rel": 42
+    },
+    "oficialismo": {
+     "sat": 10,
+     "rel": 75
+    },
+    "aliados": {
+     "sat": 15,
+     "rel": 67
+    },
+    "oposicion": {
+     "sat": 14,
      "rel": 36
     },
     "gobernadores": {
@@ -2213,18 +2224,20 @@
      "rel": 44
     }
    },
-   "apro": 8,
-   "iv": 15.5,
-   "gob": 21.7,
-   "leg": 26.6,
-   "imagen": 28.2,
-   "caja": -168,
+   "apro": 6,
+   "iv": 13.4,
+   "gob": 9.2,
+   "leg": 26.4,
+   "imagen": 25.4,
+   "caja": -155,
    "deuda": 3000,
-   "gastoCorr": 1020,
-   "resultado": -364,
-   "financiamiento": 0,
+   "gastoCorr": 1140,
+   "resultado": -184,
+   "financiamiento": 250,
    "pa": 0,
-   "notes": []
+   "notes": [
+    "Caja negativa: el Tesoro emitió para cubrir el déficit (emisión forzada)."
+   ]
   }
  ]
 }

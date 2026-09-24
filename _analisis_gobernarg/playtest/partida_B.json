@@ -9,7 +9,7 @@
  "successionVotes": null,
  "midtermVotes": [],
  "finalIv": 32.1,
- "minGob": 49.1,
+ "minGob": 48.9,
  "maxInfl": 100,
  "finalCaja": -1146,
  "finalDeuda": 3000,
@@ -721,8 +721,8 @@
     "EDUC": 50.2,
     "PSOC": 55.5,
     "SEGU": 42.9,
-    "INST": 51.7,
-    "CONF": 30
+    "INST": 51.6,
+    "CONF": 30.1
    },
    "causes": [
     "Sector externo y divisas -13.5 (Emitir dinero; Corrida cambiaria)",
@@ -810,7 +810,7 @@
    },
    "apro": 19.9,
    "iv": 32.1,
-   "gob": 49.1,
+   "gob": 48.9,
    "leg": 44,
    "imagen": 53.9,
    "caja": -1146,

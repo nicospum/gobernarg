@@ -6,25 +6,29 @@ Los datos completos están en `PLAYTEST_DATOS.md`: una tabla agregada y la bitá
 
 **Victoria:** ganar la reelección en T16 y que el espacio retenga el gobierno en la sucesión de T32 (IV ≥ 45 %).
 
+**Configuración:** escenario *Herencia pesada* (el del Excel), plataforma del partido según el arquetipo e interna del oficialismo activa. La comparación entre escenarios, con la plataforma desactivada que es el default del juego, está al final y en `ESCENARIOS.md`.
+
 ## Resultado global (30 semillas por estrategia)
 
 | Estrategia | Gana | Reelecto | Votos en la reelección | Cómo termina |
 |---|---|---|---|---|
-| A · Pasivo | 0 % | 0 % | 28,6 | Pierde la elección |
+| A · Pasivo | 0 % | 0 % | 28,1 | Pierde la elección |
 | B · Emisión | 0 % | 0 % | — | Hiperinflación en 6 turnos |
 | C · Deuda | 0 % | 0 % | — | Hiperinflación en ~11 turnos |
-| D · Obra pública | 0 % | 0 % | 27,3 | Pierde la elección |
-| E · Técnico sin reuniones | 20 % | 37 % | 43,6 | Suele perder, pero por poco |
-| F · Hipernegociador | 0 % | 0 % | 31,0 | Pierde la elección |
+| D · Obra pública | 0 % | 0 % | 26,6 | Pierde la elección |
+| E · Técnico sin reuniones | 10 % | 33 % | 43,4 | Suele perder, pero por poco |
+| F · Hipernegociador | 0 % | 0 % | 30,6 | Pierde la elección |
 | G1 · Rígido heterodoxo | 0 % | 0 % | — | Hiperinflación en ~10 turnos |
-| G1b · Heterodoxo coherente | 0 % | 0 % | 19,9 | Pierde la elección (1 de 30 por juicio político) |
-| G2 · Rígido ortodoxo | 0 % | 0 % | 23,3 | Juicio político (20 de 30) |
-| G2b · Ortodoxo coherente | 27 % | 57 % | 45,7 | Gana o pierde por poco |
-| H · Adaptable | 100 % | 100 % | 69,8 | Gana siempre |
+| G1b · Heterodoxo coherente | 0 % | 0 % | 19,7 | Pierde la elección (5 de 30 por juicio político) |
+| G2 · Rígido ortodoxo | 0 % | 0 % | 24,4 | Juicio político (29 de 30) |
+| G2b · Ortodoxo coherente | 23 % | 57 % | 45,6 | Gana o pierde por poco (2 de 30 por juicio político) |
+| H · Adaptable | 100 % | 100 % | 67,5 | Gana siempre |
 
 **Lectura general.** El motor castiga los atajos (emitir, endeudarse, repetir recetas) y premia leer el contexto. La causalidad es visible: cada derrota se explica por una cadena de indicadores, actores y canales. Hay dos alertas de balance: el jugador adaptable gana con demasiada holgura, y existe una asimetría ideológica (ver Conclusiones).
 
 **Sensibilidad al azar.** Los eventos aleatorios cambian los resultados de las estrategias que quedan cerca del umbral del 45 %. En una corrida anterior con otra secuencia aleatoria (antes de que los ids de las notificaciones dejaran de consumir `Math.random`), E ganaba 13 % / 23 % reelecto y G2b 40 % / 50 %. Las demás estrategias no cambiaron de categoría. Las tasas de E y G2b hay que leerlas con ±10 puntos. Las conclusiones cualitativas son estables.
+
+**Efecto de la interna del oficialismo.** Frente a la corrida anterior, sin interna, las estrategias impopulares caen más por juicio político (G2 pasa de 20 a 29 de 30; G1b de 1 a 5), porque un partido enojado resta gobernabilidad. Las estrategias populares no cambian de categoría.
 
 ---
 
@@ -37,7 +41,7 @@ Los datos completos están en `PLAYTEST_DATOS.md`: una tabla agregada y la bitá
 - En T11 se rompe el bloque oficialista (las bancas bajan de 40 a 31).
 - En T12 y T15 hay emisiones forzadas.
 
-La aprobación baja de 34 a 17 y pierde en T16 con 27,7 %.
+La aprobación baja de 34 a 17 y pierde en T16 con 27,4 %.
 **Veredicto:** ✅ correcto. No hacer nada no gana. El deterioro llega por el desgaste acumulado y por los actores, no por un castigo arbitrario.
 
 ## B · Abusa de la emisión
@@ -66,20 +70,19 @@ La deuda final es de ~4.900.
 **Qué pasa:** las obras grandes cuestan entre $400M y $600M y exigen un estudio vigente del turno anterior. El bot tiene una guarda fiscal, así que ejecuta pocas obras y deja muchos turnos vacíos esperando caja. En la semilla 1:
 - Desde T8 presionan los sindicatos.
 - En T10 se rompe el bloque oficialista.
-- La aprobación cae a 13 y pierde con 25,8 %.
+- La aprobación cae a 13 y pierde con 25,5 %.
 
 En promedio firma 2 acuerdos con gobernadores por partida e incumple 1,8.
 **Veredicto:** ⚠️ Parcial. El motor se comporta bien: las obras rinden tarde y cuestan caro. Pero este bot es una prueba débil del camino "obra pública", porque la caja lo frena. La conclusión útil es que la obra pública no se sostiene sola sin financiamiento previo. Conviene que un jugador humano pruebe D combinada con recaudación o deuda.
 
 ## E · Técnico que ignora a los grupos
 **Qué hace:** toma buenas decisiones técnicas (tasas con inflación alta, recaudación, crédito, educación, ciencia, prevención) y no se reúne nunca con nadie.
-**Qué pasa (semilla 1, gana):**
+**Qué pasa (semilla 1, pierde por poco):**
 - La inflación baja de 58 a 35 y los mercados responden: baja el riesgo país.
-- En T8 aprovecha una oportunidad de coalición (las bancas suben de 41 a 53).
-- Llega a T16 con 42 % de intención de voto y gana la reelección con 45,7 % gracias a la incumbencia.
-- En el segundo mandato la gestión acumulada rinde: la aprobación llega a 62 y la sucesión se gana con 58 %.
+- En T8 acepta una oportunidad de coalición: las bancas suben de 41 a 53, pero se abre la interna en su partido.
+- Llega a T16 con 41 % de intención de voto y pierde la reelección con 44,6 %, a menos de medio punto del umbral, aun con la incumbencia.
 
-En el agregado, lo típico es que llegue con 40–44 % y pierda. Sin reuniones, la relación con los actores deriva, la oposición interpela y los sindicatos presionan. Gana el 20 % de las partidas y es reelecto en el 37 %.
+En el agregado, lo típico es que llegue con 40–44 % y pierda. Sin reuniones, la relación con los actores deriva, la oposición interpela y los sindicatos presionan. Gana el 10 % de las partidas y es reelecto en el 33 %.
 **Veredicto:** ✅ correcto. Gestionar bien sin hacer política queda al borde del umbral. La diferencia con H, que sí se reúne, mide el valor de la capa política.
 
 ## F · Hipernegociador
@@ -105,19 +108,20 @@ En el agregado, lo típico es que llegue con 40–44 % y pierda. Sin reuniones, 
 **Qué pasa (semilla 1):**
 - Hasta T4 funciona: aprobación 52.
 - Tras el cepo (T4) y las retenciones se activan los canales del agro (retiene la cosecha) y de la industria (posterga inversiones). Después se suma el giro de utilidades y la dolarización.
-- El sector externo queda en restricción (EXTE < 35), así que R07 empuja la inflación hacia arriba y la actividad hacia abajo. Sin divisas no hay recuperación: paro agrario (T12), plan de lucha, paro general, corrida y cacerolazo.
-- Termina con 8 de aprobación, gobernabilidad cerca de 21 e intención de voto de 19 %.
+- El sector externo queda en restricción (EXTE < 35), así que R07 empuja la inflación hacia arriba y la actividad hacia abajo. Sin divisas no hay recuperación: paro agrario (T12), corrida, paro general, cacerolazo y paro docente.
+- Termina con 6 de aprobación, gobernabilidad 9 e intención de voto de 13 %: pierde la elección con 16,9 %.
 
-**Veredicto:** ⚠️ **Asimetría a revisar.** El programa coherente no gana nunca, mientras su espejo ortodoxo (G2b) gana el 27 % y es reelecto en el 57 %. El Excel modela bien la restricción externa, pero la caja de herramientas heterodoxa no tiene cómo generar divisas: no hay acción de "administración del comercio" ni "acuerdo con el agro", y la liquidación depende de la relación con el agro, que estas medidas deterioran. Es una decisión de diseño, no un bug.
+**Veredicto:** ⚠️ **Asimetría a revisar.** El programa coherente no gana nunca, mientras su espejo ortodoxo (G2b) gana el 23 % y es reelecto en el 57 %. El Excel modela bien la restricción externa, pero la caja de herramientas heterodoxa no tiene cómo generar divisas: no hay acción de "administración del comercio" ni "acuerdo con el agro", y la liquidación depende de la relación con el agro, que estas medidas deterioran. Es una decisión de diseño, no un bug.
 
 ## G2 · Rígido ortodoxo
 **Qué hace:** repite todo el mandato ajuste, tarifas, suba de tasas, baja de impuestos, reforma laboral y DNU.
 **Qué pasa (semilla 1):**
 - La inflación baja mucho (de 58 a 21) y los mercados responden.
 - El ajuste repetido y el DNU cada dos turnos encienden la calle: medidas de fuerza, piquetes, tres paros generales, paro docente, plan de lucha y cacerolazo. En T9 se rompe el bloque oficialista.
-- La gobernabilidad baja de 50 a 10. En T16 la justicia suspende el DNU por abuso y cae por juicio político.
+- Con la aprobación por debajo de 30, su propio partido le abre una interna que resta gobernabilidad.
+- La gobernabilidad baja de 50 a 14 y cae por juicio político en T14.
 
-En el agregado, termina en juicio político en 20 de 30 partidas.
+En el agregado, termina en juicio político en 29 de 30 partidas.
 **Veredicto:** ✅ correcto. Bajar la inflación no alcanza si se rompe la gobernabilidad.
 
 ## G2b · Ortodoxo coherente
@@ -125,22 +129,47 @@ En el agregado, termina en juicio político en 20 de 30 partidas.
 **Qué pasa (semilla 1, gana):**
 - El costo social inicial es alto: aprobación 28 en T2–T3.
 - Desde T6 los canales positivos ("mercados abiertos: baja el riesgo país", "liquidación fluida de la cosecha" y, desde T16, "industria anuncia inversiones") sostienen la recuperación.
-- La inflación baja a 18 y gana la reelección con 50,4 %.
-- En el segundo mandato la aprobación llega a 75 y gana la sucesión con 67 %.
+- La inflación baja a 18 y gana la reelección con 50,8 %.
+- En el segundo mandato la recuperación se consolida y gana la sucesión con 67,8 %.
 
-En el agregado es reelecto en el 57 % y gana la carrera en el 27 %.
+En el agregado es reelecto en el 57 % y gana la carrera en el 23 %.
 **Veredicto:** ✅ en sí mismo. ⚠️ Comparado con G1b, muestra la asimetría descrita arriba.
 
 ## H · Adaptable
 **Qué hace:** se reúne con los actores más tensos, atiende sus pedidos cuando convienen, ataca los indicadores peor ubicados, alterna herramientas y cuida la caja.
 **Qué pasa (semilla 1):**
 - Los primeros turnos son duros: la aprobación baja a 30 en T3.
-- Desde T5 combina política social focalizada, ajuste espaciado y tasas. La inflación baja de 55 a 40 y la aprobación sube a 64 en T13.
-- Tiene una emisión forzada en T14, pero nada lo desestabiliza.
-- Gana la reelección con 61,5 % y la sucesión con 77,8 %, con una aprobación final de 89.
+- Desde T5 combina política social focalizada, ajuste espaciado y tasas. La inflación baja de 55 a 40 y la aprobación sube a 60 en T12.
+- En T16 acepta una coalición, pero con la aprobación alta la interna se ordena sola.
+- Gana la reelección con 64,7 % y la sucesión con 72,4 %.
 
 Gana 30 de 30 partidas.
 **Veredicto:** ⚠️ **Probablemente demasiado fácil.** La curva logística de APRO es empinada: cuando los actores con peso electoral pasan de "divididos" a "conformes", la aprobación se dispara. Un humano atento puede replicar lo que hace H.
+
+---
+
+## Escenarios (plataforma desactivada, 20 semillas por celda)
+
+Cada celda: gana la carrera / reelecto · votos promedio en la reelección · caídas antes de tiempo. Datos en `ESCENARIOS.md`.
+
+| Escenario | A · Pasivo | B · Emisión | E · Técnico | G2b · Ortodoxo coherente | H · Adaptable |
+|---|---|---|---|---|---|
+| País en calma (Exploración) | 60 % / 100 % · 58 | 0 % · 20 caídas | 100 % / 100 % · 67 | 100 % / 100 % · 74 | 100 % / 100 % · 85 |
+| Herencia pesada (Normal) | 0 % / 0 % · 27 | 0 % · 20 caídas | 10 % / 35 % · 44 | 15 % / 30 % · 43 | 100 % / 100 % · 68 |
+| Viento de cola (Normal) | 0 % / 5 % · 37 | 0 % · 20 caídas | 55 % / 100 % · 49 | 90 % / 95 % · 50 | 100 % / 100 % · 73 |
+| Corralito (Difícil) | 0 % / 0 % · 26 | 0 % · 20 caídas | 0 % / 0 % · 30 | 0 % / 0 % · 23 | 80 % / 100 % · 61 |
+| País en llamas (Muy difícil) | 0 % / 0 % · 21 | 0 % · 20 caídas | 0 % / 0 % · 34 | 0 % / 0 % · 24 | 25 % / 45 % · 44 |
+
+**Lectura.**
+- El orden de dificultad es el buscado: Calma < Viento de cola < Herencia pesada < Corralito < País en llamas.
+- En todos los escenarios, emitir sin freno termina en hiperinflación: la lección central del motor se mantiene incluso en el modo tranquilo.
+- En País en calma se puede explorar sin miedo: hasta el jugador pasivo es reelecto. Es a propósito.
+- Corralito y País en llamas sólo se ganan leyendo el contexto (bot H).
+- Calibración de las crisis:
+  - En default no se pagan intereses.
+  - Hay una ley de emergencia que da +12 de gobernabilidad durante 6 turnos.
+  - Hay un rebote de actividad por capacidad ociosa.
+  - Sin esto, la actividad caía sin piso y nadie sobrevivía.
 
 ---
 

@@ -10,10 +10,10 @@
  "midtermVotes": [
   28.5
  ],
- "finalIv": 16.1,
- "minGob": 30.7,
+ "finalIv": 16,
+ "minGob": 30,
  "maxInfl": 100,
- "finalCaja": -456,
+ "finalCaja": -457,
  "finalDeuda": 3000,
  "meetings": 10,
  "agreementsSigned": 0,
@@ -1013,7 +1013,7 @@
     "EDUC": 48.6,
     "PSOC": 51.6,
     "SEGU": 42,
-    "INST": 51.6,
+    "INST": 51.5,
     "CONF": 33.2
    },
    "causes": [
@@ -1104,7 +1104,7 @@
    },
    "apro": 18.4,
    "iv": 26.2,
-   "gob": 45.9,
+   "gob": 45.6,
    "leg": 40.3,
    "imagen": 39.5,
    "caja": -133,
@@ -1142,7 +1142,7 @@
     "EDUC": 48.6,
     "PSOC": 51.6,
     "SEGU": 42,
-    "INST": 51.6,
+    "INST": 51.5,
     "CONF": 33.2
    },
    "indicatorsAfter": {
@@ -1156,13 +1156,13 @@
     "EDUC": 48.3,
     "PSOC": 48.5,
     "SEGU": 41.6,
-    "INST": 51.5,
-    "CONF": 45.8
+    "INST": 51.4,
+    "CONF": 45.9
    },
    "causes": [
     "Inflación +10.2 (Emitir dinero (decisión anterior); la falta de dólares)",
     "Poder adquisitivo -8.1 (la inflación se comió los salarios; Suba del salario mínimo (decisión anterior))",
-    "Actividad y empleo -7.5 (la inversión se volvió actividad; PyMEs: cierres y despidos)",
+    "Actividad y empleo -7.6 (la inversión se volvió actividad; PyMEs: cierres y despidos)",
     "Sector externo y divisas -5.5 (Emitir dinero; Agro retiene la cosecha)"
    ],
    "channels": [
@@ -1248,7 +1248,7 @@
    },
    "apro": 11.7,
    "iv": 19.5,
-   "gob": 39.7,
+   "gob": 39.2,
    "leg": 38.3,
    "imagen": 31.7,
    "caja": -390,
@@ -1292,12 +1292,12 @@
     "EDUC": 48.3,
     "PSOC": 48.5,
     "SEGU": 41.6,
-    "INST": 51.5,
-    "CONF": 45.8
+    "INST": 51.4,
+    "CONF": 45.9
    },
    "indicatorsAfter": {
     "INFL": 100,
-    "ACTV": 21.4,
+    "ACTV": 21.3,
     "PODA": 30.8,
     "INVC": 8.3,
     "SOLV": 33.9,
@@ -1306,11 +1306,11 @@
     "EDUC": 48,
     "PSOC": 47.4,
     "SEGU": 41.2,
-    "INST": 51.5,
-    "CONF": 53
+    "INST": 51.3,
+    "CONF": 53.2
    },
    "causes": [
-    "Conflictividad social +5.8 (Subir retenciones a exportaciones; Piquetes)",
+    "Conflictividad social +5.9 (Subir retenciones a exportaciones; Piquetes)",
     "Inversión y crédito -5.2 (Emitir dinero; el clima de inversión)",
     "Presión tributaria +4.0 (Subir retenciones a exportaciones)",
     "Sector externo y divisas -3.8 (Emitir dinero; Agro retiene la cosecha)"
@@ -1400,11 +1400,11 @@
     }
    },
    "apro": 8.5,
-   "iv": 16.1,
-   "gob": 30.7,
+   "iv": 16,
+   "gob": 30,
    "leg": 28.3,
    "imagen": 27.3,
-   "caja": -456,
+   "caja": -457,
    "deuda": 3000,
    "gastoCorr": 1230,
    "resultado": -97,
