@@ -222,6 +222,11 @@ function CalendarPanel({ state }: { state: GameState }) {
 
 // ─── Sección 3: Noticias ──────────────────────────────────────────────
 
+const CATEGORY_LABELS: Record<string, string> = {
+  economy: 'Economía', social: 'Social', political: 'Política', infrastructure: 'Obras',
+  security: 'Seguridad', culture: 'Cultura', system: 'Sistema',
+};
+
 function severityCls(notif: Notification): { border: string; text: string } {
   const importance = notif.importance;
   if (importance === 'critical' || importance === 'high') {
@@ -284,7 +289,7 @@ function NewsPanel({ state }: { state: GameState }) {
                   )}
                   {n.category && (
                     <span className={`inline-block text-[9px] uppercase tracking-wide mt-1 ${sev.text}`}>
-                      {n.category}
+                      {CATEGORY_LABELS[n.category] ?? n.category}
                     </span>
                   )}
                 </div>

@@ -37,6 +37,10 @@ const CATEGORY_LABELS: Record<string, string> = {
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
 
+const SEVERITY_LABELS: Record<GameEvent['severity'], string> = {
+  low: 'baja', medium: 'media', high: 'alta', critical: 'crítica',
+};
+
 export function EventModal({ event, onChoice, onClose }: EventModalProps) {
   const SeverityIcon =
     event.severity === 'critical'
@@ -91,7 +95,7 @@ export function EventModal({ event, onChoice, onClose }: EventModalProps) {
           <CategoryIcon className="w-3.5 h-3.5 flex-shrink-0" />
           <span>{categoryLabel}</span>
           <span className="opacity-50">·</span>
-          <span>severidad {event.severity}</span>
+          <span>severidad {SEVERITY_LABELS[event.severity]}</span>
         </div>
 
         {/* ---------- Choices ---------- */}

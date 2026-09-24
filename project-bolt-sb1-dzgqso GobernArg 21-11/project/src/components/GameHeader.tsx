@@ -151,7 +151,7 @@ export function GameHeader({
         <div className="leading-tight">
           <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Aprobación</div>
           <div className={`font-mono text-[12px] font-bold ${riskColor(popularityRisk)}`}>
-            {Math.round(gameState.popularity)}%
+            {Math.round(gameState.causal?.political.apro ?? gameState.popularity)}%
           </div>
         </div>
         {popTrend !== null && (
@@ -175,7 +175,7 @@ export function GameHeader({
         <div className="leading-tight">
           <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Gobernab.</div>
           <div className={`font-mono text-[12px] font-bold ${riskColor(stabilityRisk)}`}>
-            {Math.round(gameState.stability)}
+            {Math.round(gameState.causal?.political.gob ?? gameState.stability)}
           </div>
         </div>
       </div>
