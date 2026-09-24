@@ -2,6 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .government-game {
+    --background: 212 52% 13%;
+    --card: 211 46% 19%;
+    --border: 208 33% 32%;
+    --muted-foreground: 211 24% 75%;
+    --primary: 203 65% 47%;
+    --accent: 42 78% 65%;
+    background-image: radial-gradient(ellipse at top right, hsl(204 55% 25% / .55), transparent 55%);
+  }
+  .causal-primary {
+    @apply rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/80 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent;
+  }
+  .causal-secondary {
+    @apply rounded-lg border border-border bg-white/5 px-3 py-2 text-xs font-medium transition-colors hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent;
+  }
+  .causal-select {
+    @apply block w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary;
+  }
+}
+
 @layer base {
   :root {
     --background: 220 15% 8%;

@@ -124,6 +124,7 @@ describe('applyEventChoice — efectos diferidos', () => {
       severity: 'medium',
       title: 'Evento con efecto diferido',
       description: 'Prueba',
+      conditions: {},
       effects: { immediate: [] },
       choices: [
         {

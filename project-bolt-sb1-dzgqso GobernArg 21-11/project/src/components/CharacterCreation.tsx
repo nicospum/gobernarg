@@ -6,9 +6,12 @@ import { THUMBNAIL_ARCHETYPES } from '../utils/iconThumbnails';
 import { ARCHETYPE_PASSIVES } from '../data/specialAbilities';
 import { STARTING_POSITION } from '../data/careerRules';
 import { InfoTooltip } from './InfoTooltip';
+import { DIFFICULTIES, PROFILES } from '../causal/campaignCatalog';
+import type { Difficulty } from '../causal/campaignTypes';
 
 interface CharacterCreationProps {
-  onComplete: (position: Position, archetype: Archetype, governorName: string, avatar: string) => void;
+  onComplete: (position: Position, archetype: Archetype, governorName: string, avatar: string, difficulty?: Difficulty) => void;
+  causalMode?: boolean;
 }
 
 const AVATARS = [
@@ -29,7 +32,8 @@ const AVATARS = [
   { id: 'podium-official', src: IMAGES.characters.podiumOfficial, label: 'Presidente' },
 ];
 
-export function CharacterCreation({ onComplete }: CharacterCreationProps) {
+export function CharacterCreation({ onComplete, causalMode = false }: CharacterCreationProps) {
+  const [difficulty, setDifficulty] = useState<Difficulty>('normal');
   // MVP presidente-only: el cargo inicial vive en careerRules (STARTING_POSITION)
   // para que el futuro modo campaña tenga un único punto de cambio.
   const position: Position = STARTING_POSITION;
@@ -43,7 +47,7 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
       setShowNameError(true);
       return;
     }
-    onComplete(position, archetype, governorName, avatar);
+    onComplete(position, archetype, governorName, avatar, difficulty);
   };
 
   const archetypes: { id: Archetype; title: string; bonus: string; description: string }[] = [
@@ -74,6 +78,8 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
             <input
               type="text"
               value={governorName}
+              maxLength={120}
+              aria-label="Nombre del gobernante"
               onChange={(e) => {
                 setGovernorName(e.target.value);
                 setShowNameError(false);
@@ -87,9 +93,10 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
           </div>
 
           <h2 className="font-display text-xl font-semibold mb-4 uppercase tracking-wide">Elegí tu Perfil</h2>
+          {causalMode && <label className="block mb-6 text-sm">Dificultad de la gestión<select aria-label="Dificultad de la gestión" value={difficulty} onChange={event => setDifficulty(event.target.value as Difficulty)} className="causal-select mt-2 max-w-sm">{Object.entries(DIFFICULTIES).map(([id, item]) => <option key={id} value={id}>{item.name}</option>)}</select><span className="block text-xs text-muted-foreground mt-2">Modifica recaudación, frecuencia de eventos y exigencia electoral. Dos mandatos como máximo.</span></label>}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
             {archetypes.map((arch) => {
-              const passives = ARCHETYPE_PASSIVES[arch.id] ?? [];
+              const passives = causalMode ? [] : ARCHETYPE_PASSIVES[arch.id] ?? [];
               return (
                 <InfoTooltip
                   key={arch.id}
@@ -129,7 +136,7 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
                       className="w-16 h-16 rounded-full object-cover bg-white/20 p-1 mb-3"
                     />
                     <h3 className="font-bold">{arch.title}</h3>
-                    <p className="text-xs opacity-75 mt-1">{arch.bonus}</p>
+                    <p className="text-xs opacity-75 mt-1">{causalMode ? PROFILES[arch.id]?.description : arch.bonus}</p>
                     <p className="text-xs opacity-90 mt-2">{arch.description}</p>
                   </button>
                 </InfoTooltip>
