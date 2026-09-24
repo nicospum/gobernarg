@@ -159,6 +159,10 @@ export interface PoliticalState {
   /** Imagen del presidente/candidato (componente OTROS, no lee indicadores). */
   imagen: number;
   umbralLey: number;
+  /** Interna del oficialismo 0–100 (ver interna.ts). */
+  interna: number;
+  /** Ampliaciones de la coalición vigentes (alimentan la interna cada turno). */
+  coalicion: number;
 }
 
 export interface FiscalBreakdown {
@@ -225,6 +229,8 @@ export interface TurnRecord {
   relationEvents: string[];
   events: string[];
   notes: string[];
+  /** Motivos del cambio de la interna del oficialismo en este cierre. */
+  internaReasons?: string[];
 }
 
 export interface CausalState {
@@ -254,6 +260,8 @@ export interface CausalState {
   modifiers: GlobalModifier[];
   political: PoliticalState;
   platformId: string;
+  /** Escenario de partida (data/causal/scenarios.ts). */
+  scenarioId: string;
   agreements: Agreement[];
   /** Credibilidad para negociar: baja con cada incumplimiento (−5% por vez). */
   credibility: number;

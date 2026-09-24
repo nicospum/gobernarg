@@ -37,6 +37,10 @@ const CATEGORY_LABELS: Record<string, string> = {
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
 
+const SEVERITY_LABELS: Record<GameEvent['severity'], string> = {
+  low: 'baja', medium: 'media', high: 'alta', critical: 'crítica',
+};
+
 export function EventModal({ event, onChoice, onClose }: EventModalProps) {
   const SeverityIcon =
     event.severity === 'critical'
@@ -88,10 +92,10 @@ export function EventModal({ event, onChoice, onClose }: EventModalProps) {
         <div
           className={`px-5 py-2 border-t border-b text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 ${severityClasses[event.severity]}`}
         >
-          <CategoryIcon className="w-4 h-4 flex-shrink-0" />
+          <CategoryIcon className="w-3.5 h-3.5 flex-shrink-0" />
           <span>EVENTO {categoryLabel.toUpperCase()}</span>
           <span className="opacity-40">·</span>
-          <span>SEVERIDAD {event.severity.toUpperCase()}</span>
+          <span>SEVERIDAD {(SEVERITY_LABELS[event.severity] ?? event.severity).toUpperCase()}</span>
         </div>
 
         {/* ---------- Choices ---------- */}

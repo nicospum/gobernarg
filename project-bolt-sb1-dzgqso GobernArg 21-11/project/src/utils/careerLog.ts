@@ -107,7 +107,7 @@ export function generateLegacyStats(gameState: GameState): { label: string; valu
     { label: 'Mandatos perdidos', value: `${mandatesLost}` },
     { label: 'Obras completadas', value: `${totalProjects}` },
     { label: 'Crisis superadas', value: `${totalCrises}` },
-    { label: 'Popularidad final', value: `${Math.round(popularity)}%` }
+    { label: 'Aprobación final', value: `${Math.round(popularity)}%` }
   ];
 }
 

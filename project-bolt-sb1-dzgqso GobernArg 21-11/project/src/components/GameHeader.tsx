@@ -15,6 +15,7 @@ import { GameState } from '../types/game';
 import { IMAGES } from '../utils/imageAssets';
 import { getValueRisk, riskColor } from '@/lib/risk';
 import { fmtBudget } from '@/lib/format';
+import { getScenario } from '@/data/causal';
 
 interface GameHeaderProps {
   gameState: GameState;
@@ -102,8 +103,28 @@ export function GameHeader({
             {absoluteTurn}<span className="text-white/40 font-normal">/{MAX_TURNS}</span>
           </div>
         </div>
+<<<<<<< HEAD
         <div className="hidden lg:block text-[10px] font-mono text-white/50 bg-white/4 px-2 py-0.5 rounded border border-white/6 ml-1">
           Año {gameState.year} · T{gameState.turn}
+=======
+        <div className="w-px h-6 bg-border" />
+        <div className="leading-tight">
+          <div className="text-[9px] text-muted-foreground uppercase tracking-widest">Trimestre</div>
+          <div className="font-mono text-[14px] font-bold text-accent leading-none">
+            {gameState.turn}
+          </div>
+        </div>
+        <div className="w-16 hidden md:block">
+          <div className="h-1 w-full overflow-hidden rounded-full bg-white/10">
+            <div
+              className="h-full rounded-full bg-primary transition-all duration-300"
+              style={{ width: `${Math.min(100, (absoluteTurn / MAX_TURNS) * 100)}%` }}
+            />
+          </div>
+          <div className="text-[9px] text-muted-foreground mt-0.5" title={`Escenario: ${getScenario(gameState.causal?.scenarioId).name}`}>
+            Mandato {gameState.term} · Turno {absoluteTurn}/{MAX_TURNS}
+          </div>
+>>>>>>> origin/motor-causal
         </div>
       </div>
 
@@ -139,7 +160,7 @@ export function GameHeader({
         <div className="leading-tight">
           <div className="text-[9px] text-white/40 uppercase tracking-widest font-semibold">Popular.</div>
           <div className={`font-mono text-[12px] font-bold ${riskColor(popularityRisk)}`}>
-            {Math.round(gameState.popularity)}%
+            {Math.round(gameState.causal?.political.apro ?? gameState.popularity)}%
           </div>
         </div>
         {popTrend !== null && (
@@ -162,7 +183,7 @@ export function GameHeader({
         <div className="leading-tight">
           <div className="text-[9px] text-white/40 uppercase tracking-widest font-semibold">Estabil.</div>
           <div className={`font-mono text-[12px] font-bold ${riskColor(stabilityRisk)}`}>
-            {Math.round(gameState.stability)}
+            {Math.round(gameState.causal?.political.gob ?? gameState.stability)}
           </div>
         </div>
       </div>

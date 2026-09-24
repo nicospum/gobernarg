@@ -8,10 +8,17 @@
  "reelectionVotes": null,
  "successionVotes": null,
  "midtermVotes": [],
+<<<<<<< HEAD
  "finalIv": 31.6,
  "minGob": 49.4,
  "maxInfl": 98,
  "finalCaja": -1288,
+=======
+ "finalIv": 32.1,
+ "minGob": 48.9,
+ "maxInfl": 100,
+ "finalCaja": -1146,
+>>>>>>> origin/motor-causal
  "finalDeuda": 3000,
  "meetings": 0,
  "agreementsSigned": 0,
@@ -163,7 +170,13 @@
     "Bono a jubilados"
    ],
    "interactions": [],
+<<<<<<< HEAD
    "events": [],
+=======
+   "events": [
+    "Inundación → Ayuda inmediata"
+   ],
+>>>>>>> origin/motor-causal
    "indicatorsBefore": {
     "INFL": 57.4,
     "ACTV": 49.1,
@@ -185,9 +198,15 @@
     "INVC": 39.9,
     "SOLV": 39.7,
     "EXTE": 38.4,
+<<<<<<< HEAD
     "INFR": 43.4,
     "EDUC": 50.4,
     "PSOC": 51.7,
+=======
+    "INFR": 40.4,
+    "EDUC": 50.4,
+    "PSOC": 52.7,
+>>>>>>> origin/motor-causal
     "SEGU": 42.2,
     "INST": 51.9,
     "CONF": 33.9
@@ -267,6 +286,7 @@
     },
     "gobernadores": {
      "sat": 47,
+<<<<<<< HEAD
      "rel": 50
     }
    },
@@ -276,6 +296,17 @@
    "leg": 47,
    "imagen": 49.4,
    "caja": 795,
+=======
+     "rel": 54
+    }
+   },
+   "apro": 47.1,
+   "iv": 50.3,
+   "gob": 53,
+   "leg": 47,
+   "imagen": 52.4,
+   "caja": 445,
+>>>>>>> origin/motor-causal
    "deuda": 3000,
    "gastoCorr": 1170,
    "resultado": -435,
@@ -300,15 +331,22 @@
     "INVC": 39.9,
     "SOLV": 39.7,
     "EXTE": 38.4,
+<<<<<<< HEAD
     "INFR": 43.4,
     "EDUC": 50.4,
     "PSOC": 51.7,
+=======
+    "INFR": 40.4,
+    "EDUC": 50.4,
+    "PSOC": 52.7,
+>>>>>>> origin/motor-causal
     "SEGU": 42.2,
     "INST": 51.9,
     "CONF": 33.9
    },
    "indicatorsAfter": {
     "INFL": 62.2,
+<<<<<<< HEAD
     "ACTV": 48,
     "PODA": 46,
     "INVC": 39.7,
@@ -318,13 +356,30 @@
     "EDUC": 50.1,
     "PSOC": 51.5,
     "SEGU": 42.3,
+=======
+    "ACTV": 47.9,
+    "PODA": 46,
+    "INVC": 39.7,
+    "SOLV": 33.1,
+    "EXTE": 37.6,
+    "INFR": 38.6,
+    "EDUC": 50.1,
+    "PSOC": 52.4,
+    "SEGU": 42.4,
+>>>>>>> origin/motor-causal
     "INST": 51.8,
     "CONF": 33
    },
    "causes": [
+<<<<<<< HEAD
     "Solvencia fiscal -4.3 (las cuentas públicas)",
     "Inflación +3.2 (Emitir dinero; expectativas y fundamentos de la inflación)",
     "Actividad y empleo -3.0 (la inversión se volvió actividad)",
+=======
+    "Solvencia fiscal -6.6 (las cuentas públicas)",
+    "Inflación +3.2 (Emitir dinero; expectativas y fundamentos de la inflación)",
+    "Actividad y empleo -3.1 (la inversión se volvió actividad; la infraestructura ayudó a producir)",
+>>>>>>> origin/motor-causal
     "Infraestructura -1.8 (Congelar tarifas (subsidios a servicios) (decisión anterior); desgaste sin mantenimiento)"
    ],
    "channels": [],
@@ -335,6 +390,7 @@
      "rel": 50
     },
     "agro": {
+<<<<<<< HEAD
      "sat": 38,
      "rel": 45
     },
@@ -344,6 +400,17 @@
     },
     "sindicatos": {
      "sat": 51,
+=======
+     "sat": 37,
+     "rel": 45
+    },
+    "financiero": {
+     "sat": 36,
+     "rel": 50
+    },
+    "sindicatos": {
+     "sat": 52,
+>>>>>>> origin/motor-causal
      "rel": 50
     },
     "pymes": {
@@ -371,7 +438,11 @@
      "rel": 50
     },
     "org_sociales": {
+<<<<<<< HEAD
      "sat": 52,
+=======
+     "sat": 53,
+>>>>>>> origin/motor-causal
      "rel": 53
     },
     "derechos_cultura": {
@@ -387,7 +458,11 @@
      "rel": 75
     },
     "aliados": {
+<<<<<<< HEAD
      "sat": 43,
+=======
+     "sat": 42,
+>>>>>>> origin/motor-causal
      "rel": 60
     },
     "oposicion": {
@@ -395,6 +470,7 @@
      "rel": 40
     },
     "gobernadores": {
+<<<<<<< HEAD
      "sat": 47,
      "rel": 50
     }
@@ -408,6 +484,21 @@
    "deuda": 3000,
    "gastoCorr": 1170,
    "resultado": -211,
+=======
+     "sat": 45,
+     "rel": 54
+    }
+   },
+   "apro": 45.9,
+   "iv": 49.4,
+   "gob": 53.2,
+   "leg": 47,
+   "imagen": 52,
+   "caja": 484,
+   "deuda": 3000,
+   "gastoCorr": 1170,
+   "resultado": -561,
+>>>>>>> origin/motor-causal
    "financiamiento": 250,
    "pa": 1,
    "notes": []
@@ -420,6 +511,7 @@
    "actions": [
     "Emitir dinero",
     "Aumento salarial a estatales",
+<<<<<<< HEAD
     "Ampliación de transferencias sociales",
     "Congelar tarifas (subsidios a servicios)"
    ],
@@ -438,10 +530,28 @@
     "EDUC": 50.1,
     "PSOC": 51.5,
     "SEGU": 42.3,
+=======
+    "Ampliación de transferencias sociales"
+   ],
+   "interactions": [],
+   "events": [],
+   "indicatorsBefore": {
+    "INFL": 62.2,
+    "ACTV": 47.9,
+    "PODA": 46,
+    "INVC": 39.7,
+    "SOLV": 33.1,
+    "EXTE": 37.6,
+    "INFR": 38.6,
+    "EDUC": 50.1,
+    "PSOC": 52.4,
+    "SEGU": 42.4,
+>>>>>>> origin/motor-causal
     "INST": 51.8,
     "CONF": 33
    },
    "indicatorsAfter": {
+<<<<<<< HEAD
     "INFL": 70.1,
     "ACTV": 46.6,
     "PODA": 49.6,
@@ -486,6 +596,52 @@
     },
     "clase_media": {
      "sat": 47,
+=======
+    "INFL": 71.9,
+    "ACTV": 48.4,
+    "PODA": 47.5,
+    "INVC": 36,
+    "SOLV": 29.1,
+    "EXTE": 34,
+    "INFR": 36.8,
+    "EDUC": 49.8,
+    "PSOC": 56.1,
+    "SEGU": 42.6,
+    "INST": 51.8,
+    "CONF": 30
+   },
+   "causes": [
+    "Inflación +9.7 (Emitir dinero; Emitir dinero (decisión anterior))",
+    "Solvencia fiscal -3.9 (las cuentas públicas)",
+    "Inversión y crédito -3.7 (Emitir dinero; el clima de inversión)",
+    "Protección social y salud +3.7 (Ampliación de transferencias sociales)"
+   ],
+   "channels": [],
+   "pendingEffects": 4,
+   "actors": {
+    "industria": {
+     "sat": 40,
+     "rel": 50
+    },
+    "agro": {
+     "sat": 32,
+     "rel": 44
+    },
+    "financiero": {
+     "sat": 28,
+     "rel": 50
+    },
+    "sindicatos": {
+     "sat": 50,
+     "rel": 49
+    },
+    "pymes": {
+     "sat": 42,
+     "rel": 50
+    },
+    "clase_media": {
+     "sat": 46,
+>>>>>>> origin/motor-causal
      "rel": null
     },
     "sectores_populares": {
@@ -497,11 +653,19 @@
      "rel": 49
     },
     "docentes": {
+<<<<<<< HEAD
      "sat": 50,
      "rel": 52
     },
     "cientificos": {
      "sat": 48,
+=======
+     "sat": 49,
+     "rel": 52
+    },
+    "cientificos": {
+     "sat": 47,
+>>>>>>> origin/motor-causal
      "rel": 50
     },
     "org_sociales": {
@@ -517,11 +681,19 @@
      "rel": 49
     },
     "oficialismo": {
+<<<<<<< HEAD
      "sat": 50,
      "rel": 75
     },
     "aliados": {
      "sat": 42,
+=======
+     "sat": 48,
+     "rel": 75
+    },
+    "aliados": {
+     "sat": 41,
+>>>>>>> origin/motor-causal
      "rel": 60
     },
     "oposicion": {
@@ -529,6 +701,7 @@
      "rel": 39
     },
     "gobernadores": {
+<<<<<<< HEAD
      "sat": 47,
      "rel": 50
     }
@@ -544,6 +717,23 @@
    "resultado": -1157,
    "financiamiento": 250,
    "pa": 4,
+=======
+     "sat": 44,
+     "rel": 54
+    }
+   },
+   "apro": 42.3,
+   "iv": 46.9,
+   "gob": 53.5,
+   "leg": 47,
+   "imagen": 51.6,
+   "caja": -133,
+   "deuda": 3000,
+   "gastoCorr": 1440,
+   "resultado": -866,
+   "financiamiento": 250,
+   "pa": 3,
+>>>>>>> origin/motor-causal
    "notes": []
   },
   {
@@ -560,6 +750,7 @@
     "Corrida cambiaria → Suba de tasas de emergencia"
    ],
    "indicatorsBefore": {
+<<<<<<< HEAD
     "INFL": 70.1,
     "ACTV": 46.6,
     "PODA": 49.6,
@@ -613,6 +804,62 @@
     },
     "sindicatos": {
      "sat": 42,
+=======
+    "INFL": 71.9,
+    "ACTV": 48.4,
+    "PODA": 47.5,
+    "INVC": 36,
+    "SOLV": 29.1,
+    "EXTE": 34,
+    "INFR": 36.8,
+    "EDUC": 49.8,
+    "PSOC": 56.1,
+    "SEGU": 42.6,
+    "INST": 51.8,
+    "CONF": 30
+   },
+   "indicatorsAfter": {
+    "INFL": 94.7,
+    "ACTV": 47.6,
+    "PODA": 39.2,
+    "INVC": 23.5,
+    "SOLV": 21,
+    "EXTE": 27.2,
+    "INFR": 35,
+    "EDUC": 50.5,
+    "PSOC": 54.8,
+    "SEGU": 42.8,
+    "INST": 51.7,
+    "CONF": 30
+   },
+   "causes": [
+    "Inflación +22.8 (Emitir dinero (decisión anterior); Emitir dinero)",
+    "Sector externo y divisas -10.8 (Emitir dinero; Agro retiene la cosecha)",
+    "Inversión y crédito -9.5 (Emitir dinero; el clima de inversión)",
+    "Poder adquisitivo -8.3 (la inflación se comió los salarios)"
+   ],
+   "channels": [
+    "Industria posterga inversiones (INVC -1.5)",
+    "Agro retiene la cosecha (EXTE -3.0)",
+    "Sube el riesgo país (SOLV -5.0)"
+   ],
+   "pendingEffects": 4,
+   "actors": {
+    "industria": {
+     "sat": 31,
+     "rel": 49
+    },
+    "agro": {
+     "sat": 24,
+     "rel": 44
+    },
+    "financiero": {
+     "sat": 19,
+     "rel": 49
+    },
+    "sindicatos": {
+     "sat": 41,
+>>>>>>> origin/motor-causal
      "rel": 49
     },
     "pymes": {
@@ -620,7 +867,11 @@
      "rel": 49
     },
     "clase_media": {
+<<<<<<< HEAD
      "sat": 40,
+=======
+     "sat": 39,
+>>>>>>> origin/motor-causal
      "rel": null
     },
     "sectores_populares": {
@@ -632,11 +883,19 @@
      "rel": 49
     },
     "docentes": {
+<<<<<<< HEAD
      "sat": 43,
      "rel": 52
     },
     "cientificos": {
      "sat": 46,
+=======
+     "sat": 41,
+     "rel": 52
+    },
+    "cientificos": {
+     "sat": 45,
+>>>>>>> origin/motor-causal
      "rel": 49
     },
     "org_sociales": {
@@ -652,11 +911,19 @@
      "rel": 49
     },
     "oficialismo": {
+<<<<<<< HEAD
      "sat": 41,
      "rel": 75
     },
     "aliados": {
      "sat": 37,
+=======
+     "sat": 40,
+     "rel": 75
+    },
+    "aliados": {
+     "sat": 36,
+>>>>>>> origin/motor-causal
      "rel": 59
     },
     "oposicion": {
@@ -664,6 +931,7 @@
      "rel": 38
     },
     "gobernadores": {
+<<<<<<< HEAD
      "sat": 46,
      "rel": 49
     }
@@ -677,6 +945,21 @@
    "deuda": 3000,
    "gastoCorr": 1440,
    "resultado": -1088,
+=======
+     "sat": 42,
+     "rel": 53
+    }
+   },
+   "apro": 29.5,
+   "iv": 38.1,
+   "gob": 51.7,
+   "leg": 46,
+   "imagen": 51.2,
+   "caja": -477,
+   "deuda": 3000,
+   "gastoCorr": 1440,
+   "resultado": -604,
+>>>>>>> origin/motor-causal
    "financiamiento": 260,
    "pa": 1,
    "notes": [
@@ -693,6 +976,7 @@
     "Emitir dinero"
    ],
    "interactions": [],
+<<<<<<< HEAD
    "events": [],
    "indicatorsBefore": {
     "INFL": 93.2,
@@ -727,6 +1011,44 @@
     "Inversión y crédito -8.2 (Emitir dinero; el clima de inversión)",
     "Solvencia fiscal -6.3 (las cuentas públicas; Sube el riesgo país)",
     "Poder adquisitivo -4.9 (la inflación se comió los salarios)"
+=======
+   "events": [
+    "Inundación → Ayuda inmediata"
+   ],
+   "indicatorsBefore": {
+    "INFL": 94.7,
+    "ACTV": 47.6,
+    "PODA": 39.2,
+    "INVC": 23.5,
+    "SOLV": 21,
+    "EXTE": 27.2,
+    "INFR": 35,
+    "EDUC": 50.5,
+    "PSOC": 54.8,
+    "SEGU": 42.8,
+    "INST": 51.7,
+    "CONF": 30
+   },
+   "indicatorsAfter": {
+    "INFL": 100,
+    "ACTV": 44.3,
+    "PODA": 34.2,
+    "INVC": 15.4,
+    "SOLV": 19.3,
+    "EXTE": 13.8,
+    "INFR": 30.2,
+    "EDUC": 50.2,
+    "PSOC": 55.5,
+    "SEGU": 42.9,
+    "INST": 51.6,
+    "CONF": 30.1
+   },
+   "causes": [
+    "Sector externo y divisas -13.5 (Emitir dinero; Corrida cambiaria)",
+    "Inversión y crédito -8.1 (Emitir dinero; el clima de inversión)",
+    "Inflación +5.3 (Emitir dinero (decisión anterior); expectativas y fundamentos de la inflación)",
+    "Poder adquisitivo -5.0 (la inflación se comió los salarios)"
+>>>>>>> origin/motor-causal
    ],
    "channels": [
     "Industria posterga inversiones (INVC -1.5)",
@@ -735,6 +1057,7 @@
     "Corrida cambiaria (INFL +4.0)",
     "Sube el riesgo país (SOLV -5.0)"
    ],
+<<<<<<< HEAD
    "pendingEffects": 5,
    "actors": {
     "industria": {
@@ -779,6 +1102,52 @@
     },
     "org_sociales": {
      "sat": 38,
+=======
+   "pendingEffects": 4,
+   "actors": {
+    "industria": {
+     "sat": 23,
+     "rel": 49
+    },
+    "agro": {
+     "sat": 18,
+     "rel": 43
+    },
+    "financiero": {
+     "sat": 13,
+     "rel": 49
+    },
+    "sindicatos": {
+     "sat": 32,
+     "rel": 48
+    },
+    "pymes": {
+     "sat": 25,
+     "rel": 49
+    },
+    "clase_media": {
+     "sat": 33,
+     "rel": null
+    },
+    "sectores_populares": {
+     "sat": 36,
+     "rel": null
+    },
+    "estudiantes": {
+     "sat": 46,
+     "rel": 48
+    },
+    "docentes": {
+     "sat": 34,
+     "rel": 51
+    },
+    "cientificos": {
+     "sat": 43,
+     "rel": 49
+    },
+    "org_sociales": {
+     "sat": 37,
+>>>>>>> origin/motor-causal
      "rel": 52
     },
     "derechos_cultura": {
@@ -790,6 +1159,7 @@
      "rel": 48
     },
     "oficialismo": {
+<<<<<<< HEAD
      "sat": 30,
      "rel": 74
     },
@@ -815,6 +1185,33 @@
    "deuda": 3000,
    "gastoCorr": 1440,
    "resultado": -646,
+=======
+     "sat": 28,
+     "rel": 74
+    },
+    "aliados": {
+     "sat": 28,
+     "rel": 59
+    },
+    "oposicion": {
+     "sat": 53,
+     "rel": 38
+    },
+    "gobernadores": {
+     "sat": 35,
+     "rel": 57
+    }
+   },
+   "apro": 19.9,
+   "iv": 32.1,
+   "gob": 48.9,
+   "leg": 44,
+   "imagen": 53.9,
+   "caja": -1146,
+   "deuda": 3000,
+   "gastoCorr": 1440,
+   "resultado": -578,
+>>>>>>> origin/motor-causal
    "financiamiento": 260,
    "pa": 1,
    "notes": [

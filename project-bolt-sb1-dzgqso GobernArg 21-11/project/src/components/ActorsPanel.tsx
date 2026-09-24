@@ -36,7 +36,7 @@ import {
 import { moodFor } from '@/engine/causalBridge';
 import type { ActorInteraction } from '@/engine/gameEngine';
 import { concernSentence, relationBand, satisfactionBand, toneClass } from '@/lib/causalText';
-import { getValueRisk, riskColor, riskLabel, type Risk } from '@/lib/risk';
+import { riskColor, riskLabel, type Risk } from '@/lib/risk';
 import { getActorIcon } from '../utils/actorIcons';
 
 interface ActorsPanelProps {
@@ -255,6 +255,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
 export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }: ActorsPanelProps) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set(['produccion', 'sociedad']));
   const c = gameState.causal;
+  const freeLeft = c.perks.freeMeetingsPerTurn - c.freeMeetingsUsed;
 
   return (
     <section className="p-4 border-b border-white/8">
@@ -328,9 +329,9 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }:
         })}
       </div>
       <p className="text-[9px] font-mono text-white/40 mt-2.5">
-        {c.perks.freeMeetingsPerTurn - c.freeMeetingsUsed > 0
-          ? `Disponibles: ${c.perks.freeMeetingsPerTurn - c.freeMeetingsUsed} reunión${c.perks.freeMeetingsPerTurn - c.freeMeetingsUsed > 1 ? 'es' : ''} gratis este turno.`
-          : 'Reuniones adicionales cuestan 1 PA.'}
+        {freeLeft > 0
+          ? (freeLeft > 1 ? `Te quedan ${freeLeft} reuniones gratis este turno.` : 'Te queda 1 reunión gratis este turno.')
+          : 'Las reuniones de este turno ya cuestan 1 PA.'}
       </p>
     </section>
   );

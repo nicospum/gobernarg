@@ -141,13 +141,6 @@ export function processCalendarEvents(state: GameState): GameState {
   if (event.id === 'definicion-estrategia') {
     state.availableMidtermStrategies = filterAvailableMidtermStrategies(state);
     state.pendingMidtermStrategy = true;
-    state = addNotification(state, {
-      type: 'event',
-      category: 'political',
-      title: event.title,
-      message: event.description,
-      importance: 'high'
-    });
   }
 
   return state;

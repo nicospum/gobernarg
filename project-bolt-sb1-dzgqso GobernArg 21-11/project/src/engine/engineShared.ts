@@ -90,13 +90,17 @@ export function getGlobalTurn(state: { year: number; turn: number }): number {
   return (state.year - 1) * 4 + state.turn;
 }
 
+// Secuencia local para los ids: no consume Math.random, así agregar o quitar
+// una notificación no altera los eventos aleatorios (partidas con semilla).
+let notificationSeq = 0;
+
 export function addNotification(
   state: GameState,
   notification: Omit<Notification, 'id' | 'timestamp'>
 ): GameState {
   const newNotification: Notification = {
     ...notification,
-    id: `${state.year}_${state.turn}_${Math.random().toString(36).slice(2, 8)}`,
+    id: `${state.year}_${state.turn}_${(++notificationSeq).toString(36)}`,
     timestamp: Date.now(),
     // FIX (Punto 13): congelar el año/turno de creación. El centro de
     // notificaciones mostraba el turno vivo del estado, así una notificación

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Toaster, toast } from 'sonner';
 import { GameHeader } from './components/GameHeader';
 import { CharacterCreation } from './components/CharacterCreation';
@@ -18,6 +18,7 @@ import { InformesPanel } from './components/InformesPanel';
 import { RightSidebar } from './components/RightSidebar';
 import { EventModal } from './components/EventModal';
 import { ElectionResultsModal } from './components/ElectionResultsModal';
+import { recordScenarioWin } from './lib/progress';
 import { GameLog } from './components/GameLog';
 import { MidtermStrategyModal } from './components/MidtermStrategyModal';
 import { NotificationCenter } from './components/NotificationCenter';
@@ -60,6 +61,11 @@ function App() {
   // Anti doble-clic en eventos: id del último evento cuya elección se procesó.
   const lastProcessedEventRef = useRef<string | null>(null);
 
+  // Ganar la partida desbloquea escenarios (progreso guardado en el navegador).
+  useEffect(() => {
+    if (gameState.gameOver && gameState.victorious && gameState.causal) recordScenarioWin(gameState.causal.scenarioId);
+  }, [gameState.gameOver, gameState.victorious, gameState.causal]);
+
   const handleStart = (_isAdmin: boolean) => {
     setShowWelcomeScreen(false);
   };
@@ -69,10 +75,11 @@ function App() {
     archetype: Archetype,
     governorName: string,
     avatar: string,
-    platformId: string
+    platformId: string,
+    scenarioId: string,
   ) => {
     if (!governorName.trim()) return;
-    const newState = createNewGame(position, archetype, governorName, false, avatar, 'normal', platformId);
+    const newState = createNewGame(position, archetype, governorName, false, avatar, 'normal', platformId, undefined, scenarioId);
     setGameState(newState);
     setShowWelcome(true);
   };

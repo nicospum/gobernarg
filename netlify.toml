@@ -1,0 +1,15 @@
+# Despliegue en Netlify: el juego vive en una subcarpeta del repo.
+[build]
+  base = "project-bolt-sb1-dzgqso GobernArg 21-11/project"
+  command = "npm run build"
+  # Relativo a `base`.
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Todavía no es público: que los buscadores no lo indexen.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"

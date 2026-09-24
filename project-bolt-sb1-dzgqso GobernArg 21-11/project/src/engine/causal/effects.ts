@@ -12,6 +12,7 @@ import {
 import type { EffectRow } from '../../data/causal/types';
 import { evalCondition } from './dsl';
 import { FOREVER, clamp, dslContext } from './context';
+import { internaEfficacy } from './interna';
 import type { AppliedEffectRecord, CausalState, ScheduledEffect } from './types';
 
 /** Acciones de seguridad cuyo costo institucional puede mitigarse (07 derechos_cultura SAT>65, asesora de seguridad). */
@@ -55,6 +56,7 @@ export function efficacyMultiplier(state: CausalState, action: CausalActionDef, 
   if (row.target === 'CIEN' && a.cientificos.sat > 65) m *= 1.25;
   if (row.target === 'PSOC' && a.org_sociales.sat > 60 && (a.org_sociales.rel ?? 0) > 50) m *= 1.25;
   m *= state.perks.categoryEfficacy[action.category] ?? 1;
+  m *= internaEfficacy(state);
   for (const mod of state.modifiers) {
     if (mod.efficacy && mod.start <= turn && turn <= mod.end) m *= mod.efficacy;
   }

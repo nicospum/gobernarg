@@ -15,7 +15,7 @@ import {
   type IndicatorId,
 } from '@/data/causal';
 import type { EffectRow } from '@/data/causal/types';
-import { concerns, type CausalState, type Contribution } from '@/engine/causal';
+import { COALITION_ACTIONS, concerns, type CausalState, type Contribution } from '@/engine/causal';
 import { fmtBudget } from './format';
 
 export type Tone = 'good' | 'bad' | 'neutral';
@@ -253,8 +253,11 @@ export function actionTimeline(actionId: string): TimedEffect[] {
 export function actionContextNotes(actionId: string): { conditional: string[]; repetition: string[] } {
   const rows = EFFECTS_BY_ACTION[actionId] ?? [];
   const uniq = (xs: (string | null)[]) => Array.from(new Set(xs.filter((x): x is string => !!x)));
+  const coalition = COALITION_ACTIONS[actionId]
+    ? [`Abre una interna en tu partido (+${COALITION_ACTIONS[actionId]}): mientras dure, tus políticas rinden menos y cuestan más.`]
+    : [];
   return {
-    conditional: uniq(rows.filter(r => r.kind === 'CONDITIONAL').map(r => r.explanation)),
+    conditional: [...coalition, ...uniq(rows.filter(r => r.kind === 'CONDITIONAL').map(r => r.explanation))],
     repetition: uniq(rows.filter(r => r.kind === 'REPETITION').map(r => r.explanation)),
   };
 }

@@ -1,11 +1,19 @@
 import { useMemo, useState } from 'react';
-import { LayoutGrid, Scale } from 'lucide-react';
+import { Eye, EyeOff, LayoutGrid, Scale, Users } from 'lucide-react';
 import { GameState } from '../types/game';
 import { ActionCard } from './ActionCard';
 import { getPolicyAvailability } from '../engine/gameEngine';
 import { UI_CATEGORY_STYLES } from '@/data/categoryStyles';
 import { ACTOR_IDS, PARAMS, UI_CATEGORIES, type ActorId, type UiCategory } from '@/data/causal';
-import { legForLaws, lawThreshold, projectedCloseCaja } from '@/engine/causal';
+import {
+  internaCostMult,
+  internaEfficacy,
+  internaLawPlus,
+  internaLevel,
+  legForLaws,
+  lawThreshold,
+  projectedCloseCaja,
+} from '@/engine/causal';
 import { fmtBudget, fmtBudgetDelta } from '@/lib/format';
 
 interface ControlPanelProps {
@@ -18,6 +26,7 @@ type TabValue = 'todas' | UiCategory;
 
 export function ControlPanel({ gameState, onActionSelect, canTakeAction }: ControlPanelProps) {
   const [selectedCategory, setSelectedCategory] = useState<TabValue>('todas');
+  const [showBlocked, setShowBlocked] = useState(false);
   const availability = getPolicyAvailability(gameState);
   const causal = gameState.causal;
 
@@ -33,8 +42,11 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
     return map;
   }, [causal]);
 
-  const filtered = availability
-    .filter(av => selectedCategory === 'todas' || av.action.category === selectedCategory)
+  const inCategory = availability
+    .filter(av => selectedCategory === 'todas' || av.action.category === selectedCategory);
+  const blockedCount = inCategory.filter(av => av.blocked).length;
+  const filtered = inCategory
+    .filter(av => showBlocked || !av.blocked)
     .sort((x, y) => {
       const sx = gameState.selectedActions.includes(x.action.id) ? 0 : x.available ? 1 : 2;
       const sy = gameState.selectedActions.includes(y.action.id) ? 0 : y.available ? 1 : 2;
@@ -50,6 +62,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
   const threshold = lawThreshold(causal);
   const honeymoon = causal.turn - causal.mandateStart + 1 <= PARAMS.LUNA_MIEL;
   const hasMajority = leg >= threshold;
+  const interna = causal.political.interna;
 
   return (
     <div className="flex flex-col rounded-xl border border-white/8 bg-[#0f1e38] shadow-xl overflow-hidden">
@@ -59,7 +72,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
           ACCIONES POLÍTICAS
         </h2>
         <span className="text-[11px] text-white/50 font-mono">
-          {filtered.filter(a => a.available).length} disponibles · {filtered.length} en categoría
+          {inCategory.filter(a => a.available).length} disponibles · {inCategory.length} en total
         </span>
       </div>
 
@@ -68,11 +81,27 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
         <Scale size={14} className={hasMajority ? 'text-emerald-400 flex-shrink-0 mt-0.5' : 'text-amber-400 flex-shrink-0 mt-0.5'} />
         <p className={hasMajority ? 'text-emerald-300/90 leading-relaxed' : 'text-amber-300/90 leading-relaxed'}>
           {hasMajority
-            ? `Congreso favorable: mayorías para votar leyes (${leg}% de apoyo parlamentario; requere ${threshold}%).`
+            ? `Congreso favorable: mayorías para votar leyes (${leg}% de apoyo parlamentario; requiere ${threshold}%).`
             : `Congreso fragmentado (${leg}% de apoyo; requiere ${threshold}%). Las leyes complejas pueden enviarse por DNU con mayor costo político.`}
           {honeymoon && <span className="text-cyan-300 font-semibold"> (Luna de miel activa)</span>}
         </p>
       </div>
+
+      {/* Interna del oficialismo */}
+      {interna >= 10 && (
+        <div
+          className={`mx-4 mt-2 px-3.5 py-2 rounded-lg border text-[11px] flex items-start gap-2 ${interna >= 50 ? 'border-red-400/30 bg-red-400/10 text-red-300' : 'border-amber-400/30 bg-amber-400/10 text-amber-300'}`}
+          title="Sube cuando ampliás la coalición y cuando tu aprobación es baja; baja cuando sos popular."
+        >
+          <Users size={13} className="mt-0.5 flex-shrink-0" />
+          <p>
+            <span className="font-semibold">{internaLevel(interna).label}</span> ({Math.round(interna)}/100):
+            tus políticas rinden {Math.round((1 - internaEfficacy(causal)) * 100)}% menos, cuestan {Math.round((internaCostMult(causal) - 1) * 100)}% más
+            {internaLawPlus(causal) > 0 ? ` y las leyes necesitan ${internaLawPlus(causal)} punto${internaLawPlus(causal) > 1 ? 's' : ''} más de apoyo` : ''}.
+            {causal.political.coalicion > 0 ? ' Compartir poder con otros espacios alimenta la interna.' : ''}
+          </p>
+        </div>
+      )}
 
       {/* Categorías Filter Tabs */}
       <div className="flex items-center gap-1.5 p-2 mx-4 my-3 rounded-lg bg-[#070e17] border border-white/8 overflow-x-auto scrollbar-none">
@@ -107,11 +136,29 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
         })}
       </div>
 
+      {/* Bloqueadas: ocultas por defecto */}
+      {blockedCount > 0 && (
+        <div className="mx-4 mb-2 flex items-center justify-between gap-2 text-[11px] text-white/50">
+          <span>
+            {showBlocked
+              ? `Mostrando ${blockedCount} bloqueada${blockedCount === 1 ? '' : 's'} (requisitos, espera o Congreso).`
+              : `${blockedCount} bloqueada${blockedCount === 1 ? '' : 's'} oculta${blockedCount === 1 ? '' : 's'} (requisitos, espera o Congreso).`}
+          </span>
+          <button
+            onClick={() => setShowBlocked(v => !v)}
+            className="inline-flex items-center gap-1 px-2 py-1 rounded-md border border-white/10 bg-white/5 hover:bg-white/10 text-white/80 transition-colors whitespace-nowrap"
+          >
+            {showBlocked ? <EyeOff size={11} /> : <Eye size={11} />}
+            {showBlocked ? 'Ocultar bloqueadas' : 'Ver también las bloqueadas'}
+          </button>
+        </div>
+      )}
+
       {/* Grid de tarjetas */}
       <div className="flex-1 overflow-y-auto px-4 pb-4 max-h-[620px]">
         {filtered.length === 0 ? (
           <div className="text-center py-12 text-[12px] text-white/40">
-            No hay acciones disponibles en esta categoría.
+            {inCategory.length === 0 ? 'No hay acciones en esta categoría.' : 'Todas las acciones de esta categoría están bloqueadas por ahora.'}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -136,7 +183,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
             ? 'Sin acciones en agenda este turno'
             : `${gameState.selectedActions.length} ${gameState.selectedActions.length === 1 ? 'acción elegida' : 'acciones elegidas'} (${fmtBudgetDelta(selectedCaja)})`}
         </span>
-        <span className="text-white/60 font-mono text-[11px]">
+        <span className="text-white/60 font-mono text-[11px]" title="Estimación: caja actual + costo de lo elegido + recaudación − gasto corriente − intereses. No incluye efectos diferidos ni eventos.">
           Caja proyectada:{' '}
           <span className={`font-bold ${projection.caja >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{fmtBudget(projection.caja)}</span>
           {' · '}Balance estructural:{' '}

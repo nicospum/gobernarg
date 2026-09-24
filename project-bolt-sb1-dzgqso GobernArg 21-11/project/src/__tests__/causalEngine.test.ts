@@ -147,6 +147,19 @@ describe('Prerequisitos y desbloqueos', () => {
     expect(priv.available).toBe(false); // no admite DNU
   });
 
+  it('bloqueo estructural (se oculta) vs. falta de PA, caja o DNU (se muestra)', () => {
+    let s = createCausalState();
+    expect(getAvailability(s, 'infraestructura_vial', [], 4).blocked).toBe(true); // requisito
+    expect(getAvailability(s, 'emitir_dinero', [], 0).blocked).toBe(false); // sin PA
+    s = step(s, 'devaluacion');
+    expect(getAvailability(s, 'devaluacion', [], 4).blocked).toBe(true); // espera
+    for (let i = 0; i < 3; i++) s = step(s);
+    const ley = getAvailability(s, 'reduccion_impuestos', [], 4);
+    expect(ley.available).toBe(false);
+    expect(ley.blocked).toBe(false); // sale por DNU
+    expect(getAvailability(s, 'privatizacion', [], 4).blocked).toBe(true); // ley sin DNU
+  });
+
   it('liberar el cepo sólo aparece si hay cepo', () => {
     let s = createCausalState();
     expect(getAvailability(s, 'liberar_cambios', [], 4).visible).toBe(false);

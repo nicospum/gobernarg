@@ -11,11 +11,10 @@ import {
   Users,
 } from 'lucide-react';
 import { InfoTooltip } from './InfoTooltip';
-import { Tooltip, TooltipContent } from './Tooltip';
 import { fmtBudget } from '@/lib/format';
 import { UI_CATEGORY_STYLES } from '@/data/categoryStyles';
 import { ACTORS, SENSITIVITIES, type ActorId } from '@/data/causal';
-import type { Availability } from '@/engine/causal';
+import { COALITION_ACTIONS, type Availability } from '@/engine/causal';
 import {
   actionContextNotes,
   actionTimeline,
@@ -34,12 +33,6 @@ interface ActionCardProps {
   /** No se puede agregar más (sin PA, elección pendiente…) aunque la acción esté disponible. */
   disabled: boolean;
 }
-
-const TAG_LABEL: Record<string, string> = {
-  FEDERAL: 'Federal',
-  AMBIENTAL: 'Ambiental',
-  RESTRICTIVA: 'Restrictiva',
-};
 
 function ChipInline({ chip }: { chip: EffectChip }) {
   return (
@@ -94,6 +87,11 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
             </div>
           )}
           {action.risksText && <div className="text-[10px] text-amber-300">Riesgo: {action.risksText}</div>}
+          {COALITION_ACTIONS[action.id] && (
+            <div className="text-[10px] text-amber-300 font-medium">
+              Abre una interna en tu partido (+{COALITION_ACTIONS[action.id]}): tus políticas rinden menos y cuestan más.
+            </div>
+          )}
         </div>
       }
     >
@@ -170,6 +168,12 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
               {pa} acc.
             </span>
           </div>
+
+          {COALITION_ACTIONS[action.id] && (
+            <div className="text-[10px] text-amber-300 leading-snug bg-amber-500/10 border border-amber-500/20 px-2 py-1 rounded">
+              ⚠️ Abre interna en tu partido (+{COALITION_ACTIONS[action.id]})
+            </div>
+          )}
 
           {/* Lista rápida de chips de efectos */}
           {timeline.length > 0 && (

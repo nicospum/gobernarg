@@ -10,6 +10,8 @@ import {
   ACTORS,
   CAUSAL_ACTIONS_BY_ID,
   DEFAULT_PLATFORM_BY_ARCHETYPE,
+  DESIGN_SCENARIO_ID,
+  getScenario,
   LEGACY_GROUP_TO_ACTOR,
   PARAMS,
   isActorId,
@@ -32,6 +34,7 @@ import {
   changeRel,
   Rng,
   viewRef,
+  expandCoalition,
   type CausalState,
   type Perks,
   type Selection,
@@ -90,9 +93,10 @@ export function refreshPerks(state: GameState): GameState {
 
 // ─────────────────────────────── Creación ───────────────────────────────
 
-export function newCausalForGame(archetype: Archetype, platformId?: string, seed?: number): CausalState {
+export function newCausalForGame(archetype: Archetype, platformId?: string, seed?: number, scenarioId?: string): CausalState {
+  const scenario = getScenario(scenarioId ?? DESIGN_SCENARIO_ID);
   const relBonus: Partial<Record<ActorId, number>> = {};
-  let imagen = 50;
+  let imagen = scenario.imagen ?? 50;
   let desanclajeDelta = 0;
   let ingresoBonus = 0;
   for (const passive of ARCHETYPE_PASSIVES[archetype] ?? []) {
@@ -107,7 +111,8 @@ export function newCausalForGame(archetype: Archetype, platformId?: string, seed
     seed: seed ?? Math.floor(Math.random() * 2 ** 31),
     imagen,
     relBonus,
-    desanclaje: Math.max(0, PARAMS.DESANCLAJE_INICIAL + desanclajeDelta),
+    desanclaje: Math.max(0, (scenario.desanclaje ?? PARAMS.DESANCLAJE_INICIAL) + desanclajeDelta),
+    scenarioId: scenario.id,
   });
   causal.ingresoMult += ingresoBonus;
   recomputePolitical(causal, 0);
@@ -236,6 +241,8 @@ export function applyCausalEffects(causal: CausalState, effects: CausalEventEffe
     } else if (t.startsWith('REL:')) {
       const actor = t.slice(4);
       if (isActorId(actor)) changeRel(causal, actor, e.value);
+    } else if (t === 'COALICION') {
+      expandCoalition(causal, e.value);
     } else if (t.startsWith('FLAG:')) {
       const name = t.slice(5);
       causal.flags[name] = { value: e.value, start: turn, end: e.duration ? turn + e.duration - 1 : null, source };
@@ -273,6 +280,7 @@ export function applyMidtermStrategy(causal: CausalState, strategy: MidtermStrat
     });
   }
   if (def.legOnce) causal.political.legAdj += def.legOnce;
+  if (def.coalitionShock) expandCoalition(causal, def.coalitionShock);
   if (def.imagenOnce) causal.political.imagen = clamp(causal.political.imagen + def.imagenOnce);
   recomputePolitical(causal, viewRef(causal));
 }

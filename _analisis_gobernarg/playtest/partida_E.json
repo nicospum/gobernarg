@@ -5,6 +5,7 @@
  "gameOver": true,
  "victorious": false,
  "defeatReason": "election_loss",
+<<<<<<< HEAD
  "reelectionVotes": 43.35092778738553,
  "successionVotes": null,
  "midtermVotes": [
@@ -14,6 +15,17 @@
  "minGob": 46,
  "maxInfl": 54.3,
  "finalCaja": 527,
+=======
+ "reelectionVotes": 44.583007964521435,
+ "successionVotes": null,
+ "midtermVotes": [
+  47.4
+ ],
+ "finalIv": 41.1,
+ "minGob": 50,
+ "maxInfl": 54.3,
+ "finalCaja": 518,
+>>>>>>> origin/motor-causal
  "finalDeuda": 3000,
  "meetings": 0,
  "agreementsSigned": 0,
@@ -165,7 +177,13 @@
     "Transparencia y anticorrupción"
    ],
    "interactions": [],
+<<<<<<< HEAD
    "events": [],
+=======
+   "events": [
+    "Bloqueo Legislativo → Negociar con la oposición"
+   ],
+>>>>>>> origin/motor-causal
    "indicatorsBefore": {
     "INFL": 54.3,
     "ACTV": 44,
@@ -257,6 +275,7 @@
     },
     "oficialismo": {
      "sat": 37,
+<<<<<<< HEAD
      "rel": 70
     },
     "aliados": {
@@ -266,6 +285,17 @@
     "oposicion": {
      "sat": 52,
      "rel": 30
+=======
+     "rel": 75
+    },
+    "aliados": {
+     "sat": 41,
+     "rel": 66
+    },
+    "oposicion": {
+     "sat": 52,
+     "rel": 38
+>>>>>>> origin/motor-causal
     },
     "gobernadores": {
      "sat": 39,
@@ -273,11 +303,19 @@
     }
    },
    "apro": 39.2,
+<<<<<<< HEAD
    "iv": 42.3,
    "gob": 50.8,
    "leg": 45,
    "imagen": 47.6,
    "caja": 152,
+=======
+   "iv": 41.7,
+   "gob": 51,
+   "leg": 45,
+   "imagen": 44.6,
+   "caja": -48,
+>>>>>>> origin/motor-causal
    "deuda": 3000,
    "gastoCorr": 980,
    "resultado": -544,
@@ -297,9 +335,13 @@
     "Ajuste del gasto público"
    ],
    "interactions": [],
+<<<<<<< HEAD
    "events": [
     "Conflicto Diplomático → Escalar el conflicto"
    ],
+=======
+   "events": [],
+>>>>>>> origin/motor-causal
    "indicatorsBefore": {
     "INFL": 48,
     "ACTV": 40.9,
@@ -319,8 +361,13 @@
     "ACTV": 40.1,
     "PODA": 40.3,
     "INVC": 39.7,
+<<<<<<< HEAD
     "SOLV": 37,
     "EXTE": 47.8,
+=======
+    "SOLV": 35.7,
+    "EXTE": 51.8,
+>>>>>>> origin/motor-causal
     "INFR": 42.6,
     "EDUC": 51.1,
     "PSOC": 41.7,
@@ -332,7 +379,11 @@
     "Inflación -4.0 (Suba de tasas / contracción monetaria (decisión anterior); expectativas y fundamentos de la inflación)",
     "Sector externo y divisas +3.9 (Bajar retenciones (decisión anterior); Incentivos a la exportación (decisión anterior))",
     "Protección social y salud -3.1 (Ajuste del gasto público)",
+<<<<<<< HEAD
     "Educación +1.7 (Inversión educativa (decisión anterior))"
+=======
+    "Solvencia fiscal -3.0 (las cuentas públicas)"
+>>>>>>> origin/motor-causal
    ],
    "channels": [],
    "pendingEffects": 5,
@@ -346,7 +397,11 @@
      "rel": 48
     },
     "financiero": {
+<<<<<<< HEAD
      "sat": 51,
+=======
+     "sat": 50,
+>>>>>>> origin/motor-causal
      "rel": 60
     },
     "sindicatos": {
@@ -391,6 +446,7 @@
     },
     "oficialismo": {
      "sat": 39,
+<<<<<<< HEAD
      "rel": 70
     },
     "aliados": {
@@ -400,12 +456,24 @@
     "oposicion": {
      "sat": 56,
      "rel": 30
+=======
+     "rel": 75
+    },
+    "aliados": {
+     "sat": 40,
+     "rel": 66
+    },
+    "oposicion": {
+     "sat": 56,
+     "rel": 38
+>>>>>>> origin/motor-causal
     },
     "gobernadores": {
      "sat": 37,
      "rel": 50
     }
    },
+<<<<<<< HEAD
    "apro": 41.5,
    "iv": 43.9,
    "gob": 50.8,
@@ -415,6 +483,17 @@
    "deuda": 3000,
    "gastoCorr": 860,
    "resultado": 250,
+=======
+   "apro": 41.4,
+   "iv": 43.1,
+   "gob": 51,
+   "leg": 44,
+   "imagen": 44.6,
+   "caja": 203,
+   "deuda": 3000,
+   "gastoCorr": 860,
+   "resultado": 50,
+>>>>>>> origin/motor-causal
    "financiamiento": 0,
    "pa": 1,
    "notes": []
@@ -426,7 +505,11 @@
    "quarter": 4,
    "actions": [
     "Administración tributaria (lucha contra la evasión)",
+<<<<<<< HEAD
     "Crédito PyME y emprendedor"
+=======
+    "Estudio de factibilidad"
+>>>>>>> origin/motor-causal
    ],
    "interactions": [],
    "events": [],
@@ -435,8 +518,13 @@
     "ACTV": 40.1,
     "PODA": 40.3,
     "INVC": 39.7,
+<<<<<<< HEAD
     "SOLV": 37,
     "EXTE": 47.8,
+=======
+    "SOLV": 35.7,
+    "EXTE": 51.8,
+>>>>>>> origin/motor-causal
     "INFR": 42.6,
     "EDUC": 51.1,
     "PSOC": 41.7,
@@ -445,12 +533,21 @@
     "CONF": 34.2
    },
    "indicatorsAfter": {
+<<<<<<< HEAD
     "INFL": 43.3,
     "ACTV": 42.4,
     "PODA": 40.5,
     "INVC": 48.5,
     "SOLV": 39.8,
     "EXTE": 45.2,
+=======
+    "INFL": 43.1,
+    "ACTV": 42.4,
+    "PODA": 40.5,
+    "INVC": 44.7,
+    "SOLV": 38.9,
+    "EXTE": 49,
+>>>>>>> origin/motor-causal
     "INFR": 41.8,
     "EDUC": 50.8,
     "PSOC": 41.8,
@@ -459,6 +556,7 @@
     "CONF": 33.2
    },
    "causes": [
+<<<<<<< HEAD
     "Inversión y crédito +8.8 (Crédito PyME y emprendedor; Transparencia y anticorrupción (decisión anterior))",
     "Solvencia fiscal +2.8 (las cuentas públicas)",
     "Sector externo y divisas -2.6",
@@ -473,6 +571,22 @@
     },
     "agro": {
      "sat": 54,
+=======
+    "Inversión y crédito +5.0 (Transparencia y anticorrupción (decisión anterior))",
+    "Solvencia fiscal +3.2 (las cuentas públicas)",
+    "Sector externo y divisas -2.8",
+    "Actividad y empleo +2.4 (Crédito PyME y emprendedor (decisión anterior))"
+   ],
+   "channels": [],
+   "pendingEffects": 6,
+   "actors": {
+    "industria": {
+     "sat": 52,
+     "rel": 55
+    },
+    "agro": {
+     "sat": 55,
+>>>>>>> origin/motor-causal
      "rel": 47
     },
     "financiero": {
@@ -484,7 +598,11 @@
      "rel": 49
     },
     "pymes": {
+<<<<<<< HEAD
      "sat": 50,
+=======
+     "sat": 49,
+>>>>>>> origin/motor-causal
      "rel": 50
     },
     "clase_media": {
@@ -520,6 +638,7 @@
      "rel": 49
     },
     "oficialismo": {
+<<<<<<< HEAD
      "sat": 45,
      "rel": 70
     },
@@ -530,12 +649,25 @@
     "oposicion": {
      "sat": 58,
      "rel": 29
+=======
+     "sat": 43,
+     "rel": 75
+    },
+    "aliados": {
+     "sat": 42,
+     "rel": 66
+    },
+    "oposicion": {
+     "sat": 58,
+     "rel": 37
+>>>>>>> origin/motor-causal
     },
     "gobernadores": {
      "sat": 37,
      "rel": 50
     }
    },
+<<<<<<< HEAD
    "apro": 44.4,
    "iv": 45.9,
    "gob": 51.4,
@@ -545,6 +677,17 @@
    "deuda": 3000,
    "gastoCorr": 860,
    "resultado": -266,
+=======
+   "apro": 44.3,
+   "iv": 45,
+   "gob": 51.6,
+   "leg": 44,
+   "imagen": 44.6,
+   "caja": 106,
+   "deuda": 3000,
+   "gastoCorr": 860,
+   "resultado": -96,
+>>>>>>> origin/motor-causal
    "financiamiento": 0,
    "pa": 2,
    "notes": []
@@ -555,6 +698,7 @@
    "year": 2,
    "quarter": 1,
    "actions": [
+<<<<<<< HEAD
     "Ajuste del gasto público",
     "Estudio de factibilidad"
    ],
@@ -567,6 +711,21 @@
     "INVC": 48.5,
     "SOLV": 39.8,
     "EXTE": 45.2,
+=======
+    "Ajuste del gasto público"
+   ],
+   "interactions": [],
+   "events": [
+    "Inversión Extranjera → Facilitar la inversión"
+   ],
+   "indicatorsBefore": {
+    "INFL": 43.1,
+    "ACTV": 42.4,
+    "PODA": 40.5,
+    "INVC": 44.7,
+    "SOLV": 38.9,
+    "EXTE": 49,
+>>>>>>> origin/motor-causal
     "INFR": 41.8,
     "EDUC": 50.8,
     "PSOC": 41.8,
@@ -575,12 +734,21 @@
     "CONF": 33.2
    },
    "indicatorsAfter": {
+<<<<<<< HEAD
     "INFL": 42.5,
     "ACTV": 40.7,
     "PODA": 40.5,
     "INVC": 44.4,
     "SOLV": 47.2,
     "EXTE": 45.1,
+=======
+    "INFL": 42.2,
+    "ACTV": 40.4,
+    "PODA": 40.5,
+    "INVC": 44.8,
+    "SOLV": 47.1,
+    "EXTE": 50.7,
+>>>>>>> origin/motor-causal
     "INFR": 40,
     "EDUC": 52.5,
     "PSOC": 38.8,
@@ -589,6 +757,7 @@
     "CONF": 32.5
    },
    "causes": [
+<<<<<<< HEAD
     "Solvencia fiscal +7.5 (las cuentas públicas)",
     "Inversión y crédito -4.1",
     "Protección social y salud -3.0 (Ajuste del gasto público)",
@@ -603,6 +772,22 @@
     },
     "agro": {
      "sat": 52,
+=======
+    "Solvencia fiscal +8.2 (las cuentas públicas)",
+    "Inversión y crédito -3.9",
+    "Protección social y salud -3.0 (Ajuste del gasto público)",
+    "Actividad y empleo -2.0 (Ajuste del gasto público; Administración tributaria (lucha contra la evasión) (decisión anterior))"
+   ],
+   "channels": [],
+   "pendingEffects": 2,
+   "actors": {
+    "industria": {
+     "sat": 51,
+     "rel": 54
+    },
+    "agro": {
+     "sat": 54,
+>>>>>>> origin/motor-causal
      "rel": 47
     },
     "financiero": {
@@ -614,7 +799,11 @@
      "rel": 49
     },
     "pymes": {
+<<<<<<< HEAD
      "sat": 50,
+=======
+     "sat": 48,
+>>>>>>> origin/motor-causal
      "rel": 49
     },
     "clase_media": {
@@ -650,6 +839,7 @@
      "rel": 49
     },
     "oficialismo": {
+<<<<<<< HEAD
      "sat": 46,
      "rel": 70
     },
@@ -660,12 +850,25 @@
     "oposicion": {
      "sat": 61,
      "rel": 28
+=======
+     "sat": 44,
+     "rel": 75
+    },
+    "aliados": {
+     "sat": 48,
+     "rel": 65
+    },
+    "oposicion": {
+     "sat": 61,
+     "rel": 36
+>>>>>>> origin/motor-causal
     },
     "gobernadores": {
      "sat": 35,
      "rel": 49
     }
    },
+<<<<<<< HEAD
    "apro": 43.5,
    "iv": 45,
    "gob": 49.8,
@@ -677,6 +880,19 @@
    "resultado": 370,
    "financiamiento": 0,
    "pa": 2,
+=======
+   "apro": 43.3,
+   "iv": 44,
+   "gob": 50,
+   "leg": 41,
+   "imagen": 44.5,
+   "caja": 557,
+   "deuda": 3000,
+   "gastoCorr": 740,
+   "resultado": 450,
+   "financiamiento": 0,
+   "pa": 1,
+>>>>>>> origin/motor-causal
    "notes": []
   },
   {
@@ -685,6 +901,7 @@
    "year": 2,
    "quarter": 2,
    "actions": [
+<<<<<<< HEAD
     "Inversión educativa",
     "Mantenimiento de infraestructura"
    ],
@@ -699,6 +916,20 @@
     "INVC": 44.4,
     "SOLV": 47.2,
     "EXTE": 45.1,
+=======
+    "Crédito PyME y emprendedor",
+    "Inversión educativa"
+   ],
+   "interactions": [],
+   "events": [],
+   "indicatorsBefore": {
+    "INFL": 42.2,
+    "ACTV": 40.4,
+    "PODA": 40.5,
+    "INVC": 44.8,
+    "SOLV": 47.1,
+    "EXTE": 50.7,
+>>>>>>> origin/motor-causal
     "INFR": 40,
     "EDUC": 52.5,
     "PSOC": 38.8,
@@ -707,6 +938,7 @@
     "CONF": 32.5
    },
    "indicatorsAfter": {
+<<<<<<< HEAD
     "INFL": 41.5,
     "ACTV": 41,
     "PODA": 40.6,
@@ -743,6 +975,44 @@
     },
     "sindicatos": {
      "sat": 40,
+=======
+    "INFL": 40.9,
+    "ACTV": 39.7,
+    "PODA": 40.5,
+    "INVC": 48.4,
+    "SOLV": 48.9,
+    "EXTE": 50.2,
+    "INFR": 39.2,
+    "EDUC": 52.2,
+    "PSOC": 38.7,
+    "SEGU": 40.7,
+    "INST": 54.2,
+    "CONF": 32
+   },
+   "causes": [
+    "Inversión y crédito +3.7 (Crédito PyME y emprendedor)",
+    "Solvencia fiscal +1.8 (las cuentas públicas)",
+    "Inflación -1.3 (expectativas y fundamentos de la inflación)",
+    "Infraestructura -0.8 (desgaste sin mantenimiento)"
+   ],
+   "channels": [],
+   "pendingEffects": 6,
+   "actors": {
+    "industria": {
+     "sat": 53,
+     "rel": 54
+    },
+    "agro": {
+     "sat": 53,
+     "rel": 46
+    },
+    "financiero": {
+     "sat": 63,
+     "rel": 59
+    },
+    "sindicatos": {
+     "sat": 39,
+>>>>>>> origin/motor-causal
      "rel": 48
     },
     "pymes": {
@@ -758,7 +1028,11 @@
      "rel": null
     },
     "estudiantes": {
+<<<<<<< HEAD
      "sat": 47,
+=======
+     "sat": 46,
+>>>>>>> origin/motor-causal
      "rel": 51
     },
     "docentes": {
@@ -774,15 +1048,24 @@
      "rel": 49
     },
     "derechos_cultura": {
+<<<<<<< HEAD
      "sat": 49,
      "rel": 49
     },
     "ambiente": {
      "sat": 51,
+=======
+     "sat": 48,
+     "rel": 49
+    },
+    "ambiente": {
+     "sat": 50,
+>>>>>>> origin/motor-causal
      "rel": 48
     },
     "oficialismo": {
      "sat": 47,
+<<<<<<< HEAD
      "rel": 69
     },
     "aliados": {
@@ -807,6 +1090,32 @@
    "deuda": 3000,
    "gastoCorr": 780,
    "resultado": -243,
+=======
+     "rel": 74
+    },
+    "aliados": {
+     "sat": 51,
+     "rel": 65
+    },
+    "oposicion": {
+     "sat": 61,
+     "rel": 36
+    },
+    "gobernadores": {
+     "sat": 33,
+     "rel": 49
+    }
+   },
+   "apro": 43.3,
+   "iv": 44.1,
+   "gob": 50.2,
+   "leg": 41,
+   "imagen": 44.5,
+   "caja": 254,
+   "deuda": 3000,
+   "gastoCorr": 780,
+   "resultado": -303,
+>>>>>>> origin/motor-causal
    "financiamiento": 0,
    "pa": 2,
    "notes": []
@@ -816,6 +1125,7 @@
    "term": 1,
    "year": 2,
    "quarter": 3,
+<<<<<<< HEAD
    "actions": [],
    "interactions": [],
    "events": [],
@@ -876,6 +1186,68 @@
     },
     "pymes": {
      "sat": 51,
+=======
+   "actions": [
+    "Financiamiento científico"
+   ],
+   "interactions": [],
+   "events": [],
+   "indicatorsBefore": {
+    "INFL": 40.9,
+    "ACTV": 39.7,
+    "PODA": 40.5,
+    "INVC": 48.4,
+    "SOLV": 48.9,
+    "EXTE": 50.2,
+    "INFR": 39.2,
+    "EDUC": 52.2,
+    "PSOC": 38.7,
+    "SEGU": 40.7,
+    "INST": 54.2,
+    "CONF": 32
+   },
+   "indicatorsAfter": {
+    "INFL": 39.8,
+    "ACTV": 42.2,
+    "PODA": 40.6,
+    "INVC": 48.1,
+    "SOLV": 50.5,
+    "EXTE": 49.8,
+    "INFR": 37.4,
+    "EDUC": 53.9,
+    "PSOC": 38.8,
+    "SEGU": 40.5,
+    "INST": 54.1,
+    "CONF": 31.6
+   },
+   "causes": [
+    "Actividad y empleo +2.5",
+    "Infraestructura -1.8 (Ajuste del gasto público (decisión anterior); desgaste sin mantenimiento)",
+    "Educación +1.7 (Inversión educativa (decisión anterior))",
+    "Solvencia fiscal +1.6 (las cuentas públicas)"
+   ],
+   "channels": [],
+   "pendingEffects": 5,
+   "actors": {
+    "industria": {
+     "sat": 54,
+     "rel": 53
+    },
+    "agro": {
+     "sat": 52,
+     "rel": 45
+    },
+    "financiero": {
+     "sat": 66,
+     "rel": 58
+    },
+    "sindicatos": {
+     "sat": 41,
+     "rel": 48
+    },
+    "pymes": {
+     "sat": 52,
+>>>>>>> origin/motor-causal
      "rel": 48
     },
     "clase_media": {
@@ -883,11 +1255,19 @@
      "rel": null
     },
     "sectores_populares": {
+<<<<<<< HEAD
      "sat": 43,
      "rel": null
     },
     "estudiantes": {
      "sat": 49,
+=======
+     "sat": 42,
+     "rel": null
+    },
+    "estudiantes": {
+     "sat": 48,
+>>>>>>> origin/motor-causal
      "rel": 51
     },
     "docentes": {
@@ -896,6 +1276,7 @@
     },
     "cientificos": {
      "sat": 47,
+<<<<<<< HEAD
      "rel": 49
     },
     "org_sociales": {
@@ -908,10 +1289,25 @@
     },
     "ambiente": {
      "sat": 50,
+=======
+     "rel": 52
+    },
+    "org_sociales": {
+     "sat": 42,
+     "rel": 48
+    },
+    "derechos_cultura": {
+     "sat": 48,
+     "rel": 48
+    },
+    "ambiente": {
+     "sat": 49,
+>>>>>>> origin/motor-causal
      "rel": 48
     },
     "oficialismo": {
      "sat": 48,
+<<<<<<< HEAD
      "rel": 69
     },
     "aliados": {
@@ -939,6 +1335,37 @@
    "financiamiento": 0,
    "pa": 0,
    "notes": []
+=======
+     "rel": 74
+    },
+    "aliados": {
+     "sat": 52,
+     "rel": 64
+    },
+    "oposicion": {
+     "sat": 61,
+     "rel": 35
+    },
+    "gobernadores": {
+     "sat": 32,
+     "rel": 48
+    }
+   },
+   "apro": 45.1,
+   "iv": 45.2,
+   "gob": 50.2,
+   "leg": 41,
+   "imagen": 44.5,
+   "caja": 268,
+   "deuda": 3000,
+   "gastoCorr": 830,
+   "resultado": 14,
+   "financiamiento": 0,
+   "pa": 1,
+   "notes": [
+    "Científicos: notan la medida que pedían."
+   ]
+>>>>>>> origin/motor-causal
   },
   {
    "turn": 8,
@@ -946,6 +1373,7 @@
    "year": 2,
    "quarter": 4,
    "actions": [
+<<<<<<< HEAD
     "Administración tributaria (lucha contra la evasión)"
    ],
    "interactions": [],
@@ -1007,6 +1435,73 @@
     },
     "pymes": {
      "sat": 50,
+=======
+    "Administración tributaria (lucha contra la evasión)",
+    "Estudio de factibilidad",
+    "Transparencia y anticorrupción"
+   ],
+   "interactions": [],
+   "events": [
+    "Oportunidad de Coalición → Aceptar la coalición"
+   ],
+   "indicatorsBefore": {
+    "INFL": 39.8,
+    "ACTV": 42.2,
+    "PODA": 40.6,
+    "INVC": 48.1,
+    "SOLV": 50.5,
+    "EXTE": 49.8,
+    "INFR": 37.4,
+    "EDUC": 53.9,
+    "PSOC": 38.8,
+    "SEGU": 40.5,
+    "INST": 54.1,
+    "CONF": 31.6
+   },
+   "indicatorsAfter": {
+    "INFL": 38.6,
+    "ACTV": 42.7,
+    "PODA": 40.7,
+    "INVC": 48,
+    "SOLV": 51.8,
+    "EXTE": 49.4,
+    "INFR": 36.6,
+    "EDUC": 53.6,
+    "PSOC": 38.9,
+    "SEGU": 40.2,
+    "INST": 56.9,
+    "CONF": 31.3
+   },
+   "causes": [
+    "Ciencia e innovación +2.9 (Financiamiento científico (decisión anterior))",
+    "Instituciones y derechos +2.8 (Transparencia y anticorrupción)",
+    "Solvencia fiscal +1.3 (Mercados abiertos: baja el riesgo país)",
+    "Inflación -1.2 (expectativas y fundamentos de la inflación)"
+   ],
+   "channels": [
+    "Mercados abiertos: baja el riesgo país (SOLV +4.0)"
+   ],
+   "pendingEffects": 7,
+   "actors": {
+    "industria": {
+     "sat": 55,
+     "rel": 53
+    },
+    "agro": {
+     "sat": 51,
+     "rel": 44
+    },
+    "financiero": {
+     "sat": 68,
+     "rel": 58
+    },
+    "sindicatos": {
+     "sat": 42,
+     "rel": 47
+    },
+    "pymes": {
+     "sat": 53,
+>>>>>>> origin/motor-causal
      "rel": 48
     },
     "clase_media": {
@@ -1014,6 +1509,7 @@
      "rel": null
     },
     "sectores_populares": {
+<<<<<<< HEAD
      "sat": 44,
      "rel": null
     },
@@ -1031,6 +1527,25 @@
     },
     "org_sociales": {
      "sat": 45,
+=======
+     "sat": 42,
+     "rel": null
+    },
+    "estudiantes": {
+     "sat": 50,
+     "rel": 50
+    },
+    "docentes": {
+     "sat": 50,
+     "rel": 47
+    },
+    "cientificos": {
+     "sat": 50,
+     "rel": 52
+    },
+    "org_sociales": {
+     "sat": 43,
+>>>>>>> origin/motor-causal
      "rel": 48
     },
     "derechos_cultura": {
@@ -1038,6 +1553,7 @@
      "rel": 48
     },
     "ambiente": {
+<<<<<<< HEAD
      "sat": 50,
      "rel": 47
     },
@@ -1069,6 +1585,39 @@
    "resultado": 195,
    "financiamiento": 0,
    "pa": 1,
+=======
+     "sat": 51,
+     "rel": 47
+    },
+    "oficialismo": {
+     "sat": 50,
+     "rel": 72
+    },
+    "aliados": {
+     "sat": 55,
+     "rel": 70
+    },
+    "oposicion": {
+     "sat": 64,
+     "rel": 34
+    },
+    "gobernadores": {
+     "sat": 32,
+     "rel": 48
+    }
+   },
+   "apro": 47.6,
+   "iv": 47.7,
+   "gob": 55.8,
+   "leg": 53.2,
+   "imagen": 47.4,
+   "caja": 185,
+   "deuda": 3000,
+   "gastoCorr": 830,
+   "resultado": -83,
+   "financiamiento": 0,
+   "pa": 3,
+>>>>>>> origin/motor-causal
    "notes": []
   },
   {
@@ -1077,6 +1626,7 @@
    "year": 3,
    "quarter": 1,
    "actions": [
+<<<<<<< HEAD
     "Ajuste del gasto público",
     "Crédito PyME y emprendedor",
     "Estudio de factibilidad"
@@ -1204,6 +1754,131 @@
    "resultado": 266,
    "financiamiento": 0,
    "pa": 3,
+=======
+    "Ajuste del gasto público"
+   ],
+   "interactions": [],
+   "events": [],
+   "indicatorsBefore": {
+    "INFL": 38.6,
+    "ACTV": 42.7,
+    "PODA": 40.7,
+    "INVC": 48,
+    "SOLV": 51.8,
+    "EXTE": 49.4,
+    "INFR": 36.6,
+    "EDUC": 53.6,
+    "PSOC": 38.9,
+    "SEGU": 40.2,
+    "INST": 56.9,
+    "CONF": 31.3
+   },
+   "indicatorsAfter": {
+    "INFL": 37.8,
+    "ACTV": 39.1,
+    "PODA": 40.7,
+    "INVC": 47.8,
+    "SOLV": 55.8,
+    "EXTE": 49.1,
+    "INFR": 35.8,
+    "EDUC": 55.3,
+    "PSOC": 35.9,
+    "SEGU": 39.9,
+    "INST": 56.4,
+    "CONF": 31.8
+   },
+   "causes": [
+    "Solvencia fiscal +4.1 (las cuentas públicas; Mercados abiertos: baja el riesgo país)",
+    "Actividad y empleo -3.6 (Ajuste del gasto público; Administración tributaria (lucha contra la evasión) (decisión anterior))",
+    "Protección social y salud -3.0 (Ajuste del gasto público)",
+    "Presión tributaria +2.0 (Administración tributaria (lucha contra la evasión) (decisión anterior))"
+   ],
+   "channels": [
+    "Mercados abiertos: baja el riesgo país (SOLV +4.0)"
+   ],
+   "pendingEffects": 4,
+   "actors": {
+    "industria": {
+     "sat": 53,
+     "rel": 53
+    },
+    "agro": {
+     "sat": 49,
+     "rel": 44
+    },
+    "financiero": {
+     "sat": 70,
+     "rel": 58
+    },
+    "sindicatos": {
+     "sat": 40,
+     "rel": 46
+    },
+    "pymes": {
+     "sat": 52,
+     "rel": 47
+    },
+    "clase_media": {
+     "sat": 53,
+     "rel": null
+    },
+    "sectores_populares": {
+     "sat": 41,
+     "rel": null
+    },
+    "estudiantes": {
+     "sat": 51,
+     "rel": 49
+    },
+    "docentes": {
+     "sat": 51,
+     "rel": 46
+    },
+    "cientificos": {
+     "sat": 52,
+     "rel": 51
+    },
+    "org_sociales": {
+     "sat": 41,
+     "rel": 47
+    },
+    "derechos_cultura": {
+     "sat": 50,
+     "rel": 47
+    },
+    "ambiente": {
+     "sat": 51,
+     "rel": 46
+    },
+    "oficialismo": {
+     "sat": 50,
+     "rel": 72
+    },
+    "aliados": {
+     "sat": 59,
+     "rel": 70
+    },
+    "oposicion": {
+     "sat": 65,
+     "rel": 33
+    },
+    "gobernadores": {
+     "sat": 30,
+     "rel": 47
+    }
+   },
+   "apro": 45.8,
+   "iv": 46.4,
+   "gob": 56.2,
+   "leg": 54.2,
+   "imagen": 47.3,
+   "caja": 696,
+   "deuda": 3000,
+   "gastoCorr": 710,
+   "resultado": 511,
+   "financiamiento": 0,
+   "pa": 1,
+>>>>>>> origin/motor-causal
    "notes": []
   },
   {
@@ -1212,12 +1887,19 @@
    "year": 3,
    "quarter": 2,
    "actions": [
+<<<<<<< HEAD
     "Inversión educativa",
     "Transparencia y anticorrupción"
+=======
+    "Crédito PyME y emprendedor",
+    "Inversión educativa",
+    "Estudio de factibilidad"
+>>>>>>> origin/motor-causal
    ],
    "interactions": [],
    "events": [],
    "indicatorsBefore": {
+<<<<<<< HEAD
     "INFL": 39.3,
     "ACTV": 38,
     "PODA": 40.9,
@@ -1266,6 +1948,55 @@
     },
     "financiero": {
      "sat": 65,
+=======
+    "INFL": 37.8,
+    "ACTV": 39.1,
+    "PODA": 40.7,
+    "INVC": 47.8,
+    "SOLV": 55.8,
+    "EXTE": 49.1,
+    "INFR": 35.8,
+    "EDUC": 55.3,
+    "PSOC": 35.9,
+    "SEGU": 39.9,
+    "INST": 56.4,
+    "CONF": 31.8
+   },
+   "indicatorsAfter": {
+    "INFL": 36.9,
+    "ACTV": 38.3,
+    "PODA": 40.6,
+    "INVC": 47.9,
+    "SOLV": 55.7,
+    "EXTE": 48.8,
+    "INFR": 35,
+    "EDUC": 55,
+    "PSOC": 35.9,
+    "SEGU": 39.5,
+    "INST": 56,
+    "CONF": 32.1
+   },
+   "causes": [
+    "Inflación -0.9 (expectativas y fundamentos de la inflación)",
+    "Actividad y empleo -0.8 (la infraestructura ayudó a producir; la inversión se volvió actividad)",
+    "Infraestructura -0.8 (desgaste sin mantenimiento)"
+   ],
+   "channels": [
+    "Mercados abiertos: baja el riesgo país (SOLV +4.0)"
+   ],
+   "pendingEffects": 6,
+   "actors": {
+    "industria": {
+     "sat": 51,
+     "rel": 52
+    },
+    "agro": {
+     "sat": 48,
+     "rel": 43
+    },
+    "financiero": {
+     "sat": 71,
+>>>>>>> origin/motor-causal
      "rel": 57
     },
     "sindicatos": {
@@ -1273,7 +2004,11 @@
      "rel": 46
     },
     "pymes": {
+<<<<<<< HEAD
      "sat": 46,
+=======
+     "sat": 50,
+>>>>>>> origin/motor-causal
      "rel": 47
     },
     "clase_media": {
@@ -1281,6 +2016,7 @@
      "rel": null
     },
     "sectores_populares": {
+<<<<<<< HEAD
      "sat": 41,
      "rel": null
     },
@@ -1298,6 +2034,25 @@
     },
     "org_sociales": {
      "sat": 41,
+=======
+     "sat": 40,
+     "rel": null
+    },
+    "estudiantes": {
+     "sat": 51,
+     "rel": 49
+    },
+    "docentes": {
+     "sat": 51,
+     "rel": 46
+    },
+    "cientificos": {
+     "sat": 53,
+     "rel": 51
+    },
+    "org_sociales": {
+     "sat": 40,
+>>>>>>> origin/motor-causal
      "rel": 47
     },
     "derechos_cultura": {
@@ -1305,6 +2060,7 @@
      "rel": 47
     },
     "ambiente": {
+<<<<<<< HEAD
      "sat": 51,
      "rel": 46
     },
@@ -1339,6 +2095,40 @@
    "notes": [
     "Aliados: notan la medida que pedían."
    ]
+=======
+     "sat": 52,
+     "rel": 46
+    },
+    "oficialismo": {
+     "sat": 49,
+     "rel": 72
+    },
+    "aliados": {
+     "sat": 59,
+     "rel": 70
+    },
+    "oposicion": {
+     "sat": 65,
+     "rel": 34
+    },
+    "gobernadores": {
+     "sat": 28,
+     "rel": 47
+    }
+   },
+   "apro": 44.1,
+   "iv": 45.2,
+   "gob": 55.7,
+   "leg": 54.2,
+   "imagen": 47.1,
+   "caja": 377,
+   "deuda": 3000,
+   "gastoCorr": 750,
+   "resultado": -318,
+   "financiamiento": 0,
+   "pa": 3,
+   "notes": []
+>>>>>>> origin/motor-causal
   },
   {
    "turn": 11,
@@ -1347,6 +2137,7 @@
    "quarter": 3,
    "actions": [
     "Ajuste del gasto público",
+<<<<<<< HEAD
     "Financiamiento científico",
     "Estudio de factibilidad"
    ],
@@ -1399,6 +2190,63 @@
     },
     "financiero": {
      "sat": 66,
+=======
+    "Financiamiento científico"
+   ],
+   "interactions": [],
+   "events": [
+    "Crisis Energética → Tarifazos"
+   ],
+   "indicatorsBefore": {
+    "INFL": 36.9,
+    "ACTV": 38.3,
+    "PODA": 40.6,
+    "INVC": 47.9,
+    "SOLV": 55.7,
+    "EXTE": 48.8,
+    "INFR": 35,
+    "EDUC": 55,
+    "PSOC": 35.9,
+    "SEGU": 39.5,
+    "INST": 56,
+    "CONF": 32.1
+   },
+   "indicatorsAfter": {
+    "INFL": 38.3,
+    "ACTV": 35.6,
+    "PODA": 38.5,
+    "INVC": 47.6,
+    "SOLV": 58.8,
+    "EXTE": 48.5,
+    "INFR": 34.2,
+    "EDUC": 56.4,
+    "PSOC": 32.9,
+    "SEGU": 39.1,
+    "INST": 55.5,
+    "CONF": 35.7
+   },
+   "causes": [
+    "Solvencia fiscal +3.1 (Mercados abiertos: baja el riesgo país; las cuentas públicas)",
+    "Protección social y salud -3.0 (Ajuste del gasto público)",
+    "Infraestructura -1.8 (Ajuste del gasto público (decisión anterior); desgaste sin mantenimiento)",
+    "Educación +1.4 (Inversión educativa (decisión anterior))"
+   ],
+   "channels": [
+    "Mercados abiertos: baja el riesgo país (SOLV +4.0)"
+   ],
+   "pendingEffects": 6,
+   "actors": {
+    "industria": {
+     "sat": 50,
+     "rel": 52
+    },
+    "agro": {
+     "sat": 46,
+     "rel": 42
+    },
+    "financiero": {
+     "sat": 72,
+>>>>>>> origin/motor-causal
      "rel": 57
     },
     "sindicatos": {
@@ -1406,7 +2254,11 @@
      "rel": 45
     },
     "pymes": {
+<<<<<<< HEAD
      "sat": 45,
+=======
+     "sat": 49,
+>>>>>>> origin/motor-causal
      "rel": 46
     },
     "clase_media": {
@@ -1414,6 +2266,7 @@
      "rel": null
     },
     "sectores_populares": {
+<<<<<<< HEAD
      "sat": 39,
      "rel": null
     },
@@ -1435,6 +2288,29 @@
     },
     "derechos_cultura": {
      "sat": 50,
+=======
+     "sat": 38,
+     "rel": null
+    },
+    "estudiantes": {
+     "sat": 51,
+     "rel": 48
+    },
+    "docentes": {
+     "sat": 51,
+     "rel": 45
+    },
+    "cientificos": {
+     "sat": 54,
+     "rel": 51
+    },
+    "org_sociales": {
+     "sat": 37,
+     "rel": 46
+    },
+    "derechos_cultura": {
+     "sat": 49,
+>>>>>>> origin/motor-causal
      "rel": 46
     },
     "ambiente": {
@@ -1442,6 +2318,7 @@
      "rel": 45
     },
     "oficialismo": {
+<<<<<<< HEAD
      "sat": 41,
      "rel": 63
     },
@@ -1473,6 +2350,36 @@
     "Estudiantes: notan la medida que pedían.",
     "Científicos: notan la medida que pedían."
    ]
+=======
+     "sat": 46,
+     "rel": 71
+    },
+    "aliados": {
+     "sat": 59,
+     "rel": 71
+    },
+    "oposicion": {
+     "sat": 63,
+     "rel": 36
+    },
+    "gobernadores": {
+     "sat": 26,
+     "rel": 46
+    }
+   },
+   "apro": 41.8,
+   "iv": 43.5,
+   "gob": 54.2,
+   "leg": 54.2,
+   "imagen": 47,
+   "caja": 978,
+   "deuda": 3000,
+   "gastoCorr": 680,
+   "resultado": 401,
+   "financiamiento": 0,
+   "pa": 2,
+   "notes": []
+>>>>>>> origin/motor-causal
   },
   {
    "turn": 12,
@@ -1480,6 +2387,7 @@
    "year": 3,
    "quarter": 4,
    "actions": [
+<<<<<<< HEAD
     "Crédito PyME y emprendedor",
     "Prevención comunitaria del delito",
     "Mantenimiento de infraestructura"
@@ -1521,6 +2429,48 @@
     "Ciencia e innovación +2.6 (Financiamiento científico (decisión anterior))",
     "Solvencia fiscal +1.1 (Mercados abiertos: baja el riesgo país)",
     "Inflación -0.8 (expectativas y fundamentos de la inflación)"
+=======
+    "Prevención comunitaria del delito",
+    "Atención primaria de la salud",
+    "Estudio de factibilidad",
+    "Mantenimiento de infraestructura"
+   ],
+   "interactions": [],
+   "events": [],
+   "indicatorsBefore": {
+    "INFL": 38.3,
+    "ACTV": 35.6,
+    "PODA": 38.5,
+    "INVC": 47.6,
+    "SOLV": 58.8,
+    "EXTE": 48.5,
+    "INFR": 34.2,
+    "EDUC": 56.4,
+    "PSOC": 32.9,
+    "SEGU": 39.1,
+    "INST": 55.5,
+    "CONF": 35.7
+   },
+   "indicatorsAfter": {
+    "INFL": 37.2,
+    "ACTV": 35.9,
+    "PODA": 38.4,
+    "INVC": 47.5,
+    "SOLV": 55.1,
+    "EXTE": 48.3,
+    "INFR": 35.9,
+    "EDUC": 56.1,
+    "PSOC": 32.8,
+    "SEGU": 38.7,
+    "INST": 55.8,
+    "CONF": 35.5
+   },
+   "causes": [
+    "Solvencia fiscal -3.7 (las cuentas públicas)",
+    "Ciencia e innovación +2.4 (Financiamiento científico (decisión anterior))",
+    "Infraestructura +1.7 (Mantenimiento de infraestructura)",
+    "Inflación -1.1 (expectativas y fundamentos de la inflación)"
+>>>>>>> origin/motor-causal
    ],
    "channels": [
     "Mercados abiertos: baja el riesgo país (SOLV +4.0)"
@@ -1528,6 +2478,7 @@
    "pendingEffects": 9,
    "actors": {
     "industria": {
+<<<<<<< HEAD
      "sat": 47,
      "rel": 51
     },
@@ -1553,10 +2504,38 @@
     },
     "sectores_populares": {
      "sat": 38,
+=======
+     "sat": 48,
+     "rel": 51
+    },
+    "agro": {
+     "sat": 46,
+     "rel": 42
+    },
+    "financiero": {
+     "sat": 70,
+     "rel": 56
+    },
+    "sindicatos": {
+     "sat": 34,
+     "rel": 45
+    },
+    "pymes": {
+     "sat": 47,
+     "rel": 46
+    },
+    "clase_media": {
+     "sat": 49,
+     "rel": null
+    },
+    "sectores_populares": {
+     "sat": 36,
+>>>>>>> origin/motor-causal
      "rel": null
     },
     "estudiantes": {
      "sat": 50,
+<<<<<<< HEAD
      "rel": 51
     },
     "docentes": {
@@ -1573,6 +2552,24 @@
     },
     "derechos_cultura": {
      "sat": 51,
+=======
+     "rel": 48
+    },
+    "docentes": {
+     "sat": 49,
+     "rel": 45
+    },
+    "cientificos": {
+     "sat": 55,
+     "rel": 50
+    },
+    "org_sociales": {
+     "sat": 35,
+     "rel": 46
+    },
+    "derechos_cultura": {
+     "sat": 49,
+>>>>>>> origin/motor-causal
      "rel": 46
     },
     "ambiente": {
@@ -1580,18 +2577,28 @@
      "rel": 45
     },
     "oficialismo": {
+<<<<<<< HEAD
      "sat": 40,
      "rel": 63
     },
     "aliados": {
      "sat": 54,
      "rel": 68
+=======
+     "sat": 43,
+     "rel": 71
+    },
+    "aliados": {
+     "sat": 57,
+     "rel": 71
+>>>>>>> origin/motor-causal
     },
     "oposicion": {
      "sat": 61,
      "rel": 37
     },
     "gobernadores": {
+<<<<<<< HEAD
      "sat": 27,
      "rel": 46
     }
@@ -1607,6 +2614,23 @@
    "resultado": -275,
    "financiamiento": 0,
    "pa": 3,
+=======
+     "sat": 25,
+     "rel": 46
+    }
+   },
+   "apro": 38.4,
+   "iv": 41.2,
+   "gob": 53.7,
+   "leg": 54.2,
+   "imagen": 46.8,
+   "caja": 502,
+   "deuda": 3000,
+   "gastoCorr": 720,
+   "resultado": -276,
+   "financiamiento": 0,
+   "pa": 4,
+>>>>>>> origin/motor-causal
    "notes": []
   },
   {
@@ -1615,13 +2639,20 @@
    "year": 4,
    "quarter": 1,
    "actions": [
+<<<<<<< HEAD
     "Inversión educativa",
     "Atención primaria de la salud",
     "Estudio de factibilidad"
+=======
+    "Administración tributaria (lucha contra la evasión)",
+    "Crédito PyME y emprendedor",
+    "Transparencia y anticorrupción"
+>>>>>>> origin/motor-causal
    ],
    "interactions": [],
    "events": [],
    "indicatorsBefore": {
+<<<<<<< HEAD
     "INFL": 39.4,
     "ACTV": 35.5,
     "PODA": 38.5,
@@ -1682,6 +2713,70 @@
     },
     "clase_media": {
      "sat": 50,
+=======
+    "INFL": 37.2,
+    "ACTV": 35.9,
+    "PODA": 38.4,
+    "INVC": 47.5,
+    "SOLV": 55.1,
+    "EXTE": 48.3,
+    "INFR": 35.9,
+    "EDUC": 56.1,
+    "PSOC": 32.8,
+    "SEGU": 38.7,
+    "INST": 55.8,
+    "CONF": 35.5
+   },
+   "indicatorsAfter": {
+    "INFL": 36.5,
+    "ACTV": 41.1,
+    "PODA": 38.6,
+    "INVC": 50.5,
+    "SOLV": 54.7,
+    "EXTE": 48.1,
+    "INFR": 34.9,
+    "EDUC": 57.5,
+    "PSOC": 35.5,
+    "SEGU": 39.2,
+    "INST": 57.7,
+    "CONF": 38.6
+   },
+   "causes": [
+    "Actividad y empleo +5.2 (Crédito PyME y emprendedor (decisión anterior))",
+    "Conflictividad social +3.1 (Piquetes; Sindicatos: medidas de fuerza)",
+    "Inversión y crédito +3.1 (Crédito PyME y emprendedor)",
+    "Protección social y salud +2.6 (Atención primaria de la salud (decisión anterior))"
+   ],
+   "channels": [
+    "Mercados abiertos: baja el riesgo país (SOLV +4.0)",
+    "Sindicatos: medidas de fuerza (CONF +2.3)",
+    "Piquetes (CONF +3.1)"
+   ],
+   "pendingEffects": 9,
+   "actors": {
+    "industria": {
+     "sat": 49,
+     "rel": 51
+    },
+    "agro": {
+     "sat": 46,
+     "rel": 41
+    },
+    "financiero": {
+     "sat": 69,
+     "rel": 56
+    },
+    "sindicatos": {
+     "sat": 36,
+     "rel": 44
+    },
+    "pymes": {
+     "sat": 48,
+     "rel": 45
+    },
+    "clase_media": {
+     "sat": 49,
+>>>>>>> origin/motor-causal
      "rel": null
     },
     "sectores_populares": {
@@ -1689,14 +2784,20 @@
      "rel": null
     },
     "estudiantes": {
+<<<<<<< HEAD
      "sat": 51,
      "rel": 50
+=======
+     "sat": 53,
+     "rel": 47
+>>>>>>> origin/motor-causal
     },
     "docentes": {
      "sat": 50,
      "rel": 44
     },
     "cientificos": {
+<<<<<<< HEAD
      "sat": 53,
      "rel": 50
     },
@@ -1706,6 +2807,17 @@
     },
     "derechos_cultura": {
      "sat": 51,
+=======
+     "sat": 56,
+     "rel": 50
+    },
+    "org_sociales": {
+     "sat": 37,
+     "rel": 45
+    },
+    "derechos_cultura": {
+     "sat": 50,
+>>>>>>> origin/motor-causal
      "rel": 45
     },
     "ambiente": {
@@ -1713,6 +2825,7 @@
      "rel": 44
     },
     "oficialismo": {
+<<<<<<< HEAD
      "sat": 39,
      "rel": 63
     },
@@ -1738,6 +2851,33 @@
    "deuda": 3000,
    "gastoCorr": 710,
    "resultado": -43,
+=======
+     "sat": 42,
+     "rel": 71
+    },
+    "aliados": {
+     "sat": 54,
+     "rel": 72
+    },
+    "oposicion": {
+     "sat": 58,
+     "rel": 38
+    },
+    "gobernadores": {
+     "sat": 26,
+     "rel": 45
+    }
+   },
+   "apro": 40.7,
+   "iv": 42.6,
+   "gob": 52.7,
+   "leg": 54.2,
+   "imagen": 46.7,
+   "caja": 401,
+   "deuda": 3000,
+   "gastoCorr": 720,
+   "resultado": -101,
+>>>>>>> origin/motor-causal
    "financiamiento": 0,
    "pa": 3,
    "notes": []
@@ -1748,6 +2888,7 @@
    "year": 4,
    "quarter": 2,
    "actions": [
+<<<<<<< HEAD
     "Administración tributaria (lucha contra la evasión)",
     "Financiamiento científico",
     "Transparencia y anticorrupción"
@@ -1787,14 +2928,62 @@
     "Solvencia fiscal -2.6 (las cuentas públicas)",
     "Instituciones y derechos +2.4 (Transparencia y anticorrupción)",
     "Actividad y empleo +2.0 (Crédito PyME y emprendedor (decisión anterior))"
+=======
+    "Inversión educativa"
+   ],
+   "interactions": [],
+   "events": [
+    "Crisis en el Sistema de Salud → Asignar fondos de emergencia"
+   ],
+   "indicatorsBefore": {
+    "INFL": 36.5,
+    "ACTV": 41.1,
+    "PODA": 38.6,
+    "INVC": 50.5,
+    "SOLV": 54.7,
+    "EXTE": 48.1,
+    "INFR": 34.9,
+    "EDUC": 57.5,
+    "PSOC": 35.5,
+    "SEGU": 39.2,
+    "INST": 57.7,
+    "CONF": 38.6
+   },
+   "indicatorsAfter": {
+    "INFL": 36.1,
+    "ACTV": 39.4,
+    "PODA": 38.6,
+    "INVC": 47,
+    "SOLV": 52.3,
+    "EXTE": 47.9,
+    "INFR": 34.9,
+    "EDUC": 57.2,
+    "PSOC": 37.5,
+    "SEGU": 39.7,
+    "INST": 57.2,
+    "CONF": 40.5
+   },
+   "causes": [
+    "Inversión y crédito -3.6",
+    "Solvencia fiscal -2.4 (las cuentas públicas)",
+    "Presión tributaria +2.0 (Administración tributaria (lucha contra la evasión) (decisión anterior))",
+    "Actividad y empleo -1.7 (Administración tributaria (lucha contra la evasión) (decisión anterior); la infraestructura ayudó a producir)"
+>>>>>>> origin/motor-causal
    ],
    "channels": [
     "Mercados abiertos: baja el riesgo país (SOLV +4.0)"
    ],
+<<<<<<< HEAD
    "pendingEffects": 8,
    "actors": {
     "industria": {
      "sat": 46,
+=======
+   "pendingEffects": 7,
+   "actors": {
+    "industria": {
+     "sat": 47,
+>>>>>>> origin/motor-causal
      "rel": 51
     },
     "agro": {
@@ -1802,6 +2991,7 @@
      "rel": 40
     },
     "financiero": {
+<<<<<<< HEAD
      "sat": 65,
      "rel": 56
     },
@@ -1819,10 +3009,30 @@
     },
     "sectores_populares": {
      "sat": 39,
+=======
+     "sat": 67,
+     "rel": 56
+    },
+    "sindicatos": {
+     "sat": 37,
+     "rel": 43
+    },
+    "pymes": {
+     "sat": 47,
+     "rel": 45
+    },
+    "clase_media": {
+     "sat": 49,
+     "rel": null
+    },
+    "sectores_populares": {
+     "sat": 38,
+>>>>>>> origin/motor-causal
      "rel": null
     },
     "estudiantes": {
      "sat": 53,
+<<<<<<< HEAD
      "rel": 49
     },
     "docentes": {
@@ -1831,6 +3041,16 @@
     },
     "cientificos": {
      "sat": 54,
+=======
+     "rel": 46
+    },
+    "docentes": {
+     "sat": 50,
+     "rel": 43
+    },
+    "cientificos": {
+     "sat": 56,
+>>>>>>> origin/motor-causal
      "rel": 50
     },
     "org_sociales": {
@@ -1838,6 +3058,7 @@
      "rel": 45
     },
     "derechos_cultura": {
+<<<<<<< HEAD
      "sat": 53,
      "rel": 45
     },
@@ -1873,6 +3094,43 @@
    "resultado": -28,
    "financiamiento": 0,
    "pa": 3,
+=======
+     "sat": 51,
+     "rel": 45
+    },
+    "ambiente": {
+     "sat": 53,
+     "rel": 43
+    },
+    "oficialismo": {
+     "sat": 40,
+     "rel": 71
+    },
+    "aliados": {
+     "sat": 53,
+     "rel": 73
+    },
+    "oposicion": {
+     "sat": 58,
+     "rel": 39
+    },
+    "gobernadores": {
+     "sat": 27,
+     "rel": 45
+    }
+   },
+   "apro": 40.4,
+   "iv": 42.3,
+   "gob": 51.8,
+   "leg": 54.2,
+   "imagen": 46.5,
+   "caja": 65,
+   "deuda": 3000,
+   "gastoCorr": 760,
+   "resultado": 64,
+   "financiamiento": 0,
+   "pa": 1,
+>>>>>>> origin/motor-causal
    "notes": []
   },
   {
@@ -1881,6 +3139,7 @@
    "year": 4,
    "quarter": 3,
    "actions": [
+<<<<<<< HEAD
     "Ajuste del gasto público",
     "Crédito PyME y emprendedor",
     "Estudio de factibilidad"
@@ -1925,6 +3184,50 @@
    ],
    "channels": [],
    "pendingEffects": 8,
+=======
+    "Ajuste del gasto público"
+   ],
+   "interactions": [],
+   "events": [],
+   "indicatorsBefore": {
+    "INFL": 36.1,
+    "ACTV": 39.4,
+    "PODA": 38.6,
+    "INVC": 47,
+    "SOLV": 52.3,
+    "EXTE": 47.9,
+    "INFR": 34.9,
+    "EDUC": 57.2,
+    "PSOC": 37.5,
+    "SEGU": 39.7,
+    "INST": 57.2,
+    "CONF": 40.5
+   },
+   "indicatorsAfter": {
+    "INFL": 35.8,
+    "ACTV": 36.6,
+    "PODA": 38.6,
+    "INVC": 47.6,
+    "SOLV": 55.1,
+    "EXTE": 47.7,
+    "INFR": 34.9,
+    "EDUC": 58.5,
+    "PSOC": 34.4,
+    "SEGU": 40.1,
+    "INST": 56.6,
+    "CONF": 39
+   },
+   "causes": [
+    "Protección social y salud -3.1 (Ajuste del gasto público)",
+    "Solvencia fiscal +2.8 (Mercados abiertos: baja el riesgo país; las cuentas públicas)",
+    "Actividad y empleo -2.8 (Ajuste del gasto público; la infraestructura ayudó a producir)",
+    "Conflictividad social -1.5 (la calle se calma sola o la exclusión la enciende)"
+   ],
+   "channels": [
+    "Mercados abiertos: baja el riesgo país (SOLV +4.0)"
+   ],
+   "pendingEffects": 4,
+>>>>>>> origin/motor-causal
    "actors": {
     "industria": {
      "sat": 45,
@@ -1935,6 +3238,7 @@
      "rel": 40
     },
     "financiero": {
+<<<<<<< HEAD
      "sat": 63,
      "rel": 55
     },
@@ -1952,11 +3256,34 @@
     },
     "sectores_populares": {
      "sat": 37,
+=======
+     "sat": 66,
+     "rel": 55
+    },
+    "sindicatos": {
+     "sat": 36,
+     "rel": 43
+    },
+    "pymes": {
+     "sat": 45,
+     "rel": 44
+    },
+    "clase_media": {
+     "sat": 48,
+     "rel": null
+    },
+    "sectores_populares": {
+     "sat": 38,
+>>>>>>> origin/motor-causal
      "rel": null
     },
     "estudiantes": {
      "sat": 53,
+<<<<<<< HEAD
      "rel": 49
+=======
+     "rel": 46
+>>>>>>> origin/motor-causal
     },
     "docentes": {
      "sat": 51,
@@ -1971,6 +3298,7 @@
      "rel": 44
     },
     "derechos_cultura": {
+<<<<<<< HEAD
      "sat": 53,
      "rel": 44
     },
@@ -2006,6 +3334,43 @@
    "resultado": 351,
    "financiamiento": 0,
    "pa": 3,
+=======
+     "sat": 51,
+     "rel": 44
+    },
+    "ambiente": {
+     "sat": 53,
+     "rel": 43
+    },
+    "oficialismo": {
+     "sat": 39,
+     "rel": 71
+    },
+    "aliados": {
+     "sat": 52,
+     "rel": 73
+    },
+    "oposicion": {
+     "sat": 56,
+     "rel": 40
+    },
+    "gobernadores": {
+     "sat": 26,
+     "rel": 44
+    }
+   },
+   "apro": 39,
+   "iv": 41.3,
+   "gob": 51,
+   "leg": 53.2,
+   "imagen": 46.4,
+   "caja": 798,
+   "deuda": 3000,
+   "gastoCorr": 640,
+   "resultado": 332,
+   "financiamiento": 0,
+   "pa": 1,
+>>>>>>> origin/motor-causal
    "notes": []
   },
   {
@@ -2014,11 +3379,18 @@
    "year": 4,
    "quarter": 4,
    "actions": [
+<<<<<<< HEAD
     "Inversión educativa"
+=======
+    "Crédito PyME y emprendedor",
+    "Financiamiento científico",
+    "Prevención comunitaria del delito"
+>>>>>>> origin/motor-causal
    ],
    "interactions": [],
    "events": [],
    "indicatorsBefore": {
+<<<<<<< HEAD
     "INFL": 37.9,
     "ACTV": 35.7,
     "PODA": 38.5,
@@ -2119,6 +3491,107 @@
     },
     "oposicion": {
      "sat": 58,
+=======
+    "INFL": 35.8,
+    "ACTV": 36.6,
+    "PODA": 38.6,
+    "INVC": 47.6,
+    "SOLV": 55.1,
+    "EXTE": 47.7,
+    "INFR": 34.9,
+    "EDUC": 58.5,
+    "PSOC": 34.4,
+    "SEGU": 40.1,
+    "INST": 56.6,
+    "CONF": 39
+   },
+   "indicatorsAfter": {
+    "INFL": 35.5,
+    "ACTV": 36.8,
+    "PODA": 38.5,
+    "INVC": 50.5,
+    "SOLV": 55.3,
+    "EXTE": 47.6,
+    "INFR": 34.1,
+    "EDUC": 58.2,
+    "PSOC": 34.4,
+    "SEGU": 40.5,
+    "INST": 56.8,
+    "CONF": 37.9
+   },
+   "causes": [
+    "Inversión y crédito +2.9 (Crédito PyME y emprendedor)",
+    "Conflictividad social -1.1 (la calle se calma sola o la exclusión la enciende)",
+    "Infraestructura -0.8 (desgaste sin mantenimiento)"
+   ],
+   "channels": [
+    "Mercados abiertos: baja el riesgo país (SOLV +4.0)"
+   ],
+   "pendingEffects": 10,
+   "actors": {
+    "industria": {
+     "sat": 45,
+     "rel": 50
+    },
+    "agro": {
+     "sat": 43,
+     "rel": 39
+    },
+    "financiero": {
+     "sat": 66,
+     "rel": 55
+    },
+    "sindicatos": {
+     "sat": 35,
+     "rel": 42
+    },
+    "pymes": {
+     "sat": 45,
+     "rel": 44
+    },
+    "clase_media": {
+     "sat": 48,
+     "rel": null
+    },
+    "sectores_populares": {
+     "sat": 38,
+     "rel": null
+    },
+    "estudiantes": {
+     "sat": 53,
+     "rel": 45
+    },
+    "docentes": {
+     "sat": 51,
+     "rel": 42
+    },
+    "cientificos": {
+     "sat": 57,
+     "rel": 49
+    },
+    "org_sociales": {
+     "sat": 37,
+     "rel": 44
+    },
+    "derechos_cultura": {
+     "sat": 51,
+     "rel": 44
+    },
+    "ambiente": {
+     "sat": 53,
+     "rel": 42
+    },
+    "oficialismo": {
+     "sat": 38,
+     "rel": 70
+    },
+    "aliados": {
+     "sat": 52,
+     "rel": 74
+    },
+    "oposicion": {
+     "sat": 55,
+>>>>>>> origin/motor-causal
      "rel": 42
     },
     "gobernadores": {
@@ -2126,6 +3599,7 @@
      "rel": 44
     }
    },
+<<<<<<< HEAD
    "apro": 38.4,
    "iv": 39.8,
    "gob": 48.7,
@@ -2137,6 +3611,19 @@
    "resultado": -221,
    "financiamiento": 0,
    "pa": 1,
+=======
+   "apro": 38.7,
+   "iv": 41.1,
+   "gob": 50.5,
+   "leg": 52.2,
+   "imagen": 46.3,
+   "caja": 518,
+   "deuda": 3000,
+   "gastoCorr": 690,
+   "resultado": -280,
+   "financiamiento": 0,
+   "pa": 3,
+>>>>>>> origin/motor-causal
    "notes": []
   }
  ]

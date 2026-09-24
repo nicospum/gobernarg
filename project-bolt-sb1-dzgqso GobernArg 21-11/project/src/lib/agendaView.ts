@@ -3,7 +3,7 @@
  * (efectos diferidos), lo que está corriendo (programas persistentes y
  * bonus temporales) y las condiciones vigentes (flags, estrategia).
  */
-import { CAUSAL_ACTIONS_BY_ID, PARAMS } from '@/data/causal';
+import { ACTORS, CAUSAL_ACTIONS_BY_ID, PARAMS, type ActorId } from '@/data/causal';
 import { MIDTERM_CAUSAL } from '@/data/midtermStrategies';
 import { FOREVER, viewRef, type CausalState } from '@/engine/causal';
 import { effectChip, targetLabel, type EffectChip } from './causalText';
@@ -11,7 +11,18 @@ import { effectChip, targetLabel, type EffectChip } from './causalText';
 function sourceName(actionId: string): string {
   if (actionId === 'acuerdo') return 'Acuerdo con un actor';
   if (actionId.startsWith('evento:')) return 'Consecuencia de un evento';
+  if (actionId === 'escenario') return 'Herencia del escenario';
   return CAUSAL_ACTIONS_BY_ID[actionId]?.name ?? actionId;
+}
+
+/** Título de un bonus: presión de un actor (canal de poder) o la acción que lo originó. */
+function bonusTitle(source: string, label?: string): string {
+  if (source.startsWith('channel:')) {
+    const actor = ACTORS[source.slice('channel:'.length) as ActorId];
+    if (actor) return label ? `${actor.shortName}: ${label}` : `Presión de ${actor.shortName}`;
+  }
+  if (source === 'escenario' && label) return label;
+  return sourceName(source);
 }
 
 export interface UpcomingItem {
@@ -71,7 +82,7 @@ export function runningEffects(c: CausalState): RunningItem[] {
     const remaining = b.end - ref;
     out.push({
       key: b.id,
-      title: sourceName(b.source.replace(/^channel:/, '')),
+      title: bonusTitle(b.source, b.label),
       detail: `${chip.label} ${chip.text} (temporal${remaining > 0 ? `, ${remaining} turno${remaining > 1 ? 's' : ''} más` : ', último turno'})`,
       done: ref - b.start + 1,
       total: b.end - b.start + 1,
