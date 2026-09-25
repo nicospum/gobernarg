@@ -92,7 +92,7 @@ export function AdvisorPanel({ gameState, onHireAdvisor, onDismissAdvisor }: Adv
                 <div className="flex justify-between items-start gap-3">
                   <div className="flex gap-3">
                     <img
-                      src={getAdvisorPortrait(advisor.specialty)}
+                      src={getAdvisorPortrait(advisor.specialty, advisor.id)}
                       alt={advisor.name}
                       className="w-12 h-12 rounded-lg object-cover bg-ink/5 border border-ink/12 flex-shrink-0"
                     />

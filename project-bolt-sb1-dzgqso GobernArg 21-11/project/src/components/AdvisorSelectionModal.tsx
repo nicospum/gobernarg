@@ -116,7 +116,7 @@ export function AdvisorSelectionModal({ onClose, onHire, maxSelections, gameStat
                   <div className="flex justify-between items-start gap-3">
                     <div className="flex gap-3">
                       <img
-                        src={getAdvisorPortrait(advisor.specialty)}
+                        src={getAdvisorPortrait(advisor.specialty, advisor.id)}
                         alt={advisor.name}
                         className="w-16 h-16 rounded-lg object-cover bg-gray-100 flex-shrink-0"
                       />

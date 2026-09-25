@@ -57,6 +57,7 @@ import advisorSecurityMale from '../assets/images/advisors/advisor-security-male
 import advisorSocialMale from '../assets/images/advisors/advisor-social-male.webp';
 import advisorHealthFemale from '../assets/images/advisors/advisor-health-female.webp';
 import advisorJusticeMale from '../assets/images/advisors/advisor-justice-male.webp';
+import advisorCharlyAbad from '../assets/images/advisors/advisor-charly-abad.webp';
 
 import eventEconomicCrisis from '../assets/images/events/event-economic-crisis.webp';
 import eventSocialProtest from '../assets/images/events/event-social-protest.webp';
@@ -168,6 +169,7 @@ export const IMAGES = {
     socialMale: advisorSocialMale,
     healthFemale: advisorHealthFemale,
     justiceMale: advisorJusticeMale,
+    charlyAbad: advisorCharlyAbad,
   },
   events: {
     economicCrisis: eventEconomicCrisis,
@@ -288,8 +290,14 @@ export function getEventImage(category: string, _severity: string, eventId?: str
   }
 }
 
-// Retrato de asesor según especialidad
-export function getAdvisorPortrait(specialty: string): string {
+/** Asesores con retrato propio (tienen prioridad sobre el genérico por especialidad). */
+const ADVISOR_PORTRAIT_BY_ID: Record<string, string> = {
+  advisor8: IMAGES.advisors.charlyAbad,
+};
+
+// Retrato de asesor: propio si lo tiene; si no, según especialidad
+export function getAdvisorPortrait(specialty: string, advisorId?: string): string {
+  if (advisorId && ADVISOR_PORTRAIT_BY_ID[advisorId]) return ADVISOR_PORTRAIT_BY_ID[advisorId];
   const lower = specialty.toLowerCase();
   if (lower.includes('econom')) return IMAGES.advisors.economyMale;
   if (lower.includes('comunicaci')) return IMAGES.advisors.communicationMale;

@@ -1,5 +1,5 @@
 import { Advisor } from '../types/game';
-import type { ActorId, UiCategory } from './causal';
+import { ACTOR_IDS, type ActorId, type UiCategory } from './causal';
 
 export const availableAdvisors: Advisor[] = [
   {
@@ -168,6 +168,28 @@ export const availableAdvisors: Advisor[] = [
     },
     traits: ['académico', 'reformista'],
     effectiveness: 90
+  },
+  {
+    id: 'advisor8',
+    name: 'Charly Abad',
+    specialty: 'Broker de Salud',
+    bonusActions: 0, // Motor causal: el aporte del asesor es su rol (ADVISOR_ROLES), no PA extra.
+    influence: 8,
+    cost: 350,
+    description: 'Broker de salud: te arma un hospital llave en mano y te garantiza resultados en salud. Cálido y de trato fácil, se lleva bien con empresarios y líderes religiosos, y con su calidez mejora la relación con todos los sectores.',
+    popularityEffect: 8,
+    unlockRequirement: null,
+    level: 4,
+    specialAbilities: ['hospital_llave_en_mano', 'red_de_contactos'],
+    groupBonuses: {
+      'empresarios': 15,
+      'organizaciones-sociales': 15
+    },
+    policyModifiers: {
+      'social': 1.25
+    },
+    traits: ['cálido', 'negociador'],
+    effectiveness: 88
   }
 ];
 
@@ -306,6 +328,30 @@ export const ADVISOR_ROLES: Record<string, AdvisorRole> = {
       'Educación, ciencia y cultura: +20% de eficacia',
       'Reformas educativas y leyes de conocimiento cuestan 1 PA',
       'Mejor negociación con docentes, estudiantes y científicos',
+    ],
+  },
+  advisor8: {
+    categories: ['Social y salud'],
+    efficacy: 1.2,
+    paDiscount: true,
+    cajaDiscount: 0.15,
+    // Su calidez suma con todos (+5%); más con empresarios y con las organizaciones
+    // sociales, donde están las redes de los líderes religiosos (no hay actor propio).
+    negotiation: {
+      ...Object.fromEntries(ACTOR_IDS.map(a => [a, 0.05])),
+      industria: 0.15,
+      pymes: 0.15,
+      org_sociales: 0.15,
+    },
+    reveals: [],
+    imagenOnHire: 2,
+    salary: 45,
+    perks: [
+      'Social y salud: +20% de eficacia y −15% de costo',
+      'Hospitales y programas grandes de salud cuestan 1 PA',
+      'Se lleva bien con empresarios: mejor negociación con la industria y las PyMEs',
+      'Llega a los líderes religiosos: mejor negociación con las organizaciones sociales',
+      'Su calidez suma con todos: +5% al negociar con cualquier actor',
     ],
   },
 };
