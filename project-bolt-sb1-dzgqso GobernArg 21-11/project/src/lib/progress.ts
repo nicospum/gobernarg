@@ -1,18 +1,24 @@
 /**
- * Progreso del jugador entre partidas (escenarios ganados). Vive en el
- * navegador (localStorage): si no está disponible —modo privado, datos
- * borrados— el juego funciona igual, sólo que sin desbloqueos guardados.
+ * Progreso del jugador entre partidas (escenarios ganados y reelecciones).
+ * Vive en el navegador (localStorage): si no está disponible —modo privado,
+ * datos borrados— el juego funciona igual, sólo que sin desbloqueos guardados.
  */
 const KEY = 'gobernarg.progress.v1';
 
 export interface Progress {
   /** Escenarios en los que ganaste la partida completa. */
   wonScenarios: string[];
-  /** Desbloquear todos los escenarios sin ganarlos. */
+  /** Reelecciones ganadas en total: desbloquean los escenarios históricos. */
+  reelectionsWon: number;
+  /**
+   * Desbloquear todos los escenarios sin ganarlos. El jugador no puede
+   * activarlo desde la pantalla (hay que ganar reelecciones); queda como
+   * atajo de prueba editando el localStorage.
+   */
   unlockAll: boolean;
 }
 
-const EMPTY: Progress = { wonScenarios: [], unlockAll: false };
+const EMPTY: Progress = { wonScenarios: [], reelectionsWon: 0, unlockAll: false };
 
 export function loadProgress(): Progress {
   try {
@@ -21,6 +27,7 @@ export function loadProgress(): Progress {
     const parsed = JSON.parse(raw) as Partial<Progress>;
     return {
       wonScenarios: Array.isArray(parsed.wonScenarios) ? parsed.wonScenarios.filter(x => typeof x === 'string') : [],
+      reelectionsWon: typeof parsed.reelectionsWon === 'number' && parsed.reelectionsWon > 0 ? Math.floor(parsed.reelectionsWon) : 0,
       unlockAll: parsed.unlockAll === true,
     };
   } catch {
@@ -39,6 +46,13 @@ function save(p: Progress): void {
 export function recordScenarioWin(scenarioId: string): Progress {
   const p = loadProgress();
   if (!p.wonScenarios.includes(scenarioId)) p.wonScenarios.push(scenarioId);
+  save(p);
+  return p;
+}
+
+export function recordReelectionWin(): Progress {
+  const p = loadProgress();
+  p.reelectionsWon += 1;
   save(p);
   return p;
 }

@@ -9,6 +9,11 @@ import type { ActorId, IndicatorId } from './index';
  * Los escenarios sólo cambian el PUNTO DE PARTIDA (indicadores, cuentas,
  * Congreso, relaciones, condiciones vigentes). Las reglas del motor son las
  * mismas en todos.
+ *
+ * Flujo de inicio (decisión del usuario, sep-2026): primero se crea el
+ * personaje y después se elige la dificultad. Tres niveles abren un escenario
+ * cada uno (Fácil, Normal y "Argentina"); los escenarios históricos restantes
+ * se desbloquean ganando reelecciones.
  */
 export type ScenarioDifficulty = 'Exploración' | 'Normal' | 'Difícil' | 'Muy difícil';
 
@@ -49,9 +54,10 @@ export interface ScenarioDef {
   /** Condiciones vigentes al inicio: nombre → turnos de duración (null = hasta que se resuelva). */
   flags?: Record<string, number | null>;
   /**
-   * Desbloqueo: ganar cualquiera de estos escenarios. Vacío = disponible desde el inicio.
+   * Desbloqueo: reelecciones ganadas (en cualquier escenario) que hacen falta
+   * para jugarlo. 0 = disponible desde el inicio.
    */
-  unlockedBy: string[];
+  reelectionsToUnlock: number;
 }
 
 export const SCENARIOS: ScenarioDef[] = [
@@ -67,17 +73,17 @@ export const SCENARIOS: ScenarioDef[] = [
     caja: 2000,
     deuda: 0,
     desanclaje: 0,
-    unlockedBy: [],
+    reelectionsToUnlock: 0,
   },
   {
     id: 'herencia_pesada',
     name: 'Herencia pesada',
     era: 'Los traspasos de 2015, 2019 y 2023',
-    difficulty: 'Normal',
+    difficulty: 'Difícil',
     description: 'El país que recibís arrastra inflación alta, pocas divisas y deuda. Es el escenario de diseño del motor: exige ordenar sin romper.',
     highlights: ['Inflación alta y expectativas desancladas', 'Deuda de $3.000M y reservas flacas', 'Caja justa: cada gasto se nota'],
     image: { group: 'backgrounds', key: 'presidentialOffice' },
-    unlockedBy: [],
+    reelectionsToUnlock: 0,
   },
   {
     id: 'viento_de_cola',
@@ -92,7 +98,7 @@ export const SCENARIOS: ScenarioDef[] = [
     deuda: 3000,
     ingresoMult: 1.1,
     desanclaje: 2,
-    unlockedBy: ['pais_en_calma', 'herencia_pesada'],
+    reelectionsToUnlock: 0,
   },
   {
     id: 'corralito',
@@ -113,7 +119,7 @@ export const SCENARIOS: ScenarioDef[] = [
     impulsos: [{ target: 'ACTV', perTurn: 1.8, turns: 8, label: 'Rebote: capacidad ociosa después del derrumbe' }],
     relDelta: { financiero: -15, sindicatos: -10, org_sociales: -10, oposicion: -10 },
     flags: { default_deuda: 8 },
-    unlockedBy: ['herencia_pesada', 'viento_de_cola'],
+    reelectionsToUnlock: 1,
   },
   {
     id: 'pais_en_llamas',
@@ -132,7 +138,7 @@ export const SCENARIOS: ScenarioDef[] = [
     imagen: 58,
     emergencia: { gob: 12, turns: 6 },
     impulsos: [{ target: 'ACTV', perTurn: 1.6, turns: 8, label: 'Rebote: la economía vuelve a moverse si se calma la inflación' }],
-    unlockedBy: ['corralito'],
+    reelectionsToUnlock: 2,
   },
 ];
 
@@ -144,7 +150,29 @@ export function getScenario(id: string | null | undefined): ScenarioDef {
   return SCENARIOS.find(s => s.id === id) ?? SCENARIOS.find(s => s.id === DESIGN_SCENARIO_ID)!;
 }
 
-/** Escenarios disponibles según los escenarios ya ganados. */
-export function isScenarioUnlocked(s: ScenarioDef, won: string[], unlockAll = false): boolean {
-  return unlockAll || s.unlockedBy.length === 0 || s.unlockedBy.some(id => won.includes(id));
+/** Escenarios disponibles según las reelecciones ganadas. */
+export function isScenarioUnlocked(s: ScenarioDef, reelectionsWon: number, unlockAll = false): boolean {
+  return unlockAll || reelectionsWon >= s.reelectionsToUnlock;
 }
+
+export type DifficultyLevelId = 'facil' | 'normal' | 'argentina';
+
+export interface DifficultyLevel {
+  id: DifficultyLevelId;
+  label: string;
+  /** Remate en broma que acompaña al nivel. */
+  tagline: string;
+  scenarioId: string;
+}
+
+/** Los tres niveles del inicio: cada uno abre un escenario disponible desde el principio. */
+export const DIFFICULTY_LEVELS: DifficultyLevel[] = [
+  { id: 'facil', label: 'Fácil', tagline: 'Para aprender a gobernar sin que se prenda fuego todo.', scenarioId: 'pais_en_calma' },
+  { id: 'normal', label: 'Normal', tagline: 'El mundo te compra todo. Disfrutalo mientras dure.', scenarioId: 'viento_de_cola' },
+  { id: 'argentina', label: 'Argentina', tagline: 'Deuda, inflación y reservas flacas. Lo de siempre.', scenarioId: 'herencia_pesada' },
+];
+
+/** Escenarios históricos: los que no abre ningún nivel y se ganan con reelecciones. */
+export const HISTORIC_SCENARIOS: ScenarioDef[] = SCENARIOS.filter(
+  s => !DIFFICULTY_LEVELS.some(l => l.scenarioId === s.id),
+);

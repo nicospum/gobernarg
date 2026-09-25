@@ -259,7 +259,10 @@ export interface CausalState {
   saliency: Saliency[];
   modifiers: GlobalModifier[];
   political: PoliticalState;
+  /** Plataforma vigente; con platformMode 'propia' se recalcula en cada cierre. */
   platformId: string;
+  /** 'propia': el partido adopta lo que más empujaste en los últimos turnos. */
+  platformMode?: 'propia';
   /** Escenario de partida (data/causal/scenarios.ts). */
   scenarioId: string;
   agreements: Agreement[];

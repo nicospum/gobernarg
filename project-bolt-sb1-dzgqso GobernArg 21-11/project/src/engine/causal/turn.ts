@@ -2,7 +2,9 @@ import {
   ACTOR_IDS,
   CAUSAL_ACTIONS_BY_ID,
   INDICATOR_IDS,
+  INDICATORS,
   PARAMS,
+  getPlatform,
   type ActorId,
   type IndicatorId,
 } from '../../data/causal';
@@ -15,6 +17,7 @@ import { closeFiscal, type ActionCashFlows } from './fiscal';
 import { recomputePolitical, updateImagen } from './political';
 import { changeRel, processRelations } from './relations';
 import { COALITION_ACTIONS, expandCoalition, updateInterna } from './interna';
+import { OWN_PLATFORM_WINDOW, deriveOwnPlatform } from './platform';
 import { Rng } from './rng';
 import { applyStructuralRules } from './rules';
 import type { CausalState, PoliticalState, TurnActionRecord, TurnRecord } from './types';
@@ -151,6 +154,19 @@ export function closeTurn(input: CausalState, selections: Selection[]): CloseRes
   state.expect.APRO += PARAMS.BETA_EXPECT * (state.political.apro - state.expect.APRO);
   state.hyperStreak = effective(state, 'INFL', c) >= PARAMS.HIPER_UMBRAL ? state.hyperStreak + 1 : 0;
   state.govCrisisStreak = state.political.gob < PARAMS.GOB_CRISIS_UMBRAL ? state.govCrisisStreak + 1 : 0;
+
+  // Plataforma propia: el partido se reacomoda a lo que venís empujando.
+  if (state.platformMode === 'propia') {
+    const recent = [...state.records.slice(-(OWN_PLATFORM_WINDOW - 1)).map(r => r.actions), actions];
+    const next = deriveOwnPlatform(recent);
+    if (next !== state.platformId) {
+      state.platformId = next;
+      const items = getPlatform(next).items;
+      notes.push(items.length > 0
+        ? `Tu partido ahora espera: ${items.map(it => `${INDICATORS[it.indicator].name} ${it.s > 0 ? '↑' : '↓'}`).join(', ')}.`
+        : 'Tu partido todavía no tiene una plataforma: sólo mira tu aprobación.');
+    }
+  }
 
   const indicatorsAfter = effectiveAll(state, c) as Record<IndicatorId, number>;
   const record: TurnRecord = {

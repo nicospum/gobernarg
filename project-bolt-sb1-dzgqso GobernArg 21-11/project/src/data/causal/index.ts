@@ -261,10 +261,58 @@ export const NO_PLATFORM: PlatformDef = {
   items: [],
 };
 
+/**
+ * Plataforma propia (decisión del usuario, sep-2026): no se define antes de
+ * jugar. El partido adopta los (hasta) tres resultados que más empujaste con
+ * tus acciones en los últimos turnos y se actualiza en cada cierre
+ * (engine/causal/platform.ts). Mientras no hiciste nada, el partido sólo mira
+ * tu aprobación, como sin plataforma.
+ */
+export const OWN_PLATFORM_ID = 'propia';
+
+/**
+ * La plataforma propia vigente se guarda en el id para que el motor la lea con
+ * getPlatform como a cualquier otra: "propia:ACTV+,PODA+,INFL-". El orden es la
+ * prioridad y define las magnitudes de la matriz (5, 5, 4).
+ */
+export const CUSTOM_PLATFORM_PREFIX = 'propia:';
+export const CUSTOM_PLATFORM_WEIGHTS = [5, 5, 4] as const;
+
+export interface CustomPlatformItem {
+  indicator: IndicatorId;
+  dir: 1 | -1;
+}
+
+export function encodeCustomPlatform(items: CustomPlatformItem[]): string {
+  return CUSTOM_PLATFORM_PREFIX + items.map(it => `${it.indicator}${it.dir > 0 ? '+' : '-'}`).join(',');
+}
+
+export function parseCustomPlatform(id: string | null | undefined): CustomPlatformItem[] | null {
+  if (!id || !id.startsWith(CUSTOM_PLATFORM_PREFIX)) return null;
+  const items: CustomPlatformItem[] = [];
+  for (const part of id.slice(CUSTOM_PLATFORM_PREFIX.length).split(',')) {
+    const indicator = part.slice(0, -1);
+    const sign = part.slice(-1);
+    if (!isIndicatorId(indicator) || (sign !== '+' && sign !== '-')) return null;
+    if (items.some(it => it.indicator === indicator)) return null;
+    items.push({ indicator, dir: sign === '+' ? 1 : -1 });
+  }
+  return items.length > 0 && items.length <= CUSTOM_PLATFORM_WEIGHTS.length ? items : null;
+}
+
 export * from './scenarios';
 
 export function getPlatform(id: string | null | undefined): PlatformDef {
   if (id === NO_PLATFORM_ID) return NO_PLATFORM;
+  const custom = parseCustomPlatform(id);
+  if (custom) {
+    return {
+      id: id!,
+      name: 'Plataforma propia',
+      description: 'La fuiste armando al gobernar: lo que más empujaste en los últimos turnos.',
+      items: custom.map((it, i) => ({ indicator: it.indicator, s: it.dir * CUSTOM_PLATFORM_WEIGHTS[i] })),
+    };
+  }
   return PLATFORMS.find(p => p.id === id) ?? PLATFORMS[0];
 }
 

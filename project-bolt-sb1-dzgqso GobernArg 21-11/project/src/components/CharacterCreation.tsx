@@ -1,39 +1,27 @@
 import { useState } from 'react';
-import { Info, Lock } from 'lucide-react';
+import { ArrowRight, Info } from 'lucide-react';
 import { Archetype, Position } from '../types/game';
 import { IMAGES, getPositionBackground } from '../utils/imageAssets';
 import { THUMBNAIL_ARCHETYPES } from '../utils/iconThumbnails';
 import { ARCHETYPE_PASSIVES } from '../data/specialAbilities';
 import { STARTING_POSITION } from '../data/careerRules';
 import { InfoTooltip } from './InfoTooltip';
-import {
-  DEFAULT_PLATFORM_BY_ARCHETYPE,
-  DEFAULT_SCENARIO_ID,
-  INDICATORS,
-  NO_PLATFORM_ID,
-  PLATFORMS,
-  SCENARIOS,
-  isScenarioUnlocked,
-  type ScenarioDifficulty,
-} from '../data/causal';
-import { loadProgress, setUnlockAll } from '@/lib/progress';
+import { SetupSteps } from './SetupSteps';
+
+/** Lo que se define en el paso 1; la dificultad y el partido van en el paso 2 (GameSetup). */
+export interface CharacterDraft {
+  position: Position;
+  archetype: Archetype;
+  governorName: string;
+  avatar: string;
+}
 
 interface CharacterCreationProps {
-  onComplete: (position: Position, archetype: Archetype, governorName: string, avatar: string, platformId: string, scenarioId: string) => void;
+  initial?: CharacterDraft | null;
+  onContinue: (draft: CharacterDraft) => void;
 }
 
-const DIFFICULTY_CLS: Record<ScenarioDifficulty, string> = {
-  'Exploración': 'bg-emerald-400/20 text-emerald-200 border-emerald-300/40',
-  'Normal': 'bg-sky-400/20 text-sky-200 border-sky-300/40',
-  'Difícil': 'bg-amber-400/20 text-amber-200 border-amber-300/40',
-  'Muy difícil': 'bg-red-400/20 text-red-200 border-red-300/40',
-};
-
-function scenarioImage(group: 'backgrounds' | 'events', key: string): string | undefined {
-  return (IMAGES[group] as Record<string, string>)[key];
-}
-
-const AVATARS = [
+export const AVATARS = [
   { id: 'executive-1', src: IMAGES.characters.executive1, label: 'Ejecutivo' },
   { id: 'executive-2', src: IMAGES.characters.executive2, label: 'Ejecutiva' },
   { id: 'female-executive-1', src: IMAGES.characters.femaleExecutive1, label: 'Ejecutiva 1' },
@@ -51,22 +39,13 @@ const AVATARS = [
   { id: 'podium-official', src: IMAGES.characters.podiumOfficial, label: 'Presidente' },
 ];
 
-export function CharacterCreation({ onComplete }: CharacterCreationProps) {
+export function CharacterCreation({ initial, onContinue }: CharacterCreationProps) {
   // MVP presidente-only: el cargo inicial vive en careerRules (STARTING_POSITION)
   // para que el futuro modo campaña tenga un único punto de cambio.
   const position: Position = STARTING_POSITION;
-  const [archetype, setArchetype] = useState<Archetype>('politico');
-  // Plataforma del oficialismo (D-07): lo que tu propio partido espera ver.
-  // Cada perfil sugiere una; se puede cambiar.
-  // Es opcional (decisión de diseño): desactivada, el partido sólo mira tu popularidad.
-  const [platformOn, setPlatformOn] = useState(false);
-  const [platformId, setPlatformId] = useState<string>(DEFAULT_PLATFORM_BY_ARCHETYPE.politico);
-  const [platformTouched, setPlatformTouched] = useState(false);
-  // Escenarios: se desbloquean ganando partidas (progreso guardado en el navegador).
-  const [progress, setProgress] = useState(loadProgress);
-  const [scenarioId, setScenarioId] = useState<string>(DEFAULT_SCENARIO_ID);
-  const [governorName, setGovernorName] = useState('');
-  const [avatar, setAvatar] = useState<string>(AVATARS[0].src);
+  const [archetype, setArchetype] = useState<Archetype>(initial?.archetype ?? 'politico');
+  const [governorName, setGovernorName] = useState(initial?.governorName ?? '');
+  const [avatar, setAvatar] = useState<string>(initial?.avatar ?? AVATARS[0].src);
   const [showNameError, setShowNameError] = useState(false);
 
   const handleSubmit = () => {
@@ -74,7 +53,7 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
       setShowNameError(true);
       return;
     }
-    onComplete(position, archetype, governorName, avatar, platformOn ? platformId : NO_PLATFORM_ID, scenarioId);
+    onContinue({ position, archetype, governorName: governorName.trim(), avatar });
   };
 
   const archetypes: { id: Archetype; title: string; bonus: string; description: string }[] = [
@@ -94,79 +73,14 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-blue-900/70 to-slate-900/90" />
 
       <div className="relative z-10 max-w-5xl mx-auto p-4 md:p-8">
-        <img src={IMAGES.logo.primary} alt="Gobernarg" className="h-14 md:h-20 drop-shadow-lg mb-6" />
+        <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
+          <img src={IMAGES.logo.primary} alt="Gobernarg" className="h-14 md:h-20 drop-shadow-lg" />
+          <SetupSteps current={1} />
+        </div>
 
         <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 md:p-10 shadow-2xl border border-white/10">
           <h1 className="font-display text-3xl md:text-4xl font-bold mb-2 uppercase tracking-wide">Creá tu gobernante</h1>
           <p className="text-white/80 mb-8">Definí quién va a ocupar el ejecutivo y con qué perfil.</p>
-
-          <h2 className="font-display text-xl font-semibold mb-1 uppercase tracking-wide">Escenario</h2>
-          <p className="text-white/70 text-sm mb-4">
-            Con qué país arrancás. Las reglas son las mismas; cambia la herencia. Ganar una partida desbloquea escenarios nuevos.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
-            {SCENARIOS.map(sc => {
-              const unlocked = isScenarioUnlocked(sc, progress.wonScenarios, progress.unlockAll);
-              const won = progress.wonScenarios.includes(sc.id);
-              const img = scenarioImage(sc.image.group, sc.image.key);
-              const unlockText = sc.unlockedBy.map(id => SCENARIOS.find(x => x.id === id)?.name ?? id).join(' o ');
-              return (
-                <button
-                  key={sc.id}
-                  disabled={!unlocked}
-                  onClick={() => setScenarioId(sc.id)}
-                  className={`relative text-left rounded-xl border-2 overflow-hidden transition-all ${
-                    !unlocked
-                      ? 'bg-white/5 border-white/10 opacity-60 cursor-not-allowed'
-                      : scenarioId === sc.id
-                        ? 'bg-white/15 border-accent shadow-lg'
-                        : 'bg-white/5 border-white/20 hover:bg-white/10 hover:border-white/40'
-                  }`}
-                >
-                  {img && (
-                    <div
-                      className="h-20 bg-cover bg-center"
-                      style={{ backgroundImage: `url(${img})`, filter: unlocked ? undefined : 'grayscale(1)' }}
-                    />
-                  )}
-                  <div className="p-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-bold text-sm leading-tight">{sc.name}</h3>
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded border whitespace-nowrap ${DIFFICULTY_CLS[sc.difficulty]}`}>
-                        {sc.difficulty}
-                      </span>
-                    </div>
-                    <p className="text-[11px] opacity-70 mt-0.5">{sc.era}{won ? ' · ganado ✓' : ''}</p>
-                    {unlocked ? (
-                      <>
-                        <p className="text-xs opacity-85 mt-2 leading-snug">{sc.description}</p>
-                        <ul className="text-[11px] opacity-75 mt-2 space-y-0.5 list-disc list-inside">
-                          {sc.highlights.map(h => <li key={h}>{h}</li>)}
-                        </ul>
-                      </>
-                    ) : (
-                      <p className="text-xs mt-2 flex items-center gap-1.5 opacity-90">
-                        <Lock size={12} /> Se desbloquea ganando {unlockText}.
-                      </p>
-                    )}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-          <label className="flex items-center gap-2 text-xs text-white/70 mb-8 cursor-pointer w-fit">
-            <input
-              type="checkbox"
-              checked={progress.unlockAll}
-              onChange={e => {
-                const next = setUnlockAll(e.target.checked);
-                setProgress(next);
-                const current = SCENARIOS.find(x => x.id === scenarioId);
-                if (current && !isScenarioUnlocked(current, next.wonScenarios, next.unlockAll)) setScenarioId(DEFAULT_SCENARIO_ID);
-              }}
-            />
-            Desbloquear todos los escenarios sin ganarlos
-          </label>
 
           <div className="mb-8">
             <h2 className="font-display text-xl font-semibold mb-3 uppercase tracking-wide">Nombre del gobernante</h2>
@@ -215,10 +129,7 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
                   }
                 >
                   <button
-                    onClick={() => {
-                      setArchetype(arch.id);
-                      if (!platformTouched) setPlatformId(DEFAULT_PLATFORM_BY_ARCHETYPE[arch.id]);
-                    }}
+                    onClick={() => setArchetype(arch.id)}
                     className={`flex flex-col items-center text-center p-5 rounded-xl border-2 transition-all ${
                       archetype === arch.id
                         ? 'bg-white/15 border-accent shadow-lg scale-[1.02]'
@@ -237,48 +148,6 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
                 </InfoTooltip>
               );
             })}
-          </div>
-
-          <div className="flex items-center justify-between gap-4 mb-1 flex-wrap">
-            <h2 className="font-display text-xl font-semibold uppercase tracking-wide">Plataforma de tu partido</h2>
-            <button
-              role="switch"
-              aria-checked={platformOn}
-              onClick={() => setPlatformOn(v => !v)}
-              className="flex items-center gap-2 text-sm"
-            >
-              <span className={`relative inline-block w-10 h-5 rounded-full transition-colors ${platformOn ? 'bg-accent' : 'bg-white/25'}`}>
-                <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${platformOn ? 'left-5' : 'left-0.5'}`} />
-              </span>
-              {platformOn ? 'Activada' : 'Desactivada'}
-            </button>
-          </div>
-          <p className="text-white/70 text-sm mb-4">
-            {platformOn
-              ? 'Además de tu popularidad, el oficialismo espera ver estos resultados en el país. Si gobernás en contra, tu propio bloque pierde cohesión.'
-              : 'Opcional. Desactivada, tu partido sólo mira tu popularidad: si sos popular te sigue; si no, te pasa factura.'}
-          </p>
-          <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-10 ${platformOn ? '' : 'hidden'}`}>
-            {PLATFORMS.map(pl => (
-              <button
-                key={pl.id}
-                onClick={() => {
-                  setPlatformId(pl.id);
-                  setPlatformTouched(true);
-                }}
-                className={`text-left p-4 rounded-xl border-2 transition-all ${
-                  platformId === pl.id
-                    ? 'bg-white/15 border-accent shadow-lg'
-                    : 'bg-white/5 border-white/20 hover:bg-white/10 hover:border-white/40'
-                }`}
-              >
-                <h3 className="font-bold text-sm">{pl.name}</h3>
-                <p className="text-xs opacity-80 mt-1 leading-snug">{pl.description}</p>
-                <p className="text-[10px] opacity-60 mt-2">
-                  {pl.items.map(it => `${INDICATORS[it.indicator].name} ${it.s > 0 ? '↑' : '↓'}`).join(' · ')}
-                </p>
-              </button>
-            ))}
           </div>
 
           <h2 className="font-display text-xl font-semibold mb-4 uppercase tracking-wide">Elegí tu Avatar</h2>
@@ -305,14 +174,15 @@ export function CharacterCreation({ onComplete }: CharacterCreationProps) {
 
           <button
             onClick={handleSubmit}
-            className={`w-full font-display font-bold py-4 px-6 rounded-xl transition-colors text-lg uppercase tracking-wide ${
+            className={`w-full flex items-center justify-center gap-2 font-display font-bold py-4 px-6 rounded-xl transition-colors text-lg uppercase tracking-wide ${
               !governorName.trim()
                 ? 'bg-white/15 text-white/50 cursor-not-allowed'
                 : 'bg-accent hover:bg-accent/90 text-accent-foreground shadow-lg'
             }`}
             disabled={!governorName.trim()}
           >
-            Comenzar Gestión
+            Continuar
+            <ArrowRight className="w-5 h-5" />
           </button>
         </div>
       </div>

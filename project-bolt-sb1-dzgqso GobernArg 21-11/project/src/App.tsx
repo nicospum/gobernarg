@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
 import { Toaster, toast } from 'sonner';
 import { GameHeader } from './components/GameHeader';
-import { CharacterCreation } from './components/CharacterCreation';
+import { CharacterCreation, type CharacterDraft } from './components/CharacterCreation';
+import { GameSetup } from './components/GameSetup';
 import { ControlPanel } from './components/ControlPanel';
 import { AdvisorPanel } from './components/AdvisorPanel';
 import { TurnSummaryModal } from './components/TurnSummaryModal';
@@ -18,14 +19,14 @@ import { InformesPanel } from './components/InformesPanel';
 import { RightSidebar } from './components/RightSidebar';
 import { EventModal } from './components/EventModal';
 import { ElectionResultsModal } from './components/ElectionResultsModal';
-import { recordScenarioWin } from './lib/progress';
+import { recordReelectionWin, recordScenarioWin } from './lib/progress';
 import { GameLog } from './components/GameLog';
 import { MidtermStrategyModal } from './components/MidtermStrategyModal';
 import { NotificationCenter } from './components/NotificationCenter';
 import { ManagementNotebook } from './components/ManagementNotebook';
 import { CountryPanel } from './components/CountryPanel';
 
-import type { Position, Archetype, AdvisorWithStatus, TurnSummary, MidtermStrategy } from './types/game';
+import type { AdvisorWithStatus, ElectionResults, TurnSummary, MidtermStrategy } from './types/game';
 import type { ActorId } from './data/causal';
 import type { ElectionOption } from './data/careerRules';
 import type { GameEvent } from './systems/events/types';
@@ -51,6 +52,9 @@ function App() {
   const [gameStarted, setGameStarted] = useState(false);
   const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
   const [showWelcome, setShowWelcome] = useState(false);
+  // Inicio en dos pasos: personaje (draft) y después dificultad + plataforma.
+  const [draft, setDraft] = useState<CharacterDraft | null>(null);
+  const [setupStep, setSetupStep] = useState<'character' | 'setup'>('character');
   const [showTurnSummary, setShowTurnSummary] = useState(false);
   const [turnSummary, setTurnSummary] = useState<TurnSummary | null>(null);
   const [pendingEvents, setPendingEvents] = useState<GameEvent[]>([]);
@@ -61,24 +65,36 @@ function App() {
   // Anti doble-clic en eventos: id del último evento cuya elección se procesó.
   const lastProcessedEventRef = useRef<string | null>(null);
 
-  // Ganar la partida desbloquea escenarios (progreso guardado en el navegador).
+  // Ganar la partida queda registrado por escenario (progreso guardado en el navegador).
   useEffect(() => {
     if (gameState.gameOver && gameState.victorious && gameState.causal) recordScenarioWin(gameState.causal.scenarioId);
   }, [gameState.gameOver, gameState.victorious, gameState.causal]);
+
+  // Ganar una reelección desbloquea el siguiente escenario histórico. Se cuenta
+  // una sola vez por resultado (el objeto se conserva mientras el modal está abierto).
+  const countedElectionRef = useRef<ElectionResults | null>(null);
+  useEffect(() => {
+    const results = gameState.electionResults;
+    if (!results || results === countedElectionRef.current) return;
+    countedElectionRef.current = results;
+    if (results.kind === 'reelection' && results.victory) {
+      recordReelectionWin();
+      toast('Ganaste la reelección: desbloqueaste un escenario histórico nuevo.');
+    }
+  }, [gameState.electionResults]);
 
   const handleStart = (_isAdmin: boolean) => {
     setShowWelcomeScreen(false);
   };
 
-  const handleGameStart = (
-    position: Position,
-    archetype: Archetype,
-    governorName: string,
-    avatar: string,
-    platformId: string,
-    scenarioId: string,
-  ) => {
-    if (!governorName.trim()) return;
+  const handleCharacterContinue = (next: CharacterDraft) => {
+    setDraft(next);
+    setSetupStep('setup');
+  };
+
+  const handleGameStart = (platformId: string, scenarioId: string) => {
+    if (!draft || !draft.governorName.trim()) return;
+    const { position, archetype, governorName, avatar } = draft;
     const newState = createNewGame(position, archetype, governorName, false, avatar, 'normal', platformId, undefined, scenarioId);
     setGameState(newState);
     setShowWelcome(true);
@@ -168,6 +184,7 @@ function App() {
     setTurnSummary(null);
     setPendingEvents([]);
     setShowLegacy(false);
+    setSetupStep('character');
   };
 
   if (showWelcomeScreen) {
@@ -187,7 +204,10 @@ function App() {
         />
       );
     }
-    return <CharacterCreation onComplete={handleGameStart} />;
+    if (setupStep === 'setup' && draft) {
+      return <GameSetup draft={draft} onBack={() => setSetupStep('character')} onStart={handleGameStart} />;
+    }
+    return <CharacterCreation initial={draft} onContinue={handleCharacterContinue} />;
   }
 
   const currentEvent = pendingEvents[0] || null;
