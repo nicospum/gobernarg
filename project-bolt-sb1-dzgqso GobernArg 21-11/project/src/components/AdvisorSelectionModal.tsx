@@ -105,7 +105,7 @@ export function AdvisorSelectionModal({ onClose, onHire, maxSelections, gameStat
                   key={advisor.id}
                   onClick={() => handleAdvisorSelect(advisor)}
                   disabled={!isSelected && selectedAdvisors.length >= maxSelections}
-                  className={`p-4 border rounded-lg text-left transition-all ${
+                  className={`flex flex-col justify-start p-4 border rounded-lg text-left transition-all ${
                     isSelected
                       ? 'border-primary bg-primary/10'
                       : selectedAdvisors.length >= maxSelections
@@ -118,7 +118,7 @@ export function AdvisorSelectionModal({ onClose, onHire, maxSelections, gameStat
                       <img
                         src={getAdvisorPortrait(advisor.specialty, advisor.id)}
                         alt={advisor.name}
-                        className="w-16 h-16 rounded-lg object-cover bg-gray-100 flex-shrink-0"
+                        className="w-[70px] h-[70px] rounded-lg object-cover bg-gray-100 flex-shrink-0"
                       />
                       <div>
                         <div className="flex items-center gap-2">

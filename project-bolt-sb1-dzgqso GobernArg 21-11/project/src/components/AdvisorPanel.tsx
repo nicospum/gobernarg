@@ -94,7 +94,7 @@ export function AdvisorPanel({ gameState, onHireAdvisor, onDismissAdvisor }: Adv
                     <img
                       src={getAdvisorPortrait(advisor.specialty, advisor.id)}
                       alt={advisor.name}
-                      className="w-12 h-12 rounded-lg object-cover bg-ink/5 border border-ink/12 flex-shrink-0"
+                      className="w-[53px] h-[53px] rounded-lg object-cover bg-ink/5 border border-ink/12 flex-shrink-0"
                     />
                     <div>
                       <div className="flex items-center gap-2">
