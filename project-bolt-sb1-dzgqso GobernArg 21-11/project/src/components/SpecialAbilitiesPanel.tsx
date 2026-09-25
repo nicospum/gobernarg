@@ -75,13 +75,13 @@ function AbilityCard({ ability, archetype, gameState, onUseAbility, disabled }: 
     ability.cooldown > 0 ? ((ability.cooldown - cooldownLeft) / ability.cooldown) * 100 : 0;
 
   return (
-    <div className="rounded-xl border border-white/8 bg-[#0f1e38] p-4 space-y-3.5 shadow-lg">
+    <div className="rounded-lg border border-ink/8 bg-surface p-4 space-y-3.5 ">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-lg bg-blue-500/15 border border-blue-500/25 flex items-center justify-center flex-shrink-0">
           <Sparkles size={18} className="text-blue-400" />
         </div>
         <div className="min-w-0">
-          <h3 className="font-['Barlow_Condensed'] font-bold text-lg text-white leading-tight uppercase tracking-wider">
+          <h3 className="font-display font-semibold text-lg text-ink leading-tight  ">
             {ability.name}
           </h3>
           <p className={`text-[10px] uppercase tracking-widest font-bold ${accent}`}>
@@ -90,7 +90,7 @@ function AbilityCard({ ability, archetype, gameState, onUseAbility, disabled }: 
         </div>
       </div>
 
-      <p className="text-[12px] text-white/70 leading-relaxed">{ability.description}</p>
+      <p className="text-[12px] text-ink/70 leading-relaxed">{ability.description}</p>
 
       <div className="flex flex-wrap gap-2">
         {costActions > 0 && (
@@ -118,7 +118,7 @@ function AbilityCard({ ability, archetype, gameState, onUseAbility, disabled }: 
           </span>
         )}
         {costImagen !== 0 && (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-mono font-bold border border-white/8 bg-white/4 text-white/70">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-mono font-bold border border-ink/8 bg-ink/4 text-ink/70">
             <TrendingUp size={11} />
             Costo imagen
           </span>
@@ -126,13 +126,13 @@ function AbilityCard({ ability, archetype, gameState, onUseAbility, disabled }: 
       </div>
 
       {effects.length > 0 && (
-        <div className="bg-[#091422] p-3 rounded-lg border border-white/6">
-          <div className="text-[9px] text-white/40 uppercase tracking-widest font-bold mb-1.5">
+        <div className="bg-surface p-3 rounded-lg border border-ink/6">
+          <div className="text-[9px] text-ink/40 uppercase tracking-widest font-bold mb-1.5">
             EFECTOS
           </div>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1">
             {effects.map((effect, i) => (
-              <li key={i} className="text-[11px] text-white/80 flex items-center gap-1.5 font-medium">
+              <li key={i} className="text-[11px] text-ink/80 flex items-center gap-1.5 font-medium">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block flex-shrink-0" />
                 {effect.label} <span className={`font-mono font-bold ${toneClass(effect.tone)}`}>{effect.text}</span>
               </li>
@@ -143,7 +143,7 @@ function AbilityCard({ ability, archetype, gameState, onUseAbility, disabled }: 
 
       {isOnCooldown && (
         <div>
-          <div className="flex items-center justify-between text-[10px] text-white/50 mb-1 font-mono">
+          <div className="flex items-center justify-between text-[10px] text-ink/50 mb-1 font-mono">
             <span className="inline-flex items-center gap-1">
               <Clock size={10} />
               Enfriamiento activo
@@ -152,7 +152,7 @@ function AbilityCard({ ability, archetype, gameState, onUseAbility, disabled }: 
               {cooldownLeft} turno{cooldownLeft > 1 ? 's' : ''}
             </span>
           </div>
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/8">
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-ink/8">
             <div
               className="h-full rounded-full bg-blue-500 transition-all duration-500"
               style={{ width: `${cooldownProgress}%` }}
@@ -164,10 +164,10 @@ function AbilityCard({ ability, archetype, gameState, onUseAbility, disabled }: 
       <button
         onClick={() => onUseAbility(ability.id)}
         disabled={!canUse}
-        className={`w-full inline-flex items-center justify-center gap-2 py-2.5 rounded-lg font-['Barlow_Condensed'] text-[14px] font-bold uppercase tracking-wider transition-all shadow-md ${
+        className={`w-full inline-flex items-center justify-center gap-2 py-2.5 rounded-lg font-display text-[14px] font-semibold   transition-all shadow-md ${
           canUse
             ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/20 active:translate-y-0.5'
-            : 'bg-white/5 text-white/30 cursor-not-allowed border border-white/8'
+            : 'bg-ink/5 text-ink/30 cursor-not-allowed border border-ink/8'
         }`}
       >
         <Zap size={14} />
@@ -208,12 +208,12 @@ export function SpecialAbilitiesPanel({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Sparkles size={14} className="text-blue-400" />
-          <h2 className="font-['Barlow_Condensed'] text-sm uppercase tracking-wider text-white font-bold">
-            HABILIDADES DE {ARCHETYPE_LABELS[gameState.archetype].toUpperCase()}
+          <h2 className="font-display text-[16px]   text-ink font-semibold">
+            Habilidades de {ARCHETYPE_LABELS[gameState.archetype]}
           </h2>
         </div>
         {multiple && (
-          <span className="text-[10px] text-white/50 font-mono">
+          <span className="text-[10px] text-ink/50 font-mono">
             {selectedIndex + 1} / {abilities.length}
           </span>
         )}
@@ -248,14 +248,14 @@ export function SpecialAbilitiesPanel({
           <button
             onClick={scrollPrev}
             aria-label="Habilidad anterior"
-            className="absolute left-2 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#070e17]/80 border border-white/12 text-white/80 hover:text-white hover:bg-[#070e17] transition-colors backdrop-blur-sm"
+            className="absolute left-2 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-8 h-8 rounded-full bg-paper/80 border border-ink/12 text-ink/80 hover:text-ink hover:bg-paper transition-colors backdrop-blur-sm"
           >
             <ChevronLeft size={16} />
           </button>
           <button
             onClick={scrollNext}
             aria-label="Habilidad siguiente"
-            className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#070e17]/80 border border-white/12 text-white/80 hover:text-white hover:bg-[#070e17] transition-colors backdrop-blur-sm"
+            className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-8 h-8 rounded-full bg-paper/80 border border-ink/12 text-ink/80 hover:text-ink hover:bg-paper transition-colors backdrop-blur-sm"
           >
             <ChevronRight size={16} />
           </button>

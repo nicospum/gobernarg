@@ -69,20 +69,20 @@ export function EventModal({ event, onChoice, onClose }: EventModalProps) {
   const eventImage = getEventImage(event.category, event.severity, event.id);
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
-      <div className="w-full max-w-2xl rounded-2xl shadow-2xl bg-[#0f1e38] border border-white/12 overflow-hidden animate-in fade-in zoom-in-95">
+    <div className="fixed inset-0 bg-ink/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+      <div className="w-full max-w-2xl rounded-2xl shadow-2xl bg-surface border border-ink/12 overflow-hidden animate-in fade-in zoom-in-95">
         {/* ---------- Header image ---------- */}
         <div className="relative h-48 md:h-60">
           <img src={eventImage} alt={event.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0f1e38] via-[#0f1e38]/70 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
+          <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/70 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 p-5 text-ink">
             <div className="flex items-start gap-3">
               <SeverityIcon className={`w-8 h-8 flex-shrink-0 mt-0.5 ${iconColor[event.severity]}`} />
               <div>
-                <h3 className="font-['Barlow_Condensed'] font-bold text-2xl uppercase tracking-wider leading-tight text-white">
+                <h3 className="font-display font-semibold text-2xl   leading-tight text-ink">
                   {event.title}
                 </h3>
-                <p className="text-xs text-white/80 mt-1 leading-relaxed">{event.description}</p>
+                <p className="text-xs text-ink/80 mt-1 leading-relaxed">{event.description}</p>
               </div>
             </div>
           </div>
@@ -109,9 +109,9 @@ export function EventModal({ event, onChoice, onClose }: EventModalProps) {
                 <button
                   key={choice.id}
                   onClick={() => onChoice(choice.id)}
-                  className="w-full p-4 text-left rounded-xl border border-white/10 bg-[#091422] hover:border-blue-500/50 hover:bg-[#12223b] transition-all group shadow-md"
+                  className="w-full p-4 text-left rounded-lg border border-ink/10 bg-surface hover:border-blue-500/50 hover:bg-sunken transition-all group "
                 >
-                  <p className="font-bold text-white text-[13px] group-hover:text-blue-300 transition-colors">{choice.text}</p>
+                  <p className="font-bold text-ink text-[13px] group-hover:text-blue-300 transition-colors">{choice.text}</p>
                   {chips.length > 0 ? (
                     <div className="flex flex-wrap gap-1.5 mt-2.5">
                       {chips.map((c, i) => (
@@ -122,7 +122,7 @@ export function EventModal({ event, onChoice, onClose }: EventModalProps) {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-[11px] text-white/40 mt-1.5 font-mono">Sin efectos inmediatos sobre indicadores.</p>
+                    <p className="text-[11px] text-ink/40 mt-1.5 font-mono">Sin efectos inmediatos sobre indicadores.</p>
                   )}
                 </button>
               );
@@ -135,7 +135,7 @@ export function EventModal({ event, onChoice, onClose }: EventModalProps) {
           <div className="p-5">
             <button
               onClick={onClose}
-              className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-['Barlow_Condensed'] font-bold text-base uppercase tracking-wider transition-colors shadow-lg shadow-blue-600/20"
+              className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-display font-semibold text-base   transition-colors shadow-lg shadow-blue-600/20"
             >
               Entendido
             </button>

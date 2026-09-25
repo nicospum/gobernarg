@@ -3,53 +3,61 @@
 @tailwind utilities;
 
 @layer base {
+  /*
+   * Tema "Despacho": papel, tinta azul marino, oro del sol de mayo y celeste.
+   * Tokens propios en "r g b" (para bg-ink/10) y los de shadcn en HSL.
+   */
   :root {
-    --background: 216 44% 6%;
-    --foreground: 217 25% 92%;
-    --card: 218 36% 14%;
-    --card-foreground: 217 25% 92%;
-    --popover: 218 36% 14%;
-    --popover-foreground: 217 25% 92%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 217 33% 17%;
-    --secondary-foreground: 214 20% 82%;
-    --muted: 217 33% 15%;
-    --muted-foreground: 215 12% 60%;
-    --accent: 42 70% 50%;
-    --accent-foreground: 220 15% 8%;
-    --destructive: 348 65% 40%;
+    --paper: 244 239 230;       /* #F4EFE6 fondo de página */
+    --surface: 251 248 242;     /* #FBF8F2 tarjetas y paneles */
+    --sunken: 237 230 216;      /* #EDE6D8 hundido, hover, pistas de barras */
+    --ink: 20 33 61;            /* #14213D texto y trazos */
+    --rule: 217 209 195;        /* #D9D1C3 filetes y bordes */
+    --gold: 184 134 11;         /* #B8860B relleno del botón principal */
+    --gold-ink: 138 101 8;      /* #8A6508 oro para texto sobre papel */
+    --celeste: 91 155 213;      /* #5B9BD5 relleno celeste */
+    --celeste-ink: 31 95 153;   /* #1F5F99 celeste para texto */
+
+    --background: 39 38% 93%;
+    --foreground: 221 51% 16%;
+    --card: 40 56% 97%;
+    --card-foreground: 221 51% 16%;
+    --popover: 40 56% 97%;
+    --popover-foreground: 221 51% 16%;
+    --primary: 209 66% 36%;
+    --primary-foreground: 40 56% 97%;
+    --secondary: 40 33% 89%;
+    --secondary-foreground: 221 51% 16%;
+    --muted: 40 33% 89%;
+    --muted-foreground: 220 12% 38%;
+    --accent: 43 89% 38%;
+    --accent-foreground: 221 51% 16%;
+    --destructive: 0 51% 46%;
     --destructive-foreground: 0 0% 100%;
-    --border: 217 30% 18%;
-    --input: 217 30% 18%;
-    --ring: 217 91% 60%;
+    --border: 38 23% 81%;
+    --input: 38 23% 81%;
+    --ring: 209 66% 36%;
     --radius: 0.5rem;
   }
 
-  .dark {
-    --background: 216 44% 6%;
-    --foreground: 217 25% 92%;
-    --card: 218 36% 14%;
-    --card-foreground: 217 25% 92%;
-    --popover: 218 36% 14%;
-    --popover-foreground: 217 25% 92%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 217 33% 17%;
-    --secondary-foreground: 214 20% 82%;
-    --muted: 217 33% 15%;
-    --muted-foreground: 215 12% 60%;
-    --accent: 42 70% 50%;
-    --accent-foreground: 220 15% 8%;
-    --destructive: 348 65% 40%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 217 30% 18%;
-    --input: 217 30% 18%;
-    --ring: 217 91% 60%;
+  body {
+    @apply bg-paper text-ink font-sans min-h-screen antialiased selection:bg-gold/25 selection:text-ink;
   }
 
-  body {
-    @apply bg-[#070e17] text-foreground font-sans min-h-screen antialiased selection:bg-blue-500/30 selection:text-blue-200;
+  /* Títulos con serifa: tamaño óptico automático de Fraunces. */
+  .font-display {
+    font-optical-sizing: auto;
+    letter-spacing: -0.01em;
+  }
+
+  /* Cifras alineadas en columnas (reemplaza a la monoespaciada). */
+  .font-mono {
+    font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--celeste-ink));
+    outline-offset: 2px;
   }
 }
 

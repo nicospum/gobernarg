@@ -84,10 +84,10 @@ export function AdvisorSelectionModal({ onClose, onHire, maxSelections, gameStat
   const availableForHire = availableAdvisors.filter(isAdvisorAvailable);
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-ink/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-card border border-border rounded-xl w-full max-w-4xl max-h-[85vh] overflow-hidden shadow-2xl">
         <div className="px-5 py-4 border-b border-border flex justify-between items-center">
-          <h2 className="font-display text-xl font-bold uppercase tracking-wide text-foreground">Contratar Asesores</h2>
+          <h2 className="font-display text-xl font-semibold   text-foreground">Contratar Asesores</h2>
           <button onClick={onClose} aria-label="Cerrar" className="p-1 text-muted-foreground hover:text-foreground rounded transition-colors">
             <X className="w-5 h-5" />
           </button>
@@ -110,7 +110,7 @@ export function AdvisorSelectionModal({ onClose, onHire, maxSelections, gameStat
                       ? 'border-primary bg-primary/10'
                       : selectedAdvisors.length >= maxSelections
                       ? 'border-border bg-card opacity-50 cursor-not-allowed'
-                      : 'border-border bg-card hover:border-primary/40 hover:bg-white/3'
+                      : 'border-border bg-card hover:border-primary/40 hover:bg-ink/3'
                   }`}
                 >
                   <div className="flex justify-between items-start gap-3">
@@ -186,7 +186,7 @@ export function AdvisorSelectionModal({ onClose, onHire, maxSelections, gameStat
             <button
               onClick={handleHire}
               disabled={selectedAdvisors.length === 0 || !canAfford}
-              className="bg-primary hover:bg-primary/90 disabled:bg-white/5 disabled:text-muted-foreground disabled:cursor-not-allowed text-primary-foreground px-6 py-2 rounded font-display font-bold uppercase tracking-wide text-sm transition-colors"
+              className="bg-primary hover:bg-primary/90 disabled:bg-ink/5 disabled:text-muted-foreground disabled:cursor-not-allowed text-primary-foreground px-6 py-2 rounded font-display font-semibold   text-sm transition-colors"
             >
               Contratar Seleccionados
             </button>

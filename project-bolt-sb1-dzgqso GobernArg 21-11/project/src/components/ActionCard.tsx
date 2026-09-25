@@ -4,13 +4,13 @@ import {
   Clock,
   Lock,
   Star,
-  DollarSign,
   Flag,
   Check,
   Scale,
   Users,
 } from 'lucide-react';
 import { InfoTooltip } from './InfoTooltip';
+import { Tooltip, TooltipContent } from './Tooltip';
 import { fmtBudget } from '@/lib/format';
 import { UI_CATEGORY_STYLES } from '@/data/categoryStyles';
 import { ACTORS, SENSITIVITIES, type ActorId } from '@/data/causal';
@@ -34,6 +34,30 @@ interface ActionCardProps {
   disabled: boolean;
 }
 
+const TAG_LABEL: Record<string, string> = {
+  FEDERAL: 'Federal',
+  AMBIENTAL: 'Ambiental',
+  RESTRICTIVA: 'Restrictiva',
+};
+
+type RiskLevel = 'bajo' | 'medio' | 'alto' | 'critico';
+
+const RISK_CLS: Record<RiskLevel, string> = {
+  critico: 'text-red-400',
+  alto: 'text-orange-400',
+  medio: 'text-amber-400',
+  bajo: 'text-ink/50',
+};
+
+/** Nivel de riesgo a partir del texto de riesgos de la acción (heurística de la B0). */
+function riskLevelOf(risksText: string | null): RiskLevel {
+  if (!risksText) return 'bajo';
+  const t = risksText.toLowerCase();
+  if (t.includes('alto') || t.includes('paro') || t.includes('crisis')) return 'alto';
+  if (t.includes('crítico') || t.includes('default')) return 'critico';
+  return 'medio';
+}
+
 function ChipInline({ chip }: { chip: EffectChip }) {
   return (
     <span className="whitespace-nowrap">
@@ -50,29 +74,21 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
   const timeline = actionTimeline(action.id);
   const notes = actionContextNotes(action.id);
   const { winners, losers } = affectedActors(action.id, SENSITIVITIES as Record<ActorId, { target: string; s: number }[]>);
-  const costLabel = caja < 0 ? `−${fmtBudget(Math.abs(caja))}` : caja > 0 ? `+${fmtBudget(caja)}` : '$0';
+  const costLabel = caja < 0 ? `−${fmtBudget(Math.abs(caja))}` : caja > 0 ? `+${fmtBudget(caja)}` : 'Sin costo';
   const requested = requestedBy.length > 0;
-
-  // Determinar nivel de riesgo visual para B0 badge
-  const riskLevel = action.risksText
-    ? action.risksText.toLowerCase().includes('alto') || action.risksText.toLowerCase().includes('paro') || action.risksText.toLowerCase().includes('crisis')
-      ? 'alto'
-      : action.risksText.toLowerCase().includes('crítico') || action.risksText.toLowerCase().includes('default')
-      ? 'critico'
-      : 'medio'
-    : 'bajo';
+  const riskLevel = riskLevelOf(action.risksText);
 
   return (
     <InfoTooltip
       content={
         <div className="flex flex-col gap-1.5 max-w-[280px]">
-          {action.strategic && <p className="text-[11px] text-white/80 leading-snug">{action.strategic}</p>}
+          {action.strategic && <p className="text-[11px] text-ink/80 leading-snug">{action.strategic}</p>}
           {timeline.length > 0 && (
             <div>
-              <div className="font-semibold text-[11px] text-white mb-0.5">Efectos previstos</div>
+              <div className="font-semibold text-[11px] text-ink mb-0.5">Qué produce</div>
               {timeline.map(t => (
-                <div key={t.when} className="text-[10px] text-white/70 leading-snug">
-                  <span className="text-white/50">{t.when}:</span>{' '}
+                <div key={t.when} className="text-[10px] text-ink/70 leading-snug">
+                  <span className="text-ink/55">{t.when}:</span>{' '}
                   {t.chips.map((c, i) => (
                     <span key={i}>{i > 0 && ' · '}<ChipInline chip={c} /></span>
                   ))}
@@ -80,24 +96,36 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
               ))}
             </div>
           )}
+          {notes.conditional.length > 0 && (
+            <div>
+              <div className="font-semibold text-[11px] text-ink mb-0.5">Según el contexto</div>
+              {notes.conditional.slice(0, 3).map(n => <div key={n} className="text-[10px] text-ink/70">• {n}</div>)}
+            </div>
+          )}
+          {notes.repetition.length > 0 && (
+            <div>
+              <div className="font-semibold text-[11px] text-ink mb-0.5">Si se repite</div>
+              {notes.repetition.slice(0, 2).map(n => <div key={n} className="text-[10px] text-amber-300">• {n}</div>)}
+            </div>
+          )}
           {(winners.length > 0 || losers.length > 0) && (
-            <div className="text-[10px] text-white/60">
+            <div className="text-[10px] text-ink/70">
               {winners.length > 0 && <div><span className="text-emerald-400 font-semibold">Favorece:</span> {winners.map(a => ACTORS[a].shortName).join(', ')}</div>}
               {losers.length > 0 && <div><span className="text-red-400 font-semibold">Perjudica:</span> {losers.map(a => ACTORS[a].shortName).join(', ')}</div>}
             </div>
           )}
           {action.risksText && <div className="text-[10px] text-amber-300">Riesgo: {action.risksText}</div>}
-          {COALITION_ACTIONS[action.id] && (
-            <div className="text-[10px] text-amber-300 font-medium">
-              Abre una interna en tu partido (+{COALITION_ACTIONS[action.id]}): tus políticas rinden menos y cuestan más.
-            </div>
-          )}
+          <div className="text-[10px] text-ink/55">
+            {costLabel} · {pa} acc.{action.cooldown > 1 ? ` · repetible cada ${action.cooldown} turnos` : ''}
+          </div>
         </div>
       }
     >
       <div
         role="button"
         tabIndex={blocked ? -1 : 0}
+        aria-pressed={isSelected}
+        aria-disabled={blocked}
         onClick={() => !blocked && onSelect()}
         onKeyDown={(e) => {
           if ((e.key === 'Enter' || e.key === ' ') && !blocked) {
@@ -105,114 +133,136 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
             onSelect();
           }
         }}
-        className={`relative flex flex-col justify-between gap-3 rounded-xl border p-4 transition-all duration-200 min-h-[160px] ${
-          blocked ? 'opacity-50 cursor-not-allowed bg-[#0b1626] border-white/6' : ''
-        } ${
+        className={`group relative flex flex-col gap-2.5 rounded-lg border p-4 transition-all duration-150 ${
           isSelected
-            ? 'border-blue-500 bg-blue-500/10 ring-2 ring-blue-500/40 shadow-lg shadow-blue-500/10'
+            ? 'border-ink bg-gold/10 ring-1 ring-ink'
             : blocked
-              ? 'border-white/6 bg-[#0c182b]'
-              : 'border-white/10 bg-[#0f1e38] hover:border-white/20 hover:bg-[#132545] cursor-pointer shadow-md'
+              ? 'border-rule bg-sunken/40 opacity-60 cursor-not-allowed'
+              : 'border-rule bg-surface hover:border-ink/35 hover:shadow-[0_2px_10px_-4px_rgba(20,33,61,0.25)] cursor-pointer'
         }`}
       >
-        {/* Cabecera: Badges de Categoría y Estado */}
-        <div>
-          <div className="flex items-center justify-between gap-2 mb-2">
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border ${style.color} ${style.bgColor} ${style.borderColor}`}>
-                {style.label}
+        {/* Categoría, tipo de norma, etiquetas y estado */}
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className={`inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider ${style.color}`}>
+              <img src={style.imageSrc} alt="" className="w-3.5 h-3.5 object-contain" />
+              {style.label}
+            </span>
+            {action.ley && (
+              <span className="inline-flex items-center gap-0.5 text-[10px] text-purple-300 font-semibold uppercase tracking-wider">
+                <Scale size={10} />
+                {needsDnu && available ? 'Ley por DNU' : 'Ley'}
               </span>
-              {action.isReform && (
-                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider text-purple-300 bg-purple-500/20 border border-purple-500/30">
-                  REFORMA
+            )}
+            {action.tags.map(t => (
+              <span key={t} className="text-[10px] text-ink/55 uppercase tracking-wider">
+                · {TAG_LABEL[t] ?? t}
+              </span>
+            ))}
+          </div>
+          <div className="flex gap-1 flex-shrink-0">
+            {requested && !blocked && (
+              <Tooltip content={<TooltipContent label="Lo piden" detail={requestedBy.map(a => ACTORS[a].shortName).join(', ')} />}>
+                <span className="inline-flex items-center gap-1 text-[10px] text-gold-ink bg-gold/15 px-1.5 py-0.5 rounded font-semibold uppercase tracking-wide">
+                  <Star size={9} className="fill-gold" />
+                  Pedida
                 </span>
-              )}
-              {action.ley && !action.isReform && (
-                <span className="inline-flex items-center gap-0.5 text-[8px] text-cyan-300 bg-cyan-500/10 border border-cyan-500/20 px-1 py-0.5 rounded uppercase font-semibold">
-                  <Scale size={8} />
-                  {needsDnu && available ? 'DNU' : 'LEY'}
-                </span>
-              )}
-            </div>
-
-            <div className="flex items-center gap-1">
-              {requested && !blocked && (
-                <span className="inline-flex items-center gap-1 text-[9px] text-amber-300 bg-amber-400/15 border border-amber-400/30 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
-                  <Star size={9} className="fill-amber-300" />
-                  PEDIDA
-                </span>
-              )}
-              {blocked && (
-                <span className="inline-flex items-center gap-1 text-[9px] text-red-400 bg-red-400/15 border border-red-400/30 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+              </Tooltip>
+            )}
+            {blocked && (
+              <Tooltip content={<TooltipContent label="Bloqueada" detail={blockReason ?? undefined} />}>
+                <span className="inline-flex items-center gap-1 text-[10px] text-red-400 bg-red-500/10 px-1.5 py-0.5 rounded font-semibold uppercase tracking-wide">
                   <Lock size={9} />
-                  BLOQUEADA
+                  Bloqueada
                 </span>
-              )}
-            </div>
-          </div>
-
-          {/* Título y descripción */}
-          <h3 className="font-['Barlow_Condensed'] font-bold text-lg text-white leading-snug">{action.name}</h3>
-          <p className="text-[11px] text-white/60 leading-snug mt-1 line-clamp-2">{action.description}</p>
-        </div>
-
-        {/* Costos e impactos resumidos */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-3 font-mono text-[12px]">
-            <span className={`font-bold ${caja > 0 ? 'text-emerald-400' : caja === 0 ? 'text-white/40' : blockReason === 'No alcanza la caja.' ? 'text-red-400' : 'text-white/90'}`}>
-              $ {costLabel}
-            </span>
-            <span className="text-white/30">•</span>
-            <span className="text-blue-300 font-bold flex items-center gap-1">
-              <Flag size={10} />
-              {pa} acc.
-            </span>
-          </div>
-
-          {COALITION_ACTIONS[action.id] && (
-            <div className="text-[10px] text-amber-300 leading-snug bg-amber-500/10 border border-amber-500/20 px-2 py-1 rounded">
-              ⚠️ Abre interna en tu partido (+{COALITION_ACTIONS[action.id]})
-            </div>
-          )}
-
-          {/* Lista rápida de chips de efectos */}
-          {timeline.length > 0 && (
-            <div className="flex flex-wrap gap-1">
-              {timeline[0].chips.slice(0, 2).map((c, i) => (
-                <span key={i} className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] border font-mono ${toneChipClass(c.tone)}`}>
-                  ⚡ {c.label} {c.text}
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Pie: Riesgo y CTA de Ejecutar */}
-        <div className="flex items-center justify-between gap-2 pt-2 border-t border-white/8 mt-1">
-          <div className="flex items-center gap-1 text-[10px]">
-            {action.risksText ? (
-              <span className={`flex items-center gap-1 font-semibold ${
-                riskLevel === 'critico' ? 'text-red-400' : riskLevel === 'alto' ? 'text-orange-400' : 'text-amber-400'
-              }`}>
-                <AlertTriangle size={10} />
-                Riesgo {riskLevel}
-              </span>
-            ) : (
-              <span className="text-white/40 font-mono text-[9px]">Riesgo bajo</span>
+              </Tooltip>
             )}
           </div>
+        </div>
 
+        {/* Título y descripción */}
+        <div>
+          <h3 className="font-display font-semibold text-[17px] text-ink leading-snug">{action.name}</h3>
+          <p className="text-[12px] text-ink/65 leading-snug mt-0.5">{action.description}</p>
+        </div>
+
+        {/* Costos */}
+        <div className="flex items-center gap-3 text-[12px] font-mono">
+          <span className={`font-semibold ${caja > 0 ? 'text-emerald-400' : caja === 0 ? 'text-ink/50' : blockReason === 'No alcanza la caja.' ? 'text-red-400' : 'text-ink'}`}>
+            {costLabel}
+          </span>
+          <span className="inline-flex items-center gap-1 text-ink/80">
+            <Flag size={11} className="text-ink/45" />
+            {pa} acc.
+          </span>
+          {action.cooldown > 1 && (
+            <span className="inline-flex items-center gap-1 text-ink/60" title="Turnos entre usos">
+              <Clock size={11} className="text-ink/45" />
+              cada {action.cooldown}t
+            </span>
+          )}
+        </div>
+
+        {/* Efectos en el tiempo (hasta 2 momentos) */}
+        {timeline.length > 0 && (
+          <div className="space-y-1.5">
+            {timeline.slice(0, 2).map(t => (
+              <div key={t.when}>
+                <div className="text-[10px] uppercase tracking-wider text-ink/50 mb-0.5">{t.when}</div>
+                <div className="flex flex-wrap gap-1">
+                  {t.chips.slice(0, 3).map((c, i) => (
+                    <span key={i} className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded border text-[11px] ${toneChipClass(c.tone)}`}>
+                      {c.label} <span className="font-mono">{c.text}</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+            {timeline.length > 2 && <div className="text-[11px] text-ink/50">+ efectos posteriores (ver detalle)</div>}
+          </div>
+        )}
+
+        {COALITION_ACTIONS[action.id] && (
+          <div className="text-[11px] text-amber-300 leading-snug bg-amber-500/10 px-2 py-1 rounded">
+            Abre una interna en tu partido (+{COALITION_ACTIONS[action.id]}): tus políticas rinden menos y cuestan más.
+          </div>
+        )}
+
+        {/* Quiénes lo sienten, o aviso por repetición */}
+        {repetitionWarning ? (
+          <div className="flex items-start gap-1.5 text-[11px] text-amber-300 leading-snug">
+            <AlertTriangle size={11} className="mt-0.5 flex-shrink-0" />
+            {repetitionWarning}
+          </div>
+        ) : winners.length + losers.length > 0 ? (
+          <div className="flex items-start gap-1.5 text-[11px] text-ink/65 leading-snug">
+            <Users size={11} className="mt-0.5 flex-shrink-0 text-ink/45" />
+            <span>
+              {winners.slice(0, 2).map(a => ACTORS[a].shortName).join(', ')}
+              {winners.length > 0 && losers.length > 0 && ' · '}
+              {losers.length > 0 && <span className="text-red-400">{losers.slice(0, 2).map(a => ACTORS[a].shortName).join(', ')} ↓</span>}
+            </span>
+          </div>
+        ) : null}
+
+        {/* Pie: riesgo y acción */}
+        <div className="flex items-center justify-between gap-2 pt-2.5 mt-auto border-t border-rule">
+          <span className={`inline-flex items-center gap-1 text-[11px] font-medium ${RISK_CLS[riskLevel]}`}>
+            {riskLevel !== 'bajo' && <AlertTriangle size={11} />}
+            Riesgo {riskLevel}
+          </span>
           {isSelected ? (
-            <span className="inline-flex items-center gap-1 text-[12px] font-bold text-emerald-400 font-['Barlow_Condensed'] uppercase tracking-wider">
+            <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-ink">
               <Check size={13} />
-              SELECCIONADA
+              Seleccionada
             </span>
           ) : !blocked ? (
-            <span className="inline-flex items-center gap-1 text-[12px] font-bold text-blue-400 font-['Barlow_Condensed'] uppercase tracking-wider hover:translate-x-0.5 transition-transform">
-              EJECUTAR →
+            <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-ink group-hover:text-gold-ink transition-colors">
+              Ejecutar
+              <ArrowRight size={13} className="transition-transform group-hover:translate-x-0.5" />
             </span>
           ) : (
-            <span className="text-[10px] text-red-400/80 truncate max-w-[140px]" title={blockReason ?? ''}>
+            <span className="text-[11px] text-red-400 max-w-[170px] text-right truncate" title={blockReason ?? ''}>
               {blockReason}
             </span>
           )}

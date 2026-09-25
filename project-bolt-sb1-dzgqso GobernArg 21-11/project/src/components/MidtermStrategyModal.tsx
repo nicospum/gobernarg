@@ -71,11 +71,11 @@ export function MidtermStrategyModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-ink/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="p-6 md:p-8">
           <div className="text-center mb-6">
-            <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground uppercase tracking-wide mb-2">
+            <h2 className="font-display text-2xl md:text-3xl font-semibold text-foreground   mb-2">
               Estrategia Post-Legislativa
             </h2>
             <p className="text-foreground/70 text-sm">
@@ -98,15 +98,15 @@ export function MidtermStrategyModal({
                   className={`border rounded-xl p-4 text-left transition-all ${
                     isAvailable
                       ? `${info.accent} cursor-pointer active:scale-[0.98]`
-                      : 'border-border bg-white/3 cursor-not-allowed opacity-50'
+                      : 'border-border bg-ink/3 cursor-not-allowed opacity-50'
                   }`}
                 >
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="p-2 rounded-lg bg-white/5 border border-border">
+                    <div className="p-2 rounded-lg bg-ink/5 border border-border">
                       <Icon className={`w-5 h-5 ${STRATEGY_ICON_COLOR[strategy]}`} />
                     </div>
                     <div>
-                      <h3 className="font-display font-bold text-lg text-foreground uppercase tracking-wide leading-none">
+                      <h3 className="font-display font-semibold text-lg text-foreground   leading-none">
                         {info.name}
                       </h3>
                       <span

@@ -93,13 +93,13 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
   const offerOpen = signReason === null;
 
   return (
-    <div className="px-3 py-2.5 hover:bg-white/2 transition-colors">
+    <div className="px-3 py-2.5 hover:bg-ink/2 transition-colors">
       {/* Encabezado */}
       <div className="flex items-start gap-2 mb-1.5">
         {icon ? (
-          <img src={icon} alt="" className="w-8 h-8 rounded object-contain flex-shrink-0 bg-white/5" />
+          <img src={icon} alt="" className="w-8 h-8 rounded object-contain flex-shrink-0 bg-ink/5" />
         ) : (
-          <div className="w-8 h-8 rounded bg-white/5 flex-shrink-0" />
+          <div className="w-8 h-8 rounded bg-ink/5 flex-shrink-0" />
         )}
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
@@ -134,9 +134,9 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
             <span className={`text-[10px] font-semibold ${toneClass(band.tone)}`}>{band.label}</span>
           )}
         </div>
-        <div className="h-1 w-full overflow-hidden rounded-full bg-white/10 mt-0.5">
+        <div className="h-1 w-full overflow-hidden rounded-full bg-ink/10 mt-0.5">
           <div
-            className={`h-full rounded-full transition-all duration-500 ${fresh ? barColor(st.sat) : 'bg-white/25'}`}
+            className={`h-full rounded-full transition-all duration-500 ${fresh ? barColor(st.sat) : 'bg-ink/25'}`}
             style={{ width: `${fresh ? st.sat : Math.round(st.sat / 12.5) * 12.5}%` }}
           />
         </div>
@@ -151,7 +151,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
               {relationBand(st.rel)} <span className="text-muted-foreground">{Math.round(st.rel)}</span>
             </span>
           </div>
-          <div className="h-1 w-full overflow-hidden rounded-full bg-white/10 mt-0.5">
+          <div className="h-1 w-full overflow-hidden rounded-full bg-ink/10 mt-0.5">
             <div className="h-full rounded-full bg-sky-400/80 transition-all duration-500" style={{ width: `${st.rel}%` }} />
           </div>
         </div>
@@ -210,7 +210,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
               onClick={() => onInteract(actor, 'reunion')}
               disabled={disabled || !!meetReason}
               title={meetReason ?? 'Reunión: revela qué les preocupa y qué piden; habilita negociar 3 turnos'}
-              className="flex-1 inline-flex items-center justify-center gap-1 text-[9px] text-muted-foreground hover:text-foreground border border-border hover:border-white/20 px-1.5 py-1 rounded transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              className="flex-1 inline-flex items-center justify-center gap-1 text-[9px] text-muted-foreground hover:text-foreground border border-border hover:border-ink/20 px-1.5 py-1 rounded transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             >
               <MessageSquare size={9} />
               Reunirse {!meetReason && <span className="font-mono text-[8px] opacity-80">{meetingCost(c, actor) === 0 ? 'gratis' : '1PA'}</span>}
@@ -229,7 +229,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
                 onClick={() => onInteract(actor, 'negociar')}
                 disabled={disabled || !!negReason}
                 title={negReason ?? `Negociar su demanda (1 PA). Chance ${chanceLabel(negotiationChance(c, actor))}.`}
-                className="flex-1 inline-flex items-center justify-center gap-1 text-[9px] text-muted-foreground hover:text-foreground border border-border hover:border-white/20 px-1.5 py-1 rounded transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                className="flex-1 inline-flex items-center justify-center gap-1 text-[9px] text-muted-foreground hover:text-foreground border border-border hover:border-ink/20 px-1.5 py-1 rounded transition-all disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 <Handshake size={9} />
                 Negociar {!negReason && <span className="text-[8px] opacity-80">({chanceLabel(negotiationChance(c, actor))})</span>}
@@ -241,7 +241,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
             onClick={() => onInteract(actor, 'encuesta')}
             disabled={disabled || !!pollReason}
             title={pollReason ?? 'Encuesta: revela su satisfacción y los dos temas que más la mueven'}
-            className="flex-1 inline-flex items-center justify-center gap-1 text-[9px] text-muted-foreground hover:text-foreground border border-border hover:border-white/20 px-1.5 py-1 rounded transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            className="flex-1 inline-flex items-center justify-center gap-1 text-[9px] text-muted-foreground hover:text-foreground border border-border hover:border-ink/20 px-1.5 py-1 rounded transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
             <BarChart3 size={9} />
             Encuesta <span className="font-mono text-[8px] opacity-80">{c.perks.freePolls ? 'gratis' : `$${POLL_COST}M`}</span>
@@ -258,14 +258,14 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }:
   const freeLeft = c.perks.freeMeetingsPerTurn - c.freeMeetingsUsed;
 
   return (
-    <section className="p-4 border-b border-white/8">
+    <section className="p-4 border-b border-ink/8">
       <div className="flex items-center gap-2 mb-1.5">
         <UsersIcon size={14} className="text-blue-400" />
-        <h3 className="font-['Barlow_Condensed'] text-sm uppercase tracking-wider text-white font-bold">
-          ACTORES & GRUPOS DE INTERÉS
+        <h3 className="font-display text-[16px]   text-ink font-semibold">
+          Actores & grupos de interés
         </h3>
       </div>
-      <p className="text-[10px] text-white/50 mb-3 flex items-start gap-1 leading-snug">
+      <p className="text-[10px] text-ink/50 mb-3 flex items-start gap-1 leading-snug">
         <Info size={11} className="mt-0.5 flex-shrink-0 text-blue-400" />
         Relación = vínculo político con tu gobierno. Satisfacción = evaluación de gestión. Mantener reuniones revela demandas y preocupaciones.
       </p>
@@ -288,7 +288,7 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }:
             return d && d.revealedTurn !== null && c.turn - d.revealedTurn < PARAMS.VENTANA_DEMANDA;
           }).length;
           return (
-            <div key={family.id} className="rounded-xl border border-white/8 overflow-hidden bg-[#0f1e38] shadow-md">
+            <div key={family.id} className="rounded-lg border border-ink/8 overflow-hidden bg-surface ">
               <button
                 onClick={() =>
                   setExpanded(prev => {
@@ -298,27 +298,27 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }:
                     return next;
                   })
                 }
-                className="w-full flex items-center justify-between gap-2 px-3.5 py-2.5 hover:bg-white/4 transition-colors text-left"
+                className="w-full flex items-center justify-between gap-2 px-3.5 py-2.5 hover:bg-ink/4 transition-colors text-left"
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div className="flex -space-x-2 flex-shrink-0">
                     {family.members.slice(0, 3).map(a => {
                       const src = getActorIcon(a);
-                      return src ? <img key={a} src={src} alt="" className="w-6 h-6 rounded-full object-contain bg-[#070e17] border border-white/12" /> : null;
+                      return src ? <img key={a} src={src} alt="" className="w-6 h-6 rounded-full object-contain bg-paper border border-ink/12" /> : null;
                     })}
                   </div>
                   <div className="min-w-0">
-                    <div className="font-['Barlow_Condensed'] font-bold text-sm text-white truncate">{family.name}</div>
+                    <div className="font-display font-semibold text-sm text-ink truncate">{family.name}</div>
                     <div className="flex items-center gap-2 text-[9px] font-mono">
                       <span className={riskColor(worst)}>tensión {riskLabel(worst).toLowerCase()}</span>
                       {demands > 0 && <span className="text-amber-300 font-bold">{demands} demanda{demands > 1 ? 's' : ''}</span>}
                     </div>
                   </div>
                 </div>
-                {isOpen ? <ChevronDown size={14} className="text-white/40" /> : <ChevronRight size={14} className="text-white/40" />}
+                {isOpen ? <ChevronDown size={14} className="text-ink/40" /> : <ChevronRight size={14} className="text-ink/40" />}
               </button>
               {isOpen && (
-                <div className="border-t border-white/8 divide-y divide-white/6 bg-[#070e17]/50">
+                <div className="border-t border-ink/8 divide-y divide-ink/6 bg-paper/50">
                   {family.members.map(a => (
                     <ActorCard key={a} state={gameState} actor={a} onInteract={onInteract} onSelectAction={onSelectAction} disabled={disabled} />
                   ))}
@@ -328,7 +328,7 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }:
           );
         })}
       </div>
-      <p className="text-[9px] font-mono text-white/40 mt-2.5">
+      <p className="text-[9px] font-mono text-ink/40 mt-2.5">
         {freeLeft > 0
           ? (freeLeft > 1 ? `Te quedan ${freeLeft} reuniones gratis este turno.` : 'Te queda 1 reunión gratis este turno.')
           : 'Las reuniones de este turno ya cuestan 1 PA.'}

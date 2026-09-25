@@ -12,10 +12,10 @@ export function NotificationCenter({ gameState, onMarkRead, onDismiss }: Notific
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <div className="bg-card rounded-lg shadow-lg p-4">
+    <div className="bg-surface rounded-lg border border-rule px-5 py-4">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold flex items-center gap-2">
-          <Bell className="w-6 h-6 text-primary" />
+        <h2 className="font-display text-[18px] font-semibold text-ink flex items-center gap-2">
+          <Bell className="w-4 h-4 text-gold-ink" />
           Notificaciones
           {unreadCount > 0 && (
             <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">

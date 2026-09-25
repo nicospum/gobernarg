@@ -46,8 +46,8 @@ function unlockHint(sc: ScenarioDef): string {
 
 function selectableCls(selected: boolean): string {
   return selected
-    ? 'bg-white/15 border-accent shadow-lg'
-    : 'bg-white/5 border-white/20 hover:bg-white/10 hover:border-white/40';
+    ? 'bg-ink/15 border-accent shadow-lg'
+    : 'bg-ink/5 border-ink/20 hover:bg-ink/10 hover:border-ink/40';
 }
 
 export function GameSetup({ draft, onBack, onStart }: GameSetupProps) {
@@ -82,25 +82,25 @@ export function GameSetup({ draft, onBack, onStart }: GameSetupProps) {
   const handleStart = () => onStart(platformOn ? platformId : NO_PLATFORM_ID, scenarioId);
 
   return (
-    <div className="relative min-h-screen text-white overflow-hidden">
+    <div className="relative min-h-screen text-ink overflow-hidden">
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700"
         style={{ backgroundImage: `url(${bg})` }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/85 via-blue-900/75 to-slate-900/90" />
+      <div className="absolute inset-0 bg-gradient-to-b from-paper/25 via-paper/60 to-paper/95" />
 
       <div className="relative z-10 max-w-5xl mx-auto p-4 md:p-8">
         <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
-          <img src={IMAGES.logo.primary} alt="Gobernarg" className="h-14 md:h-20 drop-shadow-lg" />
+          <img src={IMAGES.logo.primary} alt="Gobernarg" className="h-14 md:h-16 rounded-md shadow-sm" />
           <SetupSteps current={2} />
         </div>
 
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 md:p-10 shadow-2xl border border-white/10">
+        <div className="bg-surface/95 backdrop-blur rounded-xl p-6 md:p-10 shadow-[0_24px_60px_-20px_rgba(20,33,61,0.45)] border border-rule">
           <div className="flex items-center gap-3 mb-8">
-            <img src={draft.avatar} alt="" className="w-12 h-12 rounded-full object-cover bg-white/20 border border-white/30" />
+            <img src={draft.avatar} alt="" className="w-12 h-12 rounded-full object-cover bg-ink/20 border border-ink/30" />
             <div>
-              <h1 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide">Elegí la dificultad</h1>
-              <p className="text-white/80">{draft.governorName} está por asumir. ¿Con qué país arranca?</p>
+              <h1 className="font-display text-3xl md:text-4xl font-semibold  ">Elegí la dificultad</h1>
+              <p className="text-ink/80">{draft.governorName} está por asumir. ¿Con qué país arranca?</p>
             </div>
           </div>
 
@@ -120,9 +120,9 @@ export function GameSetup({ draft, onBack, onStart }: GameSetupProps) {
                 >
                   {img && <div className="h-28 bg-cover bg-center" style={{ backgroundImage: `url(${img})` }} />}
                   <div className="p-4">
-                    <div className="font-display text-3xl font-bold uppercase tracking-wide leading-none">{level.label}</div>
-                    <p className="text-sm italic text-white/85 mt-2 leading-snug">{level.tagline}</p>
-                    <div className="mt-4 pt-3 border-t border-white/15">
+                    <div className="font-display text-3xl font-semibold   leading-none">{level.label}</div>
+                    <p className="text-sm italic text-ink/85 mt-2 leading-snug">{level.tagline}</p>
+                    <div className="mt-4 pt-3 border-t border-ink/15">
                       <h3 className="font-bold text-sm leading-tight">{sc.name}</h3>
                       <p className="text-[11px] opacity-70 mt-0.5">{sc.era}</p>
                       <p className="text-xs opacity-85 mt-2 leading-snug">{sc.description}</p>
@@ -138,13 +138,13 @@ export function GameSetup({ draft, onBack, onStart }: GameSetupProps) {
 
           {/* Escenarios históricos: se ganan con reelecciones */}
           <div className="flex items-end justify-between gap-4 mb-1 flex-wrap">
-            <h2 className="font-display text-xl font-semibold uppercase tracking-wide">Escenarios históricos</h2>
-            <span className="inline-flex items-center gap-1.5 text-xs text-white/80">
+            <h2 className="font-display text-xl font-semibold  ">Escenarios históricos</h2>
+            <span className="inline-flex items-center gap-1.5 text-xs text-ink/80">
               <Trophy size={14} className="text-accent" />
               {reelections === 1 ? '1 reelección ganada' : `${reelections} reelecciones ganadas`}
             </span>
           </div>
-          <p className="text-white/70 text-sm mb-4">Momentos difíciles de la historia argentina. Se desbloquean ganando reelecciones.</p>
+          <p className="text-ink/70 text-sm mb-4">Momentos difíciles de la historia argentina. Se desbloquean ganando reelecciones.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
             {HISTORIC_SCENARIOS.map(sc => {
               const unlocked = isScenarioUnlocked(sc, reelections, progress.unlockAll);
@@ -157,7 +157,7 @@ export function GameSetup({ draft, onBack, onStart }: GameSetupProps) {
                   aria-disabled={!unlocked}
                   onClick={() => unlocked && setScenarioId(sc.id)}
                   className={`relative text-left rounded-xl border-2 overflow-hidden transition-all flex ${
-                    unlocked ? selectableCls(scenarioId === sc.id) : 'bg-white/5 border-white/10 cursor-not-allowed'
+                    unlocked ? selectableCls(scenarioId === sc.id) : 'bg-ink/5 border-ink/10 cursor-not-allowed'
                   }`}
                 >
                   {img && (
@@ -198,12 +198,12 @@ export function GameSetup({ draft, onBack, onStart }: GameSetupProps) {
             >
               <span
                 className={`relative inline-block w-10 h-5 rounded-full transition-colors ${
-                  denied ? 'bg-red-500/80 ring-2 ring-red-400/60' : progress.unlockAll ? 'bg-accent' : 'bg-white/25'
+                  denied ? 'bg-red-500/80 ring-2 ring-red-400/60' : progress.unlockAll ? 'bg-accent' : 'bg-ink/25'
                 }`}
               >
-                <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${progress.unlockAll ? 'left-5' : 'left-0.5'}`} />
+                <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-surface transition-all ${progress.unlockAll ? 'left-5' : 'left-0.5'}`} />
               </span>
-              <span className={denied ? 'text-red-200' : 'text-white/80'}>Desbloquear todos los escenarios</span>
+              <span className={denied ? 'text-red-200' : 'text-ink/80'}>Desbloquear todos los escenarios</span>
             </button>
             {denied && (
               <div
@@ -217,10 +217,10 @@ export function GameSetup({ draft, onBack, onStart }: GameSetupProps) {
           </div>
 
           {/* Plataforma del partido: opcional, apagada por defecto */}
-          <div className="rounded-xl border border-white/15 bg-white/5 p-5 mb-10">
+          <div className="rounded-xl border border-ink/15 bg-ink/5 p-5 mb-10">
             <div className="flex items-center justify-between gap-4 mb-1 flex-wrap">
-              <h2 className="font-display text-xl font-semibold uppercase tracking-wide">
-                Plataforma de tu partido <span className="ml-1 align-middle text-[10px] font-sans normal-case tracking-normal px-1.5 py-0.5 rounded border border-white/25 text-white/70">Opcional</span>
+              <h2 className="font-display text-xl font-semibold  ">
+                Plataforma de tu partido <span className="ml-1 align-middle text-[10px] font-sans normal-case tracking-normal px-1.5 py-0.5 rounded border border-ink/25 text-ink/70">Opcional</span>
               </h2>
               <button
                 role="switch"
@@ -228,13 +228,13 @@ export function GameSetup({ draft, onBack, onStart }: GameSetupProps) {
                 onClick={() => setPlatformOn(v => !v)}
                 className="flex items-center gap-2 text-sm"
               >
-                <span className={`relative inline-block w-10 h-5 rounded-full transition-colors ${platformOn ? 'bg-accent' : 'bg-white/25'}`}>
-                  <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${platformOn ? 'left-5' : 'left-0.5'}`} />
+                <span className={`relative inline-block w-10 h-5 rounded-full transition-colors ${platformOn ? 'bg-accent' : 'bg-ink/25'}`}>
+                  <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-surface transition-all ${platformOn ? 'left-5' : 'left-0.5'}`} />
                 </span>
                 {platformOn ? 'Activada' : 'Desactivada'}
               </button>
             </div>
-            <p className="text-white/70 text-sm">
+            <p className="text-ink/70 text-sm">
               {platformOn
                 ? 'Además de tu popularidad, el oficialismo espera ver estos resultados en el país. Si gobernás en contra, tu propio bloque pierde cohesión.'
                 : 'No hace falta para jugar. Desactivada, tu partido sólo mira tu popularidad: si sos popular te sigue; si no, te pasa factura.'}
@@ -268,16 +268,16 @@ export function GameSetup({ draft, onBack, onStart }: GameSetupProps) {
           <div className="flex flex-col-reverse sm:flex-row gap-3">
             <button
               onClick={onBack}
-              className="flex items-center justify-center gap-2 font-display font-bold py-4 px-6 rounded-xl border border-white/30 bg-white/5 hover:bg-white/10 transition-colors uppercase tracking-wide"
+              className="flex items-center justify-center gap-2 font-semibold py-3.5 px-6 rounded-md border border-rule hover:bg-sunken transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
               Volver
             </button>
             <button
               onClick={handleStart}
-              className="flex-1 flex items-center justify-center gap-2 font-display font-bold py-4 px-6 rounded-xl bg-accent hover:bg-accent/90 text-accent-foreground shadow-lg transition-colors text-lg uppercase tracking-wide"
+              className="flex-1 flex items-center justify-center gap-2 font-semibold py-3.5 px-6 rounded-md bg-ink hover:bg-ink/90 text-paper transition-colors text-lg"
             >
-              <Play className="w-5 h-5" />
+              <Play className="w-5 h-5 text-gold" />
               Comenzar gestión
             </button>
           </div>

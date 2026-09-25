@@ -20,7 +20,7 @@ function CausalBreakdown({ result }: { result: ElectionResults }) {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
         {tiles.map(t => (
           <Tooltip key={t.label} content={<TooltipContent value={`Peso: ${t.weight}`} label={t.label} detail={t.detail} />}>
-            <div className="flex items-center gap-3 cursor-help rounded-lg border border-border bg-white/3 p-3">
+            <div className="flex items-center gap-3 cursor-help rounded-lg border border-border bg-ink/3 p-3">
               <t.Icon className={`w-5 h-5 flex-shrink-0 ${t.color}`} />
               <div>
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{t.label}</p>
@@ -55,7 +55,7 @@ export function ElectionResultsModal({ result, onClose }: ElectionResultsModalPr
   const succession = result.kind === 'succession';
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-ink/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="relative w-full max-w-2xl rounded-xl overflow-hidden shadow-2xl bg-card border border-border">
         <div className="relative h-48 md:h-56">
           <img
@@ -71,7 +71,7 @@ export function ElectionResultsModal({ result, onClose }: ElectionResultsModalPr
               className={`w-12 h-12 mx-auto mb-2 ${victory ? 'text-accent' : 'text-muted-foreground'}`}
             />
             <h2
-              className={`font-display text-3xl font-bold uppercase tracking-wide ${
+              className={`font-display text-3xl font-semibold   ${
                 victory ? 'text-accent' : 'text-red-400'
               }`}
             >
@@ -85,7 +85,7 @@ export function ElectionResultsModal({ result, onClose }: ElectionResultsModalPr
         </div>
 
         <div className="p-6">
-          <h3 className="font-display text-lg font-bold mb-4 flex items-center gap-2 text-foreground uppercase tracking-wide">
+          <h3 className="font-display text-lg font-semibold mb-4 flex items-center gap-2 text-foreground  ">
             <BarChart className="w-5 h-5 text-primary" />
             Desglose del resultado
           </h3>
@@ -101,7 +101,7 @@ export function ElectionResultsModal({ result, onClose }: ElectionResultsModalPr
                 />
               }
             >
-              <div className="flex items-center gap-3 cursor-help rounded-lg border border-border bg-white/3 p-3">
+              <div className="flex items-center gap-3 cursor-help rounded-lg border border-border bg-ink/3 p-3">
                 <TrendingUp className="w-5 h-5 text-sky-400 flex-shrink-0" />
                 <div>
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wide">
@@ -123,7 +123,7 @@ export function ElectionResultsModal({ result, onClose }: ElectionResultsModalPr
                 />
               }
             >
-              <div className="flex items-center gap-3 cursor-help rounded-lg border border-border bg-white/3 p-3">
+              <div className="flex items-center gap-3 cursor-help rounded-lg border border-border bg-ink/3 p-3">
                 <Users className="w-5 h-5 text-emerald-400 flex-shrink-0" />
                 <div>
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wide">
@@ -145,7 +145,7 @@ export function ElectionResultsModal({ result, onClose }: ElectionResultsModalPr
                 />
               }
             >
-              <div className="flex items-center gap-3 cursor-help rounded-lg border border-border bg-white/3 p-3">
+              <div className="flex items-center gap-3 cursor-help rounded-lg border border-border bg-ink/3 p-3">
                 <Target className="w-5 h-5 text-purple-400 flex-shrink-0" />
                 <div>
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wide">
@@ -167,7 +167,7 @@ export function ElectionResultsModal({ result, onClose }: ElectionResultsModalPr
                 />
               }
             >
-              <div className="flex items-center gap-3 cursor-help rounded-lg border border-border bg-white/3 p-3">
+              <div className="flex items-center gap-3 cursor-help rounded-lg border border-border bg-ink/3 p-3">
                 <Shield className="w-5 h-5 text-amber-400 flex-shrink-0" />
                 <div>
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wide">
@@ -185,7 +185,7 @@ export function ElectionResultsModal({ result, onClose }: ElectionResultsModalPr
           <div className="text-center">
             <button
               onClick={onClose}
-              className={`px-8 py-3 rounded font-display font-bold uppercase tracking-wide text-sm transition-colors ${
+              className={`px-8 py-3 rounded font-display font-semibold   text-sm transition-colors ${
                 victory
                   ? 'bg-accent hover:bg-accent/90 text-accent-foreground'
                   : 'bg-primary hover:bg-primary/90 text-primary-foreground'

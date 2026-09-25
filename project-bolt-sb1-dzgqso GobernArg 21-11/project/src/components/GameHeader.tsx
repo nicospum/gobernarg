@@ -2,7 +2,6 @@ import {
   PlayCircle,
   Users,
   Wallet,
-  Clock,
   RefreshCw,
   ArrowRight,
   Shield,
@@ -32,12 +31,47 @@ const POSITION_LABEL: Record<string, string> = {
 };
 
 const MAX_TURNS = 16;
+/** Hitos del mandato marcados en la línea de tiempo (turno dentro del mandato). */
+const MILESTONES: Record<number, string> = { 8: 'Legislativas', 16: 'Fin del mandato' };
 
 /** Tendencia de popularidad: compara el último valor histórico con el anterior. */
 function popularityTrend(state: GameState): number | null {
   const hist = state.historicalPopularity;
   if (!hist || hist.length < 2) return null;
   return Math.round(hist[hist.length - 1] - hist[hist.length - 2]);
+}
+
+/** Línea de tiempo del mandato: un tramo por turno, con los hitos en oro. */
+function MandateTimeline({ turn }: { turn: number }) {
+  const current = ((turn - 1) % MAX_TURNS) + 1;
+  return (
+    <div className="flex items-center gap-[3px]" role="img" aria-label={`Turno ${current} de ${MAX_TURNS} del mandato`}>
+      {Array.from({ length: MAX_TURNS }, (_, i) => {
+        const n = i + 1;
+        const milestone = MILESTONES[n];
+        const done = n < current;
+        const now = n === current;
+        return (
+          <span
+            key={n}
+            title={milestone ? `Turno ${n}: ${milestone}` : `Turno ${n}`}
+            className={`h-1.5 flex-1 min-w-[6px] rounded-[1px] ${
+              now ? 'bg-ink' : done ? 'bg-ink/45' : milestone ? 'bg-gold' : 'bg-rule'
+            } ${now ? 'h-2' : ''}`}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+function Stat({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="leading-tight">
+      <div className="text-[10px] text-ink/55 font-medium">{label}</div>
+      <div className="font-mono text-[15px] font-semibold text-ink">{children}</div>
+    </div>
+  );
 }
 
 export function GameHeader({
@@ -53,158 +87,133 @@ export function GameHeader({
   const positionLabel = POSITION_LABEL[gameState.position] ?? gameState.position;
   const popTrend = popularityTrend(gameState);
   const scenarioDef = getScenario(gameState.causal?.scenarioId);
+  const inMandate = ((absoluteTurn - 1) % MAX_TURNS) + 1;
+  const nextMilestone = Object.keys(MILESTONES).map(Number).find(t => t >= inMandate);
 
   return (
-    <header className="h-14 flex-none flex items-center px-4 md:px-6 gap-4 bg-[#091422] border-b border-white/8 sticky top-0 z-50">
-      {/* Logo */}
-      <div className="flex items-center gap-2.5 flex-none">
-        <img
-          src={IMAGES.logo.primary}
-          alt="GobernArg"
-          className="h-8 w-auto object-contain"
-        />
-        <div className="font-['Barlow_Condensed'] text-xl font-bold tracking-wider text-white hidden sm:block">
-          GOBERN<span className="text-blue-400">ARG</span>
-        </div>
-      </div>
-
-      <Separator />
-
-      {/* Gobernante + Cargo */}
-      <div className="flex items-center gap-2.5 flex-none">
-        {gameState.avatar ? (
-          <img
-            src={gameState.avatar}
-            alt={gameState.governorName}
-            className="w-8 h-8 rounded-full object-cover border border-white/12 shadow-sm"
-          />
-        ) : (
-          <div className="w-8 h-8 rounded-full bg-blue-500/20 border border-blue-400/30 flex items-center justify-center font-bold text-blue-400 text-xs">
-            {gameState.governorName ? gameState.governorName[0] : 'G'}
-          </div>
-        )}
-        <div className="leading-tight">
-          <div className="text-[9px] text-white/40 uppercase tracking-widest font-semibold">
-            {positionLabel}
-          </div>
-          <div className="text-[12px] font-bold text-white truncate max-w-[120px]">
-            {gameState.governorName || '—'}
+    <header className="sticky top-0 z-50 bg-surface/95 backdrop-blur border-b border-rule">
+      <div className="max-w-[1680px] mx-auto flex items-center gap-5 px-4 md:px-6 h-16">
+        {/* Logo y marca */}
+        <div className="flex items-center gap-2.5 flex-none">
+          <img src={IMAGES.logo.primary} alt="GobernArg" className="h-9 w-auto object-contain mix-blend-multiply" />
+          <div className="font-display text-xl font-semibold text-ink hidden sm:block">
+            Gobern<span className="text-gold-ink">arg</span>
           </div>
         </div>
-      </div>
 
-      <Separator />
-
-      {/* Turno / Año / Trimestre */}
-      <div className="flex items-center gap-2 flex-none">
-        <Clock size={13} className="text-white/40" />
-        <div className="leading-tight">
-          <div className="text-[9px] text-white/40 uppercase tracking-widest font-semibold">Turno</div>
-          <div className="font-mono text-[13px] font-bold text-white">
-            {absoluteTurn}<span className="text-white/40 font-normal">/{MAX_TURNS}</span>
+        {/* Gobernante y cargo */}
+        <div className="flex items-center gap-2.5 flex-none pl-5 border-l border-rule">
+          {gameState.avatar ? (
+            <img
+              src={gameState.avatar}
+              alt={gameState.governorName}
+              className="w-9 h-9 rounded-full object-cover ring-2 ring-gold/60"
+            />
+          ) : (
+            <div className="w-9 h-9 rounded-full bg-ink text-paper flex items-center justify-center font-display font-semibold text-sm">
+              {gameState.governorName ? gameState.governorName[0] : 'G'}
+            </div>
+          )}
+          <div className="leading-tight">
+            <div className="font-display text-[15px] font-semibold text-ink truncate max-w-[160px]">
+              {gameState.governorName || '—'}
+            </div>
+            <div className="text-[11px] text-ink/60">
+              {positionLabel}
+              {scenarioDef && <span title={`Escenario: ${scenarioDef.name}`}> · {scenarioDef.name}</span>}
+            </div>
           </div>
         </div>
-        <div
-          className="hidden lg:block text-[10px] font-mono text-white/50 bg-white/4 px-2 py-0.5 rounded border border-white/6 ml-1"
-          title={scenarioDef ? `Escenario: ${scenarioDef.name}` : ''}
-        >
-          Año {gameState.year} · T{gameState.turn}
-          {scenarioDef && <span className="ml-1 text-blue-300">({scenarioDef.name})</span>}
+
+        {/* Mandato: turno y línea de tiempo */}
+        <div className="hidden md:block flex-1 min-w-[180px] max-w-[420px] pl-5 border-l border-rule">
+          <div className="flex items-baseline justify-between gap-3 mb-1.5 text-[11px]">
+            <span className="text-ink/70">
+              <span className="font-semibold text-ink">Turno <span className="font-mono">{absoluteTurn}</span></span>
+              <span className="text-ink/50">/{MAX_TURNS}</span> · Año {gameState.year} · T{gameState.turn}
+            </span>
+            {nextMilestone && (
+              <span className="text-gold-ink font-medium whitespace-nowrap">
+                {MILESTONES[nextMilestone]}{nextMilestone > inMandate ? ` en ${nextMilestone - inMandate}t` : ' este turno'}
+              </span>
+            )}
+          </div>
+          <MandateTimeline turn={absoluteTurn} />
         </div>
-      </div>
 
-      <Separator />
+        <div className="flex-1 md:hidden" />
 
-      {/* Acciones Disponibles */}
-      <div className="flex items-center gap-2 flex-none bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 rounded-md">
-        <PlayCircle size={13} className="text-blue-400" />
-        <div className="leading-tight">
-          <div className="text-[8px] text-blue-300/70 uppercase tracking-widest font-bold">Acciones</div>
-          <div className="font-mono text-[13px] font-bold text-blue-300 leading-none">{availableActions}</div>
-        </div>
-      </div>
-
-      <Separator />
-
-      {/* Presupuesto */}
-      <div className="flex items-center gap-2 flex-none bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md">
-        <Wallet size={13} className="text-emerald-400" />
-        <div className="leading-tight">
-          <div className="text-[8px] text-emerald-300/70 uppercase tracking-widest font-bold">Presup.</div>
-          <div className="font-mono text-[13px] font-bold text-emerald-300 leading-none">
-            {fmtBudget(gameState.budget)}
+        {/* Recursos del turno e indicadores rápidos */}
+        <div className="flex items-center gap-5 flex-none">
+          <div className="flex items-center gap-2" title="Acciones disponibles este turno">
+            <PlayCircle size={15} className="text-ink/45" />
+            <Stat label="Acciones">{availableActions}</Stat>
+          </div>
+          <div className="flex items-center gap-2" title="Presupuesto (caja)">
+            <Wallet size={15} className="text-ink/45" />
+            <Stat label="Presupuesto">{fmtBudget(gameState.budget)}</Stat>
+          </div>
+          <div className="hidden lg:flex items-center gap-2">
+            <Activity size={15} className="text-ink/45" />
+            <div className="leading-tight">
+              <div className="text-[10px] text-ink/55 font-medium">Popularidad</div>
+              <div className="flex items-baseline gap-1.5">
+                <span className={`font-mono text-[15px] font-semibold ${riskColor(popularityRisk)}`}>
+                  {Math.round(gameState.causal?.political.apro ?? gameState.popularity)}%
+                </span>
+                {popTrend !== null && (
+                  <span
+                    className={`inline-flex items-center gap-0.5 font-mono text-[11px] ${
+                      popTrend > 0 ? 'text-emerald-400' : popTrend < 0 ? 'text-red-400' : 'text-ink/45'
+                    }`}
+                  >
+                    {popTrend > 0 ? <TrendingUp size={11} /> : popTrend < 0 ? <TrendingDown size={11} /> : <Minus size={11} />}
+                    {popTrend !== 0 ? `${popTrend > 0 ? '+' : ''}${popTrend}` : '0'}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="hidden xl:flex items-center gap-2">
+            <Shield size={15} className="text-ink/45" />
+            <div className="leading-tight">
+              <div className="text-[10px] text-ink/55 font-medium">Estabilidad</div>
+              <div className={`font-mono text-[15px] font-semibold ${riskColor(stabilityRisk)}`}>
+                {Math.round(gameState.causal?.political.gob ?? gameState.stability)}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <Separator className="hidden lg:block" />
-
-      {/* Popularidad rápida */}
-      <div className="hidden lg:flex items-center gap-2 flex-none">
-        <Activity size={13} className="text-white/40" />
-        <div className="leading-tight">
-          <div className="text-[9px] text-white/40 uppercase tracking-widest font-semibold">Popular.</div>
-          <div className={`font-mono text-[12px] font-bold ${riskColor(popularityRisk)}`}>
-            {Math.round(gameState.causal?.political.apro ?? gameState.popularity)}%
-          </div>
-        </div>
-        {popTrend !== null && (
-          <span
-            className={`inline-flex items-center gap-0.5 font-mono text-[10px] ${
-              popTrend > 0 ? 'text-emerald-400' : popTrend < 0 ? 'text-red-400' : 'text-white/40'
-            }`}
+        {/* Controles */}
+        <div className="flex items-center gap-2 flex-none pl-5 border-l border-rule">
+          <button
+            onClick={onRestart}
+            title="Reiniciar juego"
+            className="flex items-center gap-1.5 text-[12px] text-ink/60 hover:text-ink transition-colors px-2.5 py-2 rounded-md hover:bg-sunken"
           >
-            {popTrend > 0 ? <TrendingUp size={10} /> : popTrend < 0 ? <TrendingDown size={10} /> : <Minus size={10} />}
-            {popTrend !== 0 ? `${popTrend > 0 ? '+' : ''}${popTrend}` : '0'}
-          </span>
-        )}
-      </div>
+            <RefreshCw size={13} />
+            <span className="hidden md:inline">Reiniciar</span>
+          </button>
 
-      <Separator className="hidden xl:block" />
-
-      {/* Estabilidad rápida */}
-      <div className="hidden xl:flex items-center gap-2 flex-none">
-        <Shield size={13} className="text-white/40" />
-        <div className="leading-tight">
-          <div className="text-[9px] text-white/40 uppercase tracking-widest font-semibold">Estabil.</div>
-          <div className={`font-mono text-[12px] font-bold ${riskColor(stabilityRisk)}`}>
-            {Math.round(gameState.causal?.political.gob ?? gameState.stability)}
-          </div>
+          {onEndTurn && (
+            <button
+              onClick={onEndTurn}
+              disabled={!canEndTurn}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-md text-[13px] font-semibold transition-all ${
+                canEndTurn
+                  ? 'bg-ink hover:bg-ink/90 text-paper shadow-sm active:translate-y-px'
+                  : 'bg-sunken text-ink/35 cursor-not-allowed'
+              }`}
+            >
+              Finalizar turno
+              <ArrowRight size={14} className={canEndTurn ? 'text-gold' : ''} />
+            </button>
+          )}
         </div>
       </div>
-
-      <div className="flex-1 min-w-0" />
-
-      {/* Botones de acción Header */}
-      <button
-        onClick={onRestart}
-        title="Reiniciar juego"
-        className="flex items-center gap-1.5 text-[11px] text-white/50 hover:text-white transition-colors px-2.5 py-1.5 rounded border border-white/8 hover:bg-white/5"
-      >
-        <RefreshCw size={12} />
-        <span className="hidden md:inline">Reiniciar</span>
-      </button>
-
-      {onEndTurn && (
-        <button
-          onClick={onEndTurn}
-          disabled={!canEndTurn}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-['Barlow_Condensed'] text-[13px] font-bold uppercase tracking-wider transition-all shadow-lg ${
-            canEndTurn
-              ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/20 active:translate-y-0.5'
-              : 'bg-white/5 text-white/30 cursor-not-allowed border border-white/8'
-          }`}
-        >
-          Finalizar Turno
-          <ArrowRight size={14} />
-        </button>
-      )}
     </header>
   );
-}
-
-function Separator({ className = '' }: { className?: string }) {
-  return <div className={`w-px h-6 bg-white/8 ${className}`} />;
 }
 
 // Re-export del icono Users por compat

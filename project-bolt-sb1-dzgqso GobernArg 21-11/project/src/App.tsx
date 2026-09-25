@@ -213,8 +213,8 @@ function App() {
   const currentEvent = pendingEvents[0] || null;
 
   return (
-    <div className="min-h-screen bg-[#070e17] text-white selection:bg-blue-500/30 selection:text-blue-200">
-      <Toaster theme="dark" position="bottom-right" />
+    <div className="min-h-screen bg-paper text-ink">
+      <Toaster position="bottom-right" toastOptions={{ style: { background: "rgb(20 33 61)", color: "rgb(251 248 242)", border: "none" } }} />
       <GameHeader
         gameState={gameState}
         availableActions={gameState.actions}
@@ -269,14 +269,14 @@ function App() {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowGameLog(true)}
-                className="flex-1 bg-[#0f1e38] border border-white/8 rounded-xl p-3.5 hover:bg-white/4 transition-all flex items-center gap-2.5 text-xs font-bold text-white shadow-md"
+                className="flex-1 bg-surface border border-ink/8 rounded-lg p-3.5 hover:bg-ink/4 transition-all flex items-center gap-2.5 text-xs font-bold text-ink "
               >
                 <span className="inline-flex w-6 h-6 items-center justify-center rounded-lg bg-blue-500/20 text-blue-400 font-mono text-xs">L</span>
                 Historial de Gestión
               </button>
               <button
                 onClick={() => setShowNotebook(true)}
-                className="flex-1 bg-[#0f1e38] border border-white/8 rounded-xl p-3.5 hover:bg-white/4 transition-all flex items-center gap-2.5 text-xs font-bold text-white shadow-md"
+                className="flex-1 bg-surface border border-ink/8 rounded-lg p-3.5 hover:bg-ink/4 transition-all flex items-center gap-2.5 text-xs font-bold text-ink "
               >
                 <span className="inline-flex w-6 h-6 items-center justify-center rounded-lg bg-cyan-500/20 text-cyan-400 font-mono text-xs">C</span>
                 Cuaderno Político

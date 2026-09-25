@@ -42,7 +42,7 @@ function CompromisosSection({ gameState }: { gameState: GameState }) {
     <section>
       <div className="flex items-center gap-2 mb-3">
         <Activity size={14} className="text-muted-foreground" />
-        <h3 className="font-display text-xs uppercase tracking-widest text-muted-foreground font-bold">
+        <h3 className="font-display text-[16px]   text-muted-foreground font-semibold">
           Acuerdos y Pedidos
         </h3>
         <span className="text-[10px] font-mono text-muted-foreground ml-auto">
@@ -63,7 +63,7 @@ function CompromisosSection({ gameState }: { gameState: GameState }) {
               <div key={ag.id} className={`rounded-lg border p-3 ${st.cls}`}>
                 <div className="flex items-start justify-between gap-2 mb-1">
                   <div className="min-w-0">
-                    <div className="font-display font-semibold text-xs text-foreground leading-tight">
+                    <div className="font-display font-semibold text-[16px] text-foreground leading-tight">
                       {CAUSAL_ACTIONS_BY_ID[ag.commitmentActionId]?.name ?? ag.commitmentActionId}
                     </div>
                     <div className="text-[10px] text-foreground/50 mt-0.5">
@@ -92,7 +92,7 @@ function CompromisosSection({ gameState }: { gameState: GameState }) {
           })}
           {requests.map(({ actor, demand }) => (
             <div key={actor} className="rounded-lg border border-border bg-card p-2.5">
-              <div className="font-display font-semibold text-[11px] text-foreground leading-tight">
+              <div className="font-display font-semibold text-[16px] text-foreground leading-tight">
                 {CAUSAL_ACTIONS_BY_ID[demand!.actionId]?.name ?? demand!.actionId}
               </div>
               <div className="text-[9px] text-muted-foreground mt-0.5">
@@ -116,7 +116,7 @@ function EfectosDiferidosSection({ gameState }: { gameState: GameState }) {
     <section>
       <div className="flex items-center gap-2 mb-3">
         <Zap size={14} className="text-muted-foreground" />
-        <h3 className="font-display text-xs uppercase tracking-widest text-muted-foreground font-bold">
+        <h3 className="font-display text-[16px]   text-muted-foreground font-semibold">
           Efectos Diferidos
         </h3>
         <span className="text-[10px] font-mono text-muted-foreground ml-auto">
@@ -139,7 +139,7 @@ function EfectosDiferidosSection({ gameState }: { gameState: GameState }) {
                 <div key={item.key} className="rounded-lg border border-border bg-card p-2.5">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <div className="font-display font-semibold text-[11px] text-foreground leading-tight">{item.title}</div>
+                      <div className="font-display font-semibold text-[16px] text-foreground leading-tight">{item.title}</div>
                       <div className="text-[9px] text-muted-foreground mt-0.5">
                         {item.chips.map(ch => `${ch.label} ${ch.text}`).join(' · ')}
                       </div>
@@ -159,7 +159,7 @@ function EfectosDiferidosSection({ gameState }: { gameState: GameState }) {
                 <div key={item.key} className="rounded-lg border border-emerald-400/15 bg-emerald-400/5 p-2.5">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <div className="font-display font-semibold text-[11px] text-foreground leading-tight">{item.title}</div>
+                      <div className="font-display font-semibold text-[16px] text-foreground leading-tight">{item.title}</div>
                       <div className="text-[9px] text-muted-foreground mt-0.5">{item.detail}</div>
                     </div>
                     <span className="flex-shrink-0 text-[10px] font-mono text-emerald-400">activo</span>
@@ -185,7 +185,7 @@ function HistorialRecienteSection({ gameState }: { gameState: GameState }) {
     <section>
       <div className="flex items-center gap-2 mb-3">
         <ScrollText size={14} className="text-muted-foreground" />
-        <h3 className="font-display text-xs uppercase tracking-widest text-muted-foreground font-bold">
+        <h3 className="font-display text-[16px]   text-muted-foreground font-semibold">
           Historial Reciente
         </h3>
         <span className="text-[10px] font-mono text-muted-foreground ml-auto">
@@ -224,7 +224,7 @@ function HistorialRecienteSection({ gameState }: { gameState: GameState }) {
                       return (
                         <span
                           key={j}
-                          className="text-[9px] bg-white/5 border border-border/50 px-1.5 py-0.5 rounded text-foreground/70"
+                          className="text-[9px] bg-ink/5 border border-border/50 px-1.5 py-0.5 rounded text-foreground/70"
                         >
                           {name}
                         </span>
@@ -273,14 +273,14 @@ function HistorialRecienteSection({ gameState }: { gameState: GameState }) {
 
 export function ManagementNotebook({ gameState, onClose }: ManagementNotebookProps) {
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-ink/60 flex items-center justify-center z-50 p-4">
       <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <div className="flex items-center gap-2.5">
             <BookOpen size={18} className="text-blue-400" />
             <div>
-              <h2 className="font-display font-bold text-sm text-foreground uppercase tracking-wider">
+              <h2 className="font-display font-semibold text-[16px] text-foreground  ">
                 Cuaderno de Gestión
               </h2>
               <p className="text-[10px] text-muted-foreground">

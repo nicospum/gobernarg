@@ -18,7 +18,7 @@ export function InformesPanel({ gameState }: InformesPanelProps) {
   return (
     <section className="rounded-lg border border-border bg-card overflow-hidden">
       <header className="flex items-center justify-between px-4 py-2.5 border-b border-border">
-        <h2 className="font-display font-bold text-[13px] uppercase tracking-widest text-foreground flex items-center gap-2">
+        <h2 className="font-display font-semibold text-[16px]   text-foreground flex items-center gap-2">
           <Clock size={12} className="text-muted-foreground" />
           Informes de Gestión
         </h2>
@@ -39,7 +39,7 @@ export function InformesPanel({ gameState }: InformesPanelProps) {
                 </span>
               </div>
               {item.total > 0 && (
-                <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-ink/10">
                   <div
                     className={`h-full rounded-full transition-all duration-500 ${item.positive ? 'bg-emerald-400' : 'bg-primary'}`}
                     style={{ width: `${pct}%` }}

@@ -62,43 +62,43 @@ function IndicatorCardView({ card }: { card: IndicatorCard }) {
     <InfoTooltip
       content={
         <div className="flex flex-col gap-1 max-w-[260px]">
-          <div className="font-semibold text-xs text-white">{card.label}</div>
-          <div className="text-[10px] text-white/70">{card.tooltipDetail}</div>
+          <div className="font-semibold text-xs text-ink">{card.label}</div>
+          <div className="text-[10px] text-ink/70">{card.tooltipDetail}</div>
         </div>
       }
     >
-      <div className="flex-1 min-w-[170px] rounded-xl border border-white/8 bg-[#0f1e38] p-3.5 shadow-lg cursor-help transition-all hover:border-white/15">
+      <div className="flex-1 min-w-[170px] px-5 py-4 cursor-help transition-colors hover:bg-sunken/60">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-[10px] text-white/40 uppercase tracking-widest font-bold flex items-center gap-1">
+          <span className="text-[11px] text-ink/60 font-medium flex items-center gap-1">
             {card.label}
             <Info size={10} className="opacity-40" />
           </span>
           <TrendChip value={card.trend} inverse={card.inverseRisk} />
         </div>
         <div className="flex items-baseline gap-1 mb-2.5">
-          <span className={`font-mono text-2xl font-bold leading-none ${riskColor(risk)}`}>
+          <span className={`font-display text-[34px] font-semibold leading-none ${riskColor(risk)}`}>
             {Math.round(card.value)}
           </span>
-          <span className="text-[12px] font-semibold text-white/50">{card.unit}</span>
+          <span className="font-display text-[16px] text-ink/50">{card.unit}</span>
         </div>
-        <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-white/8">
+        <div className="relative h-1 w-full rounded-full bg-sunken">
           <div
             className={`absolute inset-y-0 left-0 rounded-full transition-all duration-500 ${riskColor(risk, 'bg')}`}
             style={{ width: `${pct}%` }}
           />
           {card.target > 0 && (
             <div
-              className="absolute inset-y-0 w-0.5 bg-white/70 shadow"
+              className="absolute -inset-y-1 w-0.5 bg-ink"
               style={{ left: `${targetPct}%` }}
               title={card.targetLabel}
             />
           )}
         </div>
         <div className="flex items-center justify-between mt-2">
-          <span className="text-[9px] font-mono text-white/40">
+          <span className="text-[10px] text-ink/55">
             {card.targetLabel ? card.targetLabel : `Escala 0-${card.max}`}
           </span>
-          <span className={`text-[9px] font-bold uppercase tracking-wider ${riskColor(risk)}`}>
+          <span className={`text-[10px] font-semibold uppercase tracking-wider ${riskColor(risk)}`}>
             {displayLabel}
           </span>
         </div>
@@ -118,9 +118,9 @@ function BudgetIndicatorCard({ gameState }: { gameState: GameState }) {
     <InfoTooltip
       content={
         <div className="flex flex-col gap-1 max-w-[260px]">
-          <div className="font-semibold text-xs text-white">Caja del Tesoro</div>
+          <div className="font-semibold text-xs text-ink">Caja del Tesoro</div>
           {last && (
-            <div className="text-[11px] text-white/70 space-y-0.5 font-mono">
+            <div className="text-[11px] text-ink/70 space-y-0.5 font-mono">
               <div>Recaudación: {fmtBudget(last.fiscal.ingresos)}</div>
               <div>Gasto corriente: −{fmtBudget(last.fiscal.gastoCorriente)}</div>
               <div>Intereses de deuda: −{fmtBudget(last.fiscal.servicioDeuda)}</div>
@@ -128,36 +128,36 @@ function BudgetIndicatorCard({ gameState }: { gameState: GameState }) {
               {last.fiscal.financiamiento !== 0 && <div>Financiamiento: {fmtBudgetDelta(last.fiscal.financiamiento)}</div>}
             </div>
           )}
-          <div className="text-[10px] text-white/50 mt-1">
+          <div className="text-[10px] text-ink/50 mt-1">
             Deuda: {fmtBudget(c.deuda)} (intereses {fmtBudget(debtService(c))}/turno). Gasto fijo: {fmtBudget(c.gastoCorr)}/turno.
           </div>
         </div>
       }
     >
-      <div className="flex-1 min-w-[170px] rounded-xl border border-white/8 bg-[#0f1e38] p-3.5 shadow-lg cursor-help transition-all hover:border-white/15">
+      <div className="flex-1 min-w-[170px] px-5 py-4 cursor-help transition-colors hover:bg-sunken/60">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-[10px] text-white/40 uppercase tracking-widest font-bold flex items-center gap-1">
+          <span className="text-[11px] text-ink/60 font-medium flex items-center gap-1">
             <Wallet size={10} className="opacity-60" />
             Presupuesto / Caja
             <Info size={10} className="opacity-40" />
           </span>
         </div>
         <div className="flex items-baseline gap-1 mb-2.5">
-          <span className={`font-mono text-2xl font-bold leading-none ${valueColor}`}>
+          <span className={`font-display text-[34px] font-semibold leading-none ${valueColor}`}>
             {fmtBudget(c.caja)}
           </span>
         </div>
-        <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-white/8">
+        <div className="relative h-1 w-full rounded-full bg-sunken">
           <div
             className={`absolute inset-y-0 left-0 rounded-full transition-all duration-500 ${healthy ? 'bg-emerald-400' : 'bg-red-400'}`}
             style={{ width: `${Math.min(100, Math.max(10, (c.caja / 3000) * 100))}%` }}
           />
         </div>
         <div className="flex items-center justify-between mt-2">
-          <span className="text-[9px] font-mono text-white/40">
+          <span className="text-[10px] text-ink/55">
             {result === null ? 'Recaudación activa' : `Balance ${fmtBudgetDelta(result)}`}
           </span>
-          <span className={`text-[9px] font-bold uppercase tracking-wider ${valueColor}`}>
+          <span className={`text-[10px] font-semibold uppercase tracking-wider ${valueColor}`}>
             {healthy ? 'OK' : 'EN ROJO'}
           </span>
         </div>
@@ -223,8 +223,8 @@ export function IndicatorsPanel({ gameState }: IndicatorsPanelProps) {
   ];
 
   return (
-    <section className="space-y-3">
-      <div className="flex flex-wrap gap-2.5">
+    <section className="rounded-lg border border-rule bg-surface">
+      <div className="flex flex-wrap divide-x divide-rule">
         {cards.map(card => <IndicatorCardView key={card.id} card={card} />)}
         <BudgetIndicatorCard gameState={gameState} />
       </div>

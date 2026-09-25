@@ -83,7 +83,7 @@ export function LegacyScreen({ gameState, onRestart, onClose }: LegacyScreenProp
   const targetRisk = getValueRisk(perf.targetAchievement, 100, false);
 
   return (
-    <div className="fixed inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+    <div className="fixed inset-0 bg-ink/85 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
       <div className="relative w-full max-w-3xl rounded-xl overflow-hidden shadow-2xl bg-card border border-border my-8">
         {/* Header visual */}
         <div className="relative h-48 md:h-56">
@@ -97,8 +97,8 @@ export function LegacyScreen({ gameState, onRestart, onClose }: LegacyScreenProp
           <div
             className={`absolute inset-0 ${
               isVictory
-                ? 'bg-gradient-to-t from-[#0B1829]/95 via-[#0B1829]/60 to-transparent'
-                : 'bg-gradient-to-t from-[#0B1829]/95 via-red-950/60 to-transparent'
+                ? 'bg-gradient-to-t from-paper/95 via-paper/60 to-transparent'
+                : 'bg-gradient-to-t from-paper/95 via-red-950/60 to-transparent'
             }`}
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center text-foreground text-center p-4">
@@ -107,7 +107,7 @@ export function LegacyScreen({ gameState, onRestart, onClose }: LegacyScreenProp
             ) : (
               <Skull className="w-14 h-14 text-red-400 mb-2" />
             )}
-            <h2 className="font-display text-3xl md:text-4xl font-bold uppercase tracking-wide">
+            <h2 className="font-display text-3xl md:text-4xl font-semibold  ">
               {isVictory ? 'Fin de tu gobierno' : 'Fin del gobierno'}
             </h2>
             <p className="text-foreground/85 mt-1 text-sm">{isVictivityMessage(gameState)}</p>
@@ -123,12 +123,12 @@ export function LegacyScreen({ gameState, onRestart, onClose }: LegacyScreenProp
         <div className="p-6 md:p-8 space-y-8">
           {/* Performance Summary — bloque nuevo Figma 2 */}
           <div>
-            <h3 className="font-display text-xl font-bold mb-3 flex items-center gap-2 text-foreground uppercase tracking-wide">
+            <h3 className="font-display text-xl font-semibold mb-3 flex items-center gap-2 text-foreground  ">
               <Award className="w-5 h-5 text-accent" />
               Resumen de Desempeño
             </h3>
             <div className="grid grid-cols-2 gap-4 mb-4">
-              <div className="rounded-lg border border-border bg-white/3 p-4">
+              <div className="rounded-lg border border-border bg-ink/3 p-4">
                 <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">
                   Rating General
                 </div>
@@ -137,7 +137,7 @@ export function LegacyScreen({ gameState, onRestart, onClose }: LegacyScreenProp
                   <span className="text-base text-muted-foreground">/10</span>
                 </div>
               </div>
-              <div className="rounded-lg border border-border bg-white/3 p-4">
+              <div className="rounded-lg border border-border bg-ink/3 p-4">
                 <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1 flex items-center gap-1">
                   <Target className="w-3 h-3" />
                   Metas de Gestión
@@ -172,25 +172,25 @@ export function LegacyScreen({ gameState, onRestart, onClose }: LegacyScreenProp
 
           {/* Narrativa */}
           <div>
-            <h3 className="font-display text-lg font-bold mb-3 flex items-center gap-2 text-foreground uppercase tracking-wide">
+            <h3 className="font-display text-lg font-semibold mb-3 flex items-center gap-2 text-foreground  ">
               <ScrollText className="w-5 h-5 text-primary" />
               Tu legado
             </h3>
-            <div className="rounded-xl border border-border bg-white/3 p-5 text-foreground/80 leading-relaxed whitespace-pre-line text-sm">
+            <div className="rounded-xl border border-border bg-ink/3 p-5 text-foreground/80 leading-relaxed whitespace-pre-line text-sm">
               {legacyText}
             </div>
           </div>
 
           {/* Estadísticas */}
           <div>
-            <h3 className="font-display text-lg font-bold mb-3 text-foreground uppercase tracking-wide">
+            <h3 className="font-display text-lg font-semibold mb-3 text-foreground  ">
               Estadísticas
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {stats.map((stat) => (
                 <div
                   key={stat.label}
-                  className="rounded-lg border border-border bg-white/3 p-3 text-center"
+                  className="rounded-lg border border-border bg-ink/3 p-3 text-center"
                 >
                   <p className="font-mono text-2xl font-bold text-foreground">{stat.value}</p>
                   <p className="text-[11px] text-muted-foreground uppercase tracking-wide mt-0.5">
@@ -203,10 +203,10 @@ export function LegacyScreen({ gameState, onRestart, onClose }: LegacyScreenProp
 
           {/* Perfil ideológico */}
           <div>
-            <h3 className="font-display text-lg font-bold mb-3 text-foreground uppercase tracking-wide">
+            <h3 className="font-display text-lg font-semibold mb-3 text-foreground  ">
               Perfil Ideológico
             </h3>
-            <div className="rounded-xl border border-border bg-white/3 p-5 space-y-1.5">
+            <div className="rounded-xl border border-border bg-ink/3 p-5 space-y-1.5">
               <AxisBar
                 value={gameState.radicalConciliadorAxis}
                 labelLo="Radical"
@@ -239,7 +239,7 @@ export function LegacyScreen({ gameState, onRestart, onClose }: LegacyScreenProp
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {recentProjects.length > 0 && (
                 <div>
-                  <h4 className="font-display text-[12px] font-bold text-emerald-400 uppercase tracking-widest mb-2">
+                  <h4 className="font-display text-[12px] font-semibold text-emerald-400   mb-2">
                     Obras destacadas
                   </h4>
                   <ul className="space-y-1.5">
@@ -257,7 +257,7 @@ export function LegacyScreen({ gameState, onRestart, onClose }: LegacyScreenProp
               )}
               {recentCrises.length > 0 && (
                 <div>
-                  <h4 className="font-display text-[12px] font-bold text-red-400 uppercase tracking-widest mb-2">
+                  <h4 className="font-display text-[12px] font-semibold text-red-400   mb-2">
                     Crisis superadas
                   </h4>
                   <ul className="space-y-1.5">
@@ -281,14 +281,14 @@ export function LegacyScreen({ gameState, onRestart, onClose }: LegacyScreenProp
             {onClose && (
               <button
                 onClick={onClose}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded font-display font-bold uppercase tracking-wide transition-colors border border-border bg-white/10 hover:bg-white/15 text-foreground"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded font-display font-semibold   transition-colors border border-border bg-ink/10 hover:bg-ink/15 text-foreground"
               >
                 Volver
               </button>
             )}
             <button
               onClick={onRestart}
-              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded font-display font-bold uppercase tracking-wide transition-colors shadow-lg"
+              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded font-display font-semibold   transition-colors shadow-lg"
             >
               <RotateCcw className="w-4 h-4" />
               Jugar de nuevo

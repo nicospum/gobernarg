@@ -21,13 +21,13 @@ export function AxisBar({
   return (
     <div className="mb-2">
       <div className="flex justify-between text-[11px] mb-1">
-        <span className={isLeft ? 'font-semibold text-white' : 'text-white/40'}>{labelLo}</span>
-        <span className="text-white/60 font-mono text-[10px]">{clamped > 0 ? `+${clamped}` : clamped}</span>
-        <span className={isRight ? 'font-semibold text-white' : 'text-white/40'}>{labelHi}</span>
+        <span className={isLeft ? 'font-semibold text-ink' : 'text-ink/40'}>{labelLo}</span>
+        <span className="text-ink/60 font-mono text-[10px]">{clamped > 0 ? `+${clamped}` : clamped}</span>
+        <span className={isRight ? 'font-semibold text-ink' : 'text-ink/40'}>{labelHi}</span>
       </div>
-      <div className="relative w-full h-2 bg-white/8 rounded-full overflow-hidden">
+      <div className="relative w-full h-2 bg-ink/8 rounded-full overflow-hidden">
         <div
-          className={`absolute top-0 h-full w-2 rounded-full transition-all duration-300 shadow ${isLeft ? loColor : isRight ? hiColor : 'bg-white/60'}`}
+          className={`absolute top-0 h-full w-2 rounded-full transition-all duration-300 shadow ${isLeft ? loColor : isRight ? hiColor : 'bg-ink/60'}`}
           style={{ left: `${percentage}%`, transform: 'translateX(-50%)' }}
         />
       </div>

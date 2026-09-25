@@ -32,30 +32,30 @@ export function CountryPanel({ gameState }: { gameState: GameState }) {
   const showExpectations = c.perks.reveals.includes('desanclaje');
 
   return (
-    <section className="rounded-xl border border-white/8 bg-[#0f1e38] overflow-hidden shadow-lg">
+    <section className="rounded-lg border border-rule bg-surface overflow-hidden">
       <button
         onClick={() => setOpen(v => !v)}
-        className="w-full flex items-center justify-between px-4 py-3 border-b border-white/8 hover:bg-white/4 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-2.5 border-b border-rule hover:bg-sunken/60 transition-colors"
       >
-        <h2 className="font-['Barlow_Condensed'] font-bold text-sm uppercase tracking-wider text-white flex items-center gap-2">
-          <Globe2 size={14} className="text-blue-400" />
+        <h2 className="font-display font-semibold text-[15px] text-ink flex items-center gap-2">
+          <Globe2 size={14} className="text-gold-ink" />
           Detalle Macroeconómico & Motor Causal ({INDICATOR_IDS.length} Indicadores)
         </h2>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-white/40 font-mono">
+          <span className="text-[11px] text-ink/55">
             {open ? 'Ocultar matriz' : 'Desplegar matriz'}
           </span>
-          {open ? <ChevronDown size={14} className="text-white/40" /> : <ChevronRight size={14} className="text-white/40" />}
+          {open ? <ChevronDown size={14} className="text-ink/40" /> : <ChevronRight size={14} className="text-ink/40" />}
         </div>
       </button>
       {open && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-px bg-white/6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-rule">
           {MACROS.map(macro => (
-            <div key={macro} className="bg-[#0f1e38] p-3.5 space-y-2">
-              <div className="text-[10px] uppercase tracking-widest text-blue-300/70 font-bold border-b border-white/6 pb-1">
+            <div key={macro} className="px-4 py-3">
+              <div className="text-[10px] uppercase tracking-widest text-gold-ink font-semibold pb-1.5 mb-1 border-b border-rule">
                 {macro}
               </div>
-              <div className="space-y-2 pt-0.5">
+              <div className="space-y-px">
                 {INDICATOR_IDS.filter(id => INDICATORS[id].macro === macro).map(id => {
                   const def = INDICATORS[id];
                   const v = effective(c, id, ref);
@@ -67,22 +67,22 @@ export function CountryPanel({ gameState }: { gameState: GameState }) {
                       key={id}
                       content={
                         <div className="flex flex-col gap-1 max-w-[260px]">
-                          <div className="font-semibold text-xs text-white">{def.name}</div>
-                          <div className="text-[10px] text-white/70">{def.definition}</div>
-                          <div className="text-[10px] text-white/50">
+                          <div className="font-semibold text-xs text-ink">{def.name}</div>
+                          <div className="text-[10px] text-ink/70">{def.definition}</div>
+                          <div className="text-[10px] text-ink/50">
                             Alto: {def.high} | Bajo: {def.low}
                           </div>
                           {partial && <div className="text-[10px] text-amber-300">Dato estimado: sólo se conoce tendencia.</div>}
                         </div>
                       }
                     >
-                      <div className="flex items-center justify-between gap-2 cursor-help group hover:bg-white/4 p-1 rounded transition-colors">
-                        <span className="text-[11px] text-white/80 group-hover:text-white truncate flex items-center gap-1 font-medium">
+                      <div className="flex items-center justify-between gap-2 cursor-help group hover:bg-sunken/70 px-1 py-[3px] rounded transition-colors">
+                        <span className="text-[11px] text-ink/80 group-hover:text-ink truncate flex items-center gap-1 font-medium">
                           {def.name}
-                          {partial && <EyeOff size={9} className="text-white/30 flex-shrink-0" />}
+                          {partial && <EyeOff size={9} className="text-ink/30 flex-shrink-0" />}
                         </span>
                         <span className="flex items-center gap-1.5 flex-shrink-0">
-                          <span className={`text-[10px] font-mono font-bold ${toneClass(band.tone)}`}>
+                          <span className={`text-[11px] font-mono font-semibold ${toneClass(band.tone)}`}>
                             {id === 'INFL' ? inflationMonthly(v) : band.label}
                           </span>
                           <Trend delta={delta} id={id} />
@@ -92,8 +92,8 @@ export function CountryPanel({ gameState }: { gameState: GameState }) {
                   );
                 })}
                 {macro === 'Economía' && showExpectations && (
-                  <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-white/6">
-                    <span className="text-[11px] text-white/70">Expectativas inflación</span>
+                  <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-ink/6">
+                    <span className="text-[11px] text-ink/70">Expectativas inflación</span>
                     <span className={`text-[10px] font-bold ${c.desanclaje > 20 ? 'text-red-400' : c.desanclaje > 10 ? 'text-amber-300' : 'text-emerald-400'}`}>
                       {c.desanclaje > 20 ? 'Despegadas' : c.desanclaje > 10 ? 'Inquietas' : 'Ancladas'}
                     </span>

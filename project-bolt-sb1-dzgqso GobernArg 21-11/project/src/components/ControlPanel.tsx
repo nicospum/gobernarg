@@ -65,32 +65,32 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
   const interna = causal.political.interna;
 
   return (
-    <div className="flex flex-col rounded-xl border border-white/8 bg-[#0f1e38] shadow-xl overflow-hidden">
+    <div className="flex flex-col rounded-lg border border-rule bg-surface overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/8 bg-[#091422]">
-        <h2 className="font-['Barlow_Condensed'] font-bold text-xl uppercase tracking-wider text-white">
-          ACCIONES POLÍTICAS
+      <div className="flex items-baseline justify-between px-5 pt-4 pb-3">
+        <h2 className="font-display font-semibold text-[22px] text-ink">
+          Acciones políticas
         </h2>
-        <span className="text-[11px] text-white/50 font-mono">
+        <span className="text-[12px] text-ink/55 font-mono">
           {inCategory.filter(a => a.available).length} disponibles · {inCategory.length} en total
         </span>
       </div>
 
       {/* Alerta de Congreso */}
-      <div className="mx-4 mt-3 px-3.5 py-2.5 rounded-lg border border-white/8 bg-white/4 text-[11px] flex items-start gap-2.5">
+      <div className={`mx-5 px-3.5 py-2 rounded-md text-[12px] flex items-start gap-2.5 ${hasMajority ? 'bg-emerald-500/10' : 'bg-amber-500/10'}`}>
         <Scale size={14} className={hasMajority ? 'text-emerald-400 flex-shrink-0 mt-0.5' : 'text-amber-400 flex-shrink-0 mt-0.5'} />
-        <p className={hasMajority ? 'text-emerald-300/90 leading-relaxed' : 'text-amber-300/90 leading-relaxed'}>
+        <p className={hasMajority ? 'text-emerald-300 leading-relaxed' : 'text-amber-300 leading-relaxed'}>
           {hasMajority
             ? `Congreso favorable: mayorías para votar leyes (${leg}% de apoyo parlamentario; requiere ${threshold}%).`
             : `Congreso fragmentado (${leg}% de apoyo; requiere ${threshold}%). Las leyes complejas pueden enviarse por DNU con mayor costo político.`}
-          {honeymoon && <span className="text-cyan-300 font-semibold"> (Luna de miel activa)</span>}
+          {honeymoon && <span className="text-celeste-ink font-semibold"> (Luna de miel activa)</span>}
         </p>
       </div>
 
       {/* Interna del oficialismo */}
       {interna >= 10 && (
         <div
-          className={`mx-4 mt-2 px-3.5 py-2 rounded-lg border text-[11px] flex items-start gap-2 ${interna >= 50 ? 'border-red-400/30 bg-red-400/10 text-red-300' : 'border-amber-400/30 bg-amber-400/10 text-amber-300'}`}
+          className={`mx-5 mt-2 px-3.5 py-2 rounded-md text-[12px] flex items-start gap-2 ${interna >= 50 ? 'bg-red-500/10 text-red-300' : 'bg-amber-500/10 text-amber-300'}`}
           title="Sube cuando ampliás la coalición y cuando tu aprobación es baja; baja cuando sos popular."
         >
           <Users size={13} className="mt-0.5 flex-shrink-0" />
@@ -104,13 +104,14 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
       )}
 
       {/* Categorías Filter Tabs */}
-      <div className="flex items-center gap-1.5 p-2 mx-4 my-3 rounded-lg bg-[#070e17] border border-white/8 overflow-x-auto scrollbar-none">
+      <div className="relative mx-5 mt-4 mb-3">
+      <div className="flex items-center gap-1 pb-2 border-b border-rule overflow-x-auto scrollbar-none pr-8">
         <button
           onClick={() => setSelectedCategory('todas')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-bold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all whitespace-nowrap ${
             selectedCategory === 'todas'
-              ? 'bg-blue-600 text-white shadow-md'
-              : 'text-white/60 hover:text-white hover:bg-white/6'
+              ? 'bg-ink text-paper'
+              : 'text-ink/65 hover:text-ink hover:bg-sunken'
           }`}
         >
           <LayoutGrid size={13} />
@@ -123,10 +124,10 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-bold transition-all whitespace-nowrap border ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all whitespace-nowrap ${
                 isActive
-                  ? 'border-blue-500/40 bg-blue-500/20 text-white shadow-sm'
-                  : 'border-transparent text-white/60 hover:text-white hover:bg-white/6'
+                  ? 'bg-ink text-paper'
+                  : 'text-ink/65 hover:text-ink hover:bg-sunken'
               }`}
             >
               <img src={style.imageSrc} alt={style.label} className="w-3.5 h-3.5 object-contain" />
@@ -135,10 +136,13 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
           );
         })}
       </div>
+      {/* Indica que hay más categorías si no entran en el ancho */}
+      <div className="pointer-events-none absolute right-0 top-0 bottom-2 w-10 bg-gradient-to-l from-surface to-transparent" aria-hidden="true" />
+      </div>
 
       {/* Bloqueadas: ocultas por defecto */}
       {blockedCount > 0 && (
-        <div className="mx-4 mb-2 flex items-center justify-between gap-2 text-[11px] text-white/50">
+        <div className="mx-5 mb-3 flex items-center justify-between gap-2 text-[12px] text-ink/60">
           <span>
             {showBlocked
               ? `Mostrando ${blockedCount} bloqueada${blockedCount === 1 ? '' : 's'} (requisitos, espera o Congreso).`
@@ -146,7 +150,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
           </span>
           <button
             onClick={() => setShowBlocked(v => !v)}
-            className="inline-flex items-center gap-1 px-2 py-1 rounded-md border border-white/10 bg-white/5 hover:bg-white/10 text-white/80 transition-colors whitespace-nowrap"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-rule hover:bg-sunken text-ink/80 transition-colors whitespace-nowrap"
           >
             {showBlocked ? <EyeOff size={11} /> : <Eye size={11} />}
             {showBlocked ? 'Ocultar bloqueadas' : 'Ver también las bloqueadas'}
@@ -155,13 +159,13 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
       )}
 
       {/* Grid de tarjetas */}
-      <div className="flex-1 overflow-y-auto px-4 pb-4 max-h-[620px]">
+      <div className="flex-1 overflow-y-auto px-5 pb-5 max-h-[min(760px,calc(100vh-190px))]">
         {filtered.length === 0 ? (
-          <div className="text-center py-12 text-[12px] text-white/40">
+          <div className="text-center py-12 text-[12px] text-ink/40">
             {inCategory.length === 0 ? 'No hay acciones en esta categoría.' : 'Todas las acciones de esta categoría están bloqueadas por ahora.'}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3">
             {filtered.map((av) => (
               <ActionCard
                 key={av.action.id}
@@ -177,13 +181,13 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
       </div>
 
       {/* Footer: proyección de caja */}
-      <div className={`px-5 py-3 border-t border-white/8 text-[12px] flex items-center justify-between gap-3 flex-wrap ${projection.caja < 0 ? 'bg-red-500/10' : 'bg-[#091422]'}`}>
-        <span className="font-bold text-white">
+      <div className={`px-5 py-3 border-t border-rule text-[13px] flex items-center justify-between gap-3 flex-wrap ${projection.caja < 0 ? 'bg-red-500/10' : gameState.selectedActions.length > 0 ? 'bg-gold/10' : 'bg-sunken/50'}`}>
+        <span className="font-semibold text-ink">
           {gameState.selectedActions.length === 0
             ? 'Sin acciones en agenda este turno'
             : `${gameState.selectedActions.length} ${gameState.selectedActions.length === 1 ? 'acción elegida' : 'acciones elegidas'} (${fmtBudgetDelta(selectedCaja)})`}
         </span>
-        <span className="text-white/60 font-mono text-[11px]" title="Estimación: caja actual + costo de lo elegido + recaudación − gasto corriente − intereses. No incluye efectos diferidos ni eventos.">
+        <span className="text-ink/65 font-mono text-[12px]" title="Estimación: caja actual + costo de lo elegido + recaudación − gasto corriente − intereses. No incluye efectos diferidos ni eventos.">
           Caja proyectada:{' '}
           <span className={`font-bold ${projection.caja >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{fmtBudget(projection.caja)}</span>
           {' · '}Balance estructural:{' '}

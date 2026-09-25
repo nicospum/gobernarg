@@ -18,10 +18,10 @@ export function ReelectionChoiceModal({ gameState, onSelect }: ReelectionChoiceM
   const options = gameState.pendingElectionOptions;
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-ink/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-card border border-border rounded-xl w-full max-w-2xl overflow-hidden shadow-2xl">
         <div className="border-b border-border p-6 text-center">
-          <h2 className="font-display text-3xl font-bold uppercase tracking-wide text-foreground mb-2">
+          <h2 className="font-display text-3xl font-semibold   text-foreground mb-2">
             Fin del mandato
           </h2>
           <p className="text-foreground/80 text-sm">
@@ -60,12 +60,12 @@ export function ReelectionChoiceModal({ gameState, onSelect }: ReelectionChoiceM
                   className={`w-full text-left p-5 rounded-xl border transition-all ${
                     allowed
                       ? 'border-border bg-card hover:border-primary/50 hover:bg-primary/5'
-                      : 'border-border bg-white/3 opacity-60 cursor-not-allowed'
+                      : 'border-border bg-ink/3 opacity-60 cursor-not-allowed'
                   }`}
                 >
                   <div className="flex justify-between items-start gap-3">
                     <div className="min-w-0">
-                      <h3 className="font-display font-bold text-lg text-foreground uppercase tracking-wide">
+                      <h3 className="font-display font-semibold text-lg text-foreground  ">
                         {getOptionLabel(option)}
                       </h3>
                       <p className="text-sm text-foreground/70 mt-1">
