@@ -26,6 +26,9 @@ import { NotificationCenter } from './components/NotificationCenter';
 import { ManagementNotebook } from './components/ManagementNotebook';
 import { CountryPanel } from './components/CountryPanel';
 import { clearSavedGame, loadGame, saveGame } from './lib/savegame';
+import { useIsMobile } from './lib/useMediaQuery';
+import { MobileBottomBar, MobileHeader, MobileKpis, MobileMenu, type MobileTab } from './components/mobile/MobileChrome';
+import { Sheet } from './components/mobile/Sheet';
 
 import type { AdvisorWithStatus, ElectionResults, TurnSummary, MidtermStrategy } from './types/game';
 import type { ActorId } from './data/causal';
@@ -73,6 +76,11 @@ function App() {
   // Partida guardada en el navegador (se lee una vez, al abrir el juego).
   const [savedGame, setSavedGame] = useState(() => loadGame());
   const boardRef = useRef<HTMLDivElement>(null);
+  // Celular: tablero en pestañas, con menú y notificaciones en hojas.
+  const isMobile = useIsMobile();
+  const [mobileTab, setMobileTab] = useState<MobileTab>('acciones');
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   // Guardado automático: cada cambio de la partida (y los eventos sin responder).
   useEffect(() => {
@@ -257,87 +265,170 @@ function App() {
 
   return (
     <div className="min-h-screen bg-paper text-ink">
-      <Toaster position="bottom-right" toastOptions={{ style: { background: "rgb(20 33 61)", color: "rgb(251 248 242)", border: "none" } }} />
+      <Toaster position={isMobile ? "top-center" : "bottom-right"} toastOptions={{ style: { background: "rgb(20 33 61)", color: "rgb(251 248 242)", border: "none" } }} />
       <div ref={boardRef}>
-      <GameHeader
-        gameState={gameState}
-        availableActions={gameState.actions}
-        onRestart={handleRestart}
-        onEndTurn={handleEndTurn}
-        canEndTurn={!modalOpen}
-        onOpenLog={() => setShowGameLog(true)}
-        onOpenNotebook={() => setShowNotebook(true)}
-      />
+      {isMobile ? (
+        <>
+          <MobileHeader
+            gameState={gameState}
+            onOpenNotifications={() => setShowNotifications(true)}
+            onOpenMenu={() => setShowMobileMenu(true)}
+          />
+          <main className="px-3 pt-3 pb-[calc(9rem+env(safe-area-inset-bottom))] space-y-3">
+            <MobileKpis gameState={gameState} />
+            {mobileTab === 'acciones' && (
+              <ControlPanel
+                gameState={gameState}
+                onActionSelect={handleActionSelect}
+                canTakeAction={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
+              />
+            )}
+            {mobileTab === 'pais' && (
+              <>
+                <CountryPanel gameState={gameState} compact />
+                <PendingEffectsPanel gameState={gameState} />
+                <ActiveBenefits gameState={gameState} />
+                <InformesPanel gameState={gameState} />
+              </>
+            )}
+            {mobileTab === 'actores' && (
+              <RightSidebar
+                gameState={gameState}
+                onInteract={handleActorInteraction}
+                onSelectAction={handleActionSelect}
+                interactionsDisabled={gameState.gameOver || gameState.pendingElection}
+              />
+            )}
+            {mobileTab === 'gabinete' && (
+              <>
+                <AdvisorPanel
+                  gameState={gameState}
+                  onHireAdvisor={handleHireAdvisor}
+                  onDismissAdvisor={handleDismissAdvisor}
+                />
+                <SpecialAbilitiesPanel
+                  gameState={gameState}
+                  onUseAbility={handleUseSpecialAbility}
+                  disabled={!(gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection)}
+                />
+              </>
+            )}
+          </main>
+          <MobileBottomBar
+            gameState={gameState}
+            tab={mobileTab}
+            onTab={tab => {
+              setMobileTab(tab);
+              window.scrollTo({ top: 0 });
+            }}
+            onEndTurn={handleEndTurn}
+            canEndTurn={!modalOpen}
+          />
+        </>
+      ) : (
+        <>
+          <GameHeader
+            gameState={gameState}
+            availableActions={gameState.actions}
+            onRestart={handleRestart}
+            onEndTurn={handleEndTurn}
+            canEndTurn={!modalOpen}
+            onOpenLog={() => setShowGameLog(true)}
+            onOpenNotebook={() => setShowNotebook(true)}
+          />
 
-      <main className="max-w-[1680px] mx-auto p-4 md:p-6 space-y-5">
-        {/* Indicadores horizontales arriba (KPIs B0) */}
-        <IndicatorsPanel gameState={gameState} />
+          <main className="max-w-[1680px] mx-auto p-4 md:p-6 space-y-5">
+            {/* Indicadores horizontales arriba (KPIs B0) */}
+            <IndicatorsPanel gameState={gameState} />
 
-        {/* Detalle Macro y Motor Causal */}
-        <CountryPanel gameState={gameState} />
+            {/* Detalle Macro y Motor Causal */}
+            <CountryPanel gameState={gameState} />
 
-        {/* Grid Principal: 2/3 Dashboard Acciones + 1/3 Sidebar Electoral & Actores */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          <div className="lg:col-span-2 space-y-5">
-            <ControlPanel
-              gameState={gameState}
-              onActionSelect={handleActionSelect}
-              canTakeAction={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
-            />
+            {/* Grid Principal: 2/3 Dashboard Acciones + 1/3 Sidebar Electoral & Actores */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+              <div className="lg:col-span-2 space-y-5">
+                <ControlPanel
+                  gameState={gameState}
+                  onActionSelect={handleActionSelect}
+                  canTakeAction={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
+                />
 
-            <SpecialAbilitiesPanel
-              gameState={gameState}
-              onUseAbility={handleUseSpecialAbility}
-              disabled={!(gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection)}
-            />
+                <SpecialAbilitiesPanel
+                  gameState={gameState}
+                  onUseAbility={handleUseSpecialAbility}
+                  disabled={!(gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection)}
+                />
 
-            <PendingEffectsPanel gameState={gameState} />
+                <PendingEffectsPanel gameState={gameState} />
 
-            <InformesPanel gameState={gameState} />
+                <InformesPanel gameState={gameState} />
 
-            <NotificationCenter
-              gameState={gameState}
-              onMarkRead={() => setGameState(prev => markAllNotificationsRead(prev))}
-              onDismiss={(id) => setGameState(prev => dismissNotification(prev, id))}
-            />
-          </div>
+                <NotificationCenter
+                  gameState={gameState}
+                  onMarkRead={() => setGameState(prev => markAllNotificationsRead(prev))}
+                  onDismiss={(id) => setGameState(prev => dismissNotification(prev, id))}
+                />
+              </div>
 
-          <div className="space-y-5">
-            <RightSidebar
-              gameState={gameState}
-              onInteract={handleActorInteraction}
-              onSelectAction={handleActionSelect}
-              interactionsDisabled={gameState.gameOver || gameState.pendingElection}
-            />
+              <div className="space-y-5">
+                <RightSidebar
+                  gameState={gameState}
+                  onInteract={handleActorInteraction}
+                  onSelectAction={handleActionSelect}
+                  interactionsDisabled={gameState.gameOver || gameState.pendingElection}
+                />
 
-            <ActiveBenefits gameState={gameState} />
+                <ActiveBenefits gameState={gameState} />
 
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowGameLog(true)}
-                className="flex-1 bg-surface border border-ink/8 rounded-lg p-3.5 hover:bg-ink/4 transition-all flex items-center gap-2.5 text-xs font-bold text-ink "
-              >
-                <span className="inline-flex w-6 h-6 items-center justify-center rounded-lg bg-blue-500/20 text-blue-400 font-mono text-xs">L</span>
-                Historial de Gestión
-              </button>
-              <button
-                onClick={() => setShowNotebook(true)}
-                className="flex-1 bg-surface border border-ink/8 rounded-lg p-3.5 hover:bg-ink/4 transition-all flex items-center gap-2.5 text-xs font-bold text-ink "
-              >
-                <span className="inline-flex w-6 h-6 items-center justify-center rounded-lg bg-cyan-500/20 text-cyan-400 font-mono text-xs">C</span>
-                Cuaderno Político
-              </button>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowGameLog(true)}
+                    className="flex-1 bg-surface border border-ink/8 rounded-lg p-3.5 hover:bg-ink/4 transition-all flex items-center gap-2.5 text-xs font-bold text-ink "
+                  >
+                    <span className="inline-flex w-6 h-6 items-center justify-center rounded-lg bg-blue-500/20 text-blue-400 font-mono text-xs">L</span>
+                    Historial de Gestión
+                  </button>
+                  <button
+                    onClick={() => setShowNotebook(true)}
+                    className="flex-1 bg-surface border border-ink/8 rounded-lg p-3.5 hover:bg-ink/4 transition-all flex items-center gap-2.5 text-xs font-bold text-ink "
+                  >
+                    <span className="inline-flex w-6 h-6 items-center justify-center rounded-lg bg-cyan-500/20 text-cyan-400 font-mono text-xs">C</span>
+                    Cuaderno Político
+                  </button>
+                </div>
+
+                <AdvisorPanel
+                  gameState={gameState}
+                  onHireAdvisor={handleHireAdvisor}
+                  onDismissAdvisor={handleDismissAdvisor}
+                />
+              </div>
             </div>
-
-            <AdvisorPanel
-              gameState={gameState}
-              onHireAdvisor={handleHireAdvisor}
-              onDismissAdvisor={handleDismissAdvisor}
-            />
-          </div>
-        </div>
-      </main>
+          </main>
+        </>
+      )}
       </div>
+
+      {isMobile && showMobileMenu && (
+        <MobileMenu
+          gameState={gameState}
+          onClose={() => setShowMobileMenu(false)}
+          onOpenLog={() => setShowGameLog(true)}
+          onOpenNotebook={() => setShowNotebook(true)}
+          onOpenNotifications={() => setShowNotifications(true)}
+          onRestart={handleRestart}
+        />
+      )}
+
+      {isMobile && showNotifications && (
+        <Sheet title="Notificaciones" onClose={() => setShowNotifications(false)}>
+          <NotificationCenter
+            gameState={gameState}
+            onMarkRead={() => setGameState(prev => markAllNotificationsRead(prev))}
+            onDismiss={(id) => setGameState(prev => dismissNotification(prev, id))}
+          />
+        </Sheet>
+      )}
 
       {showTurnSummary && turnSummary && (
         <TurnSummaryModal

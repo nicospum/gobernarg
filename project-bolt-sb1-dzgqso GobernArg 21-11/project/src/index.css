@@ -75,3 +75,36 @@
     .animate-denied { animation: none; }
   }
 }
+
+/*
+ * Celular: los modales ocupan toda la pantalla (salvo las hojas que suben
+ * desde abajo, marcadas con data-sheet) y la explicación de las hojas se lee
+ * en letra de tamaño normal, no en la letra chica de los carteles de escritorio.
+ */
+@media (max-width: 639px) {
+  [aria-modal="true"].fixed:not([data-sheet]) {
+    padding: 0 !important;
+    align-items: stretch !important;
+  }
+  [aria-modal="true"].fixed:not([data-sheet]) > * {
+    max-width: none !important;
+    max-height: 100dvh !important;
+    min-height: 100dvh;
+    border-radius: 0 !important;
+    border: 0 !important;
+    overflow-y: auto;
+  }
+}
+
+.info-sheet [class*="text-[10px]"],
+.info-sheet [class*="text-[11px]"],
+.info-sheet [class*="text-xs"] {
+  font-size: 14px;
+  line-height: 1.45;
+}
+.info-sheet [class*="max-w-["] {
+  max-width: none;
+}
+.info-sheet > div > div + div {
+  margin-top: 0.35rem;
+}

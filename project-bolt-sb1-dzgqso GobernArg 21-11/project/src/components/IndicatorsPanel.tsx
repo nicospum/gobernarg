@@ -10,7 +10,7 @@ interface IndicatorsPanelProps {
   gameState: GameState;
 }
 
-interface IndicatorCard {
+export interface IndicatorCard {
   id: string;
   label: string;
   value: number;
@@ -24,7 +24,7 @@ interface IndicatorCard {
   trend: number | null;
 }
 
-function TrendChip({ value, inverse = false }: { value: number | null; inverse?: boolean }) {
+export function TrendChip({ value, inverse = false }: { value: number | null; inverse?: boolean }) {
   if (value === null) {
     return (
       <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground font-mono">
@@ -107,6 +107,29 @@ function IndicatorCardView({ card }: { card: IndicatorCard }) {
   );
 }
 
+/** Desglose de la caja: el cartel de la tarjeta y la hoja del celular. */
+export function BudgetDetails({ gameState }: { gameState: GameState }) {
+  const c = gameState.causal;
+  const last = c.records[c.records.length - 1];
+  return (
+    <div className="flex flex-col gap-1 max-w-[260px]">
+      <div className="font-semibold text-xs text-ink">Caja del Tesoro</div>
+      {last && (
+        <div className="text-[11px] text-ink/70 space-y-0.5 font-mono">
+          <div>Recaudación: {fmtBudget(last.fiscal.ingresos)}</div>
+          <div>Gasto corriente: −{fmtBudget(last.fiscal.gastoCorriente)}</div>
+          <div>Intereses de deuda: −{fmtBudget(last.fiscal.servicioDeuda)}</div>
+          {last.fiscal.costoAcciones !== 0 && <div>Políticas del turno: −{fmtBudget(last.fiscal.costoAcciones)}</div>}
+          {last.fiscal.financiamiento !== 0 && <div>Financiamiento: {fmtBudgetDelta(last.fiscal.financiamiento)}</div>}
+        </div>
+      )}
+      <div className="text-[10px] text-ink/70 mt-1">
+        Deuda: {fmtBudget(c.deuda)} (intereses {fmtBudget(debtService(c))}/turno). Gasto fijo: {fmtBudget(c.gastoCorr)}/turno.
+      </div>
+    </div>
+  );
+}
+
 function BudgetIndicatorCard({ gameState }: { gameState: GameState }) {
   const c = gameState.causal;
   const last = c.records[c.records.length - 1];
@@ -117,21 +140,7 @@ function BudgetIndicatorCard({ gameState }: { gameState: GameState }) {
   return (
     <InfoTooltip
       content={
-        <div className="flex flex-col gap-1 max-w-[260px]">
-          <div className="font-semibold text-xs text-ink">Caja del Tesoro</div>
-          {last && (
-            <div className="text-[11px] text-ink/70 space-y-0.5 font-mono">
-              <div>Recaudación: {fmtBudget(last.fiscal.ingresos)}</div>
-              <div>Gasto corriente: −{fmtBudget(last.fiscal.gastoCorriente)}</div>
-              <div>Intereses de deuda: −{fmtBudget(last.fiscal.servicioDeuda)}</div>
-              {last.fiscal.costoAcciones !== 0 && <div>Políticas del turno: −{fmtBudget(last.fiscal.costoAcciones)}</div>}
-              {last.fiscal.financiamiento !== 0 && <div>Financiamiento: {fmtBudgetDelta(last.fiscal.financiamiento)}</div>}
-            </div>
-          )}
-          <div className="text-[10px] text-ink/70 mt-1">
-            Deuda: {fmtBudget(c.deuda)} (intereses {fmtBudget(debtService(c))}/turno). Gasto fijo: {fmtBudget(c.gastoCorr)}/turno.
-          </div>
-        </div>
+        <BudgetDetails gameState={gameState} />
       }
     >
       <div className="flex-1 min-w-[170px] px-5 py-4 cursor-help transition-colors hover:bg-sunken/60">
@@ -166,7 +175,8 @@ function BudgetIndicatorCard({ gameState }: { gameState: GameState }) {
   );
 }
 
-export function IndicatorsPanel({ gameState }: IndicatorsPanelProps) {
+/** Los 4 indicadores políticos principales (tablero y barra del celular). */
+export function indicatorCards(gameState: GameState): IndicatorCard[] {
   const c = gameState.causal;
   const p = c.political;
   const last = c.records[c.records.length - 1];
@@ -221,7 +231,11 @@ export function IndicatorsPanel({ gameState }: IndicatorsPanelProps) {
       trend: last ? p.iv - last.politicalBefore.iv : null,
     },
   ];
+  return cards;
+}
 
+export function IndicatorsPanel({ gameState }: IndicatorsPanelProps) {
+  const cards = indicatorCards(gameState);
   return (
     <section className="rounded-lg border border-rule bg-surface">
       <div className="flex flex-wrap divide-x divide-rule">

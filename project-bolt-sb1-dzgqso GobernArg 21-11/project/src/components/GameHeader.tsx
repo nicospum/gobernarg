@@ -37,9 +37,9 @@ const POSITION_LABEL: Record<string, string> = {
   presidente: 'Presidente',
 };
 
-const MAX_TURNS = 16;
+export const MAX_TURNS = 16;
 /** Hitos del mandato marcados en la línea de tiempo (turno dentro del mandato). */
-const MILESTONES: Record<number, string> = { 8: 'Legislativas', 16: 'Fin del mandato' };
+export const MILESTONES: Record<number, string> = { 8: 'Legislativas', 16: 'Fin del mandato' };
 
 /** Tendencia de popularidad: compara el último valor histórico con el anterior. */
 function popularityTrend(state: GameState): number | null {
@@ -49,7 +49,7 @@ function popularityTrend(state: GameState): number | null {
 }
 
 /** Línea de tiempo del mandato: un tramo por turno, con los hitos en oro. */
-function MandateTimeline({ turn }: { turn: number }) {
+export function MandateTimeline({ turn }: { turn: number }) {
   const current = ((turn - 1) % MAX_TURNS) + 1;
   return (
     <div className="flex items-center gap-[3px]" role="img" aria-label={`Turno ${current} de ${MAX_TURNS} del mandato`}>

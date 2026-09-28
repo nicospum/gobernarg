@@ -26,6 +26,7 @@ export function ConfirmDialog({
   return createPortal(
     <div
       ref={dialogRef}
+      data-sheet
       aria-labelledby="confirm-title"
       aria-describedby="confirm-message"
       className="outline-none fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-ink/60 p-4"
