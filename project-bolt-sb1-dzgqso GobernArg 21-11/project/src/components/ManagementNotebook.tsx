@@ -16,6 +16,7 @@ import { actionDefinitions } from '../data/actionRegistry';
 import { ACTOR_IDS, ACTORS, CAUSAL_ACTIONS_BY_ID, PARAMS } from '@/data/causal';
 import { runningEffects, upcomingEffects } from '@/lib/agendaView';
 import { useDialog } from '@/lib/useDialog';
+import { fmtBudgetDelta, fmtSigned } from '@/lib/format';
 
 interface ManagementNotebookProps {
   gameState: GameState;
@@ -240,8 +241,7 @@ function HistorialRecienteSection({ gameState }: { gameState: GameState }) {
                       className={`flex items-center gap-0.5 ${entry.popularityChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}
                     >
                       <TrendingUp size={9} />
-                      {entry.popularityChange > 0 ? '+' : ''}
-                      {entry.popularityChange.toFixed(1)} aprob.
+                      {fmtSigned(entry.popularityChange)} de aprobación
                     </span>
                   )}
                   {entry.budgetChange !== 0 && (
@@ -249,8 +249,7 @@ function HistorialRecienteSection({ gameState }: { gameState: GameState }) {
                       className={`flex items-center gap-0.5 ${entry.budgetChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}
                     >
                       <DollarSign size={9} />
-                      {entry.budgetChange > 0 ? '+' : ''}$
-                      {Math.abs(Math.round(entry.budgetChange))}M
+                      {fmtBudgetDelta(entry.budgetChange)}
                     </span>
                   )}
                 </div>
@@ -283,7 +282,7 @@ export function ManagementNotebook({ gameState, onClose }: ManagementNotebookPro
             <BookOpen size={18} className="text-blue-400" />
             <div>
               <h2 className="font-display font-semibold text-[16px] text-foreground  ">
-                Cuaderno de Gestión
+                Cuaderno político
               </h2>
               <p className="text-[10px] text-muted-foreground">
                 Memoria del gobierno · Turno {gameState.turn} · Año {gameState.year}

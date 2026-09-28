@@ -17,6 +17,7 @@ import { Tooltip, TooltipContent } from './Tooltip';
 import { fmtBudget } from '@/lib/format';
 import { UI_CATEGORY_STYLES } from '@/data/categoryStyles';
 import { ACTORS, SENSITIVITIES, type ActorId } from '@/data/causal';
+import { ACTION_PLAYER_NOTES, ACTION_RISK_TEXT } from '@/data/causal/playerTexts';
 import { COALITION_ACTIONS, type Availability } from '@/engine/causal';
 import {
   actionContextNotes,
@@ -44,6 +45,8 @@ const TAG_LABEL: Record<string, string> = {
 };
 
 type RiskLevel = 'bajo' | 'medio' | 'alto' | 'critico';
+
+const RISK_LABEL: Record<RiskLevel, string> = { bajo: 'bajo', medio: 'medio', alto: 'alto', critico: 'crítico' };
 
 const RISK_CLS: Record<RiskLevel, string> = {
   critico: 'text-red-400',
@@ -73,19 +76,22 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
   const { action, pa, caja, reasons, available, needsDnu, repetitionWarning } = availability;
   const style = UI_CATEGORY_STYLES[action.category];
   const blocked = !isSelected && (!available || disabled);
-  const blockReason = !available ? reasons[0] : disabled ? 'No quedan puntos de acción.' : null;
+  const blockReason = !available ? reasons[0] : disabled ? 'No te quedan acciones este turno.' : null;
   const timeline = actionTimeline(action.id);
   const notes = actionContextNotes(action.id);
   const { winners, losers } = affectedActors(action.id, SENSITIVITIES as Record<ActorId, { target: string; s: number }[]>);
   const costLabel = caja < 0 ? `−${fmtBudget(Math.abs(caja))}` : caja > 0 ? `+${fmtBudget(caja)}` : 'Sin costo';
   const requested = requestedBy.length > 0;
   const riskLevel = riskLevelOf(action.risksText);
+  // Nota para el jugador (glosario): la nota de diseño usaba siglas del motor.
+  const playerNote = ACTION_PLAYER_NOTES[action.id] ?? action.strategic;
+  const riskText = ACTION_RISK_TEXT[action.id] ?? action.risksText;
   const touch = useIsTouch();
   const [showDetail, setShowDetail] = useState(false);
 
   const details = (
     <div className="flex flex-col gap-1.5 max-w-[280px]">
-      {action.strategic && <p className="text-[11px] text-ink/80 leading-snug">{action.strategic}</p>}
+      {playerNote && <p className="text-[11px] text-ink/80 leading-snug">{playerNote}</p>}
       {timeline.length > 0 && (
         <div>
           <div className="font-semibold text-[11px] text-ink mb-0.5">Qué produce</div>
@@ -117,9 +123,9 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
           {losers.length > 0 && <div><span className="text-red-400 font-semibold">Perjudica:</span> {losers.map(a => ACTORS[a].shortName).join(', ')}</div>}
         </div>
       )}
-      {action.risksText && <div className="text-[10px] text-amber-300">Riesgo: {action.risksText}</div>}
+      {riskText && <div className="text-[10px] text-amber-300">Riesgo: {riskText}</div>}
       <div className="text-[10px] text-ink/70">
-        {costLabel} · {pa} acc.{action.cooldown > 1 ? ` · repetible cada ${action.cooldown} turnos` : ''}
+        {costLabel} · {pa} {pa === 1 ? 'acción' : 'acciones'}{action.cooldown > 1 ? ` · repetible cada ${action.cooldown} turnos` : ''}
       </div>
     </div>
   );
@@ -197,7 +203,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
         </span>
         <span className="inline-flex items-center gap-1 text-ink/80">
           <Flag size={11} className="text-ink/70" />
-          {pa} acc.
+          {pa} {pa === 1 ? 'acción' : 'acciones'}
         </span>
         {action.cooldown > 1 && (
           <span className="inline-flex items-center gap-1 text-ink/70" title="Turnos entre usos">
@@ -253,7 +259,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
       <div className="flex items-center justify-between gap-2 pt-2.5 mt-auto border-t border-rule">
         <span className={`inline-flex items-center gap-1 text-[11px] font-medium ${RISK_CLS[riskLevel]}`}>
           {riskLevel !== 'bajo' && <AlertTriangle size={11} />}
-          Riesgo {riskLevel}
+          Riesgo {RISK_LABEL[riskLevel]}
         </span>
         {touch && (
           <button

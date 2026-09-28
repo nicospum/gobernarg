@@ -190,8 +190,8 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
         <span className="text-ink/70 font-mono text-[12px]" title="Estimación: caja actual + costo de lo elegido + recaudación − gasto corriente − intereses. No incluye efectos diferidos ni eventos.">
           Caja proyectada:{' '}
           <span className={`font-bold ${projection.caja >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{fmtBudget(projection.caja)}</span>
-          {' · '}Balance estructural:{' '}
-          <span className={`font-bold ${projection.structural >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{fmtBudgetDelta(projection.structural)}/t</span>
+          {' · '}Resultado fiscal por turno:{' '}
+          <span className={`font-bold ${projection.structural >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{fmtBudgetDelta(projection.structural)}</span>
         </span>
         {projection.caja < 0 && (
           <span className="w-full text-[11px] text-red-300 font-semibold">

@@ -231,7 +231,7 @@ export const INDICATOR_ROWS: IndicatorRow[] = [
   },
   {
     "id": "CONF",
-    "name": "Conflictividad social",
+    "name": "Conflictividad",
     "macro": "Instituciones y sociedad",
     "definition": "SISTÉMICO: intensidad de protestas, paros y cortes. Se alimenta sobre todo de los canales de poder de los actores.",
     "high": "Paros, piquetes, calle caliente: frena ACTV e INVC, baja gobernabilidad.",

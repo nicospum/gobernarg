@@ -12,6 +12,7 @@ import {
   MoreHorizontal,
   ScrollText,
   NotebookPen,
+  BookOpen,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { ConfirmDialog } from './ConfirmDialog';
@@ -29,6 +30,7 @@ interface GameHeaderProps {
   canEndTurn?: boolean;
   onOpenLog?: () => void;
   onOpenNotebook?: () => void;
+  onOpenHelp?: () => void;
 }
 
 const POSITION_LABEL: Record<string, string> = {
@@ -85,12 +87,13 @@ function Stat({ label, children }: { label: string; children: React.ReactNode })
  * Menú de la partida. "Reiniciar" vive acá, lejos de "Finalizar turno", y
  * siempre pide confirmación: antes borraba el mandato con un solo clic.
  */
-function GameMenu({ governorName, turnLabel, onRestart, onOpenLog, onOpenNotebook }: {
+function GameMenu({ governorName, turnLabel, onRestart, onOpenLog, onOpenNotebook, onOpenHelp }: {
   governorName: string;
   turnLabel: string;
   onRestart: () => void;
   onOpenLog?: () => void;
   onOpenNotebook?: () => void;
+  onOpenHelp?: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const [confirming, setConfirming] = useState(false);
@@ -146,6 +149,11 @@ function GameMenu({ governorName, turnLabel, onRestart, onOpenLog, onOpenNoteboo
               <NotebookPen size={15} className="text-ink/70" /> Cuaderno político
             </button>
           )}
+          {onOpenHelp && (
+            <button role="menuitem" onClick={run(onOpenHelp)} className={`${item} text-ink hover:bg-sunken`}>
+              <BookOpen size={15} className="text-ink/70" /> Cómo se juega
+            </button>
+          )}
           <div className="my-1.5 h-px bg-rule" />
           <button role="menuitem" onClick={run(() => setConfirming(true))} className={`${item} text-red-400 hover:bg-red-950`}>
             <RefreshCw size={15} /> Reiniciar partida…
@@ -177,6 +185,7 @@ export function GameHeader({
   canEndTurn,
   onOpenLog,
   onOpenNotebook,
+  onOpenHelp,
 }: GameHeaderProps) {
   const popularityRisk = getValueRisk(gameState.popularity, 80);
   const stabilityRisk = getValueRisk(gameState.stability, 100);
@@ -246,14 +255,14 @@ export function GameHeader({
             <PlayCircle size={15} className="text-ink/70" />
             <Stat label="Acciones">{availableActions}</Stat>
           </div>
-          <div className="flex items-center gap-2" title="Presupuesto (caja)">
+          <div className="flex items-center gap-2" title="Caja del Tesoro">
             <Wallet size={15} className="text-ink/70" />
-            <Stat label="Presupuesto">{fmtBudget(gameState.budget)}</Stat>
+            <Stat label="Caja">{fmtBudget(gameState.budget)}</Stat>
           </div>
           <div className="hidden lg:flex items-center gap-2">
             <Activity size={15} className="text-ink/70" />
             <div className="leading-tight">
-              <div className="text-[10px] text-ink/70 font-medium">Popularidad</div>
+              <div className="text-[10px] text-ink/70 font-medium">Aprobación</div>
               <div className="flex items-baseline gap-1.5">
                 <span className={`font-mono text-[15px] font-semibold ${riskColor(popularityRisk)}`}>
                   {Math.round(gameState.causal?.political.apro ?? gameState.popularity)}%
@@ -274,7 +283,7 @@ export function GameHeader({
           <div className="hidden xl:flex items-center gap-2">
             <Shield size={15} className="text-ink/70" />
             <div className="leading-tight">
-              <div className="text-[10px] text-ink/70 font-medium">Estabilidad</div>
+              <div className="text-[10px] text-ink/70 font-medium">Gobernabilidad</div>
               <div className={`font-mono text-[15px] font-semibold ${riskColor(stabilityRisk)}`}>
                 {Math.round(gameState.causal?.political.gob ?? gameState.stability)}
               </div>
@@ -290,6 +299,7 @@ export function GameHeader({
             onRestart={onRestart}
             onOpenLog={onOpenLog}
             onOpenNotebook={onOpenNotebook}
+            onOpenHelp={onOpenHelp}
           />
 
           {onEndTurn && (

@@ -37,8 +37,8 @@ export const POLITICAL_CALENDAR: CalendarEvent[] = [
     id: 'definicion-estrategia',
     year: 3,
     turn: 1,
-    title: 'Definición de la estrategia post-legislativa',
-    description: 'El resultado de las elecciones obliga al gobierno a decidir cómo enfrentar la segunda mitad del mandato.',
+    title: 'Empieza la segunda mitad del mandato',
+    description: 'El gobierno encara la segunda mitad del mandato con la estrategia que eligió tras las legislativas.',
     type: 'milestone'
   },
   {

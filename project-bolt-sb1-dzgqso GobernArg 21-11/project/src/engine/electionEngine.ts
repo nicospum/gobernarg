@@ -169,6 +169,16 @@ export function resolvePendingElection(gameState: GameState, option: ElectionOpt
  * Victoria final si el espacio político del presidente retiene el gobierno
  * (IV ≥ 45, sin ventaja de incumbencia). Decisión del usuario.
  */
+/**
+ * "No presentarme" a la reelección: el oficialismo compite con otro candidato
+ * (la misma elección de sucesión que al final del segundo mandato) y la
+ * partida termina con ese resultado.
+ */
+export function retireFromReelection(gameState: GameState): GameState {
+  if (!gameState.pendingElection || gameState.electionResults) return gameState;
+  return finalizePresidentialCareer({ ...gameState, pendingElection: false, pendingElectionOptions: [] });
+}
+
 export function finalizePresidentialCareer(gameState: GameState): GameState {
   let state = { ...gameState };
   if (state.causal) {

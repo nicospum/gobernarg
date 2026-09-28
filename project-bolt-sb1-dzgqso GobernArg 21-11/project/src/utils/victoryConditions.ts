@@ -259,7 +259,7 @@ export function getPositionObjectives(position: string): Objective[] {
         {
           id: 'total-stability',
           title: 'Estabilidad Total',
-          description: 'Mantén alto apoyo en todos los sectores',
+          description: 'Mantené alto el apoyo de todos los sectores',
           requirements: {
             groupSupport: {
               'empresarios': 85,

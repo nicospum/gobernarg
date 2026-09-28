@@ -18,6 +18,7 @@ import { addNotification, filterAvailableMidtermStrategies, getGlobalTurn, recal
 import { getDifficultyModifiers } from './difficultyEngine';
 import { decisionContext, evalCondition, FOREVER } from './causal';
 import { applyCausalEffects, legislativeElection, syncLegacy, translateLegacyEffect } from './causalBridge';
+import { fmtPct } from '../lib/format';
 
 // ===========================
 // Calendario político
@@ -94,7 +95,7 @@ function legislativeOutcome(votes: number): Pick<LegislativeResults, 'outcome' |
 }
 
 /** Imagen del presidente según el resultado de las legislativas. */
-const LEGISLATIVE_IMAGE: Record<LegislativeResults['outcome'], number> = {
+export const LEGISLATIVE_IMAGE: Record<LegislativeResults['outcome'], number> = {
   landslide: 3, clear: 1, tie: 0, minority: -2, defeat: -4,
 };
 
@@ -113,7 +114,7 @@ function runLegislativeElection(state: GameState): GameState {
     oppositionVotes: Math.round(Math.max(20, 100 - out.votes - 15) * 10) / 10,
     legislativeSupport: Math.round(out.newLeg * 10) / 10,
     outcome,
-    message: `${message} El oficialismo y sus aliados quedan con ${Math.round(out.newLeg)}% de las bancas.`,
+    message: `${message} El oficialismo y sus aliados quedan con ${fmtPct(out.newLeg)} de las bancas.`,
   };
   return syncLegacy({ ...state, causal, legislativeResults: results });
 }
@@ -132,13 +133,18 @@ export function processCalendarEvents(state: GameState): GameState {
     state = addNotification(state, {
       type: 'event',
       category: 'political',
-      title: `Resultado legislativo: ${results.officialismVotes}%`,
+      title: `Resultado legislativo: ${fmtPct(results.officialismVotes, 1)}`,
       message: results.message,
       importance: results.outcome === 'defeat' || results.outcome === 'minority' ? 'critical' : 'high'
     });
+    // El resultado y la estrategia para la segunda mitad se ven juntos, en el
+    // mismo turno de la elección (antes la estrategia llegaba un turno después).
+    state.availableMidtermStrategies = filterAvailableMidtermStrategies(state);
+    state.pendingMidtermStrategy = true;
   }
 
-  if (event.id === 'definicion-estrategia') {
+  // Partidas guardadas antes del cambio: si todavía no se eligió, se elige ahora.
+  if (event.id === 'definicion-estrategia' && !state.midtermStrategy && !state.pendingMidtermStrategy && state.legislativeResults) {
     state.availableMidtermStrategies = filterAvailableMidtermStrategies(state);
     state.pendingMidtermStrategy = true;
   }

@@ -1,22 +1,51 @@
-/**
- * Formatea un valor de presupuesto en millones a notación compacta:
- * - >= 1000M se muestra como $X.YB
- * - < 1000M se muestra como $XM
- * - Negativos preservan el signo.
- */
-export function fmtBudget(n: number): string {
-  const abs = Math.abs(n);
-  const sign = n < 0 ? "-" : "";
-  if (abs >= 1000) {
-    return `${sign}$${(abs / 1000).toFixed(1)}B`;
-  }
-  return `${sign}$${Math.round(abs)}M`;
+/** Signo menos tipográfico (no el guion). */
+const MINUS = "\u2212";
+/** Espacio que no se corta: "$250 M" nunca queda partido en dos renglones. */
+const NBSP = "\u00A0";
+
+/** Punto de miles sobre los dígitos de un entero: "2200" → "2.200". */
+function groupThousands(digits: string): string {
+  return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
-/** Formatea un delta de presupuesto: incluye signo + */
+/** Entero con punto de miles: 2200 → "2.200". */
+function thousands(n: number): string {
+  return groupThousands(String(Math.round(Math.abs(n))));
+}
+
+/**
+ * Monto de la caja en millones, en formato argentino (glosario):
+ * 2200 → "$2.200 M", 250 → "$250 M", -50 → "−$50 M".
+ */
+export function fmtBudget(n: number): string {
+  const sign = Math.round(n) < 0 ? MINUS : "";
+  return `${sign}$${thousands(n)}${NBSP}M`;
+}
+
+/** Variación de caja, siempre con signo: "+$250 M", "−$50 M", "$0 M". */
 export function fmtBudgetDelta(n: number): string {
-  if (n === 0) return "$0M";
+  if (Math.round(n) === 0) return `$0${NBSP}M`;
   return n > 0 ? `+${fmtBudget(n)}` : fmtBudget(n);
+}
+
+/** Número con coma decimal: 57.6 → "57,6". */
+export function fmtNumber(n: number, decimals = 0): string {
+  const fixed = Math.abs(n).toFixed(decimals);
+  const [int, dec] = fixed.split(".");
+  const body = groupThousands(int) + (dec ? `,${dec}` : "");
+  return (n < 0 && Number(fixed) !== 0 ? MINUS : "") + body;
+}
+
+/** Porcentaje: 57.6 → "57,6 %" (un decimal solo donde hace falta, p. ej. elecciones). */
+export function fmtPct(n: number, decimals = 0): string {
+  return `${fmtNumber(n, decimals)}${NBSP}%`;
+}
+
+/** Variación con signo: +2, −3, 0 (enteros en el tablero, como pide el glosario). */
+export function fmtSigned(n: number, decimals = 0): string {
+  const r = Number(n.toFixed(decimals));
+  if (r === 0) return fmtNumber(0, decimals);
+  return (r > 0 ? "+" : "") + fmtNumber(r, decimals);
 }
 
 import type { GameAction, GameState } from "@/types/game";

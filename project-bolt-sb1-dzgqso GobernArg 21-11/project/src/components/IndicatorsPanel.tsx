@@ -147,7 +147,7 @@ function BudgetIndicatorCard({ gameState }: { gameState: GameState }) {
         <div className="flex items-center justify-between mb-1">
           <span className="text-[11px] text-ink/70 font-medium flex items-center gap-1">
             <Wallet size={10} className="opacity-60" />
-            Presupuesto / Caja
+            Caja
             <Info size={10} className="opacity-40" />
           </span>
         </div>
@@ -164,7 +164,7 @@ function BudgetIndicatorCard({ gameState }: { gameState: GameState }) {
         </div>
         <div className="flex items-center justify-between mt-2">
           <span className="text-[10px] text-ink/70">
-            {result === null ? 'Recaudación activa' : `Balance ${fmtBudgetDelta(result)}`}
+            {result === null ? 'Recaudación activa' : `Resultado fiscal ${fmtBudgetDelta(result)}`}
           </span>
           <span className={`text-[10px] font-semibold uppercase tracking-wider ${valueColor}`}>
             {healthy ? 'OK' : 'EN ROJO'}
@@ -220,7 +220,7 @@ export function indicatorCards(gameState: GameState): IndicatorCard[] {
     },
     {
       id: 'voto',
-      label: 'Intención de Voto',
+      label: 'Intención de voto',
       value: p.iv,
       max: 100,
       unit: '%',

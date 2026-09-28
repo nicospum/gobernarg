@@ -42,7 +42,7 @@ export function meetingCost(state: CausalState, actor: ActorId): number {
 export function canMeet(state: CausalState, actor: ActorId, paLeft: number): string | null {
   if (!isOrganized(actor)) return 'No es una organización: para conocer su humor, encargá una encuesta.';
   if (state.actors[actor].lastMeeting === state.turn) return 'Ya te reuniste este turno.';
-  if (meetingCost(state, actor) > paLeft) return 'No quedan puntos de acción.';
+  if (meetingCost(state, actor) > paLeft) return 'No te quedan acciones este turno.';
   return null;
 }
 
@@ -113,7 +113,7 @@ export function canNegotiate(state: CausalState, actor: ActorId, paLeft: number)
   if (state.executions.some(e => e.actionId === 'negociacion' && e.actor === actor && e.turn > state.turn - 2)) return 'Ya negociaron hace poco: esperá un turno.';
   if (state.agreements.some(a => a.actor === actor && a.status === 'active')) return 'Ya hay un acuerdo vigente con este actor.';
   if (!state.actors[actor].demand) return 'No hay una demanda concreta sobre la mesa.';
-  if (paLeft < 1) return 'No quedan puntos de acción.';
+  if (paLeft < 1) return 'No te quedan acciones este turno.';
   return null;
 }
 

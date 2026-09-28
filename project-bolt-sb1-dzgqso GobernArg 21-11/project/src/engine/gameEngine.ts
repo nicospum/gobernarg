@@ -56,6 +56,7 @@ export {
 export {
   resolvePendingElection,
   finalizePresidentialCareer,
+  retireFromReelection,
 } from './electionEngine';
 
 // Re-export from turnProcessor
@@ -521,7 +522,7 @@ export function satisfyGroupDemand(state: GameState, agendaId: string): GameStat
     type: 'success',
     category: 'social',
     title: 'Demanda satisfecha',
-    message: `Has respondido a la demanda del grupo: "${agenda.demand}".`,
+    message: `Cumpliste la demanda del grupo: "${agenda.demand}".`,
     importance: 'success',
   });
 

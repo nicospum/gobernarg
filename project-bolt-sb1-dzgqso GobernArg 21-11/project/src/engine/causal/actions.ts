@@ -151,7 +151,7 @@ export function getAvailability(
     }
   }
 
-  if (!isSelected && pa > paLeft) reasons.push('No quedan puntos de acción.');
+  if (!isSelected && pa > paLeft) reasons.push('No te quedan acciones este turno.');
 
   return {
     action,

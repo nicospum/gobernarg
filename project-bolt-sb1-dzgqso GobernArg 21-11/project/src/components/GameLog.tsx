@@ -2,6 +2,7 @@ import { ScrollText, TrendingUp, DollarSign, AlertTriangle } from 'lucide-react'
 import { GameState } from '../types/game';
 import { actionDefinitions } from '../data/actionRegistry';
 import { useDialog } from '@/lib/useDialog';
+import { fmtBudgetDelta, fmtSigned } from '@/lib/format';
 
 interface GameLogProps {
   gameState: GameState;
@@ -59,13 +60,13 @@ export function GameLog({ gameState, onClose }: GameLogProps) {
                     {entry.popularityChange !== 0 && (
                       <span className={`flex items-center gap-0.5 ${entry.popularityChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                         <TrendingUp className="w-3 h-3" />
-                        {entry.popularityChange > 0 ? '+' : ''}{entry.popularityChange.toFixed(1)} aprob.
+                        {fmtSigned(entry.popularityChange)} de aprobación
                       </span>
                     )}
                     {entry.budgetChange !== 0 && (
                       <span className={`flex items-center gap-0.5 ${entry.budgetChange > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                         <DollarSign className="w-3 h-3" />
-                        {entry.budgetChange > 0 ? '+' : ''}${Math.round(Math.abs(entry.budgetChange))}M
+                        {fmtBudgetDelta(entry.budgetChange)}
                       </span>
                     )}
                   </div>

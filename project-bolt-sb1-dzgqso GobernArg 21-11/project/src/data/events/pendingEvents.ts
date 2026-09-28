@@ -295,6 +295,17 @@ const heatWave: GameEvent = {
         ]
       },
       probability: 0.7
+    },
+    {
+      id: 'minimo',
+      text: 'Asistir con lo que ya hay, sin emergencia',
+      effects: {
+        immediate: [
+          { type: 'immediate', target: 'budget', value: -40 },
+          { type: 'immediate', target: 'popularity', value: -3 }
+        ]
+      },
+      probability: 0.3
     }
   ],
   probability: 0.2,
@@ -383,6 +394,17 @@ const externalSanctions: GameEvent = {
         ]
       },
       probability: 0.7
+    },
+    {
+      id: 'resistir',
+      text: 'Rechazar las sanciones y denunciarlas',
+      effects: {
+        immediate: [
+          { type: 'immediate', target: 'popularity', value: 4 },
+          { type: 'immediate', target: 'stability', value: -3 }
+        ]
+      },
+      probability: 0.3
     }
   ],
   probability: 0.25,
@@ -423,6 +445,16 @@ const flood: GameEvent = {
         ]
       },
       probability: 0.8
+    },
+    {
+      id: 'provincias',
+      text: 'Que las provincias lo cubran con fondos propios',
+      effects: {
+        immediate: [
+          { type: 'immediate', target: 'popularity', value: -5 }
+        ]
+      },
+      probability: 0.3
     }
   ],
   probability: 0.2,
@@ -459,6 +491,16 @@ const drought: GameEvent = {
         ]
       },
       probability: 0.75
+    },
+    {
+      id: 'credito',
+      text: 'Créditos blandos en vez de subsidios',
+      effects: {
+        immediate: [
+          { type: 'immediate', target: 'budget', value: -100 }
+        ]
+      },
+      probability: 0.3
     }
   ],
   probability: 0.15,
@@ -499,6 +541,17 @@ const prisonRiot: GameEvent = {
         ]
       },
       probability: 0.7
+    },
+    {
+      id: 'fuerza',
+      text: 'Recuperar el penal por la fuerza',
+      effects: {
+        immediate: [
+          { type: 'immediate', target: 'stability', value: -3 },
+          { type: 'immediate', target: 'popularity', value: 2 }
+        ]
+      },
+      probability: 0.3
     }
   ],
   probability: 0.25,
@@ -536,6 +589,16 @@ const drugWave: GameEvent = {
         ]
       },
       probability: 0.7
+    },
+    {
+      id: 'coordinacion',
+      text: 'Plan coordinado con las provincias',
+      effects: {
+        immediate: [
+          { type: 'immediate', target: 'budget', value: -120 }
+        ]
+      },
+      probability: 0.3
     }
   ],
   probability: 0.2,

@@ -101,7 +101,7 @@ function SituacionElectoral({ state }: { state: GameState }) {
       <div className="space-y-2">
         <ComponentBar label="Humor social" value={p.apro} weight={PARAMS.PESO_APRO_EN_IV} hint="Aprobación: satisfacción de clase media, sectores populares y demás actores según su peso electoral" />
         <ComponentBar label="Aparato político" value={p.estr} weight={PARAMS.PESO_ESTRUCTURA_EN_IV} hint="Estructura: oficialismo, aliados y gobernadores" />
-        <ComponentBar label="Imagen y campaña" value={p.otros} weight={PARAMS.PESO_OTROS_EN_IV} hint="Imagen presidencial y desgastes de gestión" />
+        <ComponentBar label="Imagen" value={p.otros} weight={PARAMS.PESO_OTROS_EN_IV} hint="Tu imagen y el desgaste de la gestión" />
       </div>
 
       <div className="grid grid-cols-2 gap-3 pt-1">

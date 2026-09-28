@@ -54,7 +54,7 @@ export function targetLabel(target: string): string {
     case 'INGRESO_MULT': return 'Recaudación';
     case 'LEG': return 'Apoyo legislativo';
     case 'GOB': return 'Gobernabilidad';
-    case 'imagen': return 'Imagen presidencial';
+    case 'imagen': return 'Imagen';
     default: return target;
   }
 }

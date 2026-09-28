@@ -3,6 +3,7 @@ import { ElectionResults } from '../types/game';
 import { IMAGES } from '../utils/imageAssets';
 import { Tooltip, TooltipContent } from './Tooltip';
 import { useDialog } from '@/lib/useDialog';
+import { fmtPct } from '@/lib/format';
 
 interface ElectionResultsModalProps {
   result: ElectionResults;
@@ -14,7 +15,7 @@ function CausalBreakdown({ result }: { result: ElectionResults }) {
   const tiles = [
     { label: 'Humor social', value: b.apro, weight: '65%', detail: 'Satisfacción de los actores con peso electoral (clase media, sectores populares, trabajadores, PyMEs…).', Icon: Users, color: 'text-sky-400' },
     { label: 'Aparato político', value: b.estructura, weight: '10%', detail: 'Oficialismo, aliados y gobernadores: su satisfacción y tu relación con ellos.', Icon: Shield, color: 'text-emerald-400' },
-    { label: 'Imagen y campaña', value: b.otros, weight: '25%', detail: 'Imagen presidencial: eventos, habilidades, estrategia y desgaste de gestión.', Icon: TrendingUp, color: 'text-purple-400' },
+    { label: 'Imagen', value: b.otros, weight: '25%', detail: 'Tu imagen: eventos, habilidades, estrategia y desgaste de gestión.', Icon: TrendingUp, color: 'text-purple-400' },
   ];
   return (
     <>
@@ -81,7 +82,7 @@ export function ElectionResultsModal({ result, onClose }: ElectionResultsModalPr
                 ? victory ? 'Tu espacio retiene el gobierno' : 'Tu espacio pierde la sucesión'
                 : victory ? '¡Victoria Electoral!' : 'Derrota Electoral'}
             </h2>
-            <p className="font-mono text-2xl font-bold mt-1">{votesPercentage.toFixed(1)}%</p>
+            <p className="font-mono text-2xl font-bold mt-1">{fmtPct(votesPercentage, 1)}</p>
             <p className="text-xs text-foreground/70 uppercase tracking-widest">de los votos</p>
           </div>
         </div>
@@ -98,7 +99,7 @@ export function ElectionResultsModal({ result, onClose }: ElectionResultsModalPr
               content={
                 <TooltipContent
                   value="Peso: 35%"
-                  label="Popularidad"
+                  label="Aprobación"
                   detail="Promedio de los últimos 4 turnos. El factor más determinante."
                 />
               }
@@ -107,10 +108,10 @@ export function ElectionResultsModal({ result, onClose }: ElectionResultsModalPr
                 <TrendingUp className="w-5 h-5 text-sky-400 flex-shrink-0" />
                 <div>
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wide">
-                    Popularidad
+                    Aprobación
                   </p>
                   <p className="font-mono font-bold text-lg text-foreground">
-                    {details.popularityImpact.toFixed(1)}%
+                    {fmtPct(details.popularityImpact, 1)}
                   </p>
                 </div>
               </div>
@@ -132,7 +133,7 @@ export function ElectionResultsModal({ result, onClose }: ElectionResultsModalPr
                     Apoyo de Grupos
                   </p>
                   <p className="font-mono font-bold text-lg text-foreground">
-                    {details.groupsSupport.toFixed(1)}%
+                    {fmtPct(details.groupsSupport, 1)}
                   </p>
                 </div>
               </div>
@@ -154,7 +155,7 @@ export function ElectionResultsModal({ result, onClose }: ElectionResultsModalPr
                     Objetivos
                   </p>
                   <p className="font-mono font-bold text-lg text-foreground">
-                    {details.completedObjectivesImpact.toFixed(1)}%
+                    {fmtPct(details.completedObjectivesImpact, 1)}
                   </p>
                 </div>
               </div>
@@ -164,7 +165,7 @@ export function ElectionResultsModal({ result, onClose }: ElectionResultsModalPr
               content={
                 <TooltipContent
                   value="Peso: 5%"
-                  label="Estabilidad"
+                  label="Gobernabilidad"
                   detail="100% si no tuviste crisis de popularidad ni déficit consecutivos."
                 />
               }
@@ -173,10 +174,10 @@ export function ElectionResultsModal({ result, onClose }: ElectionResultsModalPr
                 <Shield className="w-5 h-5 text-amber-400 flex-shrink-0" />
                 <div>
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wide">
-                    Estabilidad
+                    Gobernabilidad
                   </p>
                   <p className="font-mono font-bold text-lg text-foreground">
-                    {details.stabilityBonus.toFixed(1)}%
+                    {fmtPct(details.stabilityBonus, 1)}
                   </p>
                 </div>
               </div>

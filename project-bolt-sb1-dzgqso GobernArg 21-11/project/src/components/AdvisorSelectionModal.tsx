@@ -179,9 +179,9 @@ export function AdvisorSelectionModal({ onClose, onHire, maxSelections, gameStat
             <div className="text-sm">
               <p className="text-foreground">Asesores seleccionados: {selectedAdvisors.length}/{maxSelections}</p>
               <div className={`flex items-center gap-1 ${canAfford ? 'text-muted-foreground' : 'text-red-400'}`}>
-                <span>Costo total: ${totalCost}M</span>
+                <span>Costo total: {fmtBudget(totalCost)}</span>
                 {!canAfford && (
-                  <span className="text-xs">(Presupuesto insuficiente)</span>
+                  <span className="text-xs">(No alcanza la caja)</span>
                 )}
               </div>
             </div>

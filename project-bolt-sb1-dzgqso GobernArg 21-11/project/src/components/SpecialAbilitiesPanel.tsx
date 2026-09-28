@@ -102,7 +102,7 @@ function AbilityCard({ ability, archetype, gameState, onUseAbility, disabled }: 
             }`}
           >
             <Zap size={11} />
-            {costActions} acc.
+            {costActions} {costActions === 1 ? 'acción' : 'acciones'}
           </span>
         )}
         {costBudget > 0 && (

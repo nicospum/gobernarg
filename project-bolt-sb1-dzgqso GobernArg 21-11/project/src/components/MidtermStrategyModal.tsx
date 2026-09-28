@@ -2,6 +2,8 @@ import { AlertTriangle, Zap, Handshake, Users, Flame } from 'lucide-react';
 import { GameState, MidtermStrategy } from '../types/game';
 import { MIDTERM_STRATEGY_EFFECTS, MIDTERM_CAUSAL } from '../data/midtermStrategies';
 import { useDialog } from '@/lib/useDialog';
+import { LEGISLATIVE_IMAGE } from '../engine/eventResolver';
+import { fmtPct } from '@/lib/format';
 
 interface MidtermStrategyModalProps {
   availableStrategies: MidtermStrategy[];
@@ -62,7 +64,17 @@ export function MidtermStrategyModal({
   onSelect,
 }: MidtermStrategyModalProps) {
   const dialogRef = useDialog<HTMLDivElement>();
-  const outcome = gameState.legislativeResults?.outcome ?? 'tie';
+  const results = gameState.legislativeResults;
+  const outcome = results?.outcome ?? 'tie';
+  const imageChange = LEGISLATIVE_IMAGE[outcome];
+
+  const outcomeTitles: Record<string, string> = {
+    landslide: 'Ganaste por paliza',
+    clear: 'Ganaste las legislativas',
+    tie: 'Empate técnico',
+    minority: 'Quedaste en minoría',
+    defeat: 'Perdiste las legislativas',
+  };
 
   const outcomeLabels: Record<string, string> = {
     landslide: 'Ganaste por paliza. Tenés capital político de sobra.',
@@ -77,14 +89,38 @@ export function MidtermStrategyModal({
       <div className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="p-6 md:p-8">
           <div className="text-center mb-6">
-            <h2 className="font-display text-2xl md:text-3xl font-semibold text-foreground   mb-2">
-              Estrategia Post-Legislativa
+            <div className="text-[11px] uppercase tracking-widest text-gold-ink font-semibold mb-1">
+              Elecciones legislativas de medio término
+            </div>
+            <h2 className="font-display text-2xl md:text-3xl font-semibold text-foreground mb-3">
+              {outcomeTitles[outcome] ?? 'Resultado de las legislativas'}
             </h2>
-            <p className="text-foreground/70 text-sm">
+            {results && (
+              <div className="grid grid-cols-3 gap-2 max-w-md mx-auto mb-3">
+                <div className="rounded-lg bg-sunken px-2 py-2.5">
+                  <div className="font-display text-2xl font-semibold text-ink">{fmtPct(results.officialismVotes, 1)}</div>
+                  <div className="text-[11px] text-ink/70">de los votos</div>
+                </div>
+                <div className="rounded-lg bg-sunken px-2 py-2.5">
+                  <div className="font-display text-2xl font-semibold text-ink">{fmtPct(results.legislativeSupport)}</div>
+                  <div className="text-[11px] text-ink/70">de las bancas, con aliados</div>
+                </div>
+                <div className="rounded-lg bg-sunken px-2 py-2.5">
+                  <div className={`font-display text-2xl font-semibold ${imageChange > 0 ? 'text-emerald-400' : imageChange < 0 ? 'text-red-400' : 'text-ink'}`}>
+                    {imageChange > 0 ? '+' : ''}{imageChange}
+                  </div>
+                  <div className="text-[11px] text-ink/70">tu imagen</div>
+                </div>
+              </div>
+            )}
+            <p className="text-foreground/80 text-sm max-w-lg mx-auto">
               {outcomeLabels[outcome] ?? 'Los resultados electorales redefinen tu margen de acción.'}
             </p>
           </div>
 
+          <h3 className="font-display text-lg font-semibold text-ink mb-3">
+            ¿Cómo encarás la segunda mitad del mandato?
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
             {(Object.keys(STRATEGY_INFO) as MidtermStrategy[]).map((strategy) => {
               const info = STRATEGY_INFO[strategy];

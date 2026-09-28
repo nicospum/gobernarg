@@ -1,4 +1,5 @@
 import type { PendingEffect } from "@/types/game";
+import { fmtBudgetDelta } from "@/lib/format";
 
 export type EffectType = "economic" | "social" | "political" | "electoral" | "institutional";
 
@@ -55,8 +56,7 @@ export function isUrgentEffect(effect: PendingEffect, currentTurn: number): bool
 export function describeEffectImpact(effect: PendingEffect): string {
   const parts: string[] = [];
   if (effect.budgetChange) {
-    const sign = effect.budgetChange > 0 ? "+" : "−";
-    parts.push(`${sign}$${Math.abs(effect.budgetChange)}M`);
+    parts.push(fmtBudgetDelta(effect.budgetChange));
   }
   if (effect.popularityChange) {
     const sign = effect.popularityChange > 0 ? "+" : "";

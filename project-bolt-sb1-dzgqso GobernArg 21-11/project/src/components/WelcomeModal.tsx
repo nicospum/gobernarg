@@ -60,13 +60,13 @@ export function WelcomeModal({ governorName, position, onStart }: WelcomeModalPr
           </h2>
 
           <p className="text-lg text-ink/85 mb-5 leading-relaxed">
-            Has sido elegido como <strong>{getPositionTitle(position)}</strong>. Es hora de asumir
-            el liderazgo y guiar a tu {getTerritory(position)} hacia un futuro próspero.
+            Ganaste la elección y asumís la <strong>{getPositionTitle(position)}</strong>. Es hora de
+            liderar y guiar a tu {getTerritory(position)} hacia un futuro próspero.
           </p>
 
           <p className="text-base text-ink/70 mb-7 leading-relaxed">
-            Como {getPositionTitle(position)}, deberás tomar decisiones clave, gestionar recursos y
-            equilibrar las necesidades de diversos grupos de interés. Mantén la estabilidad política,
+            Desde la {getPositionTitle(position)} vas a tomar decisiones clave, gestionar recursos y
+            equilibrar las necesidades de diversos grupos de interés. Mantené la estabilidad política,
             económica y social mientras enfrentás desafíos y aprovechás oportunidades.
           </p>
 

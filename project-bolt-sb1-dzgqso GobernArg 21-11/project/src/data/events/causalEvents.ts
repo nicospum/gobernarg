@@ -129,6 +129,7 @@ export const EVENT_CAUSAL: Record<string, EventCausalDef> = {
     effects: [{ target: 'PSOC', value: -1 }, { target: 'imagen', value: -2 }],
     choices: {
       emergency: [{ target: 'CAJA', value: -150 }, { target: 'PSOC', value: 2 }, { target: 'imagen', value: 2 }],
+      minimo: [{ target: 'CAJA', value: -40 }, { target: 'imagen', value: -1 }, { target: 'CONF', value: 1 }],
     },
   },
   diplomatic_conflict: {
@@ -143,18 +144,21 @@ export const EVENT_CAUSAL: Record<string, EventCausalDef> = {
     effects: [{ target: 'EXTE', value: -4 }, { target: 'INVC', value: -2 }],
     choices: {
       accept: [{ target: 'CAJA', value: -200 }, { target: 'INST', value: 2 }, { target: 'EXTE', value: 2 }],
+      resistir: [{ target: 'imagen', value: 2 }, { target: 'EXTE', value: -2 }, { target: 'INVC', value: -1 }],
     },
   },
   flood: {
     effects: [{ target: 'INFR', value: -3 }, { target: 'PSOC', value: -2 }, { target: 'CAJA', value: -150 }],
     choices: {
       help: [{ target: 'CAJA', value: -200 }, { target: 'PSOC', value: 3 }, { target: 'imagen', value: 3 }, { target: 'REL:gobernadores', value: 4 }],
+      provincias: [{ target: 'REL:gobernadores', value: -6 }, { target: 'imagen', value: -2 }, { target: 'PSOC', value: -1 }],
     },
   },
   drought: {
     effects: [{ target: 'EXTE', value: -4 }, { target: 'ACTV', value: -1 }],
     choices: {
       subsidies: [{ target: 'CAJA', value: -300 }, { target: 'EXTE', value: 2 }, { target: 'REL:agro', value: 6 }],
+      credito: [{ target: 'CAJA', value: -100 }, { target: 'EXTE', value: 1 }, { target: 'REL:agro', value: 2 }],
     },
   },
   prison_riot: {
@@ -162,6 +166,7 @@ export const EVENT_CAUSAL: Record<string, EventCausalDef> = {
     effects: [{ target: 'SEGU', value: -2 }, { target: 'imagen', value: -3 }],
     choices: {
       negotiate: [{ target: 'CAJA', value: -100 }, { target: 'SEGU', value: 1 }, { target: 'INST', value: 1 }],
+      fuerza: [{ target: 'SEGU', value: 2 }, { target: 'INST', value: -2 }, { target: 'imagen', value: 1 }],
     },
   },
   drug_wave: {
@@ -169,6 +174,7 @@ export const EVENT_CAUSAL: Record<string, EventCausalDef> = {
     effects: [{ target: 'SEGU', value: -3 }, { target: 'imagen', value: -3 }],
     choices: {
       security_op: [{ target: 'CAJA', value: -300 }, { target: 'SEGU', value: 3 }, { target: 'INST', value: -1 }],
+      coordinacion: [{ target: 'CAJA', value: -120 }, { target: 'SEGU', value: 1 }, { target: 'REL:gobernadores', value: 3 }],
     },
   },
 };
@@ -295,8 +301,14 @@ export const CHANNEL_GAME_EVENTS: Record<string, GameEvent & { causal: EventCaus
     description: 'Un sector de tu propio partido arma bloque aparte en el Congreso. Perdés bancas para siempre.',
     conditions: {}, probability: 1,
     effects: { immediate: [] },
-    choices: [{ id: 'asumir', text: 'Reorganizar el bloque que queda', effects: { immediate: [] } }],
-    causal: { choices: { asumir: [{ target: 'REL:oficialismo', value: 3 }] } },
+    choices: [
+      { id: 'asumir', text: 'Reorganizar el bloque que queda', effects: { immediate: [] } },
+      { id: 'negociar', text: 'Negociar el regreso con cargos y fondos', effects: { immediate: [] } },
+    ],
+    causal: { choices: {
+      asumir: [{ target: 'REL:oficialismo', value: 3 }],
+      negociar: [{ target: 'CAJA', value: -150 }, { target: 'REL:oficialismo', value: 7 }, { target: 'imagen', value: -1 }],
+    } },
   },
   salida_coalicion: {
     id: 'salida_coalicion', type: 'triggered', category: 'political', severity: 'critical',
@@ -304,8 +316,14 @@ export const CHANNEL_GAME_EVENTS: Record<string, GameEvent & { causal: EventCaus
     description: 'Los socios dejan el gobierno y se llevan sus bancas.',
     conditions: {}, probability: 1,
     effects: { immediate: [] },
-    choices: [{ id: 'asumir', text: 'Gobernar en minoría', effects: { immediate: [] } }],
-    causal: { choices: { asumir: [] } },
+    choices: [
+      { id: 'asumir', text: 'Gobernar en minoría', effects: { immediate: [] } },
+      { id: 'recomponer', text: 'Ofrecer ministerios para recomponer la alianza', effects: { immediate: [] } },
+    ],
+    causal: { choices: {
+      asumir: [],
+      recomponer: [{ target: 'CAJA', value: -100 }, { target: 'REL:aliados', value: 8 }, { target: 'REL:oficialismo', value: -2 }],
+    } },
   },
 };
 

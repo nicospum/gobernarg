@@ -1,4 +1,4 @@
-import { TrendingUp, AlertTriangle } from 'lucide-react';
+import { TrendingUp, AlertTriangle, DoorOpen } from 'lucide-react';
 import { GameState } from '../types/game';
 import {
   ElectionOption,
@@ -9,13 +9,16 @@ import {
 } from '../utils/electionSystem';
 import { PROMOTION_MIN_POPULARITY, PROMOTION_DIFFICULTY } from '../data/careerRules';
 import { useDialog } from '@/lib/useDialog';
+import { fmtPct } from '@/lib/format';
 
 interface ReelectionChoiceModalProps {
   gameState: GameState;
   onSelect: (option: ElectionOption) => void;
+  /** No presentarse: compite otro candidato del espacio y la partida termina. */
+  onRetire?: () => void;
 }
 
-export function ReelectionChoiceModal({ gameState, onSelect }: ReelectionChoiceModalProps) {
+export function ReelectionChoiceModal({ gameState, onSelect, onRetire }: ReelectionChoiceModalProps) {
   const dialogRef = useDialog<HTMLDivElement>();
   const options = gameState.pendingElectionOptions;
 
@@ -91,7 +94,7 @@ export function ReelectionChoiceModal({ gameState, onSelect }: ReelectionChoiceM
                       <div className="flex items-center gap-1 justify-end">
                         <TrendingUp className="w-4 h-4" />
                         <span className="font-mono font-bold text-lg">
-                          {projectedVotes.toFixed(1)}%
+                          {fmtPct(projectedVotes, 1)}
                         </span>
                       </div>
                       <span className="text-xs">
@@ -102,6 +105,22 @@ export function ReelectionChoiceModal({ gameState, onSelect }: ReelectionChoiceM
                 </button>
               );
             })
+          )}
+          {onRetire && options.length > 0 && (
+            <button
+              onClick={onRetire}
+              className="w-full text-left p-5 rounded-xl border border-border bg-card hover:border-primary/50 hover:bg-primary/5 transition-all"
+            >
+              <div className="flex items-start gap-3">
+                <DoorOpen className="w-5 h-5 text-ink/70 mt-0.5 flex-shrink-0" />
+                <div className="min-w-0">
+                  <h3 className="font-display font-semibold text-lg text-foreground">No presentarme</h3>
+                  <p className="text-sm text-foreground/70 mt-1">
+                    Tu espacio compite con otro candidato. Si gana, tu gestión queda como legado; la partida termina con esta elección.
+                  </p>
+                </div>
+              </div>
+            </button>
           )}
         </div>
       </div>

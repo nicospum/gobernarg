@@ -95,7 +95,7 @@ export function CharacterCreation({ initial, onContinue }: CharacterCreationProp
               className="w-full px-4 py-3 rounded-lg bg-ink/20 border border-ink/30 focus:outline-none focus:ring-2 focus:ring-ink/50 placeholder-ink/50"
             />
             {showNameError && (
-              <p className="text-red-300 mt-2">Debes ingresar un nombre para comenzar</p>
+              <p className="text-red-300 mt-2">Escribí un nombre para seguir</p>
             )}
           </div>
 

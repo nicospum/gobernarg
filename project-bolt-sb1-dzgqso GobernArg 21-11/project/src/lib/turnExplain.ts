@@ -21,7 +21,7 @@ const RULE_TEXT: Record<string, string> = {
   R01: 'expectativas y fundamentos de la inflación',
   R02: 'la inflación se comió los salarios',
   R03: 'el empleo recompuso salarios',
-  R04: 'la inversión se volvió actividad',
+  R04: 'lo que pasa con la inversión',
   R05: 'la infraestructura ayudó a producir',
   R06: 'el conflicto frenó la economía',
   R07: 'la falta de dólares',

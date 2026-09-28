@@ -36,8 +36,13 @@ import {
 import { moodFor } from '@/engine/causalBridge';
 import type { ActorInteraction } from '@/engine/gameEngine';
 import { concernSentence, relationBand, satisfactionBand, toneClass } from '@/lib/causalText';
-import { riskColor, riskLabel, type Risk } from '@/lib/risk';
+import { riskColor, type Risk } from '@/lib/risk';
 import { getActorIcon } from '../utils/actorIcons';
+import { fmtBudget } from '@/lib/format';
+import { ACTOR_POWER_TEXT } from '@/data/causal/playerTexts';
+
+/** "tensión media", no "tensión medio" (concordancia, glosario). */
+const TENSION_LABEL: Record<Risk, string> = { bajo: 'baja', medio: 'media', alto: 'alta', critico: 'crítica' };
 
 interface ActorsPanelProps {
   gameState: GameState;
@@ -108,8 +113,8 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
             </div>
             <span className={`text-[9px] uppercase tracking-wide font-semibold ${riskColor(MOOD_RISK[mood])}`}>{mood}</span>
           </div>
-          <div className="text-[9px] text-muted-foreground truncate" title={def.channelMain}>
-            Poder: {def.channelMain}
+          <div className="text-[10px] text-muted-foreground truncate" title={ACTOR_POWER_TEXT[actor] ?? def.channelMain}>
+            Poder: {ACTOR_POWER_TEXT[actor] ?? def.channelMain}
           </div>
         </div>
       </div>
@@ -213,7 +218,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
               className="flex-1 inline-flex items-center justify-center gap-1 text-[9px] text-muted-foreground hover:text-foreground border border-border hover:border-ink/20 px-1.5 py-1 rounded transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             >
               <MessageSquare size={9} />
-              Reunirse {!meetReason && <span className="font-mono text-[10px]">{meetingCost(c, actor) === 0 ? 'gratis' : '1PA'}</span>}
+              Reunirse {!meetReason && <span className="font-mono text-[10px]">{meetingCost(c, actor) === 0 ? 'gratis' : '1 acción'}</span>}
             </button>
             {offerOpen ? (
               <button
@@ -244,7 +249,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
             className="flex-1 inline-flex items-center justify-center gap-1 text-[9px] text-muted-foreground hover:text-foreground border border-border hover:border-ink/20 px-1.5 py-1 rounded transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
             <BarChart3 size={9} />
-            Encuesta <span className="font-mono text-[10px]">{c.perks.freePolls ? 'gratis' : `$${POLL_COST}M`}</span>
+            Encuesta <span className="font-mono text-[10px]">{c.perks.freePolls ? 'gratis' : fmtBudget(POLL_COST)}</span>
           </button>
         )}
       </div>
@@ -310,7 +315,7 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }:
                   <div className="min-w-0">
                     <div className="font-display font-semibold text-sm text-ink truncate">{family.name}</div>
                     <div className="flex items-center gap-2 text-[9px] font-mono">
-                      <span className={riskColor(worst)}>tensión {riskLabel(worst).toLowerCase()}</span>
+                      <span className={riskColor(worst)}>tensión {TENSION_LABEL[worst]}</span>
                       {demands > 0 && <span className="text-amber-300 font-bold">{demands} demanda{demands > 1 ? 's' : ''}</span>}
                     </div>
                   </div>

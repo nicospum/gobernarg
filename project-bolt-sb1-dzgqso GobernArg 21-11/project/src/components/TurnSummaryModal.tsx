@@ -44,6 +44,14 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
       : IMAGES.ui.shieldEmblem;
   const changes = record ? indicatorChanges(record) : [];
   const reactions = record ? actorReactions(record, gameState.causal.platformId) : [];
+  // El registro del motor se cierra antes de los eventos, las legislativas y
+  // las decisiones que llegan después del turno. Mientras el resumen es el del
+  // último turno, los números se toman del estado actual para que cierren con
+  // lo que se ve en el tablero, y lo que no vino de la gestión se muestra aparte.
+  const isLatest = !!record && record === gameState.causal.records[gameState.causal.records.length - 1];
+  const political = isLatest ? gameState.causal.political : record?.politicalAfter;
+  const cajaFinal = isLatest ? gameState.causal.caja : record?.fiscal.cajaDespues ?? 0;
+  const otherCash = record ? Math.round(cajaFinal - record.fiscal.cajaDespues) : 0;
 
   return (
     <div ref={dialogRef} className="outline-none fixed inset-0 bg-ink/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
@@ -152,9 +160,9 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
                   <Vote className="w-3.5 h-3.5 text-blue-400" /> INDICADORES POLÍTICOS
                 </p>
                 <div className="text-[12px] space-y-1.5 font-medium">
-                  <div className="flex justify-between text-ink/80"><span>Aprobación</span><Delta value={record.politicalAfter.apro - record.politicalBefore.apro} /></div>
-                  <div className="flex justify-between text-ink/80"><span>Intención de voto</span><Delta value={record.politicalAfter.iv - record.politicalBefore.iv} suffix="%" /></div>
-                  <div className="flex justify-between text-ink/80"><span>Gobernabilidad</span><Delta value={record.politicalAfter.gob - record.politicalBefore.gob} /></div>
+                  <div className="flex justify-between text-ink/80"><span>Aprobación</span><Delta value={political!.apro - record.politicalBefore.apro} /></div>
+                  <div className="flex justify-between text-ink/80"><span>Intención de voto</span><Delta value={political!.iv - record.politicalBefore.iv} suffix="%" /></div>
+                  <div className="flex justify-between text-ink/80"><span>Gobernabilidad</span><Delta value={political!.gob - record.politicalBefore.gob} /></div>
                 </div>
               </div>
               <div className="rounded-lg border border-ink/8 bg-surface p-3.5">
@@ -166,7 +174,10 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
                   {record.fiscal.financiamiento !== 0 && (
                     <div className="flex justify-between text-ink/80"><span>Financiamiento</span><span className="font-mono text-amber-300 font-bold">{fmtBudgetDelta(record.fiscal.financiamiento)}</span></div>
                   )}
-                  <div className="flex justify-between text-ink/80"><span>Caja final</span><span className="font-mono font-bold text-ink">{fmtBudget(record.fiscal.cajaDespues)}</span></div>
+                  {otherCash !== 0 && (
+                    <div className="flex justify-between text-ink/80"><span>Eventos y otras decisiones</span><span className={`font-mono font-bold ${otherCash >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{fmtBudgetDelta(otherCash)}</span></div>
+                  )}
+                  <div className="flex justify-between text-ink/80"><span>Caja final</span><span className="font-mono font-bold text-ink">{fmtBudget(cajaFinal)}</span></div>
                 </div>
               </div>
             </section>
@@ -196,7 +207,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
             <div className="rounded-xl border border-red-500/40 bg-red-500/15 p-4 shadow-lg">
               <div className="flex items-center gap-2 text-red-300">
                 <AlertTriangle className="w-5 h-5" />
-                <p className="font-display font-semibold text-base  ">¡ALERTA DE INFLACIÓN ACRECENTADA!</p>
+                <p className="font-display font-semibold text-base  ">La inflación se está acelerando</p>
               </div>
               <p className="text-[12px] text-red-200/80 mt-1 leading-relaxed">
                 La espiral de precios reduce el poder adquisitivo de los sectores populares y tensiona la recaudación del Tesoro.

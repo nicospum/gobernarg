@@ -29,6 +29,7 @@ import { clearSavedGame, loadGame, saveGame } from './lib/savegame';
 import { useIsMobile } from './lib/useMediaQuery';
 import { MobileBottomBar, MobileHeader, MobileKpis, MobileMenu, type MobileTab } from './components/mobile/MobileChrome';
 import { Sheet } from './components/mobile/Sheet';
+import { HowToPlayModal, TutorialCard, useTutorial } from './components/Tutorial';
 
 import type { AdvisorWithStatus, ElectionResults, TurnSummary, MidtermStrategy } from './types/game';
 import type { ActorId } from './data/causal';
@@ -44,6 +45,7 @@ import {
   processEndTurn,
   applyEventChoice,
   resolvePendingElection,
+  retireFromReelection,
   markAllNotificationsRead,
   dismissNotification,
   useSpecialAbility as activateSpecialAbility,
@@ -81,6 +83,9 @@ function App() {
   const [mobileTab, setMobileTab] = useState<MobileTab>('acciones');
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  // Ayuda: tarjeta del primer turno y guía "Cómo se juega" desde el menú.
+  const tutorial = useTutorial();
+  const [showHelp, setShowHelp] = useState(false);
 
   // Guardado automático: cada cambio de la partida (y los eventos sin responder).
   useEffect(() => {
@@ -104,6 +109,11 @@ function App() {
       toast('Ganaste la reelección: desbloqueaste un escenario histórico nuevo.');
     }
   }, [gameState.electionResults]);
+
+  // Perdiste o terminó el mandato: los eventos que quedaban ya no se responden.
+  useEffect(() => {
+    if (gameState.gameOver) setPendingEvents([]);
+  }, [gameState.gameOver]);
 
   const handleStart = (_isAdmin: boolean) => {
     setShowWelcomeScreen(false);
@@ -163,7 +173,7 @@ function App() {
   // ni tocar nada de atrás (ni con el teclado).
   const modalOpen =
     showTurnSummary || pendingEvents.length > 0 || !!gameState.pendingElection || !!gameState.electionResults ||
-    showMidtermStrategy || showGameLog || showNotebook || gameState.gameOver;
+    showMidtermStrategy || showGameLog || showNotebook || showHelp || gameState.gameOver;
   useEffect(() => {
     const board = boardRef.current;
     if (!board) return;
@@ -185,13 +195,13 @@ function App() {
       setShowMidtermStrategy(true);
     }
 
-    // No mostramos el resumen si el turno terminó en elección pendiente o fin de juego
-    if (!result.state.pendingElection && !result.state.gameOver && !result.state.pendingMidtermStrategy) {
-      setTurnSummary(result.summary);
-      setShowTurnSummary(true);
-    }
+    // El resumen se muestra siempre (salvo fin de juego). Si hay legislativas o
+    // elección, aparece después de resolverlas: antes esos turnos no tenían resumen.
+    setTurnSummary(result.summary);
+    setShowTurnSummary(!result.state.gameOver);
 
-    if (result.triggeredEvents.length > 0) {
+    // Con la partida terminada no hay más eventos que responder.
+    if (result.triggeredEvents.length > 0 && !result.state.gameOver) {
       lastProcessedEventRef.current = null;
       // Concatenar en vez de reemplazar: si quedara un evento sin responder
       // de un turno anterior, no se descarta en silencio (Punto 15).
@@ -262,10 +272,14 @@ function App() {
   }
 
   const currentEvent = pendingEvents[0] || null;
+  const showTutorialCard = !tutorial.dismissed && gameState.term === 1 && gameState.year === 1 && gameState.turn === 1;
+  const tutorialCard = showTutorialCard && (
+    <TutorialCard actions={gameState.baseActions} onDismiss={tutorial.dismiss} onOpenGuide={() => setShowHelp(true)} />
+  );
 
   return (
     <div className="min-h-screen bg-paper text-ink">
-      <Toaster position={isMobile ? "top-center" : "bottom-right"} toastOptions={{ style: { background: "rgb(20 33 61)", color: "rgb(251 248 242)", border: "none" } }} />
+      <Toaster containerAriaLabel="Avisos" position={isMobile ? "top-center" : "bottom-right"} toastOptions={{ style: { background: "rgb(20 33 61)", color: "rgb(251 248 242)", border: "none" } }} />
       <div ref={boardRef}>
       {isMobile ? (
         <>
@@ -276,6 +290,7 @@ function App() {
           />
           <main className="px-3 pt-3 pb-[calc(9rem+env(safe-area-inset-bottom))] space-y-3">
             <MobileKpis gameState={gameState} />
+            {tutorialCard}
             {mobileTab === 'acciones' && (
               <ControlPanel
                 gameState={gameState}
@@ -338,7 +353,9 @@ function App() {
           />
 
           <main className="max-w-[1680px] mx-auto p-4 md:p-6 space-y-5">
-            {/* Indicadores horizontales arriba (KPIs B0) */}
+            {tutorialCard}
+
+        {/* Indicadores horizontales arriba (KPIs B0) */}
             <IndicatorsPanel gameState={gameState} />
 
             {/* Detalle Macro y Motor Causal */}
@@ -416,6 +433,7 @@ function App() {
           onOpenLog={() => setShowGameLog(true)}
           onOpenNotebook={() => setShowNotebook(true)}
           onOpenNotifications={() => setShowNotifications(true)}
+          onOpenHelp={() => setShowHelp(true)}
           onRestart={handleRestart}
         />
       )}
@@ -430,7 +448,7 @@ function App() {
         </Sheet>
       )}
 
-      {showTurnSummary && turnSummary && (
+      {showTurnSummary && turnSummary && !showMidtermStrategy && !gameState.pendingElection && !gameState.electionResults && (
         <TurnSummaryModal
           summary={turnSummary}
           gameState={gameState}
@@ -438,7 +456,7 @@ function App() {
         />
       )}
 
-      {currentEvent && (
+      {currentEvent && !showMidtermStrategy && !gameState.pendingElection && (
         <EventModal
           event={currentEvent}
           onChoice={handleEventChoice}
@@ -453,6 +471,7 @@ function App() {
         <ReelectionChoiceModal
           gameState={gameState}
           onSelect={handleElectionChoice}
+          onRetire={() => setGameState(prev => retireFromReelection(prev))}
         />
       )}
 
@@ -494,6 +513,8 @@ function App() {
       {showGameLog && (
         <GameLog gameState={gameState} onClose={() => setShowGameLog(false)} />
       )}
+
+      {showHelp && <HowToPlayModal actions={gameState.baseActions} onClose={() => setShowHelp(false)} />}
 
       {showNotebook && (
         <ManagementNotebook gameState={gameState} onClose={() => setShowNotebook(false)} />
