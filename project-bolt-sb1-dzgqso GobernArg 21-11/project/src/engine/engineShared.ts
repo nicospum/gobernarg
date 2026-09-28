@@ -94,6 +94,17 @@ export function getGlobalTurn(state: { year: number; turn: number }): number {
 // una notificación no altera los eventos aleatorios (partidas con semilla).
 let notificationSeq = 0;
 
+/**
+ * Al cargar una partida guardada, la secuencia sigue desde la más alta ya
+ * usada: si volviera a 0 repetiría ids de notificaciones del mismo turno.
+ */
+export function resumeNotificationSeq(notifications: Notification[]): void {
+  for (const n of notifications) {
+    const seq = parseInt(n.id.split('_')[2] ?? '', 36);
+    if (Number.isFinite(seq) && seq > notificationSeq) notificationSeq = seq;
+  }
+}
+
 export function addNotification(
   state: GameState,
   notification: Omit<Notification, 'id' | 'timestamp'>

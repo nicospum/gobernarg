@@ -2,6 +2,7 @@ import { Trophy, BarChart, TrendingUp, Users, Target, Shield } from 'lucide-reac
 import { ElectionResults } from '../types/game';
 import { IMAGES } from '../utils/imageAssets';
 import { Tooltip, TooltipContent } from './Tooltip';
+import { useDialog } from '@/lib/useDialog';
 
 interface ElectionResultsModalProps {
   result: ElectionResults;
@@ -51,11 +52,12 @@ function CausalBreakdown({ result }: { result: ElectionResults }) {
 }
 
 export function ElectionResultsModal({ result, onClose }: ElectionResultsModalProps) {
+  const dialogRef = useDialog<HTMLDivElement>(onClose);
   const { votesPercentage, victory, details } = result;
   const succession = result.kind === 'succession';
 
   return (
-    <div className="fixed inset-0 bg-ink/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div ref={dialogRef} className="outline-none fixed inset-0 bg-ink/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="relative w-full max-w-2xl rounded-xl overflow-hidden shadow-2xl bg-card border border-border">
         <div className="relative h-48 md:h-56">
           <img

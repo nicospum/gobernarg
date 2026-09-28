@@ -15,6 +15,7 @@ import type { GameState } from '../types/game';
 import { actionDefinitions } from '../data/actionRegistry';
 import { ACTOR_IDS, ACTORS, CAUSAL_ACTIONS_BY_ID, PARAMS } from '@/data/causal';
 import { runningEffects, upcomingEffects } from '@/lib/agendaView';
+import { useDialog } from '@/lib/useDialog';
 
 interface ManagementNotebookProps {
   gameState: GameState;
@@ -51,7 +52,7 @@ function CompromisosSection({ gameState }: { gameState: GameState }) {
       </div>
 
       {agreements.length === 0 && requests.length === 0 ? (
-        <p className="text-xs text-muted-foreground/60 py-2">
+        <p className="text-xs text-muted-foreground py-2">
           Todavía no hay acuerdos ni pedidos conocidos. Reunite con los actores para saber qué piden.
         </p>
       ) : (
@@ -66,7 +67,7 @@ function CompromisosSection({ gameState }: { gameState: GameState }) {
                     <div className="font-display font-semibold text-[16px] text-foreground leading-tight">
                       {CAUSAL_ACTIONS_BY_ID[ag.commitmentActionId]?.name ?? ag.commitmentActionId}
                     </div>
-                    <div className="text-[10px] text-foreground/50 mt-0.5">
+                    <div className="text-[10px] text-foreground/70 mt-0.5">
                       Acuerdo con {ACTORS[ag.actor].shortName} · a cambio: {ag.offer.toLowerCase()}
                     </div>
                   </div>
@@ -81,7 +82,7 @@ function CompromisosSection({ gameState }: { gameState: GameState }) {
                       <Clock size={9} />
                       Vence en {turnsLeft} turno{turnsLeft !== 1 ? 's' : ''}
                     </span>
-                    <span className="text-red-400/70 flex items-center gap-1">
+                    <span className="text-red-400 flex items-center gap-1">
                       <AlertTriangle size={9} />
                       Incumplir rompe la relación
                     </span>
@@ -125,14 +126,14 @@ function EfectosDiferidosSection({ gameState }: { gameState: GameState }) {
       </div>
 
       {upcoming.length + running.length === 0 ? (
-        <p className="text-xs text-muted-foreground/60 py-2">
+        <p className="text-xs text-muted-foreground py-2">
           No hay efectos diferidos activos.
         </p>
       ) : (
         <div className="space-y-2">
           {upcoming.length > 0 && (
             <div className="space-y-1.5">
-              <h4 className="text-[9px] uppercase tracking-widest text-amber-400/60 font-semibold px-0.5">
+              <h4 className="text-[9px] uppercase tracking-widest text-amber-400 font-semibold px-0.5">
                 Próximos a llegar
               </h4>
               {upcoming.map(item => (
@@ -152,7 +153,7 @@ function EfectosDiferidosSection({ gameState }: { gameState: GameState }) {
           )}
           {running.length > 0 && (
             <div className="space-y-1.5">
-              <h4 className="text-[9px] uppercase tracking-widest text-emerald-400/60 font-semibold px-0.5">
+              <h4 className="text-[9px] uppercase tracking-widest text-emerald-400 font-semibold px-0.5">
                 En curso
               </h4>
               {running.map(item => (
@@ -194,7 +195,7 @@ function HistorialRecienteSection({ gameState }: { gameState: GameState }) {
       </div>
 
       {entries.length === 0 ? (
-        <p className="text-xs text-muted-foreground/60 py-2">
+        <p className="text-xs text-muted-foreground py-2">
           No hay registros de turnos todavía.
         </p>
       ) : (
@@ -272,8 +273,9 @@ function HistorialRecienteSection({ gameState }: { gameState: GameState }) {
 // ─── Main Panel ─────────────────────────────────────────────────────────
 
 export function ManagementNotebook({ gameState, onClose }: ManagementNotebookProps) {
+  const dialogRef = useDialog<HTMLDivElement>(onClose);
   return (
-    <div className="fixed inset-0 bg-ink/60 flex items-center justify-center z-50 p-4">
+    <div ref={dialogRef} className="outline-none fixed inset-0 bg-ink/60 flex items-center justify-center z-50 p-4">
       <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">

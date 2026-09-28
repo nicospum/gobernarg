@@ -12,12 +12,12 @@ export function SetupSteps({ current }: { current: 1 | 2 }) {
             {i > 0 && <span className="w-6 h-px bg-ink/30" aria-hidden="true" />}
             <span
               className={`inline-flex w-6 h-6 items-center justify-center rounded-full text-xs font-bold ${
-                state === 'current' ? 'bg-accent text-accent-foreground' : state === 'done' ? 'bg-ink/80 text-slate-900' : 'bg-ink/15 text-ink/60'
+                state === 'current' ? 'bg-accent text-accent-foreground' : state === 'done' ? 'bg-ink/80 text-paper' : 'bg-ink/15 text-ink/70'
               }`}
             >
               {n}
             </span>
-            <span className={state === 'todo' ? 'text-ink/60' : 'text-ink font-semibold'}>{label}</span>
+            <span className={state === 'todo' ? 'text-ink/70' : 'text-ink font-semibold'}>{label}</span>
           </li>
         );
       })}

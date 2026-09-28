@@ -21,9 +21,9 @@ export function AxisBar({
   return (
     <div className="mb-2">
       <div className="flex justify-between text-[11px] mb-1">
-        <span className={isLeft ? 'font-semibold text-ink' : 'text-ink/40'}>{labelLo}</span>
-        <span className="text-ink/60 font-mono text-[10px]">{clamped > 0 ? `+${clamped}` : clamped}</span>
-        <span className={isRight ? 'font-semibold text-ink' : 'text-ink/40'}>{labelHi}</span>
+        <span className={isLeft ? 'font-semibold text-ink' : 'text-ink/70'}>{labelLo}</span>
+        <span className="text-ink/70 font-mono text-[10px]">{clamped > 0 ? `+${clamped}` : clamped}</span>
+        <span className={isRight ? 'font-semibold text-ink' : 'text-ink/70'}>{labelHi}</span>
       </div>
       <div className="relative w-full h-2 bg-ink/8 rounded-full overflow-hidden">
         <div

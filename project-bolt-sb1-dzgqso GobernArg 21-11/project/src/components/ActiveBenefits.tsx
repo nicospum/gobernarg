@@ -24,7 +24,7 @@ export function ActiveBenefits({ gameState }: ActiveBenefitsProps) {
               <span className="font-medium">{item.label}</span>
               {item.turnsLeft !== null && <span className="text-emerald-400 font-mono">{item.turnsLeft}t</span>}
             </div>
-            {item.detail && <p className="text-[10px] text-emerald-200/60 leading-snug">{item.detail}</p>}
+            {item.detail && <p className="text-[10px] text-emerald-200 leading-snug">{item.detail}</p>}
           </div>
         ))}
       </div>

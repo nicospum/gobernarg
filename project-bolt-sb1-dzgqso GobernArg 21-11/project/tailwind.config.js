@@ -37,6 +37,24 @@ despachoFamilies.blue = {
   500: "#1F3A68", 600: "#14213D", 700: "#2D5A8C", 800: "#C9DCEF", 900: "#E3EEF8", 950: "#F1F6FB",
 };
 
+/**
+ * El texto de color va sobre papel o sobre tintes pálidos del mismo color, y
+ * con los tonos de relleno quedaba por debajo del contraste mínimo (4.5:1).
+ * Como texto, cada tono claro u oscuro-medio baja a su versión 700-800; los
+ * rellenos (`bg-`, `border-`) siguen con LIGHT_SHADE.
+ */
+const TEXT_SHADE = {
+  50: 900, 100: 900, 200: 800, 300: 800, 400: 800, 500: 700,
+  600: 700, 700: 700, 800: 200, 900: 100, 950: 50,
+};
+const textFamilies = Object.fromEntries(
+  FAMILIES.map(name => [
+    name,
+    Object.fromEntries(Object.entries(TEXT_SHADE).map(([shade, target]) => [shade, defaultColors[name][target]])),
+  ]),
+);
+textFamilies.blue = { ...despachoFamilies.blue, 300: "#1A4F82", 400: "#1A4F82", 600: "#1F3A68", 700: "#1A4F82" };
+
 /** Token con soporte de opacidad (`bg-ink/10`): la variable guarda "r g b". */
 const token = name => `rgb(var(--${name}) / <alpha-value>)`;
 
@@ -49,6 +67,7 @@ export default {
   ],
   theme: {
     extend: {
+      textColor: textFamilies,
       colors: {
         ...despachoFamilies,
         paper: token("paper"),

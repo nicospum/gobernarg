@@ -176,7 +176,7 @@ export function CharacterCreation({ initial, onContinue }: CharacterCreationProp
             onClick={handleSubmit}
             className={`w-full flex items-center justify-center gap-2 font-semibold py-3.5 px-6 rounded-md transition-colors text-lg ${
               !governorName.trim()
-                ? 'bg-sunken text-ink/40 cursor-not-allowed'
+                ? 'bg-sunken text-ink/70 cursor-not-allowed'
                 : 'bg-ink hover:bg-ink/90 text-paper'
             }`}
             disabled={!governorName.trim()}

@@ -3,6 +3,7 @@ import { GameState, DefeatReason } from '../types/game';
 import { IMAGES } from '../utils/imageAssets';
 import { DEFEAT_REASON_CONFIG } from '../data/defeatReasons';
 import { fmtBudget } from '@/lib/format';
+import { useDialog } from '@/lib/useDialog';
 
 interface GameOverModalProps {
   gameState: GameState;
@@ -20,6 +21,7 @@ const DEFEAT_ICONS: Record<DefeatReason, typeof Trophy> = {
 };
 
 export function GameOverModal({ gameState, onRestart, onShowLegacy }: GameOverModalProps) {
+  const dialogRef = useDialog<HTMLDivElement>();
   const isVictory = gameState.victorious;
   const reason = gameState.defeatReason;
   const defeatConfig = !isVictory && reason ? DEFEAT_REASON_CONFIG[reason] : null;
@@ -28,7 +30,7 @@ export function GameOverModal({ gameState, onRestart, onShowLegacy }: GameOverMo
   const DefeatIcon = !isVictory && reason ? DEFEAT_ICONS[reason] : null;
 
   return (
-    <div className="fixed inset-0 bg-ink/85 backdrop-blur-md flex items-center justify-center z-50 p-4">
+    <div ref={dialogRef} className="outline-none fixed inset-0 bg-ink/85 backdrop-blur-md flex items-center justify-center z-50 p-4">
       <div className="relative w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl border border-ink/12 bg-surface">
         <div
           className="absolute inset-0 bg-cover bg-center"
@@ -83,7 +85,7 @@ export function GameOverModal({ gameState, onRestart, onShowLegacy }: GameOverMo
             </h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-ink/4 p-3 rounded-lg border border-ink/6">
-                <p className="text-ink/40 text-[10px] uppercase tracking-widest font-bold">
+                <p className="text-ink/70 text-[10px] uppercase tracking-widest font-bold">
                   Aprobación Final
                 </p>
                 <p className="font-mono text-3xl font-bold text-emerald-400 mt-1">
@@ -91,7 +93,7 @@ export function GameOverModal({ gameState, onRestart, onShowLegacy }: GameOverMo
                 </p>
               </div>
               <div className="bg-ink/4 p-3 rounded-lg border border-ink/6">
-                <p className="text-ink/40 text-[10px] uppercase tracking-widest font-bold">
+                <p className="text-ink/70 text-[10px] uppercase tracking-widest font-bold">
                   Caja del Tesoro
                 </p>
                 <p className="font-mono text-3xl font-bold text-ink mt-1">{fmtBudget(gameState.budget)}</p>

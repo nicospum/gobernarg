@@ -9,7 +9,12 @@ import {
   TrendingUp,
   TrendingDown,
   Minus,
+  MoreHorizontal,
+  ScrollText,
+  NotebookPen,
 } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { ConfirmDialog } from './ConfirmDialog';
 import { GameState } from '../types/game';
 import { IMAGES } from '../utils/imageAssets';
 import { getValueRisk, riskColor } from '@/lib/risk';
@@ -22,6 +27,8 @@ interface GameHeaderProps {
   onRestart: () => void;
   onEndTurn?: () => void;
   canEndTurn?: boolean;
+  onOpenLog?: () => void;
+  onOpenNotebook?: () => void;
 }
 
 const POSITION_LABEL: Record<string, string> = {
@@ -68,8 +75,96 @@ function MandateTimeline({ turn }: { turn: number }) {
 function Stat({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="leading-tight">
-      <div className="text-[10px] text-ink/55 font-medium">{label}</div>
+      <div className="text-[10px] text-ink/70 font-medium">{label}</div>
       <div className="font-mono text-[15px] font-semibold text-ink">{children}</div>
+    </div>
+  );
+}
+
+/**
+ * Menú de la partida. "Reiniciar" vive acá, lejos de "Finalizar turno", y
+ * siempre pide confirmación: antes borraba el mandato con un solo clic.
+ */
+function GameMenu({ governorName, turnLabel, onRestart, onOpenLog, onOpenNotebook }: {
+  governorName: string;
+  turnLabel: string;
+  onRestart: () => void;
+  onOpenLog?: () => void;
+  onOpenNotebook?: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  const boxRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointer = (e: PointerEvent) => {
+      if (!boxRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpen(false);
+        buttonRef.current?.focus();
+      }
+    };
+    document.addEventListener('pointerdown', onPointer);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('pointerdown', onPointer);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  const item = 'w-full flex items-center gap-2.5 px-3 h-11 text-left text-sm rounded-md transition-colors';
+  const run = (fn?: () => void) => () => {
+    setOpen(false);
+    fn?.();
+  };
+
+  return (
+    <div ref={boxRef} className="relative">
+      <button
+        ref={buttonRef}
+        onClick={() => setOpen(o => !o)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        className="flex items-center gap-1.5 text-[12px] text-ink/70 hover:text-ink transition-colors px-2.5 h-10 rounded-md hover:bg-sunken"
+      >
+        <MoreHorizontal size={16} />
+        <span className="hidden md:inline">Menú</span>
+      </button>
+      {open && (
+        <div role="menu" className="absolute right-0 top-full mt-1.5 w-60 rounded-lg border border-rule bg-surface shadow-xl p-1.5 z-50">
+          {onOpenLog && (
+            <button role="menuitem" onClick={run(onOpenLog)} className={`${item} text-ink hover:bg-sunken`}>
+              <ScrollText size={15} className="text-ink/70" /> Historial de gestión
+            </button>
+          )}
+          {onOpenNotebook && (
+            <button role="menuitem" onClick={run(onOpenNotebook)} className={`${item} text-ink hover:bg-sunken`}>
+              <NotebookPen size={15} className="text-ink/70" /> Cuaderno político
+            </button>
+          )}
+          <div className="my-1.5 h-px bg-rule" />
+          <button role="menuitem" onClick={run(() => setConfirming(true))} className={`${item} text-red-400 hover:bg-red-950`}>
+            <RefreshCw size={15} /> Reiniciar partida…
+          </button>
+        </div>
+      )}
+      {confirming && (
+        <ConfirmDialog
+          danger
+          title="¿Reiniciar la partida?"
+          message={`Perdés el mandato de ${governorName || 'tu gobernante'} (${turnLabel}). No se puede deshacer.`}
+          confirmLabel="Sí, reiniciar"
+          onCancel={() => setConfirming(false)}
+          onConfirm={() => {
+            setConfirming(false);
+            onRestart();
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -80,6 +175,8 @@ export function GameHeader({
   onRestart,
   onEndTurn,
   canEndTurn,
+  onOpenLog,
+  onOpenNotebook,
 }: GameHeaderProps) {
   const popularityRisk = getValueRisk(gameState.popularity, 80);
   const stabilityRisk = getValueRisk(gameState.stability, 100);
@@ -118,7 +215,7 @@ export function GameHeader({
             <div className="font-display text-[15px] font-semibold text-ink truncate max-w-[160px]">
               {gameState.governorName || '—'}
             </div>
-            <div className="text-[11px] text-ink/60">
+            <div className="text-[11px] text-ink/70">
               {positionLabel}
               {scenarioDef && <span title={`Escenario: ${scenarioDef.name}`}> · {scenarioDef.name}</span>}
             </div>
@@ -130,7 +227,7 @@ export function GameHeader({
           <div className="flex items-baseline justify-between gap-3 mb-1.5 text-[11px]">
             <span className="text-ink/70">
               <span className="font-semibold text-ink">Turno <span className="font-mono">{absoluteTurn}</span></span>
-              <span className="text-ink/50">/{MAX_TURNS}</span> · Año {gameState.year} · T{gameState.turn}
+              <span className="text-ink/70">/{MAX_TURNS}</span> · Año {gameState.year} · T{gameState.turn}
             </span>
             {nextMilestone && (
               <span className="text-gold-ink font-medium whitespace-nowrap">
@@ -146,17 +243,17 @@ export function GameHeader({
         {/* Recursos del turno e indicadores rápidos */}
         <div className="flex items-center gap-5 flex-none">
           <div className="flex items-center gap-2" title="Acciones disponibles este turno">
-            <PlayCircle size={15} className="text-ink/45" />
+            <PlayCircle size={15} className="text-ink/70" />
             <Stat label="Acciones">{availableActions}</Stat>
           </div>
           <div className="flex items-center gap-2" title="Presupuesto (caja)">
-            <Wallet size={15} className="text-ink/45" />
+            <Wallet size={15} className="text-ink/70" />
             <Stat label="Presupuesto">{fmtBudget(gameState.budget)}</Stat>
           </div>
           <div className="hidden lg:flex items-center gap-2">
-            <Activity size={15} className="text-ink/45" />
+            <Activity size={15} className="text-ink/70" />
             <div className="leading-tight">
-              <div className="text-[10px] text-ink/55 font-medium">Popularidad</div>
+              <div className="text-[10px] text-ink/70 font-medium">Popularidad</div>
               <div className="flex items-baseline gap-1.5">
                 <span className={`font-mono text-[15px] font-semibold ${riskColor(popularityRisk)}`}>
                   {Math.round(gameState.causal?.political.apro ?? gameState.popularity)}%
@@ -164,7 +261,7 @@ export function GameHeader({
                 {popTrend !== null && (
                   <span
                     className={`inline-flex items-center gap-0.5 font-mono text-[11px] ${
-                      popTrend > 0 ? 'text-emerald-400' : popTrend < 0 ? 'text-red-400' : 'text-ink/45'
+                      popTrend > 0 ? 'text-emerald-400' : popTrend < 0 ? 'text-red-400' : 'text-ink/70'
                     }`}
                   >
                     {popTrend > 0 ? <TrendingUp size={11} /> : popTrend < 0 ? <TrendingDown size={11} /> : <Minus size={11} />}
@@ -175,9 +272,9 @@ export function GameHeader({
             </div>
           </div>
           <div className="hidden xl:flex items-center gap-2">
-            <Shield size={15} className="text-ink/45" />
+            <Shield size={15} className="text-ink/70" />
             <div className="leading-tight">
-              <div className="text-[10px] text-ink/55 font-medium">Estabilidad</div>
+              <div className="text-[10px] text-ink/70 font-medium">Estabilidad</div>
               <div className={`font-mono text-[15px] font-semibold ${riskColor(stabilityRisk)}`}>
                 {Math.round(gameState.causal?.political.gob ?? gameState.stability)}
               </div>
@@ -187,23 +284,27 @@ export function GameHeader({
 
         {/* Controles */}
         <div className="flex items-center gap-2 flex-none pl-5 border-l border-rule">
-          <button
-            onClick={onRestart}
-            title="Reiniciar juego"
-            className="flex items-center gap-1.5 text-[12px] text-ink/60 hover:text-ink transition-colors px-2.5 py-2 rounded-md hover:bg-sunken"
-          >
-            <RefreshCw size={13} />
-            <span className="hidden md:inline">Reiniciar</span>
-          </button>
+          <GameMenu
+            governorName={gameState.governorName}
+            turnLabel={`turno ${inMandate} de ${MAX_TURNS}`}
+            onRestart={onRestart}
+            onOpenLog={onOpenLog}
+            onOpenNotebook={onOpenNotebook}
+          />
 
           {onEndTurn && (
             <button
-              onClick={onEndTurn}
+              onClick={e => {
+                // Sin foco en el botón, un Enter posterior no cierra otro turno.
+                e.currentTarget.blur();
+                onEndTurn();
+              }}
               disabled={!canEndTurn}
+              data-no-restore-focus
               className={`flex items-center gap-2 px-4 py-2.5 rounded-md text-[13px] font-semibold transition-all ${
                 canEndTurn
                   ? 'bg-ink hover:bg-ink/90 text-paper shadow-sm active:translate-y-px'
-                  : 'bg-sunken text-ink/35 cursor-not-allowed'
+                  : 'bg-sunken text-ink/70 cursor-not-allowed'
               }`}
             >
               Finalizar turno

@@ -1,6 +1,7 @@
 import { AlertTriangle, Zap, Handshake, Users, Flame } from 'lucide-react';
 import { GameState, MidtermStrategy } from '../types/game';
 import { MIDTERM_STRATEGY_EFFECTS, MIDTERM_CAUSAL } from '../data/midtermStrategies';
+import { useDialog } from '@/lib/useDialog';
 
 interface MidtermStrategyModalProps {
   availableStrategies: MidtermStrategy[];
@@ -60,6 +61,7 @@ export function MidtermStrategyModal({
   gameState,
   onSelect,
 }: MidtermStrategyModalProps) {
+  const dialogRef = useDialog<HTMLDivElement>();
   const outcome = gameState.legislativeResults?.outcome ?? 'tie';
 
   const outcomeLabels: Record<string, string> = {
@@ -71,7 +73,7 @@ export function MidtermStrategyModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-ink/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div ref={dialogRef} className="outline-none fixed inset-0 bg-ink/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="p-6 md:p-8">
           <div className="text-center mb-6">

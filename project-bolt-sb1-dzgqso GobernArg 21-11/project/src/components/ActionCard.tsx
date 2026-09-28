@@ -46,7 +46,7 @@ const RISK_CLS: Record<RiskLevel, string> = {
   critico: 'text-red-400',
   alto: 'text-orange-400',
   medio: 'text-amber-400',
-  bajo: 'text-ink/50',
+  bajo: 'text-ink/70',
 };
 
 /** Nivel de riesgo a partir del texto de riesgos de la acción (heurística de la B0). */
@@ -88,7 +88,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
               <div className="font-semibold text-[11px] text-ink mb-0.5">Qué produce</div>
               {timeline.map(t => (
                 <div key={t.when} className="text-[10px] text-ink/70 leading-snug">
-                  <span className="text-ink/55">{t.when}:</span>{' '}
+                  <span className="text-ink/70">{t.when}:</span>{' '}
                   {t.chips.map((c, i) => (
                     <span key={i}>{i > 0 && ' · '}<ChipInline chip={c} /></span>
                   ))}
@@ -115,7 +115,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
             </div>
           )}
           {action.risksText && <div className="text-[10px] text-amber-300">Riesgo: {action.risksText}</div>}
-          <div className="text-[10px] text-ink/55">
+          <div className="text-[10px] text-ink/70">
             {costLabel} · {pa} acc.{action.cooldown > 1 ? ` · repetible cada ${action.cooldown} turnos` : ''}
           </div>
         </div>
@@ -155,7 +155,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
               </span>
             )}
             {action.tags.map(t => (
-              <span key={t} className="text-[10px] text-ink/55 uppercase tracking-wider">
+              <span key={t} className="text-[10px] text-ink/70 uppercase tracking-wider">
                 · {TAG_LABEL[t] ?? t}
               </span>
             ))}
@@ -183,21 +183,21 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
         {/* Título y descripción */}
         <div>
           <h3 className="font-display font-semibold text-[17px] text-ink leading-snug">{action.name}</h3>
-          <p className="text-[12px] text-ink/65 leading-snug mt-0.5">{action.description}</p>
+          <p className="text-[12px] text-ink/70 leading-snug mt-0.5">{action.description}</p>
         </div>
 
         {/* Costos */}
         <div className="flex items-center gap-3 text-[12px] font-mono">
-          <span className={`font-semibold ${caja > 0 ? 'text-emerald-400' : caja === 0 ? 'text-ink/50' : blockReason === 'No alcanza la caja.' ? 'text-red-400' : 'text-ink'}`}>
+          <span className={`font-semibold ${caja > 0 ? 'text-emerald-400' : caja === 0 ? 'text-ink/70' : blockReason === 'No alcanza la caja.' ? 'text-red-400' : 'text-ink'}`}>
             {costLabel}
           </span>
           <span className="inline-flex items-center gap-1 text-ink/80">
-            <Flag size={11} className="text-ink/45" />
+            <Flag size={11} className="text-ink/70" />
             {pa} acc.
           </span>
           {action.cooldown > 1 && (
-            <span className="inline-flex items-center gap-1 text-ink/60" title="Turnos entre usos">
-              <Clock size={11} className="text-ink/45" />
+            <span className="inline-flex items-center gap-1 text-ink/70" title="Turnos entre usos">
+              <Clock size={11} className="text-ink/70" />
               cada {action.cooldown}t
             </span>
           )}
@@ -208,7 +208,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
           <div className="space-y-1.5">
             {timeline.slice(0, 2).map(t => (
               <div key={t.when}>
-                <div className="text-[10px] uppercase tracking-wider text-ink/50 mb-0.5">{t.when}</div>
+                <div className="text-[10px] uppercase tracking-wider text-ink/70 mb-0.5">{t.when}</div>
                 <div className="flex flex-wrap gap-1">
                   {t.chips.slice(0, 3).map((c, i) => (
                     <span key={i} className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded border text-[11px] ${toneChipClass(c.tone)}`}>
@@ -218,7 +218,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
                 </div>
               </div>
             ))}
-            {timeline.length > 2 && <div className="text-[11px] text-ink/50">+ efectos posteriores (ver detalle)</div>}
+            {timeline.length > 2 && <div className="text-[11px] text-ink/70">+ efectos posteriores (ver detalle)</div>}
           </div>
         )}
 
@@ -235,8 +235,8 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
             {repetitionWarning}
           </div>
         ) : winners.length + losers.length > 0 ? (
-          <div className="flex items-start gap-1.5 text-[11px] text-ink/65 leading-snug">
-            <Users size={11} className="mt-0.5 flex-shrink-0 text-ink/45" />
+          <div className="flex items-start gap-1.5 text-[11px] text-ink/70 leading-snug">
+            <Users size={11} className="mt-0.5 flex-shrink-0 text-ink/70" />
             <span>
               {winners.slice(0, 2).map(a => ACTORS[a].shortName).join(', ')}
               {winners.length > 0 && losers.length > 0 && ' · '}

@@ -127,7 +127,7 @@ function AbilityCard({ ability, archetype, gameState, onUseAbility, disabled }: 
 
       {effects.length > 0 && (
         <div className="bg-surface p-3 rounded-lg border border-ink/6">
-          <div className="text-[9px] text-ink/40 uppercase tracking-widest font-bold mb-1.5">
+          <div className="text-[9px] text-ink/70 uppercase tracking-widest font-bold mb-1.5">
             EFECTOS
           </div>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1">
@@ -143,7 +143,7 @@ function AbilityCard({ ability, archetype, gameState, onUseAbility, disabled }: 
 
       {isOnCooldown && (
         <div>
-          <div className="flex items-center justify-between text-[10px] text-ink/50 mb-1 font-mono">
+          <div className="flex items-center justify-between text-[10px] text-ink/70 mb-1 font-mono">
             <span className="inline-flex items-center gap-1">
               <Clock size={10} />
               Enfriamiento activo
@@ -167,7 +167,7 @@ function AbilityCard({ ability, archetype, gameState, onUseAbility, disabled }: 
         className={`w-full inline-flex items-center justify-center gap-2 py-2.5 rounded-lg font-display text-[14px] font-semibold   transition-all shadow-md ${
           canUse
             ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/20 active:translate-y-0.5'
-            : 'bg-ink/5 text-ink/30 cursor-not-allowed border border-ink/8'
+            : 'bg-ink/5 text-ink/70 cursor-not-allowed border border-ink/8'
         }`}
       >
         <Zap size={14} />
@@ -213,7 +213,7 @@ export function SpecialAbilitiesPanel({
           </h2>
         </div>
         {multiple && (
-          <span className="text-[10px] text-ink/50 font-mono">
+          <span className="text-[10px] text-ink/70 font-mono">
             {selectedIndex + 1} / {abilities.length}
           </span>
         )}

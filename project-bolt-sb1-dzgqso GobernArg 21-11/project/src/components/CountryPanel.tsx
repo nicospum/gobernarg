@@ -17,7 +17,7 @@ import { InfoTooltip } from './InfoTooltip';
 const MACROS: MacroCategory[] = ['Economía', 'Estado y servicios', 'Desarrollo', 'Instituciones y sociedad'];
 
 function Trend({ delta, id }: { delta: number | null; id: IndicatorId }) {
-  if (delta === null || Math.abs(delta) < 0.4) return <Minus size={10} className="text-muted-foreground/60" />;
+  if (delta === null || Math.abs(delta) < 0.4) return <Minus size={10} className="text-muted-foreground" />;
   const dir = INDICATORS[id].goodDirection;
   const good = dir === 0 ? null : Math.sign(delta) === dir;
   const cls = good === null ? 'text-sky-300' : good ? 'text-emerald-400' : 'text-red-400';
@@ -42,10 +42,10 @@ export function CountryPanel({ gameState }: { gameState: GameState }) {
           Detalle Macroeconómico & Motor Causal ({INDICATOR_IDS.length} Indicadores)
         </h2>
         <div className="flex items-center gap-2">
-          <span className="text-[11px] text-ink/55">
+          <span className="text-[11px] text-ink/70">
             {open ? 'Ocultar matriz' : 'Desplegar matriz'}
           </span>
-          {open ? <ChevronDown size={14} className="text-ink/40" /> : <ChevronRight size={14} className="text-ink/40" />}
+          {open ? <ChevronDown size={14} className="text-ink/70" /> : <ChevronRight size={14} className="text-ink/70" />}
         </div>
       </button>
       {open && (
@@ -69,7 +69,7 @@ export function CountryPanel({ gameState }: { gameState: GameState }) {
                         <div className="flex flex-col gap-1 max-w-[260px]">
                           <div className="font-semibold text-xs text-ink">{def.name}</div>
                           <div className="text-[10px] text-ink/70">{def.definition}</div>
-                          <div className="text-[10px] text-ink/50">
+                          <div className="text-[10px] text-ink/70">
                             Alto: {def.high} | Bajo: {def.low}
                           </div>
                           {partial && <div className="text-[10px] text-amber-300">Dato estimado: sólo se conoce tendencia.</div>}
@@ -79,7 +79,7 @@ export function CountryPanel({ gameState }: { gameState: GameState }) {
                       <div className="flex items-center justify-between gap-2 cursor-help group hover:bg-sunken/70 px-1 py-[3px] rounded transition-colors">
                         <span className="text-[11px] text-ink/80 group-hover:text-ink truncate flex items-center gap-1 font-medium">
                           {def.name}
-                          {partial && <EyeOff size={9} className="text-ink/30 flex-shrink-0" />}
+                          {partial && <EyeOff size={9} className="text-ink/70 flex-shrink-0" />}
                         </span>
                         <span className="flex items-center gap-1.5 flex-shrink-0">
                           <span className={`text-[11px] font-mono font-semibold ${toneClass(band.tone)}`}>

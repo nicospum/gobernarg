@@ -25,6 +25,7 @@ import { MidtermStrategyModal } from './components/MidtermStrategyModal';
 import { NotificationCenter } from './components/NotificationCenter';
 import { ManagementNotebook } from './components/ManagementNotebook';
 import { CountryPanel } from './components/CountryPanel';
+import { clearSavedGame, loadGame, saveGame } from './lib/savegame';
 
 import type { AdvisorWithStatus, ElectionResults, TurnSummary, MidtermStrategy } from './types/game';
 import type { ActorId } from './data/causal';
@@ -64,6 +65,19 @@ function App() {
   const [showLegacy, setShowLegacy] = useState(false);
   // Anti doble-clic en eventos: id del último evento cuya elección se procesó.
   const lastProcessedEventRef = useRef<string | null>(null);
+  // Candado de "Finalizar turno": se abre recién cuando el turno nuevo ya se dibujó.
+  const endTurnLockRef = useRef(false);
+  useEffect(() => {
+    endTurnLockRef.current = false;
+  }, [gameState]);
+  // Partida guardada en el navegador (se lee una vez, al abrir el juego).
+  const [savedGame, setSavedGame] = useState(() => loadGame());
+  const boardRef = useRef<HTMLDivElement>(null);
+
+  // Guardado automático: cada cambio de la partida (y los eventos sin responder).
+  useEffect(() => {
+    if (gameStarted) saveGame(gameState, pendingEvents);
+  }, [gameStarted, gameState, pendingEvents]);
 
   // Ganar la partida queda registrado por escenario (progreso guardado en el navegador).
   useEffect(() => {
@@ -85,6 +99,18 @@ function App() {
 
   const handleStart = (_isAdmin: boolean) => {
     setShowWelcomeScreen(false);
+  };
+
+  const handleContinue = () => {
+    if (!savedGame) return;
+    const { state, pendingEvents: events } = savedGame;
+    // La elección que ya estaba en pantalla no se vuelve a contar para desbloqueos.
+    countedElectionRef.current = state.electionResults;
+    setGameState(state);
+    setPendingEvents(events);
+    setShowMidtermStrategy(!!state.pendingMidtermStrategy);
+    setShowWelcomeScreen(false);
+    setGameStarted(true);
   };
 
   const handleCharacterContinue = (next: CharacterDraft) => {
@@ -125,7 +151,22 @@ function App() {
     setGameState(prev => dismissAdvisor(prev, advisor.id));
   };
 
+  // Con un modal abierto el tablero queda inerte: no se puede cerrar el turno
+  // ni tocar nada de atrás (ni con el teclado).
+  const modalOpen =
+    showTurnSummary || pendingEvents.length > 0 || !!gameState.pendingElection || !!gameState.electionResults ||
+    showMidtermStrategy || showGameLog || showNotebook || gameState.gameOver;
+  useEffect(() => {
+    const board = boardRef.current;
+    if (!board) return;
+    if (modalOpen) board.setAttribute('inert', '');
+    else board.removeAttribute('inert');
+  }, [modalOpen, gameStarted]);
+
   const handleEndTurn = () => {
+    // Un doble clic, o un Enter con un modal abierto, cerraba un turno de más.
+    if (endTurnLockRef.current || modalOpen) return;
+    endTurnLockRef.current = true;
     const result = processEndTurn(gameState);
     setGameState(result.state);
 
@@ -177,6 +218,8 @@ function App() {
   };
 
   const handleRestart = () => {
+    clearSavedGame();
+    setSavedGame(null);
     setGameState(getInitialGameState());
     setGameStarted(false);
     setShowWelcome(false);
@@ -188,7 +231,7 @@ function App() {
   };
 
   if (showWelcomeScreen) {
-    return <WelcomeScreen onStart={handleStart} />;
+    return <WelcomeScreen onStart={handleStart} saved={savedGame?.state} onContinue={handleContinue} />;
   }
 
   if (!gameStarted) {
@@ -215,12 +258,15 @@ function App() {
   return (
     <div className="min-h-screen bg-paper text-ink">
       <Toaster position="bottom-right" toastOptions={{ style: { background: "rgb(20 33 61)", color: "rgb(251 248 242)", border: "none" } }} />
+      <div ref={boardRef}>
       <GameHeader
         gameState={gameState}
         availableActions={gameState.actions}
         onRestart={handleRestart}
         onEndTurn={handleEndTurn}
-        canEndTurn={!gameState.gameOver && !gameState.pendingElection}
+        canEndTurn={!modalOpen}
+        onOpenLog={() => setShowGameLog(true)}
+        onOpenNotebook={() => setShowNotebook(true)}
       />
 
       <main className="max-w-[1680px] mx-auto p-4 md:p-6 space-y-5">
@@ -291,6 +337,7 @@ function App() {
           </div>
         </div>
       </main>
+      </div>
 
       {showTurnSummary && turnSummary && (
         <TurnSummaryModal

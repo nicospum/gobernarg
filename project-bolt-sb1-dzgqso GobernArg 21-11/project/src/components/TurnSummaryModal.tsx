@@ -17,6 +17,7 @@ import { CAUSAL_ACTIONS_BY_ID, INDICATORS } from '@/data/causal';
 import { actorReactions, indicatorChanges } from '@/lib/turnExplain';
 import { arrows, toneOf, toneClass } from '@/lib/causalText';
 import { getActorIcon } from '../utils/actorIcons';
+import { useDialog } from '@/lib/useDialog';
 
 interface TurnSummaryModalProps {
   summary: TurnSummary;
@@ -34,6 +35,7 @@ function Delta({ value, suffix = '' }: { value: number; suffix?: string }) {
 }
 
 export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryModalProps) {
+  const dialogRef = useDialog<HTMLDivElement>(onClose);
   const record = gameState.causal.records.find(r => r.turn === summary.causalTurn) ?? null;
   const headerImage = summary.inflationEvent.triggered
     ? IMAGES.events.economicCrisis
@@ -44,7 +46,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
   const reactions = record ? actorReactions(record, gameState.causal.platformId) : [];
 
   return (
-    <div className="fixed inset-0 bg-ink/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+    <div ref={dialogRef} className="outline-none fixed inset-0 bg-ink/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -63,7 +65,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
                 Año {summary.year} · Trimestre {summary.quarter}
               </p>
             </div>
-            <button onClick={onClose} aria-label="Cerrar resumen" className="p-1.5 text-ink/50 hover:text-ink rounded-lg transition-colors bg-ink/5 border border-ink/8">
+            <button onClick={onClose} aria-label="Cerrar resumen" className="p-1.5 text-ink/70 hover:text-ink rounded-lg transition-colors bg-ink/5 border border-ink/8">
               <X className="w-5 h-5" />
             </button>
           </div>
@@ -78,7 +80,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
                 POLÍTICAS EJECUTADAS ESTE TRIMESTRE
               </h4>
               {record.actions.length === 0 ? (
-                <p className="text-[12px] text-ink/40 font-mono">Sin acciones en la agenda este trimestre.</p>
+                <p className="text-[12px] text-ink/70 font-mono">Sin acciones en la agenda este trimestre.</p>
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {record.actions.map((a, i) => (
@@ -107,7 +109,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
                       <span className="flex items-center gap-2">
                         <span className={`font-mono font-bold ${toneClass(tone)}`}>{arrows(ch.delta)}</span>
                         {ch.causes.length > 0 && (
-                          <span className="text-ink/40 text-[10px]"> ({ch.causes.map(c => c.text).join(', ')})</span>
+                          <span className="text-ink/70 text-[10px]"> ({ch.causes.map(c => c.text).join(', ')})</span>
                         )}
                       </span>
                     </li>
@@ -132,7 +134,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
                       <div className="flex items-center gap-2">
                         {icon && <img src={icon} alt="" className="w-5 h-5 rounded object-contain" />}
                         <span className="text-ink font-medium">{r.name}</span>
-                        {r.reason && <span className="text-ink/50 text-[10px]">— {r.reason}</span>}
+                        {r.reason && <span className="text-ink/70 text-[10px]">— {r.reason}</span>}
                       </div>
                       <span className={`font-mono font-bold ${r.delta > 0 ? 'text-emerald-400' : 'text-red-400'}`}>{arrows(r.delta)}</span>
                     </li>
@@ -146,7 +148,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
           {record && (
             <section className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="rounded-lg border border-ink/8 bg-surface p-3.5">
-                <p className="flex items-center gap-1.5 font-bold text-[10px] text-ink/40 uppercase tracking-widest mb-2">
+                <p className="flex items-center gap-1.5 font-bold text-[10px] text-ink/70 uppercase tracking-widest mb-2">
                   <Vote className="w-3.5 h-3.5 text-blue-400" /> INDICADORES POLÍTICOS
                 </p>
                 <div className="text-[12px] space-y-1.5 font-medium">
@@ -156,7 +158,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
                 </div>
               </div>
               <div className="rounded-lg border border-ink/8 bg-surface p-3.5">
-                <p className="flex items-center gap-1.5 font-bold text-[10px] text-ink/40 uppercase tracking-widest mb-2">
+                <p className="flex items-center gap-1.5 font-bold text-[10px] text-ink/70 uppercase tracking-widest mb-2">
                   <Wallet className="w-3.5 h-3.5 text-emerald-400" /> RESULTADO DE CUENTAS
                 </p>
                 <div className="text-[12px] space-y-1.5 font-medium">
@@ -186,7 +188,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
                 ))}
               </ul>
             ) : (
-              <p className="text-[12px] text-ink/40 font-mono">Trimestre finalizado sin contingencias graves.</p>
+              <p className="text-[12px] text-ink/70 font-mono">Trimestre finalizado sin contingencias graves.</p>
             )}
           </section>
 

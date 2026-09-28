@@ -1,6 +1,7 @@
 import { ScrollText, TrendingUp, DollarSign, AlertTriangle } from 'lucide-react';
 import { GameState } from '../types/game';
 import { actionDefinitions } from '../data/actionRegistry';
+import { useDialog } from '@/lib/useDialog';
 
 interface GameLogProps {
   gameState: GameState;
@@ -8,10 +9,11 @@ interface GameLogProps {
 }
 
 export function GameLog({ gameState, onClose }: GameLogProps) {
+  const dialogRef = useDialog<HTMLDivElement>(onClose);
   const entries = [...gameState.turnLog].reverse();
 
   return (
-    <div className="fixed inset-0 bg-ink/60 flex items-center justify-center z-50 p-4">
+    <div ref={dialogRef} className="outline-none fixed inset-0 bg-ink/60 flex items-center justify-center z-50 p-4">
       <div className="bg-card rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col">
         <div className="p-6 border-b flex items-center justify-between">
           <h2 className="text-xl font-bold flex items-center gap-2">

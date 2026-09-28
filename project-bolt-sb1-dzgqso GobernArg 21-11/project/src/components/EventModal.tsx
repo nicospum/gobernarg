@@ -6,6 +6,7 @@ import { GameEvent } from '../systems/events/types';
 import { getEventImage } from '../utils/imageAssets';
 import { eventChoiceEffects } from '../engine/eventResolver';
 import { effectChip, toneChipClass } from '@/lib/causalText';
+import { useDialog } from '@/lib/useDialog';
 
 interface EventModalProps {
   event: GameEvent;
@@ -42,6 +43,7 @@ const SEVERITY_LABELS: Record<GameEvent['severity'], string> = {
 };
 
 export function EventModal({ event, onChoice, onClose }: EventModalProps) {
+  const dialogRef = useDialog<HTMLDivElement>();
   const SeverityIcon =
     event.severity === 'critical'
       ? AlertTriangle
@@ -69,7 +71,7 @@ export function EventModal({ event, onChoice, onClose }: EventModalProps) {
   const eventImage = getEventImage(event.category, event.severity, event.id);
 
   return (
-    <div className="fixed inset-0 bg-ink/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+    <div ref={dialogRef} className="outline-none fixed inset-0 bg-ink/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
       <div className="w-full max-w-2xl rounded-2xl shadow-2xl bg-surface border border-ink/12 overflow-hidden animate-in fade-in zoom-in-95">
         {/* ---------- Header image ---------- */}
         <div className="relative h-48 md:h-60">
@@ -94,7 +96,7 @@ export function EventModal({ event, onChoice, onClose }: EventModalProps) {
         >
           <CategoryIcon className="w-3.5 h-3.5 flex-shrink-0" />
           <span>EVENTO {categoryLabel.toUpperCase()}</span>
-          <span className="opacity-40">·</span>
+          <span className="text-ink/70">·</span>
           <span>SEVERIDAD {(SEVERITY_LABELS[event.severity] ?? event.severity).toUpperCase()}</span>
         </div>
 
@@ -116,13 +118,13 @@ export function EventModal({ event, onChoice, onClose }: EventModalProps) {
                     <div className="flex flex-wrap gap-1.5 mt-2.5">
                       {chips.map((c, i) => (
                         <span key={i} className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md border text-[11px] font-mono font-bold ${toneChipClass(c.tone)}`}>
-                          <span className="opacity-80">{c.label}</span>
+                          <span>{c.label}</span>
                           <span>{c.text}</span>
                         </span>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-[11px] text-ink/40 mt-1.5 font-mono">Sin efectos inmediatos sobre indicadores.</p>
+                    <p className="text-[11px] text-ink/70 mt-1.5 font-mono">Sin efectos inmediatos sobre indicadores.</p>
                   )}
                 </button>
               );

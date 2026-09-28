@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, Star } from 'lucide-react';
 import { AdvisorWithStatus } from '../types/game';
+import { useDialog } from '@/lib/useDialog';
 
 interface AdvisorDismissModalProps {
   onClose: () => void;
@@ -9,6 +10,7 @@ interface AdvisorDismissModalProps {
 }
 
 export function AdvisorDismissModal({ onClose, onDismiss, advisors }: AdvisorDismissModalProps) {
+  const dialogRef = useDialog<HTMLDivElement>(onClose);
   const [selectedAdvisor, setSelectedAdvisor] = useState<AdvisorWithStatus | null>(null);
 
   const handleAdvisorSelect = (advisor: AdvisorWithStatus) => {
@@ -16,7 +18,7 @@ export function AdvisorDismissModal({ onClose, onDismiss, advisors }: AdvisorDis
   };
 
   return (
-    <div className="fixed inset-0 bg-ink/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div ref={dialogRef} className="outline-none fixed inset-0 bg-ink/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-card border border-border rounded-xl w-full max-w-4xl max-h-[85vh] overflow-hidden shadow-2xl">
         <div className="px-5 py-4 border-b border-border flex justify-between items-center">
           <h2 className="font-display text-xl font-semibold   text-destructive">Despedir Asesor</h2>

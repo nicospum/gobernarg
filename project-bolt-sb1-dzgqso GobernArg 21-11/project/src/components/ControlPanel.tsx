@@ -71,7 +71,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
         <h2 className="font-display font-semibold text-[22px] text-ink">
           Acciones políticas
         </h2>
-        <span className="text-[12px] text-ink/55 font-mono">
+        <span className="text-[12px] text-ink/70 font-mono">
           {inCategory.filter(a => a.available).length} disponibles · {inCategory.length} en total
         </span>
       </div>
@@ -111,7 +111,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all whitespace-nowrap ${
             selectedCategory === 'todas'
               ? 'bg-ink text-paper'
-              : 'text-ink/65 hover:text-ink hover:bg-sunken'
+              : 'text-ink/70 hover:text-ink hover:bg-sunken'
           }`}
         >
           <LayoutGrid size={13} />
@@ -127,7 +127,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all whitespace-nowrap ${
                 isActive
                   ? 'bg-ink text-paper'
-                  : 'text-ink/65 hover:text-ink hover:bg-sunken'
+                  : 'text-ink/70 hover:text-ink hover:bg-sunken'
               }`}
             >
               <img src={style.imageSrc} alt={style.label} className="w-3.5 h-3.5 object-contain" />
@@ -142,7 +142,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
 
       {/* Bloqueadas: ocultas por defecto */}
       {blockedCount > 0 && (
-        <div className="mx-5 mb-3 flex items-center justify-between gap-2 text-[12px] text-ink/60">
+        <div className="mx-5 mb-3 flex items-center justify-between gap-2 text-[12px] text-ink/70">
           <span>
             {showBlocked
               ? `Mostrando ${blockedCount} bloqueada${blockedCount === 1 ? '' : 's'} (requisitos, espera o Congreso).`
@@ -161,7 +161,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
       {/* Grid de tarjetas */}
       <div className="flex-1 overflow-y-auto px-5 pb-5 max-h-[min(760px,calc(100vh-190px))]">
         {filtered.length === 0 ? (
-          <div className="text-center py-12 text-[12px] text-ink/40">
+          <div className="text-center py-12 text-[12px] text-ink/70">
             {inCategory.length === 0 ? 'No hay acciones en esta categoría.' : 'Todas las acciones de esta categoría están bloqueadas por ahora.'}
           </div>
         ) : (
@@ -187,7 +187,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
             ? 'Sin acciones en agenda este turno'
             : `${gameState.selectedActions.length} ${gameState.selectedActions.length === 1 ? 'acción elegida' : 'acciones elegidas'} (${fmtBudgetDelta(selectedCaja)})`}
         </span>
-        <span className="text-ink/65 font-mono text-[12px]" title="Estimación: caja actual + costo de lo elegido + recaudación − gasto corriente − intereses. No incluye efectos diferidos ni eventos.">
+        <span className="text-ink/70 font-mono text-[12px]" title="Estimación: caja actual + costo de lo elegido + recaudación − gasto corriente − intereses. No incluye efectos diferidos ni eventos.">
           Caja proyectada:{' '}
           <span className={`font-bold ${projection.caja >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{fmtBudget(projection.caja)}</span>
           {' · '}Balance estructural:{' '}

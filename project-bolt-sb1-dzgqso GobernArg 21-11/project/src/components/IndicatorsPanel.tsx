@@ -27,7 +27,7 @@ interface IndicatorCard {
 function TrendChip({ value, inverse = false }: { value: number | null; inverse?: boolean }) {
   if (value === null) {
     return (
-      <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground/70 font-mono">
+      <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground font-mono">
         <Minus size={10} />—
       </span>
     );
@@ -69,7 +69,7 @@ function IndicatorCardView({ card }: { card: IndicatorCard }) {
     >
       <div className="flex-1 min-w-[170px] px-5 py-4 cursor-help transition-colors hover:bg-sunken/60">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-[11px] text-ink/60 font-medium flex items-center gap-1">
+          <span className="text-[11px] text-ink/70 font-medium flex items-center gap-1">
             {card.label}
             <Info size={10} className="opacity-40" />
           </span>
@@ -79,7 +79,7 @@ function IndicatorCardView({ card }: { card: IndicatorCard }) {
           <span className={`font-display text-[34px] font-semibold leading-none ${riskColor(risk)}`}>
             {Math.round(card.value)}
           </span>
-          <span className="font-display text-[16px] text-ink/50">{card.unit}</span>
+          <span className="font-display text-[16px] text-ink/70">{card.unit}</span>
         </div>
         <div className="relative h-1 w-full rounded-full bg-sunken">
           <div
@@ -95,7 +95,7 @@ function IndicatorCardView({ card }: { card: IndicatorCard }) {
           )}
         </div>
         <div className="flex items-center justify-between mt-2">
-          <span className="text-[10px] text-ink/55">
+          <span className="text-[10px] text-ink/70">
             {card.targetLabel ? card.targetLabel : `Escala 0-${card.max}`}
           </span>
           <span className={`text-[10px] font-semibold uppercase tracking-wider ${riskColor(risk)}`}>
@@ -128,7 +128,7 @@ function BudgetIndicatorCard({ gameState }: { gameState: GameState }) {
               {last.fiscal.financiamiento !== 0 && <div>Financiamiento: {fmtBudgetDelta(last.fiscal.financiamiento)}</div>}
             </div>
           )}
-          <div className="text-[10px] text-ink/50 mt-1">
+          <div className="text-[10px] text-ink/70 mt-1">
             Deuda: {fmtBudget(c.deuda)} (intereses {fmtBudget(debtService(c))}/turno). Gasto fijo: {fmtBudget(c.gastoCorr)}/turno.
           </div>
         </div>
@@ -136,7 +136,7 @@ function BudgetIndicatorCard({ gameState }: { gameState: GameState }) {
     >
       <div className="flex-1 min-w-[170px] px-5 py-4 cursor-help transition-colors hover:bg-sunken/60">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-[11px] text-ink/60 font-medium flex items-center gap-1">
+          <span className="text-[11px] text-ink/70 font-medium flex items-center gap-1">
             <Wallet size={10} className="opacity-60" />
             Presupuesto / Caja
             <Info size={10} className="opacity-40" />
@@ -154,7 +154,7 @@ function BudgetIndicatorCard({ gameState }: { gameState: GameState }) {
           />
         </div>
         <div className="flex items-center justify-between mt-2">
-          <span className="text-[10px] text-ink/55">
+          <span className="text-[10px] text-ink/70">
             {result === null ? 'Recaudación activa' : `Balance ${fmtBudgetDelta(result)}`}
           </span>
           <span className={`text-[10px] font-semibold uppercase tracking-wider ${valueColor}`}>

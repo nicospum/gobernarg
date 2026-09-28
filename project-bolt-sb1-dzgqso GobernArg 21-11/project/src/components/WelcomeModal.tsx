@@ -1,5 +1,6 @@
 import { Position } from '../types/game';
 import { IMAGES, getPositionBackground } from '../utils/imageAssets';
+import { useDialog } from '@/lib/useDialog';
 
 interface WelcomeModalProps {
   governorName: string;
@@ -8,6 +9,7 @@ interface WelcomeModalProps {
 }
 
 export function WelcomeModal({ governorName, position, onStart }: WelcomeModalProps) {
+  const dialogRef = useDialog<HTMLDivElement>();
   const getTerritory = (pos: Position) => {
     switch (pos) {
       case 'intendente':
@@ -31,7 +33,7 @@ export function WelcomeModal({ governorName, position, onStart }: WelcomeModalPr
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-paper">
+    <div ref={dialogRef} className="outline-none fixed inset-0 z-50 flex items-center justify-center p-4 bg-paper">
       {/* Imagen de fondo según cargo, velada en papel */}
       <div
         className="absolute inset-0 bg-cover bg-center"

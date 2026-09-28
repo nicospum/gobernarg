@@ -8,6 +8,7 @@ import {
   calculateVotingIntentionForOption,
 } from '../utils/electionSystem';
 import { PROMOTION_MIN_POPULARITY, PROMOTION_DIFFICULTY } from '../data/careerRules';
+import { useDialog } from '@/lib/useDialog';
 
 interface ReelectionChoiceModalProps {
   gameState: GameState;
@@ -15,10 +16,11 @@ interface ReelectionChoiceModalProps {
 }
 
 export function ReelectionChoiceModal({ gameState, onSelect }: ReelectionChoiceModalProps) {
+  const dialogRef = useDialog<HTMLDivElement>();
   const options = gameState.pendingElectionOptions;
 
   return (
-    <div className="fixed inset-0 bg-ink/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div ref={dialogRef} className="outline-none fixed inset-0 bg-ink/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-card border border-border rounded-xl w-full max-w-2xl overflow-hidden shadow-2xl">
         <div className="border-b border-border p-6 text-center">
           <h2 className="font-display text-3xl font-semibold   text-foreground mb-2">

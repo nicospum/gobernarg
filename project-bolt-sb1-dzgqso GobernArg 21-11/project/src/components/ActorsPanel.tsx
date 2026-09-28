@@ -161,7 +161,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
       {fresh ? (
         <p className="text-[10px] text-foreground/70 leading-snug mb-1.5">{concernSentence(c, actor)}</p>
       ) : (
-        <p className="text-[10px] text-muted-foreground/70 leading-snug mb-1.5 italic">
+        <p className="text-[10px] text-muted-foreground leading-snug mb-1.5 italic">
           {organized ? 'Sin reunión reciente: no sabés qué les preocupa.' : 'Sin encuesta reciente: sólo una impresión general.'}
         </p>
       )}
@@ -213,7 +213,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
               className="flex-1 inline-flex items-center justify-center gap-1 text-[9px] text-muted-foreground hover:text-foreground border border-border hover:border-ink/20 px-1.5 py-1 rounded transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             >
               <MessageSquare size={9} />
-              Reunirse {!meetReason && <span className="font-mono text-[8px] opacity-80">{meetingCost(c, actor) === 0 ? 'gratis' : '1PA'}</span>}
+              Reunirse {!meetReason && <span className="font-mono text-[10px]">{meetingCost(c, actor) === 0 ? 'gratis' : '1PA'}</span>}
             </button>
             {offerOpen ? (
               <button
@@ -232,7 +232,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
                 className="flex-1 inline-flex items-center justify-center gap-1 text-[9px] text-muted-foreground hover:text-foreground border border-border hover:border-ink/20 px-1.5 py-1 rounded transition-all disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 <Handshake size={9} />
-                Negociar {!negReason && <span className="text-[8px] opacity-80">({chanceLabel(negotiationChance(c, actor))})</span>}
+                Negociar {!negReason && <span className="text-[10px]">({chanceLabel(negotiationChance(c, actor))})</span>}
               </button>
             )}
           </>
@@ -244,7 +244,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
             className="flex-1 inline-flex items-center justify-center gap-1 text-[9px] text-muted-foreground hover:text-foreground border border-border hover:border-ink/20 px-1.5 py-1 rounded transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
             <BarChart3 size={9} />
-            Encuesta <span className="font-mono text-[8px] opacity-80">{c.perks.freePolls ? 'gratis' : `$${POLL_COST}M`}</span>
+            Encuesta <span className="font-mono text-[10px]">{c.perks.freePolls ? 'gratis' : `$${POLL_COST}M`}</span>
           </button>
         )}
       </div>
@@ -265,7 +265,7 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }:
           Actores & grupos de interés
         </h3>
       </div>
-      <p className="text-[10px] text-ink/50 mb-3 flex items-start gap-1 leading-snug">
+      <p className="text-[10px] text-ink/70 mb-3 flex items-start gap-1 leading-snug">
         <Info size={11} className="mt-0.5 flex-shrink-0 text-blue-400" />
         Relación = vínculo político con tu gobierno. Satisfacción = evaluación de gestión. Mantener reuniones revela demandas y preocupaciones.
       </p>
@@ -315,7 +315,7 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }:
                     </div>
                   </div>
                 </div>
-                {isOpen ? <ChevronDown size={14} className="text-ink/40" /> : <ChevronRight size={14} className="text-ink/40" />}
+                {isOpen ? <ChevronDown size={14} className="text-ink/70" /> : <ChevronRight size={14} className="text-ink/70" />}
               </button>
               {isOpen && (
                 <div className="border-t border-ink/8 divide-y divide-ink/6 bg-paper/50">
@@ -328,7 +328,7 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }:
           );
         })}
       </div>
-      <p className="text-[9px] font-mono text-ink/40 mt-2.5">
+      <p className="text-[9px] font-mono text-ink/70 mt-2.5">
         {freeLeft > 0
           ? (freeLeft > 1 ? `Te quedan ${freeLeft} reuniones gratis este turno.` : 'Te queda 1 reunión gratis este turno.')
           : 'Las reuniones de este turno ya cuestan 1 PA.'}

@@ -42,8 +42,8 @@ function turnsToNextElection(state: GameState): { label: string; turns: number }
 function ComponentBar({ label, value, weight, hint }: { label: string; value: number; weight: number; hint: string }) {
   return (
     <div title={hint} className="space-y-0.5">
-      <div className="flex items-center justify-between text-[10px] text-ink/50">
-        <span>{label} <span className="text-ink/30">({Math.round(weight * 100)}%)</span></span>
+      <div className="flex items-center justify-between text-[10px] text-ink/70">
+        <span>{label} <span className="text-ink/70">({Math.round(weight * 100)}%)</span></span>
         <span className="font-mono text-ink font-bold">{Math.round(value)}</span>
       </div>
       <div className="h-1.5 w-full overflow-hidden rounded-full bg-ink/8">
@@ -84,14 +84,14 @@ function SituacionElectoral({ state }: { state: GameState }) {
 
       <div className="flex items-end justify-between gap-3 bg-sunken/50 px-3 py-2.5 rounded-md">
         <div>
-          <div className="text-[9px] text-ink/40 uppercase tracking-widest font-bold">Intención de voto</div>
+          <div className="text-[9px] text-ink/70 uppercase tracking-widest font-bold">Intención de voto</div>
           <div className={`font-mono text-3xl font-bold leading-none mt-1 ${riskColor(voteColor)}`}>
             {Math.round(p.iv)}%
           </div>
-          <div className="text-[9px] text-ink/40 mt-1 font-mono">Meta victoria: {PARAMS.VOTOS_PARA_GANAR}%</div>
+          <div className="text-[9px] text-ink/70 mt-1 font-mono">Meta victoria: {PARAMS.VOTOS_PARA_GANAR}%</div>
         </div>
         <div className="text-right">
-          <div className="text-[9px] text-ink/40 uppercase tracking-widest font-bold">Riesgo derrota</div>
+          <div className="text-[9px] text-ink/70 uppercase tracking-widest font-bold">Riesgo derrota</div>
           <span className={`inline-block text-[11px] font-bold uppercase tracking-wider mt-1 ${riskColor(risk)}`}>
             {riskLabel(risk)}
           </span>
@@ -110,7 +110,7 @@ function SituacionElectoral({ state }: { state: GameState }) {
             A favor
           </div>
           {favor.length === 0 ? (
-            <div className="text-[10px] text-ink/30">—</div>
+            <div className="text-[10px] text-ink/70">—</div>
           ) : (
             favor.map(a => (
               <div key={a} className="flex items-center justify-between gap-1 mb-1">
@@ -125,7 +125,7 @@ function SituacionElectoral({ state }: { state: GameState }) {
             En contra
           </div>
           {contra.length === 0 ? (
-            <div className="text-[10px] text-ink/30">—</div>
+            <div className="text-[10px] text-ink/70">—</div>
           ) : (
             contra.map(a => {
               const band = satisfactionBand(c.actors[a].sat);
@@ -167,16 +167,16 @@ function CalendarPanel({ state }: { state: GameState }) {
           </h3>
         </div>
         {open ? (
-          <ChevronDown size={14} className="text-ink/40" />
+          <ChevronDown size={14} className="text-ink/70" />
         ) : (
-          <ChevronRight size={14} className="text-ink/40" />
+          <ChevronRight size={14} className="text-ink/70" />
         )}
       </button>
 
       {open && (
         <div className="px-4 pb-4 space-y-2">
           {upcoming.length === 0 ? (
-            <div className="text-[11px] text-ink/40 py-2">Sin eventos próximos en agenda.</div>
+            <div className="text-[11px] text-ink/70 py-2">Sin eventos próximos en agenda.</div>
           ) : (
             upcoming.map(({ ev, abs }) => {
               const diff = abs - current;
@@ -206,7 +206,7 @@ function CalendarPanel({ state }: { state: GameState }) {
                     </div>
                     <div className="flex-shrink-0 text-right">
                       <div className={`font-mono text-[12px] font-bold ${turnCls}`}>T{abs}</div>
-                      <div className="text-[9px] text-ink/40 font-mono">
+                      <div className="text-[9px] text-ink/70 font-mono">
                         en {diff}t
                       </div>
                     </div>
@@ -242,7 +242,7 @@ function severityCls(notif: Notification): { border: string; text: string } {
   if (importance === 'medium') {
     return { border: 'border-amber-500/30 bg-amber-500/10', text: 'text-amber-400' };
   }
-  return { border: 'border-ink/8 bg-surface', text: 'text-ink/50' };
+  return { border: 'border-ink/8 bg-surface', text: 'text-ink/70' };
 }
 
 function NewsPanel({ state }: { state: GameState }) {
@@ -267,16 +267,16 @@ function NewsPanel({ state }: { state: GameState }) {
           )}
         </div>
         {open ? (
-          <ChevronDown size={14} className="text-ink/40" />
+          <ChevronDown size={14} className="text-ink/70" />
         ) : (
-          <ChevronRight size={14} className="text-ink/40" />
+          <ChevronRight size={14} className="text-ink/70" />
         )}
       </button>
 
       {open && (
         <div className="px-4 pb-4 space-y-2">
           {news.length === 0 ? (
-            <div className="text-[11px] text-ink/40 py-2 flex items-center gap-2">
+            <div className="text-[11px] text-ink/70 py-2 flex items-center gap-2">
               <Bell size={12} />
               Sin noticias nuevas por el momento.
             </div>

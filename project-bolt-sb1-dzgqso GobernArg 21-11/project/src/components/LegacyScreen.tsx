@@ -11,6 +11,7 @@ import { IMAGES } from '../utils/imageAssets';
 import { DEFEAT_REASON_CONFIG } from '../data/defeatReasons';
 import { AxisBar } from './AxisBar';
 import { getValueRisk, riskColor } from '@/lib/risk';
+import { useDialog } from '@/lib/useDialog';
 
 interface LegacyScreenProps {
   gameState: GameState;
@@ -71,6 +72,7 @@ function derivePerformance(state: GameState): PerformanceData {
 }
 
 export function LegacyScreen({ gameState, onRestart, onClose }: LegacyScreenProps) {
+  const dialogRef = useDialog<HTMLDivElement>(onClose);
   const isVictory = gameState.victorious;
   const reason = gameState.defeatReason;
   const defeatConfig = !isVictory && reason ? DEFEAT_REASON_CONFIG[reason] : null;
@@ -83,7 +85,7 @@ export function LegacyScreen({ gameState, onRestart, onClose }: LegacyScreenProp
   const targetRisk = getValueRisk(perf.targetAchievement, 100, false);
 
   return (
-    <div className="fixed inset-0 bg-ink/85 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+    <div ref={dialogRef} className="outline-none fixed inset-0 bg-ink/85 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
       <div className="relative w-full max-w-3xl rounded-xl overflow-hidden shadow-2xl bg-card border border-border my-8">
         {/* Header visual */}
         <div className="relative h-48 md:h-56">

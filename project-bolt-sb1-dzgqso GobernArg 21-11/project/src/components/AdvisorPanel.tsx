@@ -51,7 +51,7 @@ export function AdvisorPanel({ gameState, onHireAdvisor, onDismissAdvisor }: Adv
           <h2 className="font-display font-semibold text-lg text-ink  ">
             Gabinete & asesores ({gameState.advisors.length}/2)
           </h2>
-          <p className="text-[10px] text-ink/50">Equipá tu gobierno con expertos en áreas clave</p>
+          <p className="text-[10px] text-ink/70">Equipá tu gobierno con expertos en áreas clave</p>
         </div>
         <div className="flex gap-2">
           {!gameState.advisorActionUsed && gameState.advisors.length > 0 && (
@@ -77,7 +77,7 @@ export function AdvisorPanel({ gameState, onHireAdvisor, onDismissAdvisor }: Adv
 
       <div className="space-y-3">
         {gameState.advisors.length === 0 ? (
-          <p className="text-ink/40 text-center py-6 text-[12px] bg-paper/50 rounded-lg border border-ink/6 p-4">
+          <p className="text-ink/70 text-center py-6 text-[12px] bg-paper/50 rounded-lg border border-ink/6 p-4">
             Sin asesores activos. Podés contratar hasta 2 asesores para potenciar la gestión y ganar bonificaciones.
           </p>
         ) : (
@@ -105,7 +105,7 @@ export function AdvisorPanel({ gameState, onHireAdvisor, onDismissAdvisor }: Adv
                         </div>
                       </div>
                       <p className="text-[11px] font-semibold text-blue-300">{advisor.specialty}</p>
-                      <p className="text-[11px] text-ink/60 mt-0.5 line-clamp-2">{advisor.description}</p>
+                      <p className="text-[11px] text-ink/70 mt-0.5 line-clamp-2">{advisor.description}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 text-amber-400 flex-shrink-0 bg-ink/4 px-2 py-1 rounded border border-ink/8 font-mono text-[11px]">
@@ -121,7 +121,7 @@ export function AdvisorPanel({ gameState, onHireAdvisor, onDismissAdvisor }: Adv
                     ))}
                   </div>
                   <div className="flex items-center justify-between text-[11px] font-mono">
-                    <span className="text-ink/40">Sueldo: {fmtBudget(ADVISOR_ROLES[advisor.id]?.salary ?? 0)}/t</span>
+                    <span className="text-ink/70">Sueldo: {fmtBudget(ADVISOR_ROLES[advisor.id]?.salary ?? 0)}/t</span>
                     <span className="text-emerald-400 font-bold uppercase tracking-wider">Activo</span>
                   </div>
                   {ADVISOR_ROLES[advisor.id] && (
