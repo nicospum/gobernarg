@@ -30,8 +30,8 @@ function next(state: CausalState) { return issue(settlePrompts(state), 'close_tu
 function game(profile = 'politico') { return newSession({ name: 'Prueba', profile, avatar: '' }).state; }
 
 describe('restored cabinet, profiles and abilities', () => {
-  it('restores all seven advisors and eight profile abilities', () => {
-    expect(CABINET).toHaveLength(7); expect(ABILITIES).toHaveLength(8);
+  it('restores the eight advisors (incl. Charly Abad) and eight profile abilities', () => {
+    expect(CABINET).toHaveLength(8); expect(ABILITIES).toHaveLength(8);
     for (const id of ['politico', 'empresario', 'sindicalista', 'comunicador']) expect(ABILITIES.filter(a => a.profile === id)).toHaveLength(2);
   });
   it('activates extra capacity next turn and pays cabinet salaries in the fiscal ledger', () => {

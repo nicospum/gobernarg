@@ -167,5 +167,27 @@ export const availableAdvisors: Advisor[] = [
     },
     traits: ['académico', 'reformista'],
     effectiveness: 90
+  },
+  {
+    id: 'advisor8',
+    name: 'Charly Abad',
+    specialty: 'Broker de Salud',
+    bonusActions: 1,
+    influence: 8,
+    cost: 350,
+    description: 'Broker de salud: te arma un hospital llave en mano y te garantiza resultados en salud. Cálido y de trato fácil, se lleva bien con empresarios y líderes religiosos, y con su calidez mejora la relación con todos los sectores.',
+    popularityEffect: 8,
+    unlockRequirement: null,
+    level: 4,
+    specialAbilities: ['hospital_llave_en_mano', 'red_de_contactos'],
+    groupBonuses: {
+      'empresarios': 15,
+      'organizaciones-sociales': 15
+    },
+    policyModifiers: {
+      'social': 1.25
+    },
+    traits: ['cálido', 'negociador'],
+    effectiveness: 88
   }
 ];

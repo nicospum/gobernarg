@@ -4,13 +4,16 @@ import { AGREEMENT_LABELS } from './interactions';
 import { CAMPAIGN_COMMANDS, enableCampaign } from './campaign';
 import { DIFFICULTIES } from './campaignCatalog';
 import type { Difficulty } from './campaignTypes';
+import { getScenario, isValidPlatformId } from './scenarios';
 import type { CausalState, GameCommand } from './types';
 
 export const SAVE_KEY = 'gobernarg.causal.v1';
-interface Player { name: string; profile: string; avatar: string; difficulty?: Difficulty }
+interface Player { name: string; profile: string; avatar: string; difficulty?: Difficulty; scenarioId?: string; platformId?: string }
+/** El escenario y la plataforma son parte de la creación: la reconstrucción parte del mismo país. */
+const gameOptions = (player: Player) => ({ scenarioId: player.scenarioId, platformId: player.platformId });
 export interface GameSession { player: Player; commands: GameCommand[]; state: CausalState; campaignStart: number }
 export function newSession(player: Player): GameSession {
-  const state = createCausalGame(player.name, player.profile, player.avatar);
+  const state = createCausalGame(player.name, player.profile, player.avatar, gameOptions(player));
   enableCampaign(state, player.difficulty ?? 'normal');
   return { player, commands: [], state, campaignStart: 0 };
 }
@@ -46,14 +49,19 @@ export function deserializeSession(text: string): GameSession {
     || value.player.name.length > 120 || typeof value.player.profile !== 'string' || typeof value.player.avatar !== 'string'
     || !Array.isArray(value.commands) || value.commands.length > 10_000) throw new Error('La partida guardada tiene datos inválidos.');
   if (value.player.difficulty !== undefined && !Object.prototype.hasOwnProperty.call(DIFFICULTIES, String(value.player.difficulty))) throw new Error('Dificultad inválida.');
+  if (value.player.scenarioId !== undefined && !getScenario(String(value.player.scenarioId))) throw new Error('Escenario inválido.');
+  if (value.player.platformId !== undefined && !isValidPlatformId(value.player.platformId)) throw new Error('Plataforma inválida.');
   if (value.campaignVersion !== undefined && value.campaignVersion !== 1) throw new Error('Versión de campaña no compatible.');
   // A development hot reload could have stamped campaignVersion onto a core-only
   // session before it had a replay boundary. Upgrade that history without changing it.
   const coreOnlyHistory = value.commands.every(cmd => isObject(cmd) && !CAMPAIGN_COMMANDS.includes(String(cmd.type)));
   const campaignStart = value.campaignVersion === undefined || (value.campaignStart === undefined && coreOnlyHistory) ? value.commands.length : value.campaignStart;
   if (typeof campaignStart !== 'number' || !Number.isInteger(campaignStart) || campaignStart < 0 || campaignStart > value.commands.length) throw new Error('Inicio de campaña inválido.');
-  const player = { name: value.player.name, profile: value.player.profile, avatar: value.player.avatar, ...(value.player.difficulty ? { difficulty: value.player.difficulty as Difficulty } : {}) };
-  const session: GameSession = { player, commands: [], campaignStart, state: createCausalGame(player.name, player.profile, player.avatar) };
+  const player: Player = { name: value.player.name, profile: value.player.profile, avatar: value.player.avatar,
+    ...(value.player.difficulty ? { difficulty: value.player.difficulty as Difficulty } : {}),
+    ...(value.player.scenarioId ? { scenarioId: String(value.player.scenarioId) } : {}),
+    ...(value.player.platformId ? { platformId: String(value.player.platformId) } : {}) };
+  const session: GameSession = { player, commands: [], campaignStart, state: createCausalGame(player.name, player.profile, player.avatar, gameOptions(player)) };
   for (const [index, item] of value.commands.entries()) {
     if (index === campaignStart) enableCampaign(session.state, player.difficulty ?? 'normal');
     if (!validCommand(item)) throw new Error('El historial guardado contiene un comando inválido.');

@@ -57,6 +57,7 @@ import advisorSecurityMale from '../assets/images/advisors/advisor-security-male
 import advisorSocialMale from '../assets/images/advisors/advisor-social-male.webp';
 import advisorHealthFemale from '../assets/images/advisors/advisor-health-female.webp';
 import advisorJusticeMale from '../assets/images/advisors/advisor-justice-male.webp';
+import advisorCharlyAbad from '../assets/images/advisors/advisor-charly-abad.webp';
 
 import eventEconomicCrisis from '../assets/images/events/event-economic-crisis.webp';
 import eventSocialProtest from '../assets/images/events/event-social-protest.webp';
@@ -168,6 +169,7 @@ export const IMAGES = {
     socialMale: advisorSocialMale,
     healthFemale: advisorHealthFemale,
     justiceMale: advisorJusticeMale,
+    charlyAbad: advisorCharlyAbad,
   },
   events: {
     economicCrisis: eventEconomicCrisis,

@@ -73,3 +73,18 @@
     @apply bg-background text-foreground font-sans;
   }
 }
+
+@layer utilities {
+  /* Sacudida corta para un control que no se puede usar (p. ej. desbloquear escenarios). */
+  @keyframes denied-shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-3px); }
+    40%, 80% { transform: translateX(3px); }
+  }
+  .animate-denied {
+    animation: denied-shake 0.35s ease-in-out;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-denied { animation: none; }
+  }
+}

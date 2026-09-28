@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Toaster, toast } from 'sonner';
 import { CharacterCreation } from './components/CharacterCreation';
+import { GameSetup, type CharacterDraft } from './components/GameSetup';
+import { recordReelectionWin } from './causal/progress';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { WelcomeModal } from './components/WelcomeModal';
 import { CausalDashboard } from './components/causal/CausalDashboard';
@@ -23,7 +25,9 @@ export default function CausalApp() {
   const [loaded] = useState(readSave);
   const [session, setSession] = useState<GameSession | null>(loaded.session);
   const current = useRef(session);
-  const [screen, setScreen] = useState<'welcome' | 'character' | 'intro' | 'game'>(loaded.session ? 'game' : 'welcome');
+  const [screen, setScreen] = useState<'welcome' | 'character' | 'setup' | 'intro' | 'game'>(loaded.session ? 'game' : 'welcome');
+  // Inicio en dos pasos: personaje (draft) y después dificultad, escenario y plataforma.
+  const [draft, setDraft] = useState<CharacterDraft | null>(null);
   const [savingError, setSavingError] = useState<string | null>(loaded.error);
   useEffect(() => {
     if (!session) return;
@@ -39,11 +43,26 @@ export default function CausalApp() {
     current.current = next; setSession(next); toast.success(result.message);
     return true;
   }, []);
-  const start = (_position: Position, profile: Archetype, name: string, avatar: string, difficulty: Difficulty = 'normal') => {
+  const continueToSetup = (_position: Position, archetype: Archetype, name: string, avatar: string) => {
     if (!name.trim()) return;
-    const next = newSession({ name: name.trim(), profile, avatar, difficulty });
+    setDraft({ archetype, governorName: name.trim(), avatar });
+    setScreen('setup');
+  };
+  const start = (platformId: string, scenarioId: string, difficulty: Difficulty) => {
+    if (!draft) return;
+    const next = newSession({ name: draft.governorName, profile: draft.archetype, avatar: draft.avatar, difficulty, scenarioId, platformId });
     current.current = next; setSession(next); setScreen('intro');
   };
+  // Ganar la reelección desbloquea el siguiente escenario histórico. Se cuenta una
+  // sola vez por elección (la partida se reconstruye comando por comando al recargar).
+  useEffect(() => {
+    const elections = session?.state.campaign?.elections ?? [];
+    const last = elections[elections.length - 1];
+    if (!session || !last || last.kind !== 'presidential' || !last.won) return;
+    const resolved = [...session.commands].reverse().find(cmd => cmd.type === 'resolve_election');
+    if (!resolved) return;
+    if (recordReelectionWin(resolved.id).counted) toast.success('Ganaste la reelección: desbloqueaste un escenario histórico nuevo.');
+  }, [session]);
   const restart = () => {
     try { window.localStorage.removeItem(SAVE_KEY); } catch { /* Storage failure must not crash restart. */ }
     current.current = null; setSession(null); setScreen('character');
@@ -55,7 +74,8 @@ export default function CausalApp() {
   return <>
     <Toaster theme="dark" position="bottom-right" richColors />
     {screen === 'welcome' && <><WelcomeScreen onStart={() => setScreen('character')} />{savingError && <p role="alert" className="fixed bottom-4 left-4 right-4 rounded-lg bg-card border border-amber-300/40 p-4 text-sm text-amber-100">{savingError} Al empezar una partida nueva se crea un guardado nuevo.</p>}</>}
-    {screen === 'character' && <CharacterCreation onComplete={start} causalMode />}
+    {screen === 'character' && <CharacterCreation onComplete={continueToSetup} causalMode twoStep initial={draft} />}
+    {screen === 'setup' && draft && <GameSetup draft={draft} onBack={() => setScreen('character')} onStart={start} />}
     {screen === 'intro' && session && <WelcomeModal governorName={session.state.name} position="presidente" onStart={() => setScreen('game')} />}
     {screen === 'game' && session && <CausalDashboard state={session.state} savingError={savingError}
       onExecute={(id, params) => makeCommand('execute', id, params)} onCommand={(type, targetId, choiceId) => commit({ id: crypto.randomUUID(), expectedTurn: session.state.turn, type, targetId, choiceId })} onRestart={restart} />}

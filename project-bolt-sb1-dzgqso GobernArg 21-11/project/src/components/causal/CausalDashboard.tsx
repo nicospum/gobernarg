@@ -12,6 +12,7 @@ import { GovernmentPanel, type CampaignDispatch } from './GovernmentPanel';
 import { AxesPanel, ManagementNotebook, ObjectivesPanel, PoliticalSidebar, PoliticalStatus, ProjectReports } from './CivicPanels';
 import { CampaignFlow } from './CampaignFlow';
 import { campaignBlock } from '../../causal/campaign';
+import { getScenario } from '../../causal/scenarios';
 
 interface Props {
   state: CausalState; savingError: string | null;
@@ -19,6 +20,15 @@ interface Props {
   onCommand: CampaignDispatch; onRestart: () => void;
 }
 const fmt = (n: number) => n.toLocaleString('es-AR', { maximumFractionDigits: 1 });
+/** Hitos del mandato (turno dentro del mandato): legislativas y elección presidencial. */
+const MILESTONES: Record<number, string> = { 8: 'Legislativas', 16: 'Elección presidencial' };
+/** Línea de tiempo del mandato (traída de la versión A, con los colores de esta versión). */
+function MandateTimeline({ inTerm }: { inTerm: number }) {
+  return <div className="flex items-center gap-[3px] mt-1" role="img" aria-label={`Turno ${inTerm} de ${TURNS_PER_TERM} del mandato`}>
+    {Array.from({ length: TURNS_PER_TERM }, (_, i) => i + 1).map(n => <span key={n} title={MILESTONES[n] ? `T${n}: ${MILESTONES[n]}` : `T${n}`}
+      className={`h-1.5 w-2 rounded-[1px] ${n === inTerm ? 'bg-blue-300' : n < inTerm ? 'bg-blue-300/40' : MILESTONES[n] ? 'bg-amber-300/70' : 'bg-white/15'}`} />)}
+  </div>;
+}
 export function CausalDashboard({ state, onExecute, onCommand, onRestart, savingError }: Props) {
   const [indicator, setIndicator] = useState<IndicatorId | null>(null);
   const [history, setHistory] = useState(false);
@@ -39,8 +49,8 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
       <div className="max-w-[1600px] mx-auto flex flex-wrap items-center gap-3 md:gap-6">
         <img src={IMAGES.logo.primary} alt="GobernArg" className="h-9 w-auto" />
         {state.avatar && <img src={state.avatar} alt={state.name} className="h-10 w-10 rounded-full object-cover border-2 border-amber-200/50" />}
-        <div className="mr-auto"><p className="text-[10px] uppercase tracking-widest text-muted-foreground">Presidente · Mandato {state.term}</p><h1 className="text-sm font-semibold">{state.name}</h1></div>
-        <div className="text-xs flex items-center gap-2"><Clock3 size={15} className="text-blue-300" /><span>Año {Math.ceil(inTerm / 4)} · T{(inTerm - 1) % 4 + 1}<span className="block text-[10px] text-muted-foreground">Turno global {state.turn}</span></span></div>
+        <div className="mr-auto"><p className="text-[10px] uppercase tracking-widest text-muted-foreground">Presidente · Mandato {state.term}{getScenario(state.scenarioId) ? ` · ${getScenario(state.scenarioId)!.name}` : ''}</p><h1 className="text-sm font-semibold">{state.name}</h1></div>
+        <div className="text-xs flex items-center gap-2"><Clock3 size={15} className="text-blue-300" /><span>Año {Math.ceil(inTerm / 4)} · T{(inTerm - 1) % 4 + 1}<span className="block text-[10px] text-muted-foreground">Turno global {state.turn}</span><span className="hidden lg:block"><MandateTimeline inTerm={inTerm} /></span></span></div>
         <div className="text-xs flex items-center gap-2"><Wallet size={15} className="text-blue-300" /><span>{fmt(state.cash)} U<span className="block text-[10px] text-muted-foreground">Caja disponible</span></span></div>
         <div className="text-xs"><strong>{state.actionPoints} PA</strong><span className="block text-[10px] text-muted-foreground">Agenda disponible</span></div>
         <button type="button" className="causal-primary flex items-center gap-2" disabled={state.phase !== 'governing' || !!campaignBlock(state)} onClick={() => onCommand('close_turn')}>Cerrar turno <ArrowRight size={15} /></button>

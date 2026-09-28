@@ -8,10 +8,18 @@ import { STARTING_POSITION } from '../data/careerRules';
 import { InfoTooltip } from './InfoTooltip';
 import { DIFFICULTIES, PROFILES } from '../causal/campaignCatalog';
 import type { Difficulty } from '../causal/campaignTypes';
+import { SetupSteps } from './SetupSteps';
+import type { CharacterDraft } from './GameSetup';
 
 interface CharacterCreationProps {
   onComplete: (position: Position, archetype: Archetype, governorName: string, avatar: string, difficulty?: Difficulty) => void;
   causalMode?: boolean;
+  /**
+   * Inicio en dos pasos: este es el paso 1 (personaje) y la dificultad se elige
+   * en el paso 2 (GameSetup). Al volver desde el paso 2 se conserva lo cargado.
+   */
+  twoStep?: boolean;
+  initial?: CharacterDraft | null;
 }
 
 const AVATARS = [
@@ -32,14 +40,14 @@ const AVATARS = [
   { id: 'podium-official', src: IMAGES.characters.podiumOfficial, label: 'Presidente' },
 ];
 
-export function CharacterCreation({ onComplete, causalMode = false }: CharacterCreationProps) {
+export function CharacterCreation({ onComplete, causalMode = false, twoStep = false, initial = null }: CharacterCreationProps) {
   const [difficulty, setDifficulty] = useState<Difficulty>('normal');
   // MVP presidente-only: el cargo inicial vive en careerRules (STARTING_POSITION)
   // para que el futuro modo campaña tenga un único punto de cambio.
   const position: Position = STARTING_POSITION;
-  const [archetype, setArchetype] = useState<Archetype>('politico');
-  const [governorName, setGovernorName] = useState('');
-  const [avatar, setAvatar] = useState<string>(AVATARS[0].src);
+  const [archetype, setArchetype] = useState<Archetype>(initial?.archetype ?? 'politico');
+  const [governorName, setGovernorName] = useState(initial?.governorName ?? '');
+  const [avatar, setAvatar] = useState<string>(initial?.avatar ?? AVATARS[0].src);
   const [showNameError, setShowNameError] = useState(false);
 
   const handleSubmit = () => {
@@ -67,7 +75,10 @@ export function CharacterCreation({ onComplete, causalMode = false }: CharacterC
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-blue-900/70 to-slate-900/90" />
 
       <div className="relative z-10 max-w-5xl mx-auto p-4 md:p-8">
-        <img src={IMAGES.logo.primary} alt="Gobernarg" className="h-14 md:h-20 drop-shadow-lg mb-6" />
+        <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
+          <img src={IMAGES.logo.primary} alt="Gobernarg" className="h-14 md:h-20 drop-shadow-lg" />
+          {twoStep && <SetupSteps current={1} />}
+        </div>
 
         <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 md:p-10 shadow-2xl border border-white/10">
           <h1 className="font-display text-3xl md:text-4xl font-bold mb-2 uppercase tracking-wide">Creá tu gobernante</h1>
@@ -93,7 +104,7 @@ export function CharacterCreation({ onComplete, causalMode = false }: CharacterC
           </div>
 
           <h2 className="font-display text-xl font-semibold mb-4 uppercase tracking-wide">Elegí tu Perfil</h2>
-          {causalMode && <label className="block mb-6 text-sm">Dificultad de la gestión<select aria-label="Dificultad de la gestión" value={difficulty} onChange={event => setDifficulty(event.target.value as Difficulty)} className="causal-select mt-2 max-w-sm">{Object.entries(DIFFICULTIES).map(([id, item]) => <option key={id} value={id}>{item.name}</option>)}</select><span className="block text-xs text-muted-foreground mt-2">Modifica recaudación, frecuencia de eventos y exigencia electoral. Dos mandatos como máximo.</span></label>}
+          {causalMode && !twoStep && <label className="block mb-6 text-sm">Dificultad de la gestión<select aria-label="Dificultad de la gestión" value={difficulty} onChange={event => setDifficulty(event.target.value as Difficulty)} className="causal-select mt-2 max-w-sm">{Object.entries(DIFFICULTIES).map(([id, item]) => <option key={id} value={id}>{item.name}</option>)}</select><span className="block text-xs text-muted-foreground mt-2">Modifica recaudación, frecuencia de eventos y exigencia electoral. Dos mandatos como máximo.</span></label>}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
             {archetypes.map((arch) => {
               const passives = causalMode ? [] : ARCHETYPE_PASSIVES[arch.id] ?? [];
@@ -175,7 +186,7 @@ export function CharacterCreation({ onComplete, causalMode = false }: CharacterC
             }`}
             disabled={!governorName.trim()}
           >
-            Comenzar Gestión
+            {twoStep ? 'Continuar' : 'Comenzar Gestión'}
           </button>
         </div>
       </div>

@@ -18,7 +18,7 @@ export const CABINET = availableAdvisors.map(advisor => ({
   cost: advisor.cost, level: advisor.level, bonusActions: advisor.bonusActions,
   minimumApproval: advisor.unlockRequirement?.value ?? 0,
   categories: ({ advisor1: ['Economía'], advisor2: ['Cultura', 'Instituciones'], advisor3: ['Infraestructura'],
-    advisor4: ['Servicios'], advisor5: ['Desarrollo'], advisor6: ['Seguridad'], advisor7: ['Servicios', 'Desarrollo'] } as Record<string, string[]>)[advisor.id],
+    advisor4: ['Servicios'], advisor5: ['Desarrollo'], advisor6: ['Seguridad'], advisor7: ['Servicios', 'Desarrollo'], advisor8: ['Servicios'] } as Record<string, string[]>)[advisor.id],
 }));
 export interface Ability { id: string; name: string; profile: string; cost: number; cooldown: number; description: string; effect: CampaignDelta; requirement?: 'investment' | 'labor' | 'pact' }
 export const ABILITIES: Ability[] = [

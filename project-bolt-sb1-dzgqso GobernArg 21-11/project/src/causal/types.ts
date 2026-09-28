@@ -110,6 +110,10 @@ export interface CausalState {
   history: Execution[]; reports: TurnReport[]; processedCommands: string[];
   socialComponent: number; crisisTurns: number; waterCrisisTurns: number; waterCrisis: boolean;
   legislativeSupport: Record<string, number>;
+  /** Escenario de partida (scenarios.ts). Ausente en partidas anteriores: el país base. */
+  scenarioId?: string;
+  /** Plataforma del partido: reemplaza las prioridades del oficialismo. Ausente = las de siempre. */
+  platform?: { mode: 'preset' | 'propia'; id: string; items: Sensitivity[] };
 }
 export interface GameCommand {
   id: string; expectedTurn: number;
