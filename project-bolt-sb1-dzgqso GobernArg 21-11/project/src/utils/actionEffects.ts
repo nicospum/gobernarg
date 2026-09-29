@@ -289,7 +289,7 @@ export function processPendingEffects(gameState: GameState): GameState {
     };
   }
 
-  let updatedState = { ...gameState };
+  const updatedState = { ...gameState };
 
   activeEffects.forEach(effect => {
     if (effect.budgetChange) {

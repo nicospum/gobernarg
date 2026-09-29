@@ -19,10 +19,17 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      // Convención del proyecto: parámetros/variables con prefijo _ son intencionalmente no usados.
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
       ],
     },
+  },
+  {
+    // Tests: se permiten fixtures parciales tipados con `any`.
+    files: ['src/__tests__/**/*.ts'],
+    rules: { '@typescript-eslint/no-explicit-any': 'off' },
   }
 );
