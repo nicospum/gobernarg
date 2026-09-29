@@ -10,7 +10,7 @@ import type { CampaignProps } from './GovernmentPanel';
 import { Dialog } from './Dialog';
 import { ObjectivesPanel } from './CivicPanels';
 
-export function CampaignFlow({ state, onCommand, onRestart }: CampaignProps & { onRestart: () => void }) {
+export function CampaignFlow({ state, onCommand, onRestart, onFeedback }: CampaignProps & { onRestart: () => void; onFeedback?: () => void }) {
   const noClose = useCallback(() => {}, []);
   const [showLegacy, setShowLegacy] = useState(false);
   // Retirarse termina la partida: se confirma antes (igual que Reiniciar).
@@ -32,7 +32,7 @@ export function CampaignFlow({ state, onCommand, onRestart }: CampaignProps & { 
       <details className="text-sm"><summary className="cursor-pointer">Trayectoria electoral</summary>{c.elections.map(e => <p key={`${e.turn}:${e.kind}`} className="text-xs border-t border-border py-2 mt-2">T{e.turn} · {e.kind === 'legislative' ? 'Legislativas' : 'Presidenciales'} · {fmtPct(e.votes)} · {e.won ? 'Victoria' : 'Derrota'} · {e.ownSeats} bancas propias</p>)}</details>
       <button className="causal-secondary" onClick={() => setShowLegacy(!showLegacy)}>{showLegacy ? 'Ocultar informes de gestión' : 'Revisar informes de gestión'}</button>
       {showLegacy && [...state.reports].reverse().map(r => <details key={r.turn} className="text-xs border border-border p-3 rounded"><summary>T{r.turn} · Caja {fmtU(r.fiscal.closingCash, 0)} · Componente social {fmtScore(r.socialComponent)}</summary><p className="mt-2">{r.messages.join(' ') || 'Cierre sin incidentes adicionales.'}</p><p className="mt-2">{r.executions.map(e => policyName(e.actionId)).join(', ') || 'Sin nuevas decisiones.'}</p></details>)}
-      {ended && <button className="causal-primary" onClick={onRestart}>Nueva partida</button>}
+      {ended && <div className="flex flex-wrap gap-3">{onFeedback && <button className="causal-secondary" onClick={onFeedback}>Contanos cómo te fue</button>}<button className="causal-primary" onClick={onRestart}>Nueva partida</button></div>}
     </Dialog>;
   }
   if (c.pendingEvent) {

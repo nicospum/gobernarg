@@ -6,6 +6,7 @@ import { recordReelectionWin } from './causal/progress';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { WelcomeModal } from './components/WelcomeModal';
 import { CausalDashboard } from './components/causal/CausalDashboard';
+import { markGameStart } from './components/causal/FeedbackForm';
 import { applyCommand } from './causal/engine';
 import { deserializeSession, newSession, SAVE_KEY, serializeSession, type GameSession } from './causal/persistence';
 import type { Archetype, Position } from './types/game';
@@ -62,7 +63,7 @@ export default function CausalApp() {
   const start = (platformId: string, scenarioId: string, difficulty: Difficulty) => {
     if (!draft) return;
     const next = newSession({ name: draft.governorName, profile: draft.archetype, avatar: draft.avatar, difficulty, scenarioId, platformId });
-    current.current = next; setSession(next); setScreen('intro');
+    current.current = next; setSession(next); setScreen('intro'); markGameStart();
   };
   // Ganar la reelección desbloquea el siguiente escenario histórico. Se cuenta una
   // sola vez por elección (la partida se reconstruye comando por comando al recargar).

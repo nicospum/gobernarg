@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ArrowRight, BarChart3, BookOpen, Briefcase, Clock3, History, Info, Landmark, LayoutGrid, MoreHorizontal, NotebookPen, RefreshCw, Users, Wallet, CalendarClock } from 'lucide-react';
+import { ArrowRight, BarChart3, BookOpen, MessageSquareHeart, Briefcase, Clock3, History, Info, Landmark, LayoutGrid, MoreHorizontal, NotebookPen, RefreshCw, Users, Wallet, CalendarClock } from 'lucide-react';
 import { INDICATORS, TURNS_PER_TERM } from '../../causal/catalog';
 import { fiscalForecast } from '../../causal/finance';
 import { indicatorName, policyName, totalArrears, totalDebt } from '../../causal/selectors';
@@ -14,6 +14,7 @@ import { GovernmentPanel, type CampaignDispatch } from './GovernmentPanel';
 import { AxesPanel, ManagementNotebook, ObjectivesPanel, PoliticalSidebar, PoliticalStatus, ProjectReports } from './CivicPanels';
 import { CampaignFlow } from './CampaignFlow';
 import { HowToPlay, TutorialCard, useTutorial } from './Tutorial';
+import { FeedbackForm } from './FeedbackForm';
 import { campaignBlock } from '../../causal/campaign';
 import { getScenario } from '../../causal/scenarios';
 
@@ -57,6 +58,8 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
   const [notebook, setNotebook] = useState(false);
   const [menu, setMenu] = useState(false);
   const [help, setHelp] = useState(false);
+  const [feedback, setFeedback] = useState(false);
+  const closeFeedback = useCallback(() => setFeedback(false), []);
   const [tab, setTab] = useState<MobileTab>('acciones');
   const isMobile = useIsMobile();
   const tutorial = useTutorial();
@@ -93,6 +96,7 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
     ['Cuaderno de gestión', NotebookPen, () => setNotebook(true)],
     ['Historial de gobierno', History, () => setHistory(true)],
     ['Cómo se juega', BookOpen, () => setHelp(true)],
+    ['Contanos cómo te fue', MessageSquareHeart, () => setFeedback(true)],
     ['Reiniciar partida…', RefreshCw, () => setRestart(true), true],
   ];
 
@@ -126,12 +130,13 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
 
   const overlays = <>
     {notebook && <ManagementNotebook state={state} onClose={closeNotebook} />}
-    <CampaignFlow state={state} onCommand={onCommand} onRestart={onRestart} />
+    <CampaignFlow state={state} onCommand={onCommand} onRestart={onRestart} onFeedback={() => setFeedback(true)} />
     {selectedIndicator && <Dialog title={selectedIndicator.name} onClose={closeIndicator}><p className="text-sm leading-6">{selectedIndicator.description}</p><div className="grid grid-cols-2 gap-3 text-sm"><p className="bg-background/50 p-3 rounded">Alto: {selectedIndicator.high}</p><p className="bg-background/50 p-3 rounded">Bajo: {selectedIndicator.low}</p></div>{lastReport?.indicators.filter(trace => trace.id === indicator).map(trace => <div key={trace.id}><h3 className="text-sm font-semibold mb-3">Último cierre: {fmtScore(trace.before)} → {fmtScore(trace.after)}</h3>{trace.contributions.map((contribution, index) => <p key={`${contribution.sourceId}:${index}`} className="flex justify-between gap-3 text-sm py-2 border-b border-border"><span>{contribution.label}</span><span className="font-mono shrink-0">{fmtSigned(contribution.amount)}</span></p>)}</div>)}</Dialog>}
     {history && <Dialog title="Historial de gobierno" onClose={closeHistory}>{state.reports.length === 0 ? <p className="text-sm text-muted-foreground">Todavía no cerraste un turno.</p> : [...state.reports].reverse().map(report => <button type="button" key={report.turn} className="w-full text-left border border-border rounded p-3 hover:border-primary" onClick={() => { setHistory(false); setReview(report); }}><strong className="text-sm">Turno {report.turn} · Mandato {report.term}</strong><p className="text-xs text-muted-foreground mt-1">{report.executions.map(execution => policyName(execution.actionId)).join(', ') || 'Sin nuevas políticas'} · Caja {fmtU(report.fiscal.closingCash)}</p></button>)}</Dialog>}
     {review && !campaignOpen && <Dialog title={`Cierre del turno ${review.turn}`} onClose={closeReview}><ReportContent report={review} /><button type="button" className="causal-primary w-full" onClick={closeReview}>Seguir gobernando</button></Dialog>}
     {menu && <Dialog title="Menú" onClose={closeMenu}><div className="flex flex-col">{menuItems.map(([label, Icon, action, danger]) => <button key={label} type="button" className={`flex items-center gap-3 min-h-[52px] px-2 rounded text-left hover:bg-white/10 ${danger ? 'text-red-300 border-t border-border mt-2 pt-2' : ''}`} onClick={() => { setMenu(false); action(); }}><Icon size={18} /> {label}</button>)}</div></Dialog>}
     {help && <HowToPlay onClose={closeHelp} />}
+    {feedback && <FeedbackForm state={state} onClose={closeFeedback} />}
     {restart && <Dialog title="Reiniciar partida" onClose={closeRestart}><p className="text-sm">Esto reemplaza la partida guardada en este navegador y su historial.</p><div className="flex gap-3"><button type="button" className="causal-secondary" onClick={closeRestart}>Seguir jugando</button><button type="button" className="causal-primary" onClick={onRestart}>Reiniciar</button></div></Dialog>}
     {!state.campaign && (state.phase === 'mandate_review' || state.phase === 'ended') && <Dialog title={state.phase === 'ended' ? 'Gestión finalizada' : 'Mandato completado'} onClose={() => {}} dismissible={false}><Landmark className="text-accent" size={30} /><p className="text-sm text-muted-foreground leading-6">El componente social cierra en {fmtScore(state.socialComponent)}/100. El resultado electoral completo todavía no está definido. Podés revisar tu gestión o continuar la simulación conservando deuda, acuerdos y efectos futuros.</p><div className="flex flex-wrap gap-3">{state.phase === 'mandate_review' && <button type="button" className="causal-primary" onClick={() => onCommand('continue_term')}>Continuar simulación</button>}<button type="button" className="causal-secondary" onClick={() => setHistory(true)}>Revisar historial</button>{state.phase === 'mandate_review' && <button type="button" className="causal-secondary" onClick={() => onCommand('end_game')}>Finalizar gestión</button>}{state.phase === 'ended' && <button type="button" className="causal-primary" onClick={onRestart}>Nueva partida</button>}</div></Dialog>}
   </>;
