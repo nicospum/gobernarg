@@ -275,5 +275,84 @@ export const rigidOrthodoxModerateBot: Bot = {
   policies: () => ['reduccion_gasto', 'actualizar_tarifas', 'politica_monetaria_contractiva', 'reduccion_impuestos', 'reforma_laboral', 'privatizacion', 'bajar_retenciones', 'regimen_grandes_inversiones', 'transparencia_anticorrupcion'],
 };
 
-export const ALL_BOTS: Bot[] = [passiveBot, printerBot, debtBot, infraBot, technocratBot, negotiatorBot, rigidHeterodoxBot, rigidHeterodoxModerateBot, rigidOrthodoxBot, rigidOrthodoxModerateBot, adaptiveBot];
+// ─────────────────── G1c / G2c: programas bien jugados ───────────────────
+/**
+ * Interacciones de un programa "bien jugado": firma los acuerdos que puede con
+ * su coalición, negocia con el socio de relación más baja y se reúne con el
+ * que hace más tiempo que no ve (así mantiene a los tres "vistos" en los
+ * últimos 4 turnos, que es lo que pide el pacto social).
+ */
+function coalitionInteractions(s: GameState, coalition: ActorId[]): Interaction[] {
+  const c = s.causal;
+  const out: Interaction[] = [];
+  for (const a of coalition) if (canSignAgreement(c, a) === null) out.push({ actor: a, kind: 'acuerdo' });
+  const lowest = [...coalition].sort((x, y) => (c.actors[x].rel ?? 50) - (c.actors[y].rel ?? 50))[0];
+  if (canNegotiate(c, lowest, s.actions) === null && (c.actors[lowest].rel ?? 0) >= 40) out.push({ actor: lowest, kind: 'negociar' });
+  const stalest = [...coalition].sort((x, y) => (c.actors[x].lastMeeting ?? -99) - (c.actors[y].lastMeeting ?? -99));
+  for (const a of stalest.slice(0, 2)) if (canMeet(c, a, s.actions) === null) out.push({ actor: a, kind: 'reunion' });
+  return out;
+}
+
+function committedActions(s: GameState): string[] {
+  return s.causal.agreements.filter(a => a.status === 'active').map(a => a.commitmentActionId);
+}
+
+/**
+ * Heterodoxo bien jugado: el mismo programa (salarios, crédito, industria,
+ * protección), pero construye el pacto social con sindicatos, industria y
+ * PyMEs, busca dólares con exportaciones y energía, y cuida la caja con
+ * recaudación antes de gastar. Es la vara para medir la asimetría ideológica.
+ */
+export const heterodoxSkilledBot: Bot = {
+  id: 'G1c', fiscalGuard: true, avoidRepetition: true, name: 'Heterodoxo bien jugado', archetype: 'sindicalista',
+  description: 'Programa heterodoxo con acuerdos: pacto social, dólares por exportación y energía, recauda antes de gastar.',
+  interactions: (s) => coalitionInteractions(s, ['sindicatos', 'industria', 'pymes']),
+  policies: (s) => {
+    const infl = view(s, 'INFL');
+    const exte = view(s, 'EXTE');
+    const structural = projectedCloseCaja(s.causal, []).structural;
+    return [
+      ...committedActions(s),
+      'pacto_social',
+      ...(exte < 45 ? ['incentivos_exportacion', 'desarrollo_energetico_minero'] : []),
+      ...(exte < 32 ? ['control_cambios'] : []),
+      ...(infl > 55 ? ['control_precios'] : []),
+      ...(s.causal.caja < 500 || structural < 0 ? ['subir_retenciones', 'mejorar_recaudacion', 'reforma_tributaria'] : []),
+      'credito_pyme', 'promocion_industrial',
+      ...(infl < 60 ? ['suba_salario_minimo', 'cobertura_social'] : []),
+      ...(infl < 50 ? ['aumento_salarial', 'plan_viviendas'] : []),
+      'asistencia_alimentaria', 'inversion_educativa', 'salud_preventiva',
+    ];
+  },
+  eventChoice: bestChoice,
+  midterm: (s, av) => (av.includes('negociar') && s.causal.political.leg < 50 ? 'negociar' : av.includes('abrirse') ? 'abrirse' : av[0]),
+  advisors: () => ['advisor1', 'advisor4'],
+};
+
+/** Ortodoxo bien jugado: el espejo del anterior, con su coalición y sus herramientas. */
+export const orthodoxSkilledBot: Bot = {
+  id: 'G2c', fiscalGuard: true, avoidRepetition: true, name: 'Ortodoxo bien jugado', archetype: 'empresario',
+  description: 'Programa ortodoxo con acuerdos: coalición con finanzas, industria y agro; dólares por apertura; ajusta antes de bajar impuestos.',
+  interactions: (s) => coalitionInteractions(s, ['financiero', 'industria', 'agro']),
+  policies: (s) => {
+    const infl = view(s, 'INFL');
+    const exte = view(s, 'EXTE');
+    const structural = projectedCloseCaja(s.causal, []).structural;
+    return [
+      ...committedActions(s),
+      ...(exte < 45 ? ['bajar_retenciones', 'prestamo_internacional'] : []),
+      ...(exte < 32 ? ['devaluacion'] : []),
+      ...(infl > 55 ? ['politica_monetaria_contractiva'] : []),
+      ...(s.causal.caja < 500 || structural < 0 ? ['reduccion_gasto', 'actualizar_tarifas'] : []),
+      'regimen_grandes_inversiones', 'transparencia_anticorrupcion', 'tratado_comercio',
+      ...(structural > 50 ? ['reduccion_impuestos'] : []),
+      'reforma_laboral', 'privatizacion', 'infraestructura_vial', 'economia_conocimiento',
+    ];
+  },
+  eventChoice: bestChoice,
+  midterm: (s, av) => (av.includes('negociar') && s.causal.political.leg < 50 ? 'negociar' : av.includes('abrirse') ? 'abrirse' : av[0]),
+  advisors: () => ['advisor1', 'advisor4'],
+};
+
+export const ALL_BOTS: Bot[] = [passiveBot, printerBot, debtBot, infraBot, technocratBot, negotiatorBot, rigidHeterodoxBot, rigidHeterodoxModerateBot, heterodoxSkilledBot, rigidOrthodoxBot, rigidOrthodoxModerateBot, orthodoxSkilledBot, adaptiveBot];
 

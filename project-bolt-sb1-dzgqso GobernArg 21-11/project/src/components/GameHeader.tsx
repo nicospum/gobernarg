@@ -13,6 +13,7 @@ import {
   ScrollText,
   NotebookPen,
   BookOpen,
+  MessageSquareHeart,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { ConfirmDialog } from './ConfirmDialog';
@@ -31,6 +32,7 @@ interface GameHeaderProps {
   onOpenLog?: () => void;
   onOpenNotebook?: () => void;
   onOpenHelp?: () => void;
+  onOpenFeedback?: () => void;
 }
 
 const POSITION_LABEL: Record<string, string> = {
@@ -87,13 +89,14 @@ function Stat({ label, children }: { label: string; children: React.ReactNode })
  * Menú de la partida. "Reiniciar" vive acá, lejos de "Finalizar turno", y
  * siempre pide confirmación: antes borraba el mandato con un solo clic.
  */
-function GameMenu({ governorName, turnLabel, onRestart, onOpenLog, onOpenNotebook, onOpenHelp }: {
+function GameMenu({ governorName, turnLabel, onRestart, onOpenLog, onOpenNotebook, onOpenHelp, onOpenFeedback }: {
   governorName: string;
   turnLabel: string;
   onRestart: () => void;
   onOpenLog?: () => void;
   onOpenNotebook?: () => void;
   onOpenHelp?: () => void;
+  onOpenFeedback?: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const [confirming, setConfirming] = useState(false);
@@ -154,6 +157,11 @@ function GameMenu({ governorName, turnLabel, onRestart, onOpenLog, onOpenNoteboo
               <BookOpen size={15} className="text-ink/70" /> Cómo se juega
             </button>
           )}
+          {onOpenFeedback && (
+            <button role="menuitem" onClick={run(onOpenFeedback)} className={`${item} text-ink hover:bg-sunken`}>
+              <MessageSquareHeart size={15} className="text-ink/70" /> Contanos cómo te fue
+            </button>
+          )}
           <div className="my-1.5 h-px bg-rule" />
           <button role="menuitem" onClick={run(() => setConfirming(true))} className={`${item} text-red-400 hover:bg-red-950`}>
             <RefreshCw size={15} /> Reiniciar partida…
@@ -186,6 +194,7 @@ export function GameHeader({
   onOpenLog,
   onOpenNotebook,
   onOpenHelp,
+  onOpenFeedback,
 }: GameHeaderProps) {
   const popularityRisk = getValueRisk(gameState.popularity, 80);
   const stabilityRisk = getValueRisk(gameState.stability, 100);
@@ -300,6 +309,7 @@ export function GameHeader({
             onOpenLog={onOpenLog}
             onOpenNotebook={onOpenNotebook}
             onOpenHelp={onOpenHelp}
+            onOpenFeedback={onOpenFeedback}
           />
 
           {onEndTurn && (

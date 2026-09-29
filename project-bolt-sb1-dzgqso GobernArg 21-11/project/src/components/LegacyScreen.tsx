@@ -17,6 +17,8 @@ interface LegacyScreenProps {
   gameState: GameState;
   onRestart: () => void;
   onClose?: () => void;
+  /** Playtest: abre "Contanos cómo te fue". */
+  onFeedback?: () => void;
 }
 
 interface PerformanceData {
@@ -71,7 +73,7 @@ function derivePerformance(state: GameState): PerformanceData {
   };
 }
 
-export function LegacyScreen({ gameState, onRestart, onClose }: LegacyScreenProps) {
+export function LegacyScreen({ gameState, onRestart, onClose, onFeedback }: LegacyScreenProps) {
   const dialogRef = useDialog<HTMLDivElement>(onClose);
   const isVictory = gameState.victorious;
   const reason = gameState.defeatReason;
@@ -280,6 +282,14 @@ export function LegacyScreen({ gameState, onRestart, onClose }: LegacyScreenProp
 
           {/* Botones */}
           <div className="flex flex-wrap items-center justify-center gap-3">
+            {onFeedback && (
+              <button
+                onClick={onFeedback}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded font-display font-semibold transition-colors border border-border bg-ink/10 hover:bg-ink/15 text-foreground"
+              >
+                Contanos cómo te fue
+              </button>
+            )}
             {onClose && (
               <button
                 onClick={onClose}

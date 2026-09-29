@@ -16,6 +16,14 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Formulario del playtest (Fase 3): Netlify Forms lo detecta acá; el juego lo envía por fetch. -->
+    <form name="playtest" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input name="bot-field" />
+      <input name="version" /><input name="alias" /><input name="experiencia" /><input name="programa" />
+      <input name="opinaba" /><textarea name="opinaba_por_que"></textarea><textarea name="no_entendi"></textarea>
+      <input name="diversion" /><input name="claridad" /><input name="dificultad" /><input name="volveria" />
+      <textarea name="comentarios"></textarea><textarea name="resumen"></textarea>
+    </form>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

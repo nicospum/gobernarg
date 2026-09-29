@@ -9,6 +9,8 @@ interface GameOverModalProps {
   gameState: GameState;
   onRestart: () => void;
   onShowLegacy?: () => void;
+  /** Playtest: abre "Contanos cómo te fue". */
+  onFeedback?: () => void;
 }
 
 const DEFEAT_ICONS: Record<DefeatReason, typeof Trophy> = {
@@ -20,7 +22,7 @@ const DEFEAT_ICONS: Record<DefeatReason, typeof Trophy> = {
   election_loss: Vote,
 };
 
-export function GameOverModal({ gameState, onRestart, onShowLegacy }: GameOverModalProps) {
+export function GameOverModal({ gameState, onRestart, onShowLegacy, onFeedback }: GameOverModalProps) {
   const dialogRef = useDialog<HTMLDivElement>();
   const isVictory = gameState.victorious;
   const reason = gameState.defeatReason;
@@ -102,6 +104,14 @@ export function GameOverModal({ gameState, onRestart, onShowLegacy }: GameOverMo
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-3">
+            {onFeedback && (
+              <button
+                onClick={onFeedback}
+                className="px-6 py-3 rounded-xl font-display font-semibold text-[16px] transition-colors border border-ink/12 bg-ink/6 hover:bg-ink/12 text-ink"
+              >
+                Contanos cómo te fue
+              </button>
+            )}
             {onShowLegacy && (
               <button
                 onClick={onShowLegacy}

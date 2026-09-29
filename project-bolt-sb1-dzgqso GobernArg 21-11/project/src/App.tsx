@@ -30,6 +30,8 @@ import { useIsMobile } from './lib/useMediaQuery';
 import { MobileBottomBar, MobileHeader, MobileKpis, MobileMenu, type MobileTab } from './components/mobile/MobileChrome';
 import { Sheet } from './components/mobile/Sheet';
 import { HowToPlayModal, TutorialCard, useTutorial } from './components/Tutorial';
+import { FeedbackModal } from './components/FeedbackModal';
+import { markGameStart } from './lib/playtest';
 
 import type { AdvisorWithStatus, ElectionResults, TurnSummary, MidtermStrategy } from './types/game';
 import type { ActorId } from './data/causal';
@@ -86,6 +88,8 @@ function App() {
   // Ayuda: tarjeta del primer turno y guía "Cómo se juega" desde el menú.
   const tutorial = useTutorial();
   const [showHelp, setShowHelp] = useState(false);
+  // Playtest (Fase 3): "Contanos cómo te fue".
+  const [showFeedback, setShowFeedback] = useState(false);
 
   // Guardado automático: cada cambio de la partida (y los eventos sin responder).
   useEffect(() => {
@@ -140,6 +144,7 @@ function App() {
     if (!draft || !draft.governorName.trim()) return;
     const { position, archetype, governorName, avatar } = draft;
     const newState = createNewGame(position, archetype, governorName, false, avatar, 'normal', platformId, undefined, scenarioId);
+    markGameStart();
     setGameState(newState);
     setShowWelcome(true);
   };
@@ -173,7 +178,7 @@ function App() {
   // ni tocar nada de atrás (ni con el teclado).
   const modalOpen =
     showTurnSummary || pendingEvents.length > 0 || !!gameState.pendingElection || !!gameState.electionResults ||
-    showMidtermStrategy || showGameLog || showNotebook || showHelp || gameState.gameOver;
+    showMidtermStrategy || showGameLog || showNotebook || showHelp || showFeedback || gameState.gameOver;
   useEffect(() => {
     const board = boardRef.current;
     if (!board) return;
@@ -350,6 +355,8 @@ function App() {
             canEndTurn={!modalOpen}
             onOpenLog={() => setShowGameLog(true)}
             onOpenNotebook={() => setShowNotebook(true)}
+            onOpenHelp={() => setShowHelp(true)}
+            onOpenFeedback={() => setShowFeedback(true)}
           />
 
           <main className="max-w-[1680px] mx-auto p-4 md:p-6 space-y-5">
@@ -434,6 +441,7 @@ function App() {
           onOpenNotebook={() => setShowNotebook(true)}
           onOpenNotifications={() => setShowNotifications(true)}
           onOpenHelp={() => setShowHelp(true)}
+          onOpenFeedback={() => setShowFeedback(true)}
           onRestart={handleRestart}
         />
       )}
@@ -491,6 +499,7 @@ function App() {
           gameState={gameState}
           onRestart={handleRestart}
           onShowLegacy={() => setShowLegacy(true)}
+          onFeedback={() => setShowFeedback(true)}
         />
       )}
 
@@ -507,12 +516,15 @@ function App() {
           gameState={gameState}
           onRestart={handleRestart}
           onClose={gameState.victorious ? undefined : () => setShowLegacy(false)}
+          onFeedback={() => setShowFeedback(true)}
         />
       )}
 
       {showGameLog && (
         <GameLog gameState={gameState} onClose={() => setShowGameLog(false)} />
       )}
+
+      {showFeedback && <FeedbackModal gameState={gameState} onClose={() => setShowFeedback(false)} />}
 
       {showHelp && <HowToPlayModal actions={gameState.baseActions} onClose={() => setShowHelp(false)} />}
 

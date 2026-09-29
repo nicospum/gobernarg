@@ -210,13 +210,14 @@ export function MobileBottomBar({ gameState, tab, onTab, onEndTurn, canEndTurn }
 }
 
 /** Menú del celular: historial, cuaderno, notificaciones y Reiniciar con confirmación. */
-export function MobileMenu({ gameState, onClose, onOpenLog, onOpenNotebook, onOpenNotifications, onOpenHelp, onRestart }: {
+export function MobileMenu({ gameState, onClose, onOpenLog, onOpenNotebook, onOpenNotifications, onOpenHelp, onOpenFeedback, onRestart }: {
   gameState: GameState;
   onClose: () => void;
   onOpenLog: () => void;
   onOpenNotebook: () => void;
   onOpenNotifications: () => void;
   onOpenHelp: () => void;
+  onOpenFeedback: () => void;
   onRestart: () => void;
 }) {
   const [confirming, setConfirming] = useState(false);
@@ -242,6 +243,7 @@ export function MobileMenu({ gameState, onClose, onOpenLog, onOpenNotebook, onOp
           </span>
         </button>
         <button className={item} onClick={go(onOpenHelp)}>Cómo se juega <ChevronRight size={18} className="text-ink/70" /></button>
+        <button className={item} onClick={go(onOpenFeedback)}>Contanos cómo te fue <ChevronRight size={18} className="text-ink/70" /></button>
         <div className="h-px bg-rule my-2" />
         {confirming ? (
           <div className="rounded-xl border border-red-800 bg-red-950 p-4 flex flex-col gap-3">
