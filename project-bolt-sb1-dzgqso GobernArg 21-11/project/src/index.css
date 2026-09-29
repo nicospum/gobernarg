@@ -8,7 +8,7 @@
     --card: 211 46% 19%;
     --border: 208 33% 32%;
     --muted-foreground: 211 24% 75%;
-    --primary: 203 65% 47%;
+    --primary: 203 65% 41%; /* un poco más oscuro: texto blanco encima con contraste 4,8:1 */
     --accent: 42 78% 65%;
     background-image: radial-gradient(ellipse at top right, hsl(204 55% 25% / .55), transparent 55%);
   }
