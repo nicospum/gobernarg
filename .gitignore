@@ -35,3 +35,12 @@ lerna-debug.log*
 .env
 .env.*
 !.env.example
+
+# Arte crudo y material de producción (Fase 4): queda en el disco de quien lo
+# tiene, fuera del repositorio. El juego solo usa las imágenes optimizadas de
+# project/src/assets/images (sin la carpeta raw).
+/*.zip
+project-bolt-sb1-dzgqso GobernArg 21-11/new assets/
+project-bolt-sb1-dzgqso GobernArg 21-11/project/src/assets/images/raw/
+*.tsbuildinfo
+dist.zip

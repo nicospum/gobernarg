@@ -8,9 +8,6 @@ import { AdvisorPanel } from './components/AdvisorPanel';
 import { TurnSummaryModal } from './components/TurnSummaryModal';
 import { WelcomeModal } from './components/WelcomeModal';
 import { SpecialAbilitiesPanel } from './components/SpecialAbilitiesPanel';
-import { LegacyScreen } from './components/LegacyScreen';
-import { GameOverModal } from './components/GameOverModal';
-import { ReelectionChoiceModal } from './components/ReelectionChoiceModal';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { IndicatorsPanel } from './components/IndicatorsPanel';
 import { PendingEffectsPanel } from './components/PendingEffectsPanel';
@@ -18,19 +15,15 @@ import { ActiveBenefits } from './components/ActiveBenefits';
 import { InformesPanel } from './components/InformesPanel';
 import { RightSidebar } from './components/RightSidebar';
 import { EventModal } from './components/EventModal';
-import { ElectionResultsModal } from './components/ElectionResultsModal';
 import { recordReelectionWin, recordScenarioWin } from './lib/progress';
-import { GameLog } from './components/GameLog';
-import { MidtermStrategyModal } from './components/MidtermStrategyModal';
 import { NotificationCenter } from './components/NotificationCenter';
-import { ManagementNotebook } from './components/ManagementNotebook';
 import { CountryPanel } from './components/CountryPanel';
 import { clearSavedGame, loadGame, saveGame } from './lib/savegame';
+import { lazyModal } from './lib/lazyModal';
 import { useIsMobile } from './lib/useMediaQuery';
 import { MobileBottomBar, MobileHeader, MobileKpis, MobileMenu, type MobileTab } from './components/mobile/MobileChrome';
 import { Sheet } from './components/mobile/Sheet';
-import { HowToPlayModal, TutorialCard, useTutorial } from './components/Tutorial';
-import { FeedbackModal } from './components/FeedbackModal';
+import { TutorialCard, useTutorial } from './components/Tutorial';
 import { markGameStart } from './lib/playtest';
 
 import type { AdvisorWithStatus, ElectionResults, TurnSummary, MidtermStrategy } from './types/game';
@@ -54,6 +47,18 @@ import {
   triggerMidtermStrategy,
   type ActorInteraction,
 } from './engine/gameEngine';
+
+// Pantallas que aparecen pocas veces: se descargan recién cuando hacen falta
+// (Fase 4), así la primera carga del juego es más liviana.
+const LegacyScreen = lazyModal(() => import('./components/LegacyScreen').then(m => m.LegacyScreen));
+const GameOverModal = lazyModal(() => import('./components/GameOverModal').then(m => m.GameOverModal));
+const ReelectionChoiceModal = lazyModal(() => import('./components/ReelectionChoiceModal').then(m => m.ReelectionChoiceModal));
+const ElectionResultsModal = lazyModal(() => import('./components/ElectionResultsModal').then(m => m.ElectionResultsModal));
+const GameLog = lazyModal(() => import('./components/GameLog').then(m => m.GameLog));
+const MidtermStrategyModal = lazyModal(() => import('./components/MidtermStrategyModal').then(m => m.MidtermStrategyModal));
+const ManagementNotebook = lazyModal(() => import('./components/ManagementNotebook').then(m => m.ManagementNotebook));
+const HowToPlayModal = lazyModal(() => import('./components/Tutorial').then(m => m.HowToPlayModal));
+const FeedbackModal = lazyModal(() => import('./components/FeedbackModal').then(m => m.FeedbackModal));
 
 function App() {
   const [gameState, setGameState] = useState(() => getInitialGameState());

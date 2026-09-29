@@ -1,7 +1,8 @@
 # Despliegue en Netlify: el juego vive en una subcarpeta del repo.
 [build]
   base = "project-bolt-sb1-dzgqso GobernArg 21-11/project"
-  command = "npm run build"
+  # URL la define Netlify: la vista previa al compartir necesita el link completo de la imagen.
+  command = "VITE_SITE_URL=$URL npm run build"
   # Relativo a `base`.
   publish = "dist"
 

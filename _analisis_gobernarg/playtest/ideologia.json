@@ -1,0 +1,239 @@
+{
+  "pais_en_calma": {
+    "G1b": {
+      "reelected": 87,
+      "votes": 51.2,
+      "early": 23,
+      "pacto": 0,
+      "reasons": {
+        "election_loss": 7,
+        "hyperinflation": 10,
+        "impeachment": 13
+      }
+    },
+    "G1c": {
+      "reelected": 100,
+      "votes": 74,
+      "early": 1,
+      "pacto": 97,
+      "reasons": {
+        "election_loss": 2,
+        "impeachment": 1
+      }
+    },
+    "G2b": {
+      "reelected": 100,
+      "votes": 73.8,
+      "early": 0,
+      "pacto": 0,
+      "reasons": {}
+    },
+    "G2c": {
+      "reelected": 100,
+      "votes": 78.2,
+      "early": 0,
+      "pacto": 0,
+      "reasons": {}
+    },
+    "H": {
+      "reelected": 100,
+      "votes": 84.5,
+      "early": 0,
+      "pacto": 0,
+      "reasons": {}
+    }
+  },
+  "herencia_pesada": {
+    "G1b": {
+      "reelected": 0,
+      "votes": 19.1,
+      "early": 5,
+      "pacto": 0,
+      "reasons": {
+        "election_loss": 25,
+        "impeachment": 5
+      }
+    },
+    "G1c": {
+      "reelected": 67,
+      "votes": 53.8,
+      "early": 4,
+      "pacto": 97,
+      "reasons": {
+        "election_loss": 22,
+        "impeachment": 4
+      }
+    },
+    "G2b": {
+      "reelected": 43,
+      "votes": 44.1,
+      "early": 0,
+      "pacto": 0,
+      "reasons": {
+        "election_loss": 25
+      }
+    },
+    "G2c": {
+      "reelected": 100,
+      "votes": 56.3,
+      "early": 0,
+      "pacto": 0,
+      "reasons": {
+        "election_loss": 1
+      }
+    },
+    "H": {
+      "reelected": 100,
+      "votes": 67.3,
+      "early": 0,
+      "pacto": 0,
+      "reasons": {}
+    }
+  },
+  "viento_de_cola": {
+    "G1b": {
+      "reelected": 0,
+      "votes": 30.1,
+      "early": 0,
+      "pacto": 0,
+      "reasons": {
+        "election_loss": 30
+      }
+    },
+    "G1c": {
+      "reelected": 97,
+      "votes": 64.9,
+      "early": 4,
+      "pacto": 97,
+      "reasons": {
+        "hyperinflation": 2,
+        "election_loss": 19,
+        "impeachment": 2
+      }
+    },
+    "G2b": {
+      "reelected": 100,
+      "votes": 51,
+      "early": 1,
+      "pacto": 0,
+      "reasons": {
+        "impeachment": 1,
+        "election_loss": 3
+      }
+    },
+    "G2c": {
+      "reelected": 100,
+      "votes": 73.7,
+      "early": 0,
+      "pacto": 0,
+      "reasons": {}
+    },
+    "H": {
+      "reelected": 100,
+      "votes": 73.7,
+      "early": 0,
+      "pacto": 0,
+      "reasons": {}
+    }
+  },
+  "corralito": {
+    "G1b": {
+      "reelected": 0,
+      "votes": 19.3,
+      "early": 1,
+      "pacto": 0,
+      "reasons": {
+        "election_loss": 29,
+        "impeachment": 1
+      }
+    },
+    "G1c": {
+      "reelected": 30,
+      "votes": 42,
+      "early": 7,
+      "pacto": 90,
+      "reasons": {
+        "election_loss": 23,
+        "impeachment": 7
+      }
+    },
+    "G2b": {
+      "reelected": 0,
+      "votes": 22.9,
+      "early": 0,
+      "pacto": 0,
+      "reasons": {
+        "election_loss": 30
+      }
+    },
+    "G2c": {
+      "reelected": 0,
+      "votes": 23,
+      "early": 0,
+      "pacto": 0,
+      "reasons": {
+        "election_loss": 30
+      }
+    },
+    "H": {
+      "reelected": 97,
+      "votes": 60.7,
+      "early": 0,
+      "pacto": 0,
+      "reasons": {
+        "election_loss": 7
+      }
+    }
+  },
+  "pais_en_llamas": {
+    "G1b": {
+      "reelected": 0,
+      "votes": 17.8,
+      "early": 13,
+      "pacto": 0,
+      "reasons": {
+        "election_loss": 17,
+        "hyperinflation": 12,
+        "impeachment": 1
+      }
+    },
+    "G1c": {
+      "reelected": 0,
+      "votes": 20.7,
+      "early": 2,
+      "pacto": 93,
+      "reasons": {
+        "election_loss": 28,
+        "impeachment": 2
+      }
+    },
+    "G2b": {
+      "reelected": 0,
+      "votes": 23.7,
+      "early": 2,
+      "pacto": 0,
+      "reasons": {
+        "election_loss": 28,
+        "impeachment": 2
+      }
+    },
+    "G2c": {
+      "reelected": 0,
+      "votes": 28.6,
+      "early": 0,
+      "pacto": 0,
+      "reasons": {
+        "election_loss": 30
+      }
+    },
+    "H": {
+      "reelected": 53,
+      "votes": 45.6,
+      "early": 0,
+      "pacto": 0,
+      "reasons": {
+        "election_loss": 17
+      }
+    }
+  }
+}

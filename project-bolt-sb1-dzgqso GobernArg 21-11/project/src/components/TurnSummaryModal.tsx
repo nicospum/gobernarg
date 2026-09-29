@@ -9,7 +9,6 @@ import {
   Vote,
   ListChecks,
 } from 'lucide-react';
-import { motion } from 'motion/react';
 import { GameState, TurnSummary } from '../types/game';
 import { IMAGES } from '../utils/imageAssets';
 import { fmtBudgetDelta, fmtBudget } from '@/lib/format';
@@ -55,11 +54,8 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
 
   return (
     <div ref={dialogRef} className="outline-none fixed inset-0 bg-ink/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.2 }}
-        className="bg-surface border border-ink/12 rounded-2xl w-full max-w-2xl max-h-[92vh] overflow-y-auto shadow-2xl"
+      <div
+        className="animate-in fade-in-0 zoom-in-95 duration-200 bg-surface border border-ink/12 rounded-2xl w-full max-w-2xl max-h-[92vh] overflow-y-auto shadow-2xl"
       >
         {/* Header visual */}
         <div className="relative h-36 md:h-44">
@@ -221,7 +217,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
             </button>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
