@@ -11,6 +11,17 @@ import { deserializeSession, newSession, SAVE_KEY, serializeSession, type GameSe
 import type { Archetype, Position } from './types/game';
 import type { CommandParams, GameCommand } from './causal/types';
 import type { Difficulty } from './causal/campaignTypes';
+import { TURNS_PER_TERM } from './causal/catalog';
+import { getScenario } from './causal/scenarios';
+
+/** "Laura Méndez · Mandato 1, turno 5 · Herencia pesada" para el botón Continuar partida. */
+function savedLabel(session: GameSession | null): string | null {
+  if (!session) return null;
+  const s = session.state;
+  const inTerm = (s.turn - 1) % TURNS_PER_TERM + 1;
+  const scenario = getScenario(s.scenarioId);
+  return [s.name, `Mandato ${s.term}, turno ${inTerm}`, scenario?.name].filter(Boolean).join(' · ');
+}
 
 function readSave(): { session: GameSession | null; error: string | null } {
   try {
@@ -25,7 +36,7 @@ export default function CausalApp() {
   const [loaded] = useState(readSave);
   const [session, setSession] = useState<GameSession | null>(loaded.session);
   const current = useRef(session);
-  const [screen, setScreen] = useState<'welcome' | 'character' | 'setup' | 'intro' | 'game'>(loaded.session ? 'game' : 'welcome');
+  const [screen, setScreen] = useState<'welcome' | 'character' | 'setup' | 'intro' | 'game'>('welcome');
   // Inicio en dos pasos: personaje (draft) y después dificultad, escenario y plataforma.
   const [draft, setDraft] = useState<CharacterDraft | null>(null);
   const [savingError, setSavingError] = useState<string | null>(loaded.error);
@@ -72,8 +83,8 @@ export default function CausalApp() {
     return commit({ id: crypto.randomUUID(), expectedTurn: session.state.turn, type, actionId, params });
   };
   return <>
-    <Toaster theme="dark" position="bottom-right" richColors />
-    {screen === 'welcome' && <><WelcomeScreen onStart={() => setScreen('character')} />{savingError && <p role="alert" className="fixed bottom-4 left-4 right-4 rounded-lg bg-card border border-amber-300/40 p-4 text-sm text-amber-100">{savingError} Al empezar una partida nueva se crea un guardado nuevo.</p>}</>}
+    <Toaster theme="dark" position="bottom-right" richColors containerAriaLabel="Avisos" />
+    {screen === 'welcome' && <><WelcomeScreen onStart={() => setScreen('character')} savedLabel={savedLabel(session)} onContinue={() => setScreen('game')} />{savingError && <p role="alert" className="fixed bottom-4 left-4 right-4 rounded-lg bg-card border border-amber-300/40 p-4 text-sm text-amber-100">{savingError} Al empezar una partida nueva se crea un guardado nuevo.</p>}</>}
     {screen === 'character' && <CharacterCreation onComplete={continueToSetup} causalMode twoStep initial={draft} />}
     {screen === 'setup' && draft && <GameSetup draft={draft} onBack={() => setScreen('character')} onStart={start} />}
     {screen === 'intro' && session && <WelcomeModal governorName={session.state.name} position="presidente" onStart={() => setScreen('game')} />}

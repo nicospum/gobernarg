@@ -99,7 +99,7 @@ export function CharacterCreation({ onComplete, causalMode = false, twoStep = fa
               className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 placeholder-white/50"
             />
             {showNameError && (
-              <p className="text-red-300 mt-2">Debes ingresar un nombre para comenzar</p>
+              <p className="text-red-300 mt-2">Escribí un nombre para comenzar</p>
             )}
           </div>
 

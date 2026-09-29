@@ -2133,7 +2133,7 @@ export const POLICIES: PolicyDefinition[] = [
     "name": "Conectividad y acceso digital",
     "description": "Integra redes, acceso y alfabetización digital.",
     "category": "Infraestructura",
-    "strategy": "Unifica tres acciones redundantes.",
+    "strategy": "Reúne en un solo plan todo lo de conectividad.",
     "actionCost": 1,
     "cooldown": 6,
     "maxUses": 2,
@@ -2548,7 +2548,7 @@ export const POLICIES: PolicyDefinition[] = [
   {
     "id": "estudio_factibilidad",
     "name": "Estudiar un proyecto nacional",
-    "description": "Elige una obra y prepara su ejecución técnica y ambiental.",
+    "description": "Elegí una obra y prepará su ejecución técnica y ambiental.",
     "category": "Infraestructura",
     "strategy": "Permiso de proyecto específico, consumible y con vencimiento.",
     "actionCost": 1,
@@ -3717,7 +3717,7 @@ export const POLICIES: PolicyDefinition[] = [
   {
     "id": "negociar",
     "name": "Negociar una demanda",
-    "description": "Selecciona resultado, plazo y contraprestación verificables.",
+    "description": "Definí resultado, plazo y contraprestación verificables.",
     "category": "Actores",
     "strategy": "Requiere reunión reciente y oferta factible.",
     "actionCost": 1,

@@ -1,7 +1,14 @@
-import { Play } from 'lucide-react';
+import { Play, RotateCcw } from 'lucide-react';
 import { IMAGES } from '../utils/imageAssets';
 
-export function WelcomeScreen({ onStart }: { onStart: (isAdmin: boolean) => void }) {
+interface WelcomeScreenProps {
+  onStart: (isAdmin: boolean) => void;
+  /** Resumen de la partida guardada ("Laura Méndez · Mandato 1, turno 5"), si hay una. */
+  savedLabel?: string | null;
+  onContinue?: () => void;
+}
+
+export function WelcomeScreen({ onStart, savedLabel, onContinue }: WelcomeScreenProps) {
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
       {/* Fondo institucional */}
@@ -24,13 +31,33 @@ export function WelcomeScreen({ onStart }: { onStart: (isAdmin: boolean) => void
           negociás con grupos de interés y buscás la legitimidad para gobernar.
         </p>
 
-        <button
-          onClick={() => onStart(false)}
-          className="inline-flex items-center gap-2 bg-accent hover:bg-accent/90 text-accent-foreground font-display font-bold px-10 py-4 rounded-xl transition-colors shadow-lg text-lg uppercase tracking-wide"
-        >
-          <Play className="w-5 h-5" />
-          Empezar
-        </button>
+        {savedLabel && onContinue ? (
+          <div className="flex flex-col items-center gap-3">
+            <button
+              onClick={onContinue}
+              className="inline-flex items-center gap-2 bg-accent hover:bg-accent/90 text-accent-foreground font-display font-bold px-10 py-4 rounded-xl transition-colors shadow-lg text-lg uppercase tracking-wide"
+            >
+              <Play className="w-5 h-5" />
+              Continuar partida
+            </button>
+            <p className="text-sm text-white/85 drop-shadow">{savedLabel}</p>
+            <button
+              onClick={() => onStart(false)}
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-white/90 hover:text-white px-4 py-2.5 rounded-lg hover:bg-white/10 transition-colors"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Empezar una nueva
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => onStart(false)}
+            className="inline-flex items-center gap-2 bg-accent hover:bg-accent/90 text-accent-foreground font-display font-bold px-10 py-4 rounded-xl transition-colors shadow-lg text-lg uppercase tracking-wide"
+          >
+            <Play className="w-5 h-5" />
+            Empezar
+          </button>
+        )}
       </div>
     </div>
   );

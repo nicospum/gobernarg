@@ -1,5 +1,6 @@
 import { Position } from '../types/game';
 import { IMAGES, getPositionBackground } from '../utils/imageAssets';
+import { useDialog } from '@/lib/useDialog';
 
 interface WelcomeModalProps {
   governorName: string;
@@ -8,6 +9,7 @@ interface WelcomeModalProps {
 }
 
 export function WelcomeModal({ governorName, position, onStart }: WelcomeModalProps) {
+  const dialogRef = useDialog<HTMLDivElement>();
   const getTerritory = (pos: Position) => {
     switch (pos) {
       case 'intendente':
@@ -31,7 +33,7 @@ export function WelcomeModal({ governorName, position, onStart }: WelcomeModalPr
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div ref={dialogRef} className="outline-none fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="relative w-full max-w-3xl rounded-xl overflow-hidden shadow-2xl border border-border">
         {/* Imagen de fondo según cargo */}
         <div
@@ -52,13 +54,13 @@ export function WelcomeModal({ governorName, position, onStart }: WelcomeModalPr
           </h2>
 
           <p className="text-lg md:text-xl text-white/90 mb-6 leading-relaxed">
-            Has sido elegido como <strong>{getPositionTitle(position)}</strong>. Es hora de asumir
-            el liderazgo y guiar a tu {getTerritory(position)} hacia un futuro próspero.
+            Ganaste la elección y asumís la <strong>{getPositionTitle(position)}</strong>. Es hora de
+            liderar y guiar a tu {getTerritory(position)} hacia un futuro próspero.
           </p>
 
           <p className="text-base md:text-lg text-white/80 mb-8 leading-relaxed">
-            Como {getPositionTitle(position)}, deberás tomar decisiones clave, gestionar recursos y
-            equilibrar las necesidades de diversos grupos de interés. Mantén la estabilidad política,
+            Desde la {getPositionTitle(position)} vas a tomar decisiones clave, gestionar recursos y
+            equilibrar las necesidades de diversos grupos de interés. Mantené la estabilidad política,
             económica y social mientras enfrentás desafíos y aprovechás oportunidades.
           </p>
 
