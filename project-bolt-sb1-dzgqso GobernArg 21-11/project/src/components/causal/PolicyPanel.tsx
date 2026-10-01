@@ -7,9 +7,9 @@ import type { CausalState, CommandParams, PolicyDefinition } from '../../causal/
 import { Dialog } from './Dialog';
 import { CATEGORY_VISUALS } from './visuals';
 
-interface Props { state: CausalState; onExecute: (id: string, params?: CommandParams) => boolean }
+interface Props { state: CausalState; onExecute: (id: string, params?: CommandParams) => boolean; onPreview?: (policy: PolicyDefinition | null) => void }
 const number = (n: number) => n.toLocaleString('es-AR', { maximumFractionDigits: 1 });
-export function PolicyPanel({ state, onExecute }: Props) {
+export function PolicyPanel({ state, onExecute, onPreview }: Props) {
   const [category, setCategory] = useState('Economía');
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<PolicyDefinition | null>(null);
@@ -17,10 +17,10 @@ export function PolicyPanel({ state, onExecute }: Props) {
   const categories = ['Todas', ...new Set(POLICIES.filter(policy => policy.role === 'policy').map(policy => policy.category))];
   const policies = POLICIES.filter(policy => policy.role === 'policy' && (category === 'Todas' || policy.category === category)
     && `${policy.name} ${policy.description}`.toLocaleLowerCase('es').includes(query.toLocaleLowerCase('es')));
-  return <section className="bg-card border border-border rounded-xl overflow-hidden">
+  return <section className="b-policy-panel bg-card border border-border rounded-xl overflow-hidden">
     <div className="p-4 border-b border-border flex items-center justify-between gap-3"><h2 className="font-display text-lg font-bold uppercase tracking-wide">Políticas públicas</h2><span className="text-xs text-muted-foreground">{state.actionPoints} {state.actionPoints === 1 ? 'acción disponible' : 'acciones disponibles'}</span></div>
     <div className="p-3 flex flex-wrap gap-1.5" role="group" aria-label="Categorías de políticas">
-      {categories.map(item => <button type="button" key={item} onClick={() => setCategory(item)} aria-pressed={item === category}
+      {categories.map(item => <button type="button" key={item} onClick={() => { setCategory(item); onPreview?.(null); }} aria-pressed={item === category}
         className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs ${category === item ? 'bg-primary text-white' : 'bg-white/5 text-muted-foreground hover:text-white'}`}>{CATEGORY_VISUALS[item] && <img src={CATEGORY_VISUALS[item].image} alt="" className="w-5 h-5 object-contain" />}{item}</button>)}
     </div>
     <label className="mx-4 mb-3 flex items-center gap-2 border border-border rounded px-3 py-2 text-muted-foreground"><Search size={15} /><input value={query} onChange={event => setQuery(event.target.value)} aria-label="Buscar políticas" placeholder="Buscar una política" className="min-w-0 w-full bg-transparent outline-none text-sm text-foreground" /></label>
@@ -28,16 +28,17 @@ export function PolicyPanel({ state, onExecute }: Props) {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-4 pt-0">
       {policies.map(policy => {
         const availability = policyAvailability(state, policy.id);
-        const effects = policy.effects.filter(effect => effect.kind === 'indicator').slice(0, 2);
+        const effects = policyEffectsPreview(state, policy).slice(0, 3);
+        const executed = state.history.some(execution => execution.turn === state.turn && execution.actionId === policy.id);
         const visual = CATEGORY_VISUALS[policy.category];
         const adverse = policy.effects.some(effect => effect.kind === 'indicator' && (effect.target === 'inflacion' ? effect.magnitude > 0 : effect.magnitude < 0));
         const relevant = policy.effects.some(effect => effect.kind === 'indicator' && (effect.target === 'inflacion' ? effect.magnitude < 0 && state.indicators.inflacion > 60 : effect.magnitude > 0 && state.indicators[effect.target] < 45));
-        return <button type="button" key={policy.id} onClick={() => setSelected(policy)} style={{ borderLeftColor: visual?.color }} className="text-left rounded-lg border border-l-4 border-border bg-background/40 p-4 hover:border-primary focus-visible:outline focus-visible:outline-primary transition-colors">
-          <div className="flex items-center gap-2 mb-3"><img src={visual?.image} alt="" className="w-9 h-9 object-contain rounded bg-white/10" /><span className="text-[10px] uppercase font-semibold tracking-wide" style={{ color: visual?.color }}>{policy.category}</span>{relevant && availability.allowed && <span className="ml-auto text-[10px] text-amber-200">★ Prioritaria</span>}</div>
-          <div className="flex items-start justify-between gap-2"><h3 className="font-semibold text-sm leading-5">{policy.name}</h3>{!availability.allowed && <LockKeyhole className="shrink-0 text-muted-foreground" size={14} aria-label="Requiere condiciones" />}</div>
+        return <button type="button" key={policy.id} data-policy={policy.id} onMouseEnter={() => onPreview?.(policy)} onMouseLeave={() => onPreview?.(null)} onFocus={() => onPreview?.(policy)} onBlur={() => onPreview?.(null)} onClick={() => { onPreview?.(null); setSelected(policy); }} style={{ borderLeftColor: visual?.color }} className={`b-policy-card ${executed ? 'b-policy-executed' : ''} text-left rounded-lg border border-l-4 border-border bg-background/40 p-4 hover:border-primary focus-visible:outline focus-visible:outline-primary transition-colors`}>
+          <div className="flex items-center gap-2 mb-3"><img src={visual?.image} alt="" className="w-7 h-7 object-contain rounded bg-white/10" /><span className="text-[10px] uppercase font-semibold tracking-wide" style={{ color: visual?.color }}>{policy.category}</span>{relevant && availability.allowed && <span className="ml-auto text-[10px] text-amber-200">★ Prioritaria</span>}</div>
+          <div className="flex items-start justify-between gap-2"><h3 className="font-display font-semibold text-sm leading-5">{policy.name}</h3>{!availability.allowed && <LockKeyhole className="shrink-0 text-muted-foreground" size={14} aria-label="Requiere condiciones" />}</div>
           <p className="text-xs text-muted-foreground mt-2 leading-5">{policy.description}</p>
-          <div className="mt-3 flex flex-wrap gap-1.5">{effects.map(effect => <span key={effect.id} className="text-[11px] bg-primary/10 border border-primary/20 text-blue-200 px-2 py-1 rounded">{indicatorName(effect.target)}</span>)}</div>
-          <div className="mt-3 flex justify-between gap-2 text-xs"><span className="text-muted-foreground">{availability.actionCost} {availability.actionCost === 1 ? 'acción' : 'acciones'} · {number(availability.cashCost)} U</span><span className="text-blue-300 flex gap-1 items-center">Ver política <ArrowRight size={12} /></span></div>
+          <div className="b-policy-effects"><span className="b-eyebrow">Efectos previstos</span>{effects.map(effect => <span key={effect.id} className={effect.capturedMagnitude === 0 ? 'text-muted-foreground' : (effect.target === 'inflacion' ? effect.capturedMagnitude < 0 : effect.capturedMagnitude > 0) ? 'text-emerald-300' : 'text-rose-300'}>{indicatorName(effect.target)} <strong>{effect.capturedMagnitude > 0 ? '+' : ''}{number(effect.capturedMagnitude)}</strong><small>desde T{effect.begins}</small></span>)}{effects.length === 0 && <span className="text-muted-foreground">Consultá las condiciones del instrumento.</span>}</div>
+          <div className="mt-3 flex justify-between gap-2 text-xs"><span className="text-muted-foreground">{availability.actionCost} {availability.actionCost === 1 ? 'acción' : 'acciones'} · {number(availability.cashCost)} U</span><span className="text-blue-300 flex gap-1 items-center">{executed ? 'Ejecutada · Ver detalle' : 'Ver política'} <ArrowRight size={12} /></span></div>
           <p className={`mt-2 text-[10px] ${adverse ? 'text-amber-200' : 'text-emerald-300'}`}>{adverse ? 'Riesgo: incluye efectos adversos' : 'Riesgo: sin perjuicio directo previsto'}{availability.efficacy > 1 ? ` · Bonificación ${number((availability.efficacy - 1) * 100)}%` : ''}</p>
         </button>;
       })}

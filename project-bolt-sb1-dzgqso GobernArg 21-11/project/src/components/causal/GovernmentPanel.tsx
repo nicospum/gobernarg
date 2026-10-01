@@ -14,7 +14,7 @@ export function GovernmentPanel({ state, onCommand }: CampaignProps) {
   const c = state.campaign;
   if (!c) return null;
   return <section className="bg-card border border-border rounded-xl overflow-hidden">
-    <div className="relative h-36"><img src={IMAGES.backgrounds.cabinetRoom} alt="Sala del gabinete presidencial" className="absolute inset-0 w-full h-full object-cover" /><div className="absolute inset-0 bg-gradient-to-t from-[#102841] via-[#102841]/35 to-transparent" /><div className="absolute bottom-4 left-5"><p className="text-[10px] uppercase tracking-[.2em] text-blue-200">Equipo de gobierno</p><h2 className="font-display text-xl font-bold">Gabinete presidencial · {c.advisors.length}/2</h2></div></div>
+    <div className="relative h-36"><img src={IMAGES.backgrounds.cabinetRoom} alt="Sala del gabinete presidencial" className="absolute inset-0 w-full h-full object-cover" /><div className="absolute inset-0 bg-gradient-to-t from-[#0b1017] via-[#0b1017]/35 to-transparent" /><div className="absolute bottom-4 left-5"><p className="text-[10px] uppercase tracking-[.2em] text-blue-200">Equipo de gobierno</p><h2 className="font-display text-xl font-bold">Gabinete presidencial · {c.advisors.length}/2</h2></div></div>
     <div className="p-4 space-y-4"><p className="text-xs text-muted-foreground">Una operación de gabinete por turno · 1 acción. Sueldo: 10 U por nivel y trimestre, incluso durante capacitación. Los puntos adicionales comienzan al activarse el asesor.</p>
       <div className="grid sm:grid-cols-2 gap-3">{CABINET.map(advisor => {
         const member = c.advisors.find(a => a.id === advisor.id);

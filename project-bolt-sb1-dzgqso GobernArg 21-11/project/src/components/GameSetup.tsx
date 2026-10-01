@@ -1,3 +1,4 @@
+import { PresidentialMark } from './causal/SituationRoom';
 import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, Lock, Play, Sparkles, Trophy } from 'lucide-react';
 import { IMAGES } from '../utils/imageAssets';
@@ -115,7 +116,7 @@ export function GameSetup({ draft, onBack, onStart }: GameSetupProps) {
 
       <div className="relative z-10 max-w-5xl mx-auto p-4 md:p-8">
         <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
-          <img src={IMAGES.logo.primary} alt="Gobernarg" className="h-14 md:h-20 drop-shadow-lg" />
+          <div className="b-onboarding-mark"><PresidentialMark /></div>
           <SetupSteps current={2} />
         </div>
 

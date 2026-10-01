@@ -1,5 +1,6 @@
+import { PresidentialMark } from './causal/SituationRoom';
 import { Position } from '../types/game';
-import { IMAGES, getPositionBackground } from '../utils/imageAssets';
+import { getPositionBackground } from '../utils/imageAssets';
 import { useDialog } from '@/lib/useDialog';
 
 interface WelcomeModalProps {
@@ -43,11 +44,7 @@ export function WelcomeModal({ governorName, position, onStart }: WelcomeModalPr
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/70 to-slate-900/40" />
 
         <div className="relative z-10 p-8 md:p-12 text-white text-center">
-          <img
-            src={IMAGES.logo.primary}
-            alt="Gobernarg"
-            className="h-16 md:h-20 mx-auto mb-6 bg-white/90 rounded-xl px-4 py-2"
-          />
+          <div className="b-onboarding-mark"><PresidentialMark /></div>
 
           <h2 className="font-display text-3xl md:text-4xl font-bold mb-4 drop-shadow-lg uppercase tracking-wide">
             ¡Felicitaciones, {governorName}!

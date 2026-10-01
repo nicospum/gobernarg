@@ -1,64 +1,23 @@
-import { Play, RotateCcw } from 'lucide-react';
+import { ArrowRight, Play, RotateCcw } from 'lucide-react';
 import { IMAGES } from '../utils/imageAssets';
+import { ACTORS, INDICATORS, POLICIES } from '../causal/catalog';
+import { PresidentialMark } from './causal/SituationRoom';
 
 interface WelcomeScreenProps {
   onStart: (isAdmin: boolean) => void;
-  /** Resumen de la partida guardada ("Laura Méndez · Mandato 1, turno 5"), si hay una. */
   savedLabel?: string | null;
   onContinue?: () => void;
 }
 
 export function WelcomeScreen({ onStart, savedLabel, onContinue }: WelcomeScreenProps) {
-  return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
-      {/* Fondo institucional */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${IMAGES.backgrounds.congressSunrise})` }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-blue-900/80 via-blue-800/60 to-slate-900/80" />
-
-      {/* Contenido */}
-      <div className="relative z-10 max-w-2xl w-full px-6 text-center">
-        <img
-          src={IMAGES.logo.wide}
-          alt="Gobernarg"
-          className="w-full max-w-md mx-auto mb-6 drop-shadow-2xl"
-        />
-
-        <p className="text-lg md:text-xl text-white/90 mb-10 leading-relaxed drop-shadow">
-          Simulación política donde tomás decisiones estratégicas, gestionás recursos,
-          negociás con grupos de interés y buscás la legitimidad para gobernar.
-        </p>
-
-        {savedLabel && onContinue ? (
-          <div className="flex flex-col items-center gap-3">
-            <button
-              onClick={onContinue}
-              className="inline-flex items-center gap-2 bg-accent hover:bg-accent/90 text-accent-foreground font-display font-bold px-10 py-4 rounded-xl transition-colors shadow-lg text-lg uppercase tracking-wide"
-            >
-              <Play className="w-5 h-5" />
-              Continuar partida
-            </button>
-            <p className="text-sm text-white/85 drop-shadow">{savedLabel}</p>
-            <button
-              onClick={() => onStart(false)}
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-white/90 hover:text-white px-4 py-2.5 rounded-lg hover:bg-white/10 transition-colors"
-            >
-              <RotateCcw className="w-4 h-4" />
-              Empezar una nueva
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={() => onStart(false)}
-            className="inline-flex items-center gap-2 bg-accent hover:bg-accent/90 text-accent-foreground font-display font-bold px-10 py-4 rounded-xl transition-colors shadow-lg text-lg uppercase tracking-wide"
-          >
-            <Play className="w-5 h-5" />
-            Empezar
-          </button>
-        )}
+  return <div className="b-welcome">
+    <header className="b-welcome-header"><PresidentialMark /><span className="b-classification">República Argentina / Presidencia</span></header>
+    <main className="b-welcome-main">
+      <div className="b-welcome-copy"><p className="b-eyebrow"><span className="b-live-dot" /> Simulación política argentina</p><h1>Sala de situación<br /><em>presidencial.</em></h1><p className="b-welcome-description">Cada decisión abre un frente.<br />Goberná, negociá y construí tu legado.</p><p className="b-welcome-detail">Administrá los recursos del país, acordá con sus actores y enfrentá las consecuencias de tu gobierno, trimestre a trimestre.</p>
+        <div className="b-welcome-actions">{savedLabel && onContinue ? <><button onClick={onContinue} className="causal-primary b-welcome-start"><Play size={17} />Continuar partida<ArrowRight size={18} /></button><p className="b-saved-label">{savedLabel}</p><button onClick={() => onStart(false)} className="causal-secondary"><RotateCcw size={14} />Empezar una nueva</button></> : <button onClick={() => onStart(false)} className="causal-primary b-welcome-start"><Play size={17} />Empezar<ArrowRight size={18} /></button>}</div>
+        <div className="b-welcome-stats">{[[INDICATORS.length, 'Indicadores'], [ACTORS.length, 'Actores de poder'], [POLICIES.filter(p => p.role === 'policy').length, 'Políticas públicas']].map(([value, label]) => <div key={label}><strong>{value}</strong><span>{label}</span></div>)}</div>
       </div>
-    </div>
-  );
+      <div className="b-welcome-scene"><img src={IMAGES.backgrounds.casaRosadaSunset} alt="Casa Rosada al atardecer" /><div className="b-scene-caption"><span className="b-eyebrow">Casa Rosada / Buenos Aires</span><strong>El país espera tus decisiones.</strong><span>Un mandato. Dieciséis trimestres.</span></div><span className="b-scene-stamp">GobernArg · Versión B</span></div>
+    </main><footer className="b-welcome-footer"><span>Decisiones · Acuerdos · Consecuencias</span><span>Tu gestión se guarda automáticamente en este navegador.</span></footer>
+  </div>;
 }

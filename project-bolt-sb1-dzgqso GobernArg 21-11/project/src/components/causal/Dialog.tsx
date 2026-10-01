@@ -11,7 +11,7 @@ const stack: HTMLElement[] = [];
  * así un Enter posterior no cierra otro turno sin querer. En el celular ocupa
  * toda la pantalla.
  */
-export function Dialog({ title, children, onClose, dismissible = true }: { title: string; children: ReactNode; onClose: () => void; dismissible?: boolean }) {
+export function Dialog({ title, children, onClose, dismissible = true, variant = 'dossier' }: { title: string; children: ReactNode; onClose: () => void; dismissible?: boolean; variant?: 'dossier' | 'drawer' }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
@@ -39,10 +39,10 @@ export function Dialog({ title, children, onClose, dismissible = true }: { title
       if (previous?.isConnected && !previous.hasAttribute('data-no-restore-focus')) previous.focus({ preventScroll: true });
     };
   }, [onClose, dismissible]);
-  return <div className="fixed inset-0 z-[70] bg-black/75 backdrop-blur-sm p-0 sm:p-6 flex items-stretch sm:items-center justify-center" onMouseDown={event => { if (dismissible && event.target === event.currentTarget) onClose(); }}>
-    <div ref={ref} tabIndex={-1} role="dialog" aria-modal="true" aria-label={title} className="w-full max-w-3xl h-[100dvh] sm:h-auto max-h-[100dvh] sm:max-h-[90vh] overflow-y-auto bg-card sm:border border-border sm:rounded-xl shadow-2xl outline-none">
+  return <div className={`b-dialog-backdrop ${variant === 'drawer' ? 'b-drawer-backdrop' : ''} fixed inset-0 z-[70] bg-black/75 backdrop-blur-sm p-0 sm:p-6 flex items-stretch sm:items-center justify-center`} onMouseDown={event => { if (dismissible && event.target === event.currentTarget) onClose(); }}>
+    <div ref={ref} tabIndex={-1} role="dialog" aria-modal="true" aria-label={title} className={`b-dialog ${variant === 'drawer' ? 'b-drawer' : ''} w-full max-w-3xl h-[100dvh] sm:h-auto max-h-[100dvh] sm:max-h-[90vh] overflow-y-auto bg-card sm:border border-border sm:rounded-xl shadow-2xl outline-none`}>
       <div className="sticky top-0 bg-card border-b border-border p-5 flex justify-between items-start gap-3 z-10">
-        <h2 className="font-display text-xl font-bold">{title}</h2>
+        <div><p className="b-eyebrow mb-1">Presidencia / Sala de situación</p><h2 className="font-display text-xl font-bold">{title}</h2></div>
         {dismissible && <button type="button" onClick={onClose} aria-label="Cerrar diálogo" className="-m-2 p-3 hover:bg-white/10 rounded"><X size={20} /></button>}
       </div>
       <div className="p-5 space-y-5">{children}</div>

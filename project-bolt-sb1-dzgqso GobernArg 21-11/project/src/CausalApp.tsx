@@ -83,7 +83,7 @@ export default function CausalApp() {
     if (!session) return false;
     return commit({ id: crypto.randomUUID(), expectedTurn: session.state.turn, type, actionId, params });
   };
-  return <>
+  return <div className={`situation-room b-screen-${screen}`}>
     <Toaster theme="dark" position="bottom-right" richColors containerAriaLabel="Avisos" />
     {screen === 'welcome' && <><WelcomeScreen onStart={() => setScreen('character')} savedLabel={savedLabel(session)} onContinue={() => setScreen('game')} />{savingError && <p role="alert" className="fixed bottom-4 left-4 right-4 rounded-lg bg-card border border-amber-300/40 p-4 text-sm text-amber-100">{savingError} Al empezar una partida nueva se crea un guardado nuevo.</p>}</>}
     {screen === 'character' && <CharacterCreation onComplete={continueToSetup} causalMode twoStep initial={draft} />}
@@ -91,5 +91,5 @@ export default function CausalApp() {
     {screen === 'intro' && session && <WelcomeModal governorName={session.state.name} position="presidente" onStart={() => setScreen('game')} />}
     {screen === 'game' && session && <CausalDashboard state={session.state} savingError={savingError}
       onExecute={(id, params) => makeCommand('execute', id, params)} onCommand={(type, targetId, choiceId) => commit({ id: crypto.randomUUID(), expectedTurn: session.state.turn, type, targetId, choiceId })} onRestart={restart} />}
-  </>;
+  </div>;
 }

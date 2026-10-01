@@ -1,3 +1,4 @@
+import { PresidentialMark } from './causal/SituationRoom';
 import { useState } from 'react';
 import { Info } from 'lucide-react';
 import { Archetype, Position } from '../types/game';
@@ -76,7 +77,7 @@ export function CharacterCreation({ onComplete, causalMode = false, twoStep = fa
 
       <div className="relative z-10 max-w-5xl mx-auto p-4 md:p-8">
         <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
-          <img src={IMAGES.logo.primary} alt="Gobernarg" className="h-14 md:h-20 drop-shadow-lg" />
+          <div className="b-onboarding-mark"><PresidentialMark /></div>
           {twoStep && <SetupSteps current={1} />}
         </div>
 

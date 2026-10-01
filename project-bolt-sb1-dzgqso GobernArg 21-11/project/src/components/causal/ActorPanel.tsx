@@ -8,20 +8,21 @@ import type { ActorId, AgreementTemplate, CausalState, CommandParams, IndicatorI
 import { Dialog } from './Dialog';
 import { actorPortrait } from './visuals';
 
-interface Props { state: CausalState; onExecute: (id: string, params?: CommandParams) => boolean }
-export function ActorPanel({ state, onExecute }: Props) {
+interface Props { state: CausalState; onExecute: (id: string, params?: CommandParams) => boolean; previewTargets?: IndicatorId[] }
+export function ActorPanel({ state, onExecute, previewTargets = [] }: Props) {
   const [selected, setSelected] = useState<ActorId | null>(null);
   const close = useCallback(() => setSelected(null), []);
-  return <section className="bg-card border border-border rounded-xl overflow-hidden">
-    <div className="p-4 border-b border-border flex items-center gap-2"><Users size={17} className="text-blue-300" /><h2 className="font-display font-bold text-lg uppercase tracking-wide">Actores</h2></div>
+  return <section className="b-actors-panel bg-card border border-border rounded-xl overflow-hidden">
+    <div className="p-4 border-b border-border flex items-center gap-2"><Users size={17} className="text-blue-300" /><h2 className="font-display font-bold text-lg uppercase tracking-wide">Factores de poder</h2></div>
     <p className="text-xs text-muted-foreground px-4 py-3">Satisfacción con los resultados y relación política son dos cosas distintas.</p>
     <div className="max-h-[720px] overflow-y-auto divide-y divide-border">
       {ACTORS.map(actor => {
         const status = state.actors[actor.id];
-        return <button type="button" key={actor.id} onClick={() => setSelected(actor.id)} className="w-full text-left p-3 px-4 hover:bg-white/5 transition-colors">
+        const relevant = actor.sensitivities.some(item => previewTargets.includes(item.indicatorId));
+        return <button type="button" key={actor.id} onClick={() => setSelected(actor.id)} className={`b-actor-card ${relevant ? 'b-actor-relevant' : ''} w-full text-left p-3 px-4 hover:bg-white/5 transition-colors`}>
           <div className="flex items-center gap-3"><img src={actorPortrait(actor.id)} alt="" className="w-10 h-10 rounded-lg object-cover bg-white/10" /><span className="text-sm font-medium flex-1">{actor.name}</span><ChevronRight size={13} className="text-muted-foreground shrink-0" /></div>
-          <div className="flex gap-3 mt-2 text-[11px]"><span className={status.satisfaction < 35 ? 'text-amber-200' : 'text-muted-foreground'}>Satisfacción <strong className="text-foreground">{status.satisfaction.toFixed(0)}</strong></span><span className="text-muted-foreground">Relación <strong className="text-foreground">{status.relationship.toFixed(0)}</strong></span>
-            {status.conflict && <span className="text-red-300">Conflicto</span>}{status.cooperation && <span className="text-emerald-300">Cooperación</span>}</div>
+          <p className="b-actor-channel">{actor.channel.name}</p><div className="b-actor-metrics flex gap-3 mt-2 text-[11px]"><span className={status.satisfaction < 35 ? 'text-amber-200' : 'text-muted-foreground'}>Satisfacción <strong className="text-foreground">{status.satisfaction.toFixed(0)}</strong><span className="b-meter"><span style={{ width: `${status.satisfaction}%`, background: status.satisfaction < 35 ? '#fbbf24' : '#34d399' }} /></span></span><span className="text-muted-foreground">Relación <strong className="text-foreground">{status.relationship.toFixed(0)}</strong><span className="b-meter"><span style={{ width: `${status.relationship}%` }} /></span></span>
+            {status.conflict && <span className="text-red-300">Conflicto</span>}{status.cooperation && <span className="text-emerald-300">Cooperación</span>}</div><p className="b-actor-footnote">{relevant ? 'La política toca indicadores que este actor valora.' : hasRecentMeeting(state, actor.id) ? 'Prioridades reveladas · Abrir negociación' : 'Sin reunión vigente · Abrir audiencia'}</p>
         </button>;
       })}
     </div>
