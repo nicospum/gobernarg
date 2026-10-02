@@ -27,7 +27,7 @@ export const SHORT_NAMES: Record<IndicatorId, string> = {
 export type Tone = 'critical' | 'bad' | 'neutral' | 'good' | 'great';
 const TONES: Tone[] = ['critical', 'bad', 'neutral', 'good', 'great'];
 const WORDS = ['Crítico', 'Bajo', 'Regular', 'Bueno', 'Muy bueno'];
-const PRICE_WORDS = ['Descontrolados', 'Muy altos', 'En alza', 'Estables', 'Muy estables'];
+const PRICE_WORDS = ['Descontrolados', 'Muy altos', 'Altos', 'Estables', 'Muy estables'];
 /** Palabras para aprobación, estabilidad y legitimidad. */
 const KPI_WORDS = ['Muy baja', 'Baja', 'Media', 'Alta', 'Muy alta'];
 

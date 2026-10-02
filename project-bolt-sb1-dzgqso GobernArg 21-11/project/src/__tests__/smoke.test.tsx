@@ -8,6 +8,7 @@ import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import App from '../App';
 import { ErrorBoundary } from '../components/ErrorBoundary';
+import { LITE_FEATURES } from '../lite/config';
 
 beforeAll(() => {
   class Observer { observe() {} unobserve() {} disconnect() {} takeRecords() { return []; } }
@@ -98,5 +99,36 @@ describe('Prueba de humo de la interfaz (versión B Lite)', { timeout: 30000 }, 
     expect(screen.getAllByText('Sindicalista').length).toBeGreaterThan(0);
     expect(screen.getAllByText(/Herencia pesada/).length).toBeGreaterThan(0);
     expect(screen.getAllByText('5 acciones').length).toBeGreaterThan(0);
+  });
+
+  it('la Lite oculta paneles y cifras; el modo detallado los devuelve', async () => {
+    localStorage.clear();
+    renderGame();
+    await startGame('Lite');
+    expect(screen.getByRole('region', { name: 'El país' })).toBeTruthy();
+    for (const hidden of ['Cable de gobierno', 'Expediente del trimestre', 'Briefing del país', 'Componente electoral social']) expect(screen.queryByText(hidden)).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Gestión' })).toBeNull();
+    await click(screen.getByRole('button', { name: 'Tesoro' }));
+    expect(screen.getByRole('region', { name: 'Caja y deuda' })).toBeTruthy();
+    expect(screen.getByRole('region', { name: 'Compromisos' })).toBeTruthy();
+    expect(screen.getByRole('region', { name: 'Gobernabilidad' })).toBeTruthy();
+    expect(screen.queryByText('Proyección de obligaciones')).toBeNull();
+    expect(screen.queryByText(/ U\b/)).toBeNull();
+    cleanup();
+
+    LITE_FEATURES.modoDetallado = true;
+    try {
+      localStorage.clear();
+      renderGame();
+      await startGame('Detallado');
+      expect(screen.getByText('Briefing del país')).toBeTruthy();
+      expect(screen.getByText('Cable de gobierno')).toBeTruthy();
+      expect(screen.getByText('Expediente del trimestre')).toBeTruthy();
+      await click(screen.getByRole('button', { name: 'Gestión' }));
+      expect(screen.getByText('Calendario político')).toBeTruthy();
+      expect(screen.getByText('Objetivos de gobierno')).toBeTruthy();
+    } finally {
+      LITE_FEATURES.modoDetallado = false;
+    }
   });
 });
