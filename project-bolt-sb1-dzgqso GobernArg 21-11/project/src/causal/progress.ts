@@ -1,13 +1,11 @@
 /**
- * Progreso del jugador entre partidas (escenarios ganados y reelecciones).
+ * Progreso del jugador entre partidas (reelecciones ganadas).
  * Vive en el navegador (localStorage): si no está disponible —modo privado,
  * datos borrados— el juego funciona igual, sólo que sin desbloqueos guardados.
  */
 const KEY = 'gobernarg.progress.v1';
 
 export interface Progress {
-  /** Escenarios en los que ganaste la partida completa. */
-  wonScenarios: string[];
   /** Reelecciones ganadas en total: desbloquean los escenarios históricos. */
   reelectionsWon: number;
   /**
@@ -23,7 +21,7 @@ export interface Progress {
   unlockAll: boolean;
 }
 
-const EMPTY: Progress = { wonScenarios: [], reelectionsWon: 0, countedReelections: [], unlockAll: false };
+const EMPTY: Progress = { reelectionsWon: 0, countedReelections: [], unlockAll: false };
 
 export function loadProgress(): Progress {
   try {
@@ -31,7 +29,6 @@ export function loadProgress(): Progress {
     if (!raw) return { ...EMPTY };
     const parsed = JSON.parse(raw) as Partial<Progress>;
     return {
-      wonScenarios: Array.isArray(parsed.wonScenarios) ? parsed.wonScenarios.filter(x => typeof x === 'string') : [],
       reelectionsWon: typeof parsed.reelectionsWon === 'number' && parsed.reelectionsWon > 0 ? Math.floor(parsed.reelectionsWon) : 0,
       countedReelections: Array.isArray(parsed.countedReelections) ? parsed.countedReelections.filter(x => typeof x === 'string').slice(-200) : [],
       unlockAll: parsed.unlockAll === true,
@@ -47,13 +44,6 @@ function save(p: Progress): void {
   } catch {
     // Sin almacenamiento: el progreso dura sólo esta sesión.
   }
-}
-
-export function recordScenarioWin(scenarioId: string): Progress {
-  const p = loadProgress();
-  if (!p.wonScenarios.includes(scenarioId)) p.wonScenarios.push(scenarioId);
-  save(p);
-  return p;
 }
 
 /** Suma una reelección ganada una sola vez por elección (key = id del comando que la resolvió). */

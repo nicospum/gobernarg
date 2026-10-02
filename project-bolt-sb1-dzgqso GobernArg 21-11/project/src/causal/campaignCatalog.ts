@@ -1,4 +1,3 @@
-import { availableAdvisors } from '../data/advisors';
 import type { CampaignDelta, CampaignEvent, Difficulty, Strategy } from './campaignTypes';
 
 export const DIFFICULTIES: Record<Difficulty, { name: string; revenue: number; eventChance: number; electionPenalty: number }> = {
@@ -13,13 +12,17 @@ export const PROFILES: Record<string, { name: string; description: string }> = {
   sindicalista: { name: 'Sindicalista', description: 'Un punto de acción adicional. Reuniones gratuitas con sindicatos y organizaciones sociales.' },
   comunicador: { name: 'Comunicador', description: 'Reduce 30% los impactos negativos de indicadores en eventos. Sus habilidades sostienen la comunicación pública.' },
 };
-export const CABINET = availableAdvisors.map(advisor => ({
-  id: advisor.id, name: advisor.name, specialty: advisor.specialty, description: advisor.description,
-  cost: advisor.cost, level: advisor.level, bonusActions: advisor.bonusActions,
-  minimumApproval: advisor.unlockRequirement?.value ?? 0,
-  categories: ({ advisor1: ['Economía'], advisor2: ['Cultura', 'Instituciones'], advisor3: ['Infraestructura'],
-    advisor4: ['Servicios'], advisor5: ['Desarrollo'], advisor6: ['Seguridad'], advisor7: ['Servicios', 'Desarrollo'], advisor8: ['Servicios'] } as Record<string, string[]>)[advisor.id],
-}));
+export interface CabinetDefinition { id: string; name: string; specialty: string; description: string; cost: number; level: number; bonusActions: number; minimumApproval: number; categories: string[] }
+export const CABINET: CabinetDefinition[] = [
+  { id: 'advisor1', name: 'Dr. Carlos Méndez', specialty: 'Economista', description: 'Experto en política monetaria y desarrollo económico', cost: 300, level: 3, bonusActions: 2, minimumApproval: 0, categories: ['Economía'] },
+  { id: 'advisor2', name: 'Lic. María González', specialty: 'Comunicación Social', description: 'Especialista en manejo de medios y opinión pública', cost: 250, level: 2, bonusActions: 1, minimumApproval: 0, categories: ['Cultura', 'Instituciones'] },
+  { id: 'advisor3', name: 'Ing. Roberto Silva', specialty: 'Infraestructura', description: 'Experto en desarrollo urbano y obras públicas', cost: 400, level: 4, bonusActions: 2, minimumApproval: 0, categories: ['Infraestructura'] },
+  { id: 'advisor4', name: 'Dra. Ana Martínez', specialty: 'Políticas Sociales', description: 'Especialista en programas de desarrollo social', cost: 200, level: 3, bonusActions: 1, minimumApproval: 0, categories: ['Servicios'] },
+  { id: 'advisor5', name: 'Dr. Jorge Ramírez', specialty: 'Relaciones Internacionales', description: 'Diplomático con amplia experiencia internacional', cost: 500, level: 5, bonusActions: 2, minimumApproval: 60, categories: ['Desarrollo'] },
+  { id: 'advisor6', name: 'Lic. Patricia Sánchez', specialty: 'Seguridad Pública', description: 'Experta en políticas de seguridad y prevención', cost: 350, level: 3, bonusActions: 1, minimumApproval: 0, categories: ['Seguridad'] },
+  { id: 'advisor7', name: 'Dr. Miguel Ángel Torres', specialty: 'Educación', description: 'Especialista en reforma educativa', cost: 300, level: 4, bonusActions: 2, minimumApproval: 55, categories: ['Servicios', 'Desarrollo'] },
+  { id: 'advisor8', name: 'Charly Abad', specialty: 'Broker de Salud', description: 'Broker de salud: te arma un hospital llave en mano y te garantiza resultados en salud. Cálido y de trato fácil, se lleva bien con empresarios y líderes religiosos, y con su calidez mejora la relación con todos los sectores.', cost: 350, level: 4, bonusActions: 1, minimumApproval: 0, categories: ['Servicios'] },
+];
 export interface Ability { id: string; name: string; profile: string; cost: number; cooldown: number; description: string; effect: CampaignDelta; requirement?: 'investment' | 'labor' | 'pact' }
 export const ABILITIES: Ability[] = [
   { id: 'discurso_patriotico', name: 'Discurso Patriótico', profile: 'politico', cost: 30, cooldown: 4, description: 'Explicás el rumbo del gobierno: comunicación +4 durante tres turnos, sin alterar resultados materiales.', effect: { communication: 4 } },

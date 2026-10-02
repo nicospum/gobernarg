@@ -1,25 +1,16 @@
 import { PresidentialMark } from './causal/SituationRoom';
 import { useState } from 'react';
-import { Info } from 'lucide-react';
-import { Archetype, Position } from '../types/game';
-import { IMAGES, getPositionBackground } from '../utils/imageAssets';
+import { IMAGES } from '../utils/imageAssets';
 import { THUMBNAIL_ARCHETYPES } from '../utils/iconThumbnails';
-import { ARCHETYPE_PASSIVES } from '../data/specialAbilities';
-import { STARTING_POSITION } from '../data/careerRules';
 import { InfoTooltip } from './InfoTooltip';
-import { DIFFICULTIES, PROFILES } from '../causal/campaignCatalog';
-import type { Difficulty } from '../causal/campaignTypes';
+import { PROFILES } from '../causal/campaignCatalog';
+import type { Profile } from '../causal/campaignTypes';
 import { SetupSteps } from './SetupSteps';
 import type { CharacterDraft } from './GameSetup';
 
 interface CharacterCreationProps {
-  onComplete: (position: Position, archetype: Archetype, governorName: string, avatar: string, difficulty?: Difficulty) => void;
-  causalMode?: boolean;
-  /**
-   * Inicio en dos pasos: este es el paso 1 (personaje) y la dificultad se elige
-   * en el paso 2 (GameSetup). Al volver desde el paso 2 se conserva lo cargado.
-   */
-  twoStep?: boolean;
+  onComplete: (archetype: Profile, governorName: string, avatar: string) => void;
+  /** Inicio en dos pasos: al volver desde el paso 2 (GameSetup) se conserva lo cargado. */
   initial?: CharacterDraft | null;
 }
 
@@ -41,12 +32,8 @@ const AVATARS = [
   { id: 'podium-official', src: IMAGES.characters.podiumOfficial, label: 'Presidente' },
 ];
 
-export function CharacterCreation({ onComplete, causalMode = false, twoStep = false, initial = null }: CharacterCreationProps) {
-  const [difficulty, setDifficulty] = useState<Difficulty>('normal');
-  // MVP presidente-only: el cargo inicial vive en careerRules (STARTING_POSITION)
-  // para que el futuro modo campaña tenga un único punto de cambio.
-  const position: Position = STARTING_POSITION;
-  const [archetype, setArchetype] = useState<Archetype>(initial?.archetype ?? 'politico');
+export function CharacterCreation({ onComplete, initial = null }: CharacterCreationProps) {
+  const [archetype, setArchetype] = useState<Profile>(initial?.archetype ?? 'politico');
   const [governorName, setGovernorName] = useState(initial?.governorName ?? '');
   const [avatar, setAvatar] = useState<string>(initial?.avatar ?? AVATARS[0].src);
   const [showNameError, setShowNameError] = useState(false);
@@ -56,14 +43,14 @@ export function CharacterCreation({ onComplete, causalMode = false, twoStep = fa
       setShowNameError(true);
       return;
     }
-    onComplete(position, archetype, governorName, avatar, difficulty);
+    onComplete(archetype, governorName, avatar);
   };
 
-  const archetypes: { id: Archetype; title: string; bonus: string; description: string }[] = [
-    { id: 'politico', title: 'Político de Raza', bonus: '+2 acciones por turno', description: 'Experto en acuerdos y manejo institucional.' },
-    { id: 'sindicalista', title: 'Sindicalista', bonus: '+1 acción, apoyo sindical', description: 'Fortaleza en movimientos sociales.' },
-    { id: 'empresario', title: 'Empresario', bonus: '+1 acción, capital inicial', description: 'Visión económica y relación con el sector privado.' },
-    { id: 'comunicador', title: 'Comunicador', bonus: 'Alta popularidad inicial', description: 'Domina la agenda pública y los medios.' },
+  const archetypes: { id: Profile; title: string; description: string }[] = [
+    { id: 'politico', title: 'Político de Raza', description: 'Experto en acuerdos y manejo institucional.' },
+    { id: 'sindicalista', title: 'Sindicalista', description: 'Fortaleza en movimientos sociales.' },
+    { id: 'empresario', title: 'Empresario', description: 'Visión económica y relación con el sector privado.' },
+    { id: 'comunicador', title: 'Comunicador', description: 'Domina la agenda pública y los medios.' },
   ];
 
   return (
@@ -71,14 +58,14 @@ export function CharacterCreation({ onComplete, causalMode = false, twoStep = fa
       {/* Fondo según cargo seleccionado */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700"
-        style={{ backgroundImage: `url(${getPositionBackground(position)})` }}
+        style={{ backgroundImage: `url(${IMAGES.backgrounds.congressSunrise})` }}
       />
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-blue-900/70 to-slate-900/90" />
 
       <div className="relative z-10 max-w-5xl mx-auto p-4 md:p-8">
         <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
           <div className="b-onboarding-mark"><PresidentialMark /></div>
-          {twoStep && <SetupSteps current={1} />}
+          <SetupSteps current={1} />
         </div>
 
         <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 md:p-10 shadow-2xl border border-white/10">
@@ -105,10 +92,8 @@ export function CharacterCreation({ onComplete, causalMode = false, twoStep = fa
           </div>
 
           <h2 className="font-display text-xl font-semibold mb-4 uppercase tracking-wide">Elegí tu Perfil</h2>
-          {causalMode && !twoStep && <label className="block mb-6 text-sm">Dificultad de la gestión<select aria-label="Dificultad de la gestión" value={difficulty} onChange={event => setDifficulty(event.target.value as Difficulty)} className="causal-select mt-2 max-w-sm">{Object.entries(DIFFICULTIES).map(([id, item]) => <option key={id} value={id}>{item.name}</option>)}</select><span className="block text-xs text-muted-foreground mt-2">Modifica recaudación, frecuencia de eventos y exigencia electoral. Dos mandatos como máximo.</span></label>}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
             {archetypes.map((arch) => {
-              const passives = causalMode ? [] : ARCHETYPE_PASSIVES[arch.id] ?? [];
               return (
                 <InfoTooltip
                   key={arch.id}
@@ -117,20 +102,6 @@ export function CharacterCreation({ onComplete, causalMode = false, twoStep = fa
                     <div className="flex flex-col gap-1.5">
                       <div className="font-semibold text-xs">{arch.title}</div>
                       <div className="text-[10px] text-muted-foreground">{arch.description}</div>
-                      {passives.length > 0 && (
-                        <div>
-                          <div className="font-semibold text-[11px] mt-0.5 mb-0.5">Pasivas activas</div>
-                          {passives.map((p, i) => (
-                            <div key={i} className="flex items-start gap-1 text-[10px]">
-                              <Info size={10} className="text-blue-400 mt-0.5 shrink-0" />
-                              <span>
-                                <span className="text-white">{p.name}</span>
-                                <span className="text-muted-foreground"> — {p.description}</span>
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
                     </div>
                   }
                 >
@@ -148,7 +119,7 @@ export function CharacterCreation({ onComplete, causalMode = false, twoStep = fa
                       className="w-16 h-16 rounded-full object-cover bg-white/20 p-1 mb-3"
                     />
                     <h3 className="font-bold">{arch.title}</h3>
-                    <p className="text-xs opacity-75 mt-1">{causalMode ? PROFILES[arch.id]?.description : arch.bonus}</p>
+                    <p className="text-xs opacity-75 mt-1">{PROFILES[arch.id]?.description}</p>
                     <p className="text-xs opacity-90 mt-2">{arch.description}</p>
                   </button>
                 </InfoTooltip>
@@ -187,7 +158,7 @@ export function CharacterCreation({ onComplete, causalMode = false, twoStep = fa
             }`}
             disabled={!governorName.trim()}
           >
-            {twoStep ? 'Continuar' : 'Comenzar Gestión'}
+            Continuar
           </button>
         </div>
       </div>

@@ -362,11 +362,8 @@ export function applyCommand(input: CausalState, command: GameCommand): CommandR
   }
   if (command.type === 'close_turn' && input.phase !== 'governing') return reject('El mandato está pendiente de revisión.');
   if (command.type === 'close_turn' && campaignBlock(input)) return reject(campaignBlock(input)!);
-  if (command.type === 'continue_term' && input.campaign) return reject('La continuidad se resuelve en la elección presidencial.');
-  if (command.type === 'continue_term' && input.phase !== 'mandate_review') return reject('Todavía no terminó el mandato.');
   const state = structuredClone(input);
   if (command.type === 'close_turn') closeTurn(state);
-  if (command.type === 'continue_term') { state.term += 1; state.phase = 'governing'; }
   if (command.type === 'end_game') { state.phase = 'ended'; if (state.campaign) { state.campaign.outcome = 'retired'; state.campaign.outcomeReason = 'Decidiste finalizar tu carrera presidencial.'; } }
   state.processedCommands.push(command.id);
   return { state, accepted: true, message: command.type === 'close_turn' ? `Turno ${input.turn} cerrado.` : 'Estado actualizado.' };

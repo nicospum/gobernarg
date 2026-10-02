@@ -1,5 +1,7 @@
 import type { ActorId, IndicatorId } from './types';
 
+/** Perfil del presidente: cada uno tiene ventajas fijas (PROFILES). */
+export type Profile = 'politico' | 'empresario' | 'sindicalista' | 'comunicador';
 export type Difficulty = 'easy' | 'normal' | 'hard' | 'legend';
 export type Strategy = 'acelerar' | 'negociar' | 'abrirse' | 'jugada_audaz';
 export interface CabinetMember { id: string; level: number; activeFrom: number; hiredTurn: number }

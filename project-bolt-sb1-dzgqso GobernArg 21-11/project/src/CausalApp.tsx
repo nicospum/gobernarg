@@ -9,9 +9,8 @@ import { CausalDashboard } from './components/causal/CausalDashboard';
 import { markGameStart } from './components/causal/FeedbackForm';
 import { applyCommand } from './causal/engine';
 import { deserializeSession, newSession, SAVE_KEY, serializeSession, type GameSession } from './causal/persistence';
-import type { Archetype, Position } from './types/game';
 import type { CommandParams, GameCommand } from './causal/types';
-import type { Difficulty } from './causal/campaignTypes';
+import type { Difficulty, Profile } from './causal/campaignTypes';
 import { TURNS_PER_TERM } from './causal/catalog';
 import { getScenario } from './causal/scenarios';
 
@@ -55,7 +54,7 @@ export default function CausalApp() {
     current.current = next; setSession(next); toast.success(result.message);
     return true;
   }, []);
-  const continueToSetup = (_position: Position, archetype: Archetype, name: string, avatar: string) => {
+  const continueToSetup = (archetype: Profile, name: string, avatar: string) => {
     if (!name.trim()) return;
     setDraft({ archetype, governorName: name.trim(), avatar });
     setScreen('setup');
@@ -86,9 +85,9 @@ export default function CausalApp() {
   return <div className={`situation-room b-screen-${screen}`}>
     <Toaster theme="dark" position="bottom-right" richColors containerAriaLabel="Avisos" />
     {screen === 'welcome' && <><WelcomeScreen onStart={() => setScreen('character')} savedLabel={savedLabel(session)} onContinue={() => setScreen('game')} />{savingError && <p role="alert" className="fixed bottom-4 left-4 right-4 rounded-lg bg-card border border-amber-300/40 p-4 text-sm text-amber-100">{savingError} Al empezar una partida nueva se crea un guardado nuevo.</p>}</>}
-    {screen === 'character' && <CharacterCreation onComplete={continueToSetup} causalMode twoStep initial={draft} />}
+    {screen === 'character' && <CharacterCreation onComplete={continueToSetup} initial={draft} />}
     {screen === 'setup' && draft && <GameSetup draft={draft} onBack={() => setScreen('character')} onStart={start} />}
-    {screen === 'intro' && session && <WelcomeModal governorName={session.state.name} position="presidente" onStart={() => setScreen('game')} />}
+    {screen === 'intro' && session && <WelcomeModal governorName={session.state.name} onStart={() => setScreen('game')} />}
     {screen === 'game' && session && <CausalDashboard state={session.state} savingError={savingError}
       onExecute={(id, params) => makeCommand('execute', id, params)} onCommand={(type, targetId, choiceId) => commit({ id: crypto.randomUUID(), expectedTurn: session.state.turn, type, targetId, choiceId })} onRestart={restart} />}
   </div>;

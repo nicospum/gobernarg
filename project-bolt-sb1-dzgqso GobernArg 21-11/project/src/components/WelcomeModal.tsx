@@ -1,45 +1,21 @@
 import { PresidentialMark } from './causal/SituationRoom';
-import { Position } from '../types/game';
-import { getPositionBackground } from '../utils/imageAssets';
+import { IMAGES } from '../utils/imageAssets';
 import { useDialog } from '@/lib/useDialog';
 
 interface WelcomeModalProps {
   governorName: string;
-  position: Position;
   onStart: () => void;
 }
 
-export function WelcomeModal({ governorName, position, onStart }: WelcomeModalProps) {
+export function WelcomeModal({ governorName, onStart }: WelcomeModalProps) {
   const dialogRef = useDialog<HTMLDivElement>();
-  const getTerritory = (pos: Position) => {
-    switch (pos) {
-      case 'intendente':
-        return 'municipio';
-      case 'gobernador':
-        return 'provincia';
-      case 'presidente':
-        return 'país';
-    }
-  };
-
-  const getPositionTitle = (pos: Position) => {
-    switch (pos) {
-      case 'intendente':
-        return 'Intendente';
-      case 'gobernador':
-        return 'Gobernador';
-      case 'presidente':
-        return 'Presidente';
-    }
-  };
-
   return (
     <div ref={dialogRef} className="outline-none fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="relative w-full max-w-3xl rounded-xl overflow-hidden shadow-2xl border border-border">
-        {/* Imagen de fondo según cargo */}
+        
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${getPositionBackground(position)})` }}
+          style={{ backgroundImage: `url(${IMAGES.backgrounds.congressSunrise})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/95 via-slate-900/70 to-slate-900/40" />
 
@@ -51,12 +27,12 @@ export function WelcomeModal({ governorName, position, onStart }: WelcomeModalPr
           </h2>
 
           <p className="text-lg md:text-xl text-white/90 mb-6 leading-relaxed">
-            Ganaste la elección y asumís la <strong>{getPositionTitle(position)}</strong>. Es hora de
-            liderar y guiar a tu {getTerritory(position)} hacia un futuro próspero.
+            Ganaste la elección y asumís la <strong>Presidencia</strong>. Es hora de
+            liderar y guiar al país hacia un futuro próspero.
           </p>
 
           <p className="text-base md:text-lg text-white/80 mb-8 leading-relaxed">
-            Desde la {getPositionTitle(position)} vas a tomar decisiones clave, gestionar recursos y
+            Desde la Presidencia vas a tomar decisiones clave, gestionar recursos y
             equilibrar las necesidades de diversos grupos de interés. Mantené la estabilidad política,
             económica y social mientras enfrentás desafíos y aprovechás oportunidades.
           </p>

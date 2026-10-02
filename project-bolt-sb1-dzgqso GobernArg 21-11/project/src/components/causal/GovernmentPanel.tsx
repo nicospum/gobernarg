@@ -1,7 +1,7 @@
 import { ABILITIES, CABINET, PROFILES } from '../../causal/campaignCatalog';
 import { campaignActionReason } from '../../causal/campaign';
 import type { CausalState, GameCommand } from '../../causal/types';
-import { IMAGES, getAdvisorPortrait } from '../../utils/imageAssets';
+import { ADVISOR_PORTRAITS, IMAGES } from '../../utils/imageAssets';
 import { THUMBNAIL_ARCHETYPES } from '../../utils/iconThumbnails';
 
 export type CampaignDispatch = (type: GameCommand['type'], targetId?: string, choiceId?: string) => boolean;
@@ -20,7 +20,7 @@ export function GovernmentPanel({ state, onCommand }: CampaignProps) {
         const member = c.advisors.find(a => a.id === advisor.id);
         const level = member?.level ?? advisor.level;
         return <article key={advisor.id} className={`border rounded-xl p-3 ${member ? 'border-sky-300/50 bg-sky-400/10' : 'border-border bg-background/30'}`}>
-          <div className="flex gap-3"><img src={advisor.id === 'advisor8' ? IMAGES.advisors.charlyAbad : advisor.id === 'advisor2' ? IMAGES.advisors.communicationFemale : advisor.id === 'advisor4' ? IMAGES.advisors.socialFemale : advisor.id === 'advisor6' ? IMAGES.advisors.securityFemale : getAdvisorPortrait(advisor.specialty)} alt={advisor.name} className="w-16 h-20 rounded-lg object-cover" /><div><h3 className="text-sm font-semibold">{advisor.name}</h3><p className="text-xs text-blue-200 mt-1">{advisor.specialty}</p><p className="text-xs text-amber-200 mt-1">{'★'.repeat(level)} · Nivel {level}</p></div></div>
+          <div className="flex gap-3"><img src={ADVISOR_PORTRAITS[advisor.id]} alt={advisor.name} className="w-16 h-20 rounded-lg object-cover" /><div><h3 className="text-sm font-semibold">{advisor.name}</h3><p className="text-xs text-blue-200 mt-1">{advisor.specialty}</p><p className="text-xs text-amber-200 mt-1">{'★'.repeat(level)} · Nivel {level}</p></div></div>
           <p className="text-xs text-muted-foreground mt-3">{advisor.description}</p><p className="text-xs mt-2">+{advisor.bonusActions} {advisor.bonusActions === 1 ? 'acción' : 'acciones'} por turno activo · +{level * 2}% de eficacia en {advisor.categories.join(' / ')}.</p>
           {advisor.id === 'advisor8' && <p className="text-xs mt-1">Red hospitalaria 15% más barata y con su bonificación. Reuniones y negociaciones 20% más baratas; 40% con industria, PyMEs y organizaciones sociales.</p>}
           <p className="text-xs text-muted-foreground mt-1">Sueldo {level * 10} U/turno · Bonificación conjunta de asesores limitada a 15%.</p>

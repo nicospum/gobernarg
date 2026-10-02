@@ -41,7 +41,7 @@ function MandateTimeline({ inTerm, wide = false }: { inTerm: number; wide?: bool
 /** Hay un modal de campaña (evento, elección, estrategia, balance) delante del tablero. */
 function campaignModalOpen(state: CausalState): boolean {
   const c = state.campaign;
-  if (!c) return state.phase === 'mandate_review' || state.phase === 'ended';
+  if (!c) return false;
   return state.phase === 'ended' || state.phase === 'mandate_review' || !!c.pendingEvent || !!c.resultPending || !!c.strategyPending;
 }
 
@@ -135,7 +135,6 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
     {help && <HowToPlay onClose={closeHelp} />}
     {feedback && <FeedbackForm state={state} onClose={closeFeedback} />}
     {restart && <Dialog title="Reiniciar partida" onClose={closeRestart}><p className="text-sm">Esto reemplaza la partida guardada en este navegador y su historial.</p><div className="flex gap-3"><button type="button" className="causal-secondary" onClick={closeRestart}>Seguir jugando</button><button type="button" className="causal-primary" onClick={onRestart}>Reiniciar</button></div></Dialog>}
-    {!state.campaign && (state.phase === 'mandate_review' || state.phase === 'ended') && <Dialog title={state.phase === 'ended' ? 'Gestión finalizada' : 'Mandato completado'} onClose={() => {}} dismissible={false}><Landmark className="text-accent" size={30} /><p className="text-sm text-muted-foreground leading-6">El componente social cierra en {fmtScore(state.socialComponent)}/100. El resultado electoral completo todavía no está definido. Podés revisar tu gestión o continuar la simulación conservando deuda, acuerdos y efectos futuros.</p><div className="flex flex-wrap gap-3">{state.phase === 'mandate_review' && <button type="button" className="causal-primary" onClick={() => onCommand('continue_term')}>Continuar simulación</button>}<button type="button" className="causal-secondary" onClick={() => setHistory(true)}>Revisar historial</button>{state.phase === 'mandate_review' && <button type="button" className="causal-secondary" onClick={() => onCommand('end_game')}>Finalizar gestión</button>}{state.phase === 'ended' && <button type="button" className="causal-primary" onClick={onRestart}>Nueva partida</button>}</div></Dialog>}
   </>;
 
   const scenarioName = getScenario(state.scenarioId)?.name;

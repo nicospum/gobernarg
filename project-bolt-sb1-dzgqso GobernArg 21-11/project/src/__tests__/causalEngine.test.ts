@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ACTORS, INDICATORS, POLICIES } from '../causal/catalog';
 import { applyCommand, createCausalGame, policyAvailability, policyEffectsPreview } from '../causal/engine';
-import { LEGACY_ACTION_AUDIT } from '../causal/legacyMapping';
 import { agreementActive, countUses, legislativeSupport, socialComponent, totalArrears, totalDebt } from '../causal/selectors';
 import { deserializeSession, newSession, serializeSession } from '../causal/persistence';
 import { fiscalForecast } from '../causal/finance';
@@ -33,14 +32,11 @@ function sign(state: CausalState, actorId: ActorId, params: CommandParams = {}):
   return execute(state, 'firmar_acuerdo', { actorId, offerId });
 }
 
-describe('causal catalog and migration coverage', () => {
-  it('has a unique, linked replacement for every legacy action', () => {
+describe('causal catalog coverage', () => {
+  it('has unique, linked policies and effects', () => {
     expect(POLICIES).toHaveLength(48); expect(ACTORS).toHaveLength(18); expect(INDICATORS).toHaveLength(14);
-    expect(LEGACY_ACTION_AUDIT).toHaveLength(61);
-    expect(new Set(LEGACY_ACTION_AUDIT.map(item => item.sourceId)).size).toBe(61);
     const ids = new Set(POLICIES.map(policy => policy.id));
     expect(ids.size).toBe(48);
-    for (const item of LEGACY_ACTION_AUDIT) expect(ids.has(item.targetId)).toBe(true);
     const effects = POLICIES.flatMap(policy => policy.effects);
     expect(effects).toHaveLength(161); expect(new Set(effects.map(effect => effect.id)).size).toBe(161);
     for (const effect of effects) {
@@ -326,7 +322,8 @@ describe('debt, crises, continuity and persistence', () => {
     expect(state.phase).toBe('mandate_review'); expect(state.turn).toBe(17);
     expect(applyCommand(state, command(state, 'close_turn')).accepted).toBe(false);
     const originalCash = state.cash, historyCount = state.history.length;
-    state = applyCommand(state, command(state, 'continue_term')).state;
+    // Sin la capa de campaña no hay elección: el segundo mandato se abre a mano.
+    state = { ...structuredClone(state), term: 2, phase: 'governing' };
     expect(state.cash).toBe(originalCash); expect(state.history).toHaveLength(historyCount); expect(totalDebt(state)).toBe(500);
     expect(countUses(state, 'emitir_dinero', 5)).toBe(1);
     state = close(state); state = close(state);

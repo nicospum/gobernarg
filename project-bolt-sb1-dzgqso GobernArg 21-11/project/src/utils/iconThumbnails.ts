@@ -1,74 +1,44 @@
-// Iconos webp para UI (arquetipos, categorías y grupos de interés).
-// Se cargan con import.meta.glob para que, si falta algún asset, quede un
-// string vacío como fallback en lugar de romper el build.
-const archetypeIcons = import.meta.glob('../assets/images/icons/archetypes/*.webp', {
-  eager: true,
-  import: 'default',
-});
+// Iconos de perfiles y de grupos de actores.
+import archetypeInstitutional from '../assets/images/icons/archetypes/archetype-institutional.webp';
+import archetypeUnion from '../assets/images/icons/archetypes/archetype-union.webp';
+import archetypeBusiness from '../assets/images/icons/archetypes/archetype-business.webp';
+import archetypeCommunicator from '../assets/images/icons/archetypes/archetype-communicator.webp';
 
-const categoryIcons = import.meta.glob('../assets/images/icons/categories/*.webp', {
-  eager: true,
-  import: 'default',
-});
-
-const groupIcons = import.meta.glob('../assets/images/icons/groups/*.webp', {
-  eager: true,
-  import: 'default',
-});
-
-function getArchetypeIcon(name: string): string {
-  const key = `../assets/images/icons/archetypes/${name}.webp`;
-  return (archetypeIcons[key] as string) || '';
-}
-
-function getCategoryIcon(name: string): string {
-  const key = `../assets/images/icons/categories/${name}.webp`;
-  return (categoryIcons[key] as string) || '';
-}
-
-function getGroupIcon(name: string): string {
-  const key = `../assets/images/icons/groups/${name}.webp`;
-  return (groupIcons[key] as string) || '';
-}
-
-export const THUMBNAIL_CATEGORIES: Record<string, string> = {
-  economia: getCategoryIcon('category-economy'),
-  social: getCategoryIcon('category-social'),
-  infraestructura: getCategoryIcon('category-infrastructure'),
-  diplomacia: getCategoryIcon('category-diplomacy'),
-  seguridad: getCategoryIcon('category-security'),
-  cultura: getCategoryIcon('category-culture'),
-  educacion: getCategoryIcon('category-education'),
-  gobierno: getCategoryIcon('category-government'),
-  turismo: getCategoryIcon('category-tourism'),
-  tecnologia: getCategoryIcon('category-technology'),
-};
+import groupWorkers from '../assets/images/icons/groups/group-workers.webp';
+import groupBusiness from '../assets/images/icons/groups/group-business.webp';
+import groupAgriculture from '../assets/images/icons/groups/group-agriculture.webp';
+import groupFinancial from '../assets/images/icons/groups/group-financial.webp';
+import groupMiddleClass from '../assets/images/icons/groups/group-middle-class.webp';
+import groupLowIncome from '../assets/images/icons/groups/group-low-income.webp';
+import groupNgo from '../assets/images/icons/groups/group-ngo.webp';
+import groupEnvironmentalists from '../assets/images/icons/groups/group-environmentalists.webp';
+import groupStudents from '../assets/images/icons/groups/group-students.webp';
+import groupCooperatives from '../assets/images/icons/groups/group-cooperatives.webp';
+import groupAllies from '../assets/images/icons/groups/group-allies.webp';
+import groupOpposition from '../assets/images/icons/groups/group-opposition.webp';
+import groupArtists from '../assets/images/icons/groups/group-artists.webp';
+import groupAcademics from '../assets/images/icons/groups/group-academics.webp';
 
 export const THUMBNAIL_GROUPS: Record<string, string> = {
-  sindicatos: getGroupIcon('group-workers'),
-  empresarios: getGroupIcon('group-business'),
-  'sector-agricola': getGroupIcon('group-agriculture'),
-  medios: getGroupIcon('group-media'),
-  'sector-financiero': getGroupIcon('group-financial'),
-  'clase-media': getGroupIcon('group-middle-class'),
-  'sectores-populares': getGroupIcon('group-low-income'),
-  'clase-alta': getGroupIcon('group-upper-class'),
-  'minorias-etnicas': getGroupIcon('group-indigenous'),
-  ongs: getGroupIcon('group-ngo'),
-  ambientalistas: getGroupIcon('group-environmentalists'),
-  feministas: getGroupIcon('group-feminists'),
-  estudiantiles: getGroupIcon('group-students'),
-  cooperativas: getGroupIcon('group-cooperatives'),
-  aliados: getGroupIcon('group-allies'),
-  opositores: getGroupIcon('group-opposition'),
-  artistas: getGroupIcon('group-artists'),
-  deportistas: getGroupIcon('group-athletes'),
-  academicos: getGroupIcon('group-academics'),
+  sindicatos: groupWorkers,
+  empresarios: groupBusiness,
+  'sector-agricola': groupAgriculture,
+  'sector-financiero': groupFinancial,
+  'clase-media': groupMiddleClass,
+  'sectores-populares': groupLowIncome,
+  ongs: groupNgo,
+  ambientalistas: groupEnvironmentalists,
+  estudiantiles: groupStudents,
+  cooperativas: groupCooperatives,
+  aliados: groupAllies,
+  opositores: groupOpposition,
+  artistas: groupArtists,
+  academicos: groupAcademics,
 };
 
 export const THUMBNAIL_ARCHETYPES: Record<string, string> = {
-  politico: getArchetypeIcon('archetype-institutional'),
-  sindicalista: getArchetypeIcon('archetype-union'),
-  empresario: getArchetypeIcon('archetype-business'),
-  comunicador: getArchetypeIcon('archetype-communicator'),
+  politico: archetypeInstitutional,
+  sindicalista: archetypeUnion,
+  empresario: archetypeBusiness,
+  comunicador: archetypeCommunicator,
 };

@@ -11,15 +11,15 @@ export const SAVE_KEY = 'gobernarg.causal.v1';
 interface Player { name: string; profile: string; avatar: string; difficulty?: Difficulty; scenarioId?: string; platformId?: string }
 /** El escenario y la plataforma son parte de la creación: la reconstrucción parte del mismo país. */
 const gameOptions = (player: Player) => ({ scenarioId: player.scenarioId, platformId: player.platformId });
-export interface GameSession { player: Player; commands: GameCommand[]; state: CausalState; campaignStart: number }
+export interface GameSession { player: Player; commands: GameCommand[]; state: CausalState }
 export function newSession(player: Player): GameSession {
   const state = createCausalGame(player.name, player.profile, player.avatar, gameOptions(player));
   enableCampaign(state, player.difficulty ?? 'normal');
-  return { player, commands: [], state, campaignStart: 0 };
+  return { player, commands: [], state };
 }
 export function serializeSession(session: GameSession): string {
   // Replay is authoritative: saved derived indicators cannot be tampered with or go stale.
-  return JSON.stringify({ schemaVersion: 1, modelVersion: 'causal-1', campaignVersion: 1, campaignStart: session.campaignStart ?? (session.state.campaign ? 0 : session.commands.length), player: session.player, commands: session.commands });
+  return JSON.stringify({ schemaVersion: 1, modelVersion: 'causal-1', campaignVersion: 1, player: session.player, commands: session.commands });
 }
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -27,7 +27,7 @@ function isObject(value: unknown): value is Record<string, unknown> {
 function validCommand(value: unknown): value is GameCommand {
   if (!isObject(value) || typeof value.id !== 'string' || value.id.length > 180 || !Number.isInteger(value.expectedTurn)
     || typeof value.expectedTurn !== 'number' || value.expectedTurn < 1
-    || !['execute', 'close_turn', 'continue_term', 'end_game', ...CAMPAIGN_COMMANDS].includes(String(value.type))) return false;
+    || !['execute', 'close_turn', 'end_game', ...CAMPAIGN_COMMANDS].includes(String(value.type))) return false;
   if (['targetId', 'choiceId'].some(key => value[key] !== undefined && (typeof value[key] !== 'string' || (value[key] as string).length > 250))) return false;
   if (value.actionId !== undefined && typeof value.actionId !== 'string') return false;
   if (value.params !== undefined) {
@@ -51,24 +51,17 @@ export function deserializeSession(text: string): GameSession {
   if (value.player.difficulty !== undefined && !Object.prototype.hasOwnProperty.call(DIFFICULTIES, String(value.player.difficulty))) throw new Error('Dificultad inválida.');
   if (value.player.scenarioId !== undefined && !getScenario(String(value.player.scenarioId))) throw new Error('Escenario inválido.');
   if (value.player.platformId !== undefined && !isValidPlatformId(value.player.platformId)) throw new Error('Plataforma inválida.');
-  if (value.campaignVersion !== undefined && value.campaignVersion !== 1) throw new Error('Versión de campaña no compatible.');
-  // A development hot reload could have stamped campaignVersion onto a core-only
-  // session before it had a replay boundary. Upgrade that history without changing it.
-  const coreOnlyHistory = value.commands.every(cmd => isObject(cmd) && !CAMPAIGN_COMMANDS.includes(String(cmd.type)));
-  const campaignStart = value.campaignVersion === undefined || (value.campaignStart === undefined && coreOnlyHistory) ? value.commands.length : value.campaignStart;
-  if (typeof campaignStart !== 'number' || !Number.isInteger(campaignStart) || campaignStart < 0 || campaignStart > value.commands.length) throw new Error('Inicio de campaña inválido.');
+  if (value.campaignVersion !== 1) throw new Error('Versión de campaña no compatible.');
   const player: Player = { name: value.player.name, profile: value.player.profile, avatar: value.player.avatar,
     ...(value.player.difficulty ? { difficulty: value.player.difficulty as Difficulty } : {}),
     ...(value.player.scenarioId ? { scenarioId: String(value.player.scenarioId) } : {}),
     ...(value.player.platformId ? { platformId: String(value.player.platformId) } : {}) };
-  const session: GameSession = { player, commands: [], campaignStart, state: createCausalGame(player.name, player.profile, player.avatar, gameOptions(player)) };
-  for (const [index, item] of value.commands.entries()) {
-    if (index === campaignStart) enableCampaign(session.state, player.difficulty ?? 'normal');
+  const session = newSession(player);
+  for (const item of value.commands) {
     if (!validCommand(item)) throw new Error('El historial guardado contiene un comando inválido.');
     const result = applyCommand(session.state, item);
     if (!result.accepted) throw new Error(`No se pudo reconstruir la partida: ${result.message}`);
     session.state = result.state; session.commands.push(item);
   }
-  if (!session.state.campaign) enableCampaign(session.state, player.difficulty ?? 'normal');
   return session;
 }

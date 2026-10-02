@@ -117,7 +117,7 @@ export interface CausalState {
 }
 export interface GameCommand {
   id: string; expectedTurn: number;
-  type: 'execute' | 'close_turn' | 'continue_term' | 'end_game' | CampaignCommand;
+  type: 'execute' | 'close_turn' | 'end_game' | CampaignCommand;
   targetId?: string; choiceId?: string;
   actionId?: string; params?: CommandParams;
 }

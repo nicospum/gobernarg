@@ -17,12 +17,11 @@ import {
 import { DIFFICULTIES } from '../causal/campaignCatalog';
 import { indicatorName } from '../causal/selectors';
 import { loadProgress, setUnlockAll } from '../causal/progress';
-import type { Difficulty } from '../causal/campaignTypes';
-import type { Archetype } from '../types/game';
+import type { Difficulty, Profile } from '../causal/campaignTypes';
 import { SetupSteps } from './SetupSteps';
 /** Lo que se definió en el paso 1 (Creá tu gobernante). */
 export interface CharacterDraft {
-  archetype: Archetype;
+  archetype: Profile;
   governorName: string;
   avatar: string;
 }

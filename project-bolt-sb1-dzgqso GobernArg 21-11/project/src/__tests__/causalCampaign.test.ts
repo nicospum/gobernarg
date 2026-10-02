@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyCommand, createCausalGame, policyAvailability } from '../causal/engine';
+import { applyCommand, policyAvailability } from '../causal/engine';
 import { campaignActionReason, electoralBreakdown, eligibleCampaignEvents, settleCampaignClose } from '../causal/campaign';
 import { ABILITIES, CABINET, CAMPAIGN_EVENTS } from '../causal/campaignCatalog';
 import { deserializeSession, newSession, serializeSession } from '../causal/persistence';
@@ -198,9 +198,9 @@ describe('elections, defeats and a complete presidential career', () => {
     expect(totalDebt(state)).toBe(debt); expect(state.effects).toEqual(effects); expect(state.campaign!.advisors).toEqual(cabinet);
     expect(campaignActionReason(state, 'resolve_election')).not.toBeNull();
   });
-  it('a lost election ends the game and cannot be bypassed with continue_term', () => {
+  it('a lost election ends the game and cannot be bypassed by closing the turn', () => {
     let state = game(); state.turn = 17; state.phase = 'mandate_review'; state.campaign!.votes = 40;
-    expect(applyCommand(state, { id: 'bypass', expectedTurn: 17, type: 'continue_term' }).accepted).toBe(false);
+    expect(applyCommand(state, { id: 'bypass', expectedTurn: 17, type: 'close_turn' }).accepted).toBe(false);
     state = issue(state, 'resolve_election'); expect(state.phase).toBe('ended'); expect(state.campaign!.outcome).toBe('defeat');
   });
   it('completes two mandates and makes a third impossible', () => {
@@ -212,7 +212,7 @@ describe('elections, defeats and a complete presidential career', () => {
     while (state.turn <= 32 && state.phase !== 'ended') state = next(state);
     expect(state.phase).toBe('ended'); expect(state.turn).toBe(33); expect(state.term).toBe(2);
     expect(state.campaign!.elections.filter(e => e.kind === 'legislative')).toHaveLength(2);
-    expect(applyCommand(state, { id: 'third', expectedTurn: 33, type: 'continue_term' }).accepted).toBe(false);
+    expect(applyCommand(state, { id: 'third', expectedTurn: 33, type: 'close_turn' }).accepted).toBe(false);
   });
   it('awards the final victory only with objectives and electoral backing', () => {
     const state = game(); state.turn = 32; state.term = 2;
@@ -234,7 +234,7 @@ describe('elections, defeats and a complete presidential career', () => {
   });
 });
 
-describe('persistence, migration and deterministic simulation', () => {
+describe('persistence and deterministic simulation', () => {
   it('replays a full first mandate, cabinet decisions, events and election exactly', () => {
     const session = newSession({ name: 'Partida completa', profile: 'politico', avatar: '', difficulty: 'easy' });
     const submit = (type: GameCommand['type'], targetId?: string, choiceId?: string) => {
@@ -253,28 +253,12 @@ describe('persistence, migration and deterministic simulation', () => {
     submit('resolve_election');
     expect(deserializeSession(serializeSession(session)).state).toEqual(session.state);
   });
-  it('upgrades an old causal save at a replay boundary without rewriting past decisions', () => {
-    const original = createCausalGame('Anterior', 'politico', '');
-    const cmd: GameCommand = { id: 'old', type: 'execute', actionId: 'prestamo_local', expectedTurn: 1 };
-    const old = applyCommand(original, cmd).state;
-    const raw = JSON.stringify({ schemaVersion: 1, modelVersion: 'causal-1', player: { name: 'Anterior', profile: 'politico', avatar: '' }, commands: [cmd] });
-    const upgraded = deserializeSession(raw);
-    expect(upgraded.state.cash).toBe(old.cash); expect(upgraded.state.loans).toEqual(old.loans); expect(upgraded.campaignStart).toBe(1);
-    expect(deserializeSession(serializeSession(upgraded)).state).toEqual(upgraded.state);
-  });
   it('difficulty changes fiscal revenue and cannot be tampered into an unknown mode', () => {
     const easy = newSession({ name: 'A', profile: 'politico', avatar: '', difficulty: 'easy' });
     const hard = newSession({ name: 'A', profile: 'politico', avatar: '', difficulty: 'hard' });
     expect(next(easy.state).cash).toBeGreaterThan(next(hard.state).cash);
     const broken = JSON.parse(serializeSession(easy)); broken.player.difficulty = 'unknown';
     expect(() => deserializeSession(JSON.stringify(broken))).toThrow();
-  });
-  it('recovers a core-only development save stamped before its migration boundary existed', () => {
-    const command: GameCommand = { id: 'old-close', expectedTurn: 1, type: 'close_turn' };
-    const raw = JSON.stringify({ schemaVersion: 1, modelVersion: 'causal-1', campaignVersion: 1, player: { name: 'Anterior', profile: 'politico', avatar: '' }, commands: [command] });
-    const restored = deserializeSession(raw);
-    expect(restored.campaignStart).toBe(1); expect(restored.state.turn).toBe(2);
-    expect(deserializeSession(serializeSession(restored)).state).toEqual(restored.state);
   });
   it('does not mutate state when previewing unavailable campaign actions', () => {
     const state = game(), snapshot = JSON.stringify(state);
