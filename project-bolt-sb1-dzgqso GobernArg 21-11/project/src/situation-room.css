@@ -259,7 +259,7 @@
   .b-kpi-value { font-size: 20px; }
 }
 @media (max-width: 1023px) {
-  .situation-room [data-sonner-toaster][data-y-position="bottom"] { bottom: calc(9rem + env(safe-area-inset-bottom) + 8px) !important; }
+  .situation-room [data-sonner-toaster][data-y-position="bottom"] { bottom: calc(9rem + env(safe-area-inset-bottom, 0px) + 8px) !important; }
   .b-welcome-main { padding-top: 35px; padding-bottom: 35px; gap: 30px; }
   .b-welcome-scene { height: 430px; }
   .b-welcome-copy h1 { font-size: 36px; }
@@ -375,3 +375,14 @@
 }
 /* Escritorio Lite: las categorías de políticas se acomodan en renglones en vez de quedar cortadas. */
 .b-cockpit-lite .b-policy-panel [aria-label="Categorías de políticas"] { flex-wrap: wrap; overflow: visible; }
+
+/* iPhone con muesca (viewport-fit=cover): las barras fijas y las pantallas completas
+   se corren lo que ocupa el área segura; en el resto de los equipos vale 0. */
+.b-mobile-header { padding-top: calc(0.5rem + env(safe-area-inset-top, 0px)); padding-left: calc(1rem + env(safe-area-inset-left, 0px)); padding-right: calc(0.5rem + env(safe-area-inset-right, 0px)); }
+.b-mobile-dock { padding-left: calc(1rem + env(safe-area-inset-left, 0px)); padding-right: calc(0.75rem + env(safe-area-inset-right, 0px)); }
+.b-new-inner { padding-top: calc(24px + env(safe-area-inset-top, 0px)); padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); }
+.b-welcome { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+@media (max-width: 639px) {
+  .b-dialog > div:first-child { padding-top: calc(1.25rem + env(safe-area-inset-top, 0px)); }
+  .b-dialog > div:last-child { padding-bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px)); }
+}
