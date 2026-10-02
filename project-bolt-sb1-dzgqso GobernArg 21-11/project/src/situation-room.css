@@ -289,3 +289,25 @@
   .b-wire-window { overflow-x: auto; }
   .b-wire-copy[aria-hidden=true], .b-wire-toggle { display: none; }
 }
+
+/* Lite (LITE_FEATURES.modoDetallado = false): el país en palabras, colores y flechas. */
+.b-tone-critical { --tone: #f87171; }
+.b-tone-bad { --tone: #fbbf24; }
+.b-tone-neutral { --tone: #9cc3e6; }
+.b-tone-good { --tone: #34d399; }
+.b-tone-great { --tone: #6ee7b7; }
+.b-lite-indicators { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; padding: 10px; }
+.b-lite-indicator { margin-top: 0; cursor: default; }
+.b-lite-indicator .b-indicator-top { align-items: center; color: #a1b2c7; }
+.b-lite-word { display: block; color: var(--tone, #e2e8f0); font: 600 13px/1.3 Inter, system-ui, sans-serif; margin: 3px 0 7px; }
+.b-lite-indicator .b-meter > span { background: var(--tone, #75aadb); }
+.b-lite-arrows { display: block; margin-top: 6px; font-size: 10px; letter-spacing: 1px; }
+.b-lite-inline { color: var(--tone, inherit); font-weight: 600; }
+.b-lite-money { border: 1px solid #1e2d40; background: #0b1119bf; border-radius: 9px; padding: 12px; }
+.b-lite-money > span { display: block; color: #a1b2c7; font-size: 11px; }
+.b-lite-money > strong { display: block; font: 700 20px/1.3 'JetBrains Mono', monospace; margin-top: 2px; }
+.b-lite-money > small { display: block; color: var(--tone, #a1b2c7); font-size: 11px; margin-top: 4px; }
+.b-lite-change { list-style: none; border: 1px solid #1e2d40; background: #0b1119bf; border-radius: 9px; padding: 12px; box-shadow: inset 3px 0 var(--tone, #75aadb); }
+.b-lite-change small { display: block; color: #a1b2c7; font-size: 11px; }
+.b-lite-cash { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 14px; }
+.b-kpi-word { font-size: .78em; letter-spacing: .01em; }

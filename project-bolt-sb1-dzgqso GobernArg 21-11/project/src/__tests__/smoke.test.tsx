@@ -59,7 +59,7 @@ describe('Prueba de humo de la interfaz (versión B Lite)', { timeout: 30000 }, 
     cleanup();
     renderGame();
     await click(screen.getByRole('button', { name: /Continuar partida/ }));
-    expect(screen.getByText(/Turno global 2/)).toBeTruthy();
+    expect(screen.getByText('Año 1 · T2')).toBeTruthy();
   });
 
   it('el menú abre la guía y pide confirmación para reiniciar', async () => {

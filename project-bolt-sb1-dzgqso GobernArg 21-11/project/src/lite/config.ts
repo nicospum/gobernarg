@@ -10,8 +10,17 @@ export interface LiteFeatures {
    * reelecciones ganadas se siguen contando para cuando se reactiven.
    */
   escenariosHistoricos: boolean;
+  /**
+   * Pantalla con todas las cifras de la versión completa: indicadores con
+   * número y causas, calendario, noticias, objetivos, estilo de gobierno,
+   * informe de obras, expediente del trimestre, Tesoro completo y cierre de
+   * turno detallado. Apagado (la Lite): tomás una decisión y ves cómo se
+   * mueve el país en palabras, colores y flechas. El motor es el mismo.
+   */
+  modoDetallado: boolean;
 }
 
 export const LITE_FEATURES: LiteFeatures = {
   escenariosHistoricos: false,
+  modoDetallado: false,
 };

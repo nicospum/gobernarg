@@ -5,6 +5,8 @@ import { policyEffectsPreview } from '../../causal/engine';
 import { fiscalForecast } from '../../causal/finance';
 import { fmtScore, fmtSigned, fmtMoney } from '../../causal/format';
 import type { CausalState, IndicatorId, PolicyDefinition } from '../../causal/types';
+import { LITE_FEATURES } from '../../lite/config';
+import { describeKpi } from '../../lite/present';
 
 export function PresidentialMark({ compact = false }: { compact?: boolean }) {
   return <div className="b-brand"><span className="b-seal" aria-hidden="true"><Sun size={compact ? 21 : 25} strokeWidth={1.4} /><span className="b-live-dot" /></span><div><span className="b-wordmark">Gobern<span>Arg</span></span><span className="b-edition">B Lite / Sala de situación</span></div></div>;
@@ -35,8 +37,11 @@ export function CommandStatus({ state }: { state: CausalState }) {
     { label: 'Proyección electoral', value: c.votes, detail: `Umbral de victoria: 45 % · ${c.votes < 45 ? 'Por debajo' : 'Sobre el umbral'}`, icon: Vote, color: '#c4a0ff', unit: '%' },
   ];
   const forecast = fiscalForecast(state)[0];
-  return <section className="b-command-status" aria-label="Estado político y fiscal">{items.map(({ label, value, detail, icon: Icon, color, unit }) => <article className="b-kpi" key={label} style={{ '--metric-color': color } as CSSProperties}><div><p className="b-kpi-label"><Icon size={13} />{label}</p><strong className="b-kpi-value"><span key={value} className="b-value-update">{fmtScore(value)}</span><small>{unit}</small></strong><p className="b-kpi-detail">{detail}</p></div><Ring value={value} /></article>)}
-    <article className="b-kpi b-kpi-cash" style={{ '--metric-color': '#34d399' } as CSSProperties}><div><p className="b-kpi-label"><Wallet size={13} />Caja del Tesoro</p><strong className="b-kpi-value"><span key={state.cash} className="b-value-update">{fmtMoney(state.cash)}</span></strong><p className="b-kpi-detail">Prevista T{forecast?.turn}: {forecast ? fmtMoney(forecast.cash) : '—'}</p></div></article>
+  // Lite: palabras en vez de cifras (el voto se ve en % porque es la meta: 45 %).
+  const lite = !LITE_FEATURES.modoDetallado;
+  const shown = (label: string, value: number, unit: string) => lite ? label === 'Proyección electoral' ? <>{Math.round(value)}<small>%</small></> : <span className="b-kpi-word">{describeKpi(value).word}</span> : <>{fmtScore(value)}<small>{unit}</small></>;
+  return <section className="b-command-status" aria-label="Estado político y fiscal">{items.map(({ label, value, detail, icon: Icon, color, unit }) => <article className="b-kpi" key={label} style={{ '--metric-color': color } as CSSProperties}><div><p className="b-kpi-label"><Icon size={13} />{label}</p><strong className="b-kpi-value"><span key={value} className="b-value-update">{shown(label, value, unit)}</span></strong>{(!lite || label === 'Proyección electoral') && <p className="b-kpi-detail">{lite ? `Necesitás 45 % · ${value < 45 ? 'Por debajo' : 'Sobre el umbral'}` : detail}</p>}</div><Ring value={value} /></article>)}
+    <article className="b-kpi b-kpi-cash" style={{ '--metric-color': '#34d399' } as CSSProperties}><div><p className="b-kpi-label"><Wallet size={13} />Caja del Tesoro</p><strong className="b-kpi-value"><span key={state.cash} className="b-value-update">{fmtMoney(state.cash)}</span></strong>{!lite && <p className="b-kpi-detail">Prevista T{forecast?.turn}: {forecast ? fmtMoney(forecast.cash) : '—'}</p>}</div></article>
   </section>;
 }
 

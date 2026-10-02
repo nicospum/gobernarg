@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { BookOpen, X } from 'lucide-react';
 import { ACTIONS_PER_TURN } from '../../causal/catalog';
 import { Dialog } from './Dialog';
+import { LITE_FEATURES } from '../../lite/config';
 
 const SEEN_KEY = 'gobernarg.lite.tutorial.v1';
 
@@ -15,7 +16,7 @@ function markSeen() {
 /** Los pasos del primer turno (traídos de la versión A, adaptados a esta versión). */
 const STEPS = [
   { title: 'Elegí qué hacer', text: `Cada turno tenés ${ACTIONS_PER_TURN} acciones de agenda. Las políticas públicas cuestan acciones y plata de la caja (en millones de pesos): tocá una para ver qué produce y ejecutarla.` },
-  { title: 'Mirá el país', text: 'Los indicadores cambian recién al cerrar el trimestre. Tocá cualquiera para ver sus causas.' },
+  { title: 'Mirá el país', text: LITE_FEATURES.modoDetallado ? 'Los indicadores cambian recién al cerrar el trimestre. Tocá cualquiera para ver sus causas.' : 'El país cambia recién al cerrar el trimestre: la palabra dice cómo está y la flecha, hacia dónde va.' },
   { title: 'Cuidá a los actores', text: 'Cada sector reacciona según cómo le va. Reunite, negociá y firmá compromisos: si los cumplís, ganás legitimidad.' },
   { title: 'Cerrá el turno', text: '"Cerrar turno" hace pasar un trimestre. En el turno 8 hay legislativas y en el 16 elecciones: para ganar necesitás 45 % de proyección de voto.' },
 ];
