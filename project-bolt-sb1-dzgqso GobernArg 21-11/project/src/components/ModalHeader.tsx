@@ -9,6 +9,8 @@ interface ModalHeaderProps {
   /** Imagen de fondo (eventos, legado): queda bajo un velo marino. */
   image?: string;
   imageAlt?: string;
+  /** "light": la imagen se ve casi entera y el velo queda solo detrás del texto. */
+  veil?: 'dark' | 'light';
   icon?: ReactNode;
   onClose?: () => void;
   closeLabel?: string;
@@ -18,13 +20,19 @@ interface ModalHeaderProps {
 }
 
 /** Cabecera de los modales en el estilo "sala de situación": banda marina con rótulo y título. */
-export function ModalHeader({ label, title, subtitle, image, imageAlt = '', icon, onClose, closeLabel = 'Cerrar', center = false, id }: ModalHeaderProps) {
+export function ModalHeader({ label, title, subtitle, image, imageAlt = '', veil = 'dark', icon, onClose, closeLabel = 'Cerrar', center = false, id }: ModalHeaderProps) {
   return (
     <div className={`relative overflow-hidden sr-navy-bar ${image ? 'min-h-[150px] md:min-h-[180px] flex items-end' : ''}`}>
       {image && (
         <>
           <img src={image} alt={imageAlt} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-[linear-gradient(0deg,rgb(var(--navy))_8%,rgb(var(--navy)/0.72)_45%,rgb(var(--navy-2)/0.25)_100%)]" />
+          <div
+            className={`absolute inset-0 ${
+              veil === 'light'
+                ? 'bg-[linear-gradient(0deg,rgb(var(--navy)/0.9)_0%,rgb(var(--navy)/0.55)_40%,rgb(var(--navy)/0)_78%)]'
+                : 'bg-[linear-gradient(0deg,rgb(var(--navy))_8%,rgb(var(--navy)/0.72)_45%,rgb(var(--navy-2)/0.25)_100%)]'
+            }`}
+          />
         </>
       )}
       <div className={`relative w-full flex items-start gap-3 px-5 md:px-6 py-4 md:py-5 ${center ? 'justify-center text-center' : ''}`}>

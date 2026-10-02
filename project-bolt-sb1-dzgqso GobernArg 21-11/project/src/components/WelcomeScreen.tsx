@@ -1,5 +1,6 @@
 import { Play, RotateCcw } from 'lucide-react';
 import { IMAGES } from '../utils/imageAssets';
+import { screenImage } from '@/lib/liteImages';
 import type { GameState } from '../types/game';
 import { getScenario } from '@/data/causal';
 
@@ -20,12 +21,9 @@ function savedLabel(state: GameState): string {
 export function WelcomeScreen({ onStart, saved, onContinue }: WelcomeScreenProps) {
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
-      {/* Fondo institucional */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${IMAGES.backgrounds.congressSunrise})` }}
-      />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(var(--navy)/0.55)_0%,rgb(var(--paper)/0.6)_45%,rgb(var(--paper)/0.95)_100%)]" />
+      {/* Portada: Plaza de Mayo (aclarada para el tema claro) */}
+      <img src={screenImage('bienvenida')} alt="" decoding="async" className="absolute inset-0 w-full h-full object-cover" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(var(--paper)/0.05)_0%,rgb(var(--paper)/0.3)_55%,rgb(var(--paper)/0.85)_100%)]" />
 
       {/* Contenido */}
       <div className="relative z-10 max-w-xl w-[calc(100%-2rem)] px-6 py-10 md:px-12 md:py-12 text-center bg-surface/95 backdrop-blur sr-modal">

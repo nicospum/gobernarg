@@ -9,7 +9,7 @@ import {
   ListChecks,
 } from 'lucide-react';
 import { GameState, TurnSummary } from '../types/game';
-import { IMAGES } from '../utils/imageAssets';
+import { screenImage } from '@/lib/liteImages';
 import { fmtBudgetDelta, fmtBudget } from '@/lib/format';
 import { CAUSAL_ACTIONS_BY_ID, INDICATORS } from '@/data/causal';
 import { actorReactions, indicatorChanges } from '@/lib/turnExplain';
@@ -36,11 +36,7 @@ function Delta({ value, suffix = '' }: { value: number; suffix?: string }) {
 export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryModalProps) {
   const dialogRef = useDialog<HTMLDivElement>(onClose);
   const record = gameState.causal.records.find(r => r.turn === summary.causalTurn) ?? null;
-  const headerImage = summary.inflationEvent.triggered
-    ? IMAGES.events.economicCrisis
-    : record && record.events.length > 0
-      ? IMAGES.events.socialProtest
-      : IMAGES.ui.shieldEmblem;
+  const headerImage = screenImage('cierreTurno');
   const changes = record ? indicatorChanges(record) : [];
   const reactions = record ? actorReactions(record) : [];
   // El registro del motor se cierra antes de los eventos, las legislativas y
@@ -62,6 +58,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
           title="Resumen del trimestre"
           subtitle={<span className="inline-flex items-center gap-1.5"><CalendarDays className="w-3.5 h-3.5" /> Año {summary.year} · Trimestre {summary.quarter}</span>}
           image={headerImage}
+          veil="light"
           imageAlt=""
           onClose={onClose}
           closeLabel="Cerrar resumen"
@@ -128,7 +125,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
                   return (
                     <li key={r.actor} className="flex items-center justify-between text-[12px] bg-ink/3 p-2 rounded-lg border border-ink/6">
                       <div className="flex items-center gap-2">
-                        {icon && <img src={icon} alt="" className="w-5 h-5 rounded object-contain" />}
+                        {icon && <img src={icon} alt="" loading="lazy" decoding="async" className="w-6 h-6 rounded-full object-cover" />}
                         <span className="text-ink font-medium">{r.name}</span>
                         {r.reason && <span className="text-ink/70 text-[10px]">— {r.reason}</span>}
                       </div>

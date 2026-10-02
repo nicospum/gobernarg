@@ -1,6 +1,5 @@
 import logoPrimary from '../assets/images/logo/logo-primary.webp';
 import logoWide from '../assets/images/logo/logo-wide.webp';
-import bgCongressSunrise from '../assets/images/backgrounds/congress-sunrise-panorama.webp';
 import bgPresidentialOffice from '../assets/images/backgrounds/bg-presidential-office.webp';
 import bgMapArgentina from '../assets/images/backgrounds/bg-map-argentina.webp';
 import bgCasaRosadaMorning from '../assets/images/backgrounds/bg-casa-rosada-morning.webp';
@@ -36,7 +35,6 @@ import eventPrisonRiot from '../assets/images/events/event-prison-riot.webp';
 import eventDrugWave from '../assets/images/events/event-drug-wave.webp';
 import eventPoliceViolence from '../assets/images/events/event-police-violence-scandal.webp';
 import eventMinisterResignation from '../assets/images/events/event-minister-resignation.webp';
-import uiShieldEmblem from '../assets/images/ui/shield-emblem.webp';
 import uiShieldEmblemPremium from '../assets/images/ui/shield-emblem-premium.webp';
 import iconEconomy from '../assets/images/icons/categories/category-economy.webp';
 import iconSocial from '../assets/images/icons/categories/category-social.webp';
@@ -55,7 +53,6 @@ export const IMAGES = {
     wide: logoWide,
   },
   backgrounds: {
-    congressSunrise: bgCongressSunrise,
     presidentialOffice: bgPresidentialOffice,
     mapArgentina: bgMapArgentina,
     casaRosadaMorning: bgCasaRosadaMorning,
@@ -97,7 +94,6 @@ export const IMAGES = {
     ministerResignation: eventMinisterResignation,
   },
   ui: {
-    shieldEmblem: uiShieldEmblem,
     shieldEmblemPremium: uiShieldEmblemPremium,
   },
   icons: {

@@ -16,6 +16,7 @@ import { useIsTouch } from '@/lib/useMediaQuery';
 import { Tooltip, TooltipContent } from './Tooltip';
 import { fmtBudget } from '@/lib/format';
 import { UI_CATEGORY_STYLES } from '@/data/categoryStyles';
+import { actionImage } from '@/lib/liteImages';
 import { ACTORS, SENSITIVITIES, type ActorId } from '@/data/causal';
 import { ACTION_PLAYER_NOTES, ACTION_RISK_TEXT } from '@/data/causal/playerTexts';
 import { COALITION_ACTIONS, type Availability } from '@/engine/causal';
@@ -103,9 +104,14 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
   const riskText = ACTION_RISK_TEXT[action.id] ?? action.risksText;
   const touch = useIsTouch();
   const [showDetail, setShowDetail] = useState(false);
+  // Ilustración de la política (src/lite/imageMap.ts); no todas tienen.
+  const illustration = actionImage(action.id);
+  const illustrationImg = (cls: string) =>
+    illustration ? <img src={illustration} alt="" loading="lazy" decoding="async" className={`object-cover bg-sunken ${cls}`} /> : null;
 
   const details = (
     <div className="flex flex-col gap-1.5 max-w-[280px]">
+      {!touch && illustrationImg('w-full aspect-[2/1] rounded-md mb-1')}
       {playerNote && <p className="text-[11px] text-ink/80 leading-snug">{playerNote}</p>}
       {timeline.length > 0 && (
         <div>
@@ -171,8 +177,9 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
     >
       <span className="absolute left-0 top-3 bottom-3 w-1 rounded-r" style={{ background: `rgb(${accent})` }} aria-hidden="true" />
 
-      {/* Información */}
+      {/* Información (con la ilustración: banda arriba en el celular, miniatura al lado en pantallas anchas) */}
       <div className="min-w-0">
+        {illustrationImg('block w-full h-[84px] rounded-md mb-3 md:float-left md:w-[96px] md:h-[72px] md:mr-3.5 md:mb-1')}
         <div className="flex items-center gap-2 flex-wrap">
           <span className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.11em] ${style.color}`}>
             <img src={style.imageSrc} alt="" className="w-3.5 h-3.5 object-contain" />
@@ -318,6 +325,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
               </button>
             }
           >
+            {illustrationImg('w-full aspect-[2/1] rounded-lg mb-3')}
             <p className="text-[14px] text-ink/80 mb-3">{action.description}</p>
             {details}
           </Sheet>

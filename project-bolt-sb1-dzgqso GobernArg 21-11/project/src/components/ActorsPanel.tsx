@@ -102,9 +102,9 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
       {/* Encabezado */}
       <div className="flex items-start gap-2 mb-1.5">
         {icon ? (
-          <img src={icon} alt="" className="w-8 h-8 rounded-lg object-contain flex-shrink-0 bg-sunken border border-rule p-0.5" />
+          <img src={icon} alt="" loading="lazy" decoding="async" className="w-10 h-10 rounded-full object-cover flex-shrink-0 bg-sunken ring-1 ring-rule" />
         ) : (
-          <div className="w-8 h-8 rounded-lg bg-sunken flex-shrink-0" />
+          <div className="w-10 h-10 rounded-full bg-sunken flex-shrink-0" />
         )}
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
@@ -315,7 +315,7 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled, i
                   <div className="flex -space-x-2 flex-shrink-0">
                     {family.members.slice(0, 3).map(a => {
                       const src = getActorIcon(a);
-                      return src ? <img key={a} src={src} alt="" className="w-6 h-6 rounded-full object-contain bg-surface border border-rule" /> : null;
+                      return src ? <img key={a} src={src} alt="" loading="lazy" decoding="async" className="w-7 h-7 rounded-full object-cover bg-sunken border-2 border-surface" /> : null;
                     })}
                   </div>
                   <div className="min-w-0">
