@@ -1,0 +1,63 @@
+/**
+ * Progreso del jugador entre partidas (reelecciones ganadas).
+ * Vive en el navegador (localStorage): si no está disponible —modo privado,
+ * datos borrados— el juego funciona igual, sólo que sin desbloqueos guardados.
+ */
+const KEY = 'gobernarg.progress.v1';
+
+export interface Progress {
+  /** Reelecciones ganadas en total: desbloquean los escenarios históricos. */
+  reelectionsWon: number;
+  /**
+   * Reelecciones ya contadas (id del comando que resolvió la elección). La
+   * partida se reconstruye al recargar: sin esto una misma victoria contaría dos veces.
+   */
+  countedReelections: string[];
+  /**
+   * Desbloquear todos los escenarios sin ganarlos. El jugador no puede
+   * activarlo desde la pantalla (hay que ganar reelecciones); queda como
+   * atajo de prueba editando el localStorage.
+   */
+  unlockAll: boolean;
+}
+
+const EMPTY: Progress = { reelectionsWon: 0, countedReelections: [], unlockAll: false };
+
+export function loadProgress(): Progress {
+  try {
+    const raw = window.localStorage.getItem(KEY);
+    if (!raw) return { ...EMPTY };
+    const parsed = JSON.parse(raw) as Partial<Progress>;
+    return {
+      reelectionsWon: typeof parsed.reelectionsWon === 'number' && parsed.reelectionsWon > 0 ? Math.floor(parsed.reelectionsWon) : 0,
+      countedReelections: Array.isArray(parsed.countedReelections) ? parsed.countedReelections.filter(x => typeof x === 'string').slice(-200) : [],
+      unlockAll: parsed.unlockAll === true,
+    };
+  } catch {
+    return { ...EMPTY };
+  }
+}
+
+function save(p: Progress): void {
+  try {
+    window.localStorage.setItem(KEY, JSON.stringify(p));
+  } catch {
+    // Sin almacenamiento: el progreso dura sólo esta sesión.
+  }
+}
+
+/** Suma una reelección ganada una sola vez por elección (key = id del comando que la resolvió). */
+export function recordReelectionWin(key: string): { progress: Progress; counted: boolean } {
+  const p = loadProgress();
+  if (p.countedReelections.includes(key)) return { progress: p, counted: false };
+  p.reelectionsWon += 1;
+  p.countedReelections.push(key);
+  save(p);
+  return { progress: p, counted: true };
+}
+
+export function setUnlockAll(unlockAll: boolean): Progress {
+  const p = { ...loadProgress(), unlockAll };
+  save(p);
+  return p;
+}
