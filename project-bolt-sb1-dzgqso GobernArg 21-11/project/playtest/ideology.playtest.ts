@@ -7,7 +7,7 @@ import { SCENARIOS } from '../src/data/causal';
 
 /**
  * Asimetría ideológica (Fase 3): los programas heterodoxo y ortodoxo, jugados
- * "coherentes" (G1b/G2b) y "bien jugados" (G1c/G2c), en los cinco escenarios.
+ * "coherentes" (G1b/G2b) y "bien jugados" (G1c/G2c), en los escenarios del juego.
  * Meta del documento de asimetría: menos de 15 puntos de diferencia en
  * reelecciones ganadas entre los dos programas bien jugados.
  * Salida: $PLAYTEST_OUT/IDEOLOGIA.md (por defecto, _analisis_gobernarg/playtest).

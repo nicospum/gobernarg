@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { GameState } from '../types/game';
 import { createNewGame, processEndTurn, resolvePendingElection, triggerMidtermStrategy } from '../engine/gameEngine';
 import { nextRandom } from '../engine/causal';
-import { SAVE_KEY, clearSavedGame, loadGame, rehydrate, saveGame } from '../lib/savegame';
+import { SAVE_KEY, SAVE_VERSION, clearSavedGame, loadGame, rehydrate, saveGame } from '../lib/savegame';
 
 function seeded(seed: number): () => number {
   let s = seed >>> 0;
@@ -98,6 +98,17 @@ describe('Guardado automático', () => {
     expect(loadGame()?.state.avatar).toBe(photo);
   });
 
+  it('Lite guarda con su propia clave y no lee la partida de la versión completa', () => {
+    const storage = fakeStorage();
+    vi.stubGlobal('window', { localStorage: storage });
+    expect(SAVE_KEY).toBe('gobernarg.lite.partida');
+    const state = createNewGame({ archetype: 'politico', governorName: 'Laura', seed: 1, scenarioId: 'pais_en_calma' });
+    storage.setItem('gobernarg.partida.v1', JSON.stringify({ v: 1, savedAt: '', state, pendingEvents: [] }));
+    expect(loadGame()).toBeNull();
+    saveGame(state, []);
+    expect(JSON.parse(storage.getItem(SAVE_KEY)!).v).toBe(SAVE_VERSION);
+  });
+
   it('ignora guardados rotos o de otra versión', () => {
     const storage = fakeStorage();
     vi.stubGlobal('window', { localStorage: storage });
@@ -105,7 +116,7 @@ describe('Guardado automático', () => {
     expect(loadGame()).toBeNull();
     storage.setItem(SAVE_KEY, JSON.stringify({ v: 99, state: {} }));
     expect(loadGame()).toBeNull();
-    storage.setItem(SAVE_KEY, JSON.stringify({ v: 1, state: { governorName: 'X' } }));
+    storage.setItem(SAVE_KEY, JSON.stringify({ v: SAVE_VERSION, state: { governorName: 'X' } }));
     expect(loadGame()).toBeNull();
   });
 

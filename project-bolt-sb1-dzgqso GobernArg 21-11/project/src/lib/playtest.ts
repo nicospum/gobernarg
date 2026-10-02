@@ -9,8 +9,8 @@ import { fmtBudget, fmtPct } from './format';
  * navegador.
  */
 export const PLAYTEST_FORM = 'playtest';
-export const GAME_VERSION = 'A · Despacho';
-const START_KEY = 'gobernarg.playtest.inicio';
+export const GAME_VERSION = 'A Lite';
+const START_KEY = 'gobernarg.lite.playtest.inicio';
 
 /** Se marca al empezar cada partida para medir cuánto se jugó. */
 export function markGameStart(): void {

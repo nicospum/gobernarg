@@ -14,8 +14,8 @@ export default defineConfig({
   root: './',
   build: {
     outDir: 'dist',
-    // El pedazo del juego (datos + motor + interfaz) ronda los 520 kB sin comprimir (145 kB con gzip).
-    chunkSizeWarningLimit: 600,
+    // El pedazo del juego (datos + motor + interfaz) ronda los 440 kB sin comprimir (123 kB con gzip) en Lite.
+    chunkSizeWarningLimit: 500,
     rollupOptions: {
       output: {
         // Fase 4: en vez de un solo archivo de 1 MB, las librerías van aparte y

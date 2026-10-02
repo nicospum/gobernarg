@@ -7,8 +7,10 @@ import { resumeNotificationSeq } from '../engine/engineShared';
  * completo (es JSON puro) más los eventos que quedaron sin responder, así
  * recargar la página o cerrar la pestaña no borra el mandato.
  */
-export const SAVE_KEY = 'gobernarg.partida.v1';
-const SAVE_VERSION = 1;
+// Versión Lite: clave propia, así no se cruza con la partida de la versión
+// completa en el mismo navegador. SAVE_VERSION sube si cambia el estado.
+export const SAVE_KEY = 'gobernarg.lite.partida';
+export const SAVE_VERSION = 1;
 
 export interface SavedGame {
   v: number;

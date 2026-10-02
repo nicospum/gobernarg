@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { PARAMS } from '@/data/causal';
 import { useIsTouch } from '@/lib/useMediaQuery';
 
-const SEEN_KEY = 'gobernarg.tutorial.v1';
+const SEEN_KEY = 'gobernarg.lite.tutorial.v1';
 
 function tutorialSeen(): boolean {
   try {

@@ -4,14 +4,24 @@ Simulación política: gobernás la Argentina durante uno o dos mandatos, negoci
 
 ## Versiones
 
-Hay dos versiones en paralelo, cada una en su rama:
+Hay varias versiones en paralelo, cada una en su rama:
 
 | Rama | Versión | Qué tiene |
 | --- | --- | --- |
 | `rediseno-despacho` | **A · Despacho** (principal) | Motor causal de 15 indicadores y 17 actores, estética "Despacho" (papel, azul marino, oro y celeste) |
 | `version-b` | **B** | Motor causal propio (14 indicadores, 18 actores, 45 políticas), estética oscura |
+| `version-a-lite` | **A Lite** | La versión A reducida y compacta (ver abajo) |
 
-Las dos comparten las funciones de las fases 0 a 3: inicio en dos pasos con niveles Fácil / Normal / Argentina, escenarios históricos que se desbloquean con reelecciones, guardado automático, versión para celular, tutorial del primer turno, glosario aplicado y formulario de playtest.
+A y B comparten las funciones de las fases 0 a 3: inicio en dos pasos con niveles Fácil / Normal / Argentina, escenarios históricos que se desbloquean con reelecciones, guardado automático, versión para celular, tutorial del primer turno, glosario aplicado y formulario de playtest.
+
+## Versión Lite (`version-a-lite`)
+
+Versión reducida y compacta de A, con la misma estética y el mismo motor causal (indicadores, actores, acciones, eventos, mandatos, elecciones, legislativas y estrategia post-legislativa sin cambios).
+
+- **Qué se sacó:** asesores y gabinete, habilidades activas de los perfiles (quedan sus ventajas fijas), cuaderno político, historial de gestión, plataforma del partido, escenarios históricos desbloqueables (Corralito y País en llamas) con el sistema de desbloqueo, y el código del juego viejo que ya no se usaba.
+- **Inicio en una pantalla:** bienvenida (Empezar / Continuar) y "Nueva partida" con nombre, foto (de la grilla o propia, recortada a 256×256), perfil y nivel (Fácil, Normal o Argentina).
+- **Guardado propio:** la partida se guarda en `gobernarg.lite.partida` (con versión de guardado), así no se mezcla con la de la versión completa en el mismo navegador. El formulario de playtest llega con la versión `A Lite`.
+- **Publicar en Netlify:** un sitio aparte apuntando a la rama `version-a-lite`, con los mismos pasos de abajo (el `netlify.toml` sirve tal cual).
 
 ## Correr el juego
 
@@ -31,7 +41,7 @@ npm run dev
 | `npm run typecheck` | Chequeo de tipos |
 | `npm run lint` | ESLint |
 | `npm run playtest` | Partidas completas con bots y matriz de escenarios |
-| `npm run playtest:ideologia` | Asimetría ideológica: heterodoxo y ortodoxo, coherentes y bien jugados, en los 5 escenarios |
+| `npm run playtest:ideologia` | Asimetría ideológica: heterodoxo y ortodoxo, coherentes y bien jugados, en los escenarios (3 en Lite) |
 
 Los resultados del playtest con bots quedan en `_analisis_gobernarg/playtest/`.
 
@@ -59,7 +69,7 @@ El sitio no se indexa en buscadores (`X-Robots-Tag` y `robots` meta). La vista p
 
 ## Imágenes
 
-El juego usa solo las imágenes optimizadas de `src/assets/images` (unos 3 MB). El arte crudo (`new assets/`, los `.zip` de la raíz y `src/assets/images/raw/`) queda fuera del repositorio desde la Fase 4; sigue en el historial de Git. Para optimizar imágenes nuevas hace falta ffmpeg con libwebp:
+El juego usa solo las imágenes optimizadas de `src/assets/images` (unos 3 MB; 2 MB en Lite). El arte crudo (`new assets/`, los `.zip` de la raíz y `src/assets/images/raw/`) queda fuera del repositorio desde la Fase 4; sigue en el historial de Git. Para optimizar imágenes nuevas hace falta ffmpeg con libwebp:
 
 ```bash
 scripts/optimizar-imagenes.sh src/assets/images

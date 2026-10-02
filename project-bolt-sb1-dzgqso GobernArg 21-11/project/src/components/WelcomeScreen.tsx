@@ -28,12 +28,15 @@ export function WelcomeScreen({ onStart, saved, onContinue }: WelcomeScreenProps
       <div className="absolute inset-0 bg-gradient-to-b from-paper/25 via-paper/60 to-paper/95" />
 
       {/* Contenido */}
-      <div className="relative z-10 max-w-xl w-full mx-6 px-8 py-10 md:px-12 md:py-12 text-center bg-surface/95 backdrop-blur rounded-xl shadow-[0_24px_60px_-20px_rgba(20,33,61,0.45)] border border-rule">
+      <div className="relative z-10 max-w-xl w-[calc(100%-2rem)] px-6 py-10 md:px-12 md:py-12 text-center bg-surface/95 backdrop-blur rounded-xl shadow-[0_24px_60px_-20px_rgba(20,33,61,0.45)] border border-rule">
         <img
           src={IMAGES.logo.wide}
           alt="Gobernarg"
-          className="w-full max-w-sm mx-auto mb-6 mix-blend-multiply"
+          className="w-full max-w-sm mx-auto mb-3 mix-blend-multiply"
         />
+        <p className="mb-6">
+          <span className="inline-block px-2.5 py-0.5 rounded-full border border-ink/25 text-[12px] font-semibold tracking-wide text-ink/80">Versión Lite</span>
+        </p>
 
         <p className="text-lg text-ink/80 mb-8 leading-relaxed">
           Simulación política donde tomás decisiones estratégicas, gestionás recursos,
