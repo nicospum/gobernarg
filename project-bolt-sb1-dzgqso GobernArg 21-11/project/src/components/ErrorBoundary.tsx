@@ -54,9 +54,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             <div className="flex flex-col gap-2.5">
               <button
                 onClick={this.handleRetry}
-                className="inline-flex items-center justify-center gap-2 bg-ink hover:bg-ink/90 text-paper h-11 px-6 rounded-md font-semibold transition-colors"
+                className="sr-btn-navy h-11 px-6"
               >
-                <RotateCcw className="w-5 h-5 text-gold" />
+                <RotateCcw className="w-5 h-5" />
                 Volver a intentar
               </button>
               <button

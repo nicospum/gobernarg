@@ -2,6 +2,7 @@ import { Trophy, BarChart, TrendingUp, Users, Target, Shield } from 'lucide-reac
 import { ElectionResults } from '../types/game';
 import { IMAGES } from '../utils/imageAssets';
 import { Tooltip, TooltipContent } from './Tooltip';
+import { ModalHeader } from './ModalHeader';
 import { useDialog } from '@/lib/useDialog';
 import { fmtPct } from '@/lib/format';
 
@@ -58,34 +59,19 @@ export function ElectionResultsModal({ result, onClose }: ElectionResultsModalPr
   const succession = result.kind === 'succession';
 
   return (
-    <div ref={dialogRef} className="outline-none fixed inset-0 bg-ink/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="relative w-full max-w-2xl rounded-xl overflow-hidden shadow-2xl bg-card border border-border">
-        <div className="relative h-48 md:h-56">
-          <img
-            src={IMAGES.events.electionDay}
-            alt="Elecciones"
-            loading="lazy"
-            decoding="async"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-card via-card/70 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-6 text-foreground text-center">
-            <Trophy
-              className={`w-12 h-12 mx-auto mb-2 ${victory ? 'text-accent' : 'text-muted-foreground'}`}
-            />
-            <h2
-              className={`font-display text-3xl font-semibold   ${
-                victory ? 'text-accent' : 'text-red-400'
-              }`}
-            >
-              {succession
-                ? victory ? 'Tu espacio retiene el gobierno' : 'Tu espacio pierde la sucesión'
-                : victory ? '¡Victoria Electoral!' : 'Derrota Electoral'}
-            </h2>
-            <p className="font-mono text-2xl font-bold mt-1">{fmtPct(votesPercentage, 1)}</p>
-            <p className="text-xs text-foreground/70 uppercase tracking-widest">de los votos</p>
-          </div>
-        </div>
+    <div ref={dialogRef} className="outline-none fixed inset-0 bg-sala-navy/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="relative w-full max-w-2xl overflow-hidden sr-modal max-h-[92vh] overflow-y-auto">
+        <ModalHeader
+          center
+          label={succession ? 'Elección de sucesión' : result.kind === 'reelection' ? 'Elecciones presidenciales' : 'Resultado electoral'}
+          title={succession
+            ? victory ? 'Tu espacio retiene el gobierno' : 'Tu espacio pierde la sucesión'
+            : victory ? '¡Victoria electoral!' : 'Derrota electoral'}
+          subtitle={<><span className="block font-mono text-[28px] font-bold text-white mt-1">{fmtPct(votesPercentage, 1)}</span><span className="uppercase tracking-[0.15em] text-[10px]">de los votos</span></>}
+          image={IMAGES.events.electionDay}
+          imageAlt="Elecciones"
+          icon={<Trophy className={`w-11 h-11 ${victory ? 'text-sala-lime' : 'text-white/60'}`} />}
+        />
 
         <div className="p-6">
           <h3 className="font-display text-lg font-semibold mb-4 flex items-center gap-2 text-foreground  ">

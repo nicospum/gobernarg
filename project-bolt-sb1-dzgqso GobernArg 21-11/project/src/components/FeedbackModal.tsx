@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react';
-import { Check, Copy, MessageSquareHeart, X } from 'lucide-react';
+import { Check, Copy, MessageSquareHeart } from 'lucide-react';
 import type { GameState } from '../types/game';
+import { ModalHeader } from './ModalHeader';
 import { useDialog } from '@/lib/useDialog';
 import { useIsMobile } from '@/lib/useMediaQuery';
 import { gameSummary, sendPlaytest } from '@/lib/playtest';
@@ -22,7 +23,7 @@ function Choice({ name, value, options, onChange }: {
           aria-checked={value === v}
           onClick={() => onChange(value === v ? '' : v)}
           className={`min-h-10 px-3 rounded-md border text-sm ${
-            value === v ? 'bg-ink text-paper border-ink hover:bg-ink/90' : 'bg-surface text-ink border-rule hover:bg-sunken'
+            value === v ? 'bg-sala-blue text-white border-sala-blue' : 'bg-surface text-ink border-rule hover:bg-sunken'
           }`}
         >
           {label}
@@ -82,15 +83,10 @@ export function FeedbackModal({ gameState, onClose }: { gameState: GameState; on
   const input = 'w-full rounded-md border border-rule bg-surface px-3 py-2.5 text-[15px] text-ink placeholder:text-ink/50 focus:outline-none focus:ring-2 focus:ring-celeste-ink/40';
 
   return (
-    <div ref={dialogRef} aria-labelledby="feedback-title" className="outline-none fixed inset-0 z-[60] flex items-center justify-center bg-ink/70 p-4">
-      <div className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-xl border border-rule bg-surface shadow-2xl">
-        <div className="sticky top-0 z-10 bg-surface border-b border-rule px-5 py-4 flex items-center justify-between gap-3">
-          <h2 id="feedback-title" className="font-display text-2xl font-semibold text-ink flex items-center gap-2">
-            <MessageSquareHeart size={22} className="text-celeste-ink" /> Contanos cómo te fue
-          </h2>
-          <button onClick={onClose} aria-label="Cerrar" className="w-10 h-10 flex items-center justify-center rounded-md text-ink hover:bg-sunken">
-            <X size={20} />
-          </button>
+    <div ref={dialogRef} aria-labelledby="feedback-title" className="outline-none fixed inset-0 z-[60] flex items-center justify-center bg-sala-navy/60 backdrop-blur-sm p-4">
+      <div className="w-full max-w-xl max-h-[90vh] overflow-y-auto sr-modal">
+        <div className="sticky top-0 z-10">
+          <ModalHeader id="feedback-title" label="Playtest" title="Contanos cómo te fue" icon={<MessageSquareHeart size={22} className="text-sala-sky" />} onClose={onClose} />
         </div>
 
         {status === 'sent' ? (
@@ -98,7 +94,7 @@ export function FeedbackModal({ gameState, onClose }: { gameState: GameState; on
             <Check size={36} className="mx-auto text-emerald-400" />
             <p className="font-display text-xl font-semibold text-ink">¡Gracias! Tus respuestas llegaron.</p>
             <p className="text-sm text-ink/80">Nos ayudan a que el juego se entienda mejor y sea justo con todas las ideas.</p>
-            <button onClick={onClose} className="h-11 px-6 rounded-md bg-ink text-paper font-semibold">Volver al juego</button>
+            <button onClick={onClose} className="sr-btn-navy h-11 px-6">Volver al juego</button>
           </div>
         ) : (
           <div className="px-5 py-5 space-y-6">
@@ -169,7 +165,7 @@ export function FeedbackModal({ gameState, onClose }: { gameState: GameState; on
             <button
               onClick={submit}
               disabled={status === 'sending'}
-              className="w-full h-12 rounded-md bg-ink text-paper font-semibold hover:bg-ink/90 disabled:opacity-60"
+              className="sr-btn-lime w-full h-12 text-[13px] disabled:opacity-60"
             >
               {status === 'sending' ? 'Enviando…' : 'Enviar'}
             </button>

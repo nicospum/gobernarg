@@ -1,6 +1,7 @@
 import { TrendingUp, DoorOpen } from 'lucide-react';
 import { GameState } from '../types/game';
 import { INCUMBENCY_BONUS } from '../engine/causalBridge';
+import { ModalHeader } from './ModalHeader';
 import { useDialog } from '@/lib/useDialog';
 import { fmtPct } from '@/lib/format';
 
@@ -23,18 +24,14 @@ export function ReelectionChoiceModal({ gameState, onSelect, onRetire }: Reelect
         : 'text-red-400';
 
   return (
-    <div ref={dialogRef} className="outline-none fixed inset-0 bg-ink/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-card border border-border rounded-xl w-full max-w-2xl overflow-hidden shadow-2xl">
-        <div className="border-b border-border p-6 text-center">
-          <h2 className="font-display text-3xl font-semibold   text-foreground mb-2">
-            Fin del mandato
-          </h2>
-          <p className="text-foreground/80 text-sm">
-            Terminaste tu mandato como{' '}
-            <span className="font-semibold capitalize text-accent">{gameState.position}</span>.
-            {' '}Llegan las elecciones presidenciales: ¿buscás la reelección?
-          </p>
-        </div>
+    <div ref={dialogRef} className="outline-none fixed inset-0 bg-sala-navy/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="sr-modal w-full max-w-2xl overflow-hidden">
+        <ModalHeader
+          center
+          label="Elecciones presidenciales"
+          title="Fin del mandato"
+          subtitle={<>Terminaste tu mandato como <span className="font-semibold capitalize text-white">{gameState.position}</span>. Llegan las elecciones presidenciales: ¿buscás la reelección?</>}
+        />
 
         <div className="p-6 space-y-3">
           <button

@@ -11,6 +11,7 @@ import { IMAGES } from '../utils/imageAssets';
 import { DEFEAT_REASON_CONFIG } from '../data/defeatReasons';
 import { AxisBar } from './AxisBar';
 import { getValueRisk, riskColor } from '@/lib/risk';
+import { ModalHeader } from './ModalHeader';
 import { useDialog } from '@/lib/useDialog';
 
 interface LegacyScreenProps {
@@ -87,47 +88,31 @@ export function LegacyScreen({ gameState, onRestart, onClose, onFeedback }: Lega
   const targetRisk = getValueRisk(perf.targetAchievement, 100, false);
 
   return (
-    <div ref={dialogRef} className="outline-none fixed inset-0 bg-ink/85 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="relative w-full max-w-3xl rounded-xl overflow-hidden shadow-2xl bg-card border border-border my-8">
-        {/* Header visual */}
-        <div className="relative h-48 md:h-56">
-          <img
-            src={isVictory ? IMAGES.ui.shieldEmblemPremium : IMAGES.events.socialProtest}
-            alt={isVictory ? 'Victoria' : 'Derrota'}
-            loading="lazy"
-            decoding="async"
-            className="w-full h-full object-cover"
-          />
-          <div
-            className={`absolute inset-0 ${
-              isVictory
-                ? 'bg-gradient-to-t from-paper/95 via-paper/60 to-transparent'
-                : 'bg-gradient-to-t from-paper/95 via-red-950/60 to-transparent'
-            }`}
-          />
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-foreground text-center p-4">
-            {isVictory ? (
-              <Trophy className="w-14 h-14 text-accent mb-2" />
-            ) : (
-              <Skull className="w-14 h-14 text-red-400 mb-2" />
-            )}
-            <h2 className="font-display text-3xl md:text-4xl font-semibold  ">
-              {isVictory ? 'Fin de tu gobierno' : 'Fin del gobierno'}
-            </h2>
-            <p className="text-foreground/85 mt-1 text-sm">{isVictivityMessage(gameState)}</p>
+    <div ref={dialogRef} className="outline-none fixed inset-0 bg-sala-navy/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+      <div className="relative w-full max-w-3xl overflow-hidden sr-modal my-8">
+        <ModalHeader
+          center
+          label="Legado de tu gestión"
+          title={isVictory ? 'Fin de tu gobierno' : 'Fin del gobierno'}
+          subtitle={<>
+            {isVictivityMessage(gameState)}
             {defeatConfig && (
-              <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-400/10 text-xs text-red-300 border border-red-400/30">
+              <span className="mt-3 flex w-fit mx-auto items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 text-xs text-white border border-white/25">
                 <Skull className="w-3.5 h-3.5" />
                 {defeatConfig.title}
-              </div>
+              </span>
             )}
-          </div>
-        </div>
+          </>}
+          image={isVictory ? IMAGES.ui.shieldEmblemPremium : IMAGES.events.socialProtest}
+          imageAlt={isVictory ? 'Victoria' : 'Derrota'}
+          icon={isVictory ? <Trophy className="w-12 h-12 text-sala-lime" /> : <Skull className="w-12 h-12 text-[#ff8a6e]" />}
+          onClose={onClose}
+        />
 
         <div className="p-6 md:p-8 space-y-8">
           {/* Performance Summary — bloque nuevo Figma 2 */}
           <div>
-            <h3 className="font-display text-xl font-semibold mb-3 flex items-center gap-2 text-foreground  ">
+            <h3 className="text-[18px] font-bold tracking-tight mb-3 flex items-center gap-2 text-ink">
               <Award className="w-5 h-5 text-accent" />
               Resumen de Desempeño
             </h3>
@@ -176,7 +161,7 @@ export function LegacyScreen({ gameState, onRestart, onClose, onFeedback }: Lega
 
           {/* Narrativa */}
           <div>
-            <h3 className="font-display text-lg font-semibold mb-3 flex items-center gap-2 text-foreground  ">
+            <h3 className="text-[16px] font-bold tracking-tight mb-3 flex items-center gap-2 text-ink">
               <ScrollText className="w-5 h-5 text-primary" />
               Tu legado
             </h3>
@@ -187,7 +172,7 @@ export function LegacyScreen({ gameState, onRestart, onClose, onFeedback }: Lega
 
           {/* Estadísticas */}
           <div>
-            <h3 className="font-display text-lg font-semibold mb-3 text-foreground  ">
+            <h3 className="text-[16px] font-bold tracking-tight mb-3 text-ink">
               Estadísticas
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -207,7 +192,7 @@ export function LegacyScreen({ gameState, onRestart, onClose, onFeedback }: Lega
 
           {/* Perfil ideológico */}
           <div>
-            <h3 className="font-display text-lg font-semibold mb-3 text-foreground  ">
+            <h3 className="text-[16px] font-bold tracking-tight mb-3 text-ink">
               Perfil Ideológico
             </h3>
             <div className="rounded-xl border border-border bg-ink/3 p-5 space-y-1.5">
@@ -243,7 +228,7 @@ export function LegacyScreen({ gameState, onRestart, onClose, onFeedback }: Lega
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {recentProjects.length > 0 && (
                 <div>
-                  <h4 className="font-display text-[12px] font-semibold text-emerald-400   mb-2">
+                  <h4 className="sr-label !text-sala-good mb-2">
                     Obras destacadas
                   </h4>
                   <ul className="space-y-1.5">
@@ -261,7 +246,7 @@ export function LegacyScreen({ gameState, onRestart, onClose, onFeedback }: Lega
               )}
               {recentCrises.length > 0 && (
                 <div>
-                  <h4 className="font-display text-[12px] font-semibold text-red-400   mb-2">
+                  <h4 className="sr-label !text-sala-bad mb-2">
                     Crisis superadas
                   </h4>
                   <ul className="space-y-1.5">
@@ -285,7 +270,7 @@ export function LegacyScreen({ gameState, onRestart, onClose, onFeedback }: Lega
             {onFeedback && (
               <button
                 onClick={onFeedback}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded font-display font-semibold transition-colors border border-border bg-ink/10 hover:bg-ink/15 text-foreground"
+                className="sr-btn-ghost px-5 h-11 text-[14px]"
               >
                 Contanos cómo te fue
               </button>
@@ -293,14 +278,14 @@ export function LegacyScreen({ gameState, onRestart, onClose, onFeedback }: Lega
             {onClose && (
               <button
                 onClick={onClose}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded font-display font-semibold   transition-colors border border-border bg-ink/10 hover:bg-ink/15 text-foreground"
+                className="sr-btn-ghost px-5 h-11 text-[14px]"
               >
                 Volver
               </button>
             )}
             <button
               onClick={onRestart}
-              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3 rounded font-display font-semibold   transition-colors shadow-lg"
+              className="sr-btn-lime px-6 h-11 text-[12px]"
             >
               <RotateCcw className="w-4 h-4" />
               Jugar de nuevo

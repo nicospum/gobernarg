@@ -29,11 +29,11 @@ export function ConfirmDialog({
       data-sheet
       aria-labelledby="confirm-title"
       aria-describedby="confirm-message"
-      className="outline-none fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-ink/60 p-4"
+      className="outline-none fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-sala-navy/60 backdrop-blur-sm p-4"
       onClick={e => { if (e.target === e.currentTarget) onCancel(); }}
     >
-      <div className="w-full max-w-sm rounded-xl bg-surface border border-rule shadow-2xl p-5">
-        <h2 id="confirm-title" className={`font-display text-lg font-semibold ${danger ? 'text-red-400' : 'text-ink'}`}>
+      <div className="w-full max-w-sm sr-modal p-5">
+        <h2 id="confirm-title" className={`font-display text-lg font-semibold ${danger ? 'text-sala-bad' : 'text-ink'}`}>
           {title}
         </h2>
         <p id="confirm-message" className="mt-1.5 text-sm text-ink/75 leading-relaxed">{message}</p>
@@ -47,7 +47,7 @@ export function ConfirmDialog({
           <button
             onClick={onConfirm}
             className={`h-11 rounded-md text-sm font-semibold transition-colors ${
-              danger ? 'bg-red-600 hover:bg-red-600/90 text-white' : 'bg-ink hover:bg-ink/90 text-paper'
+              danger ? 'bg-sala-bad hover:bg-sala-bad/90 text-white' : 'bg-sala-navy hover:bg-sala-navy2 text-white'
             }`}
           >
             {confirmLabel}

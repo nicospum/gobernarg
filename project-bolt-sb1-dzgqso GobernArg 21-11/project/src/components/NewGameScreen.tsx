@@ -48,15 +48,15 @@ function scenarioImage(sc: ScenarioDef): string | undefined {
 
 function choiceCls(selected: boolean): string {
   return selected
-    ? 'border-ink bg-ink/10 shadow-md'
-    : 'border-ink/15 bg-surface hover:border-ink/40 hover:bg-ink/5';
+    ? 'border-sala-blue bg-sala-blue/10 shadow-[0_7px_22px_rgb(36_107_206/0.12)]'
+    : 'border-rule bg-surface hover:border-sala-blue/40 hover:bg-sunken/60';
 }
 
 function Section({ title, hint, children }: { title: string; hint?: string; children: ReactNode }) {
   return (
     <section className="mb-7">
-      <h2 className="font-display text-lg md:text-xl font-semibold text-ink">{title}</h2>
-      {hint && <p className="text-[13px] text-ink/70 mb-3">{hint}</p>}
+      <h2 className="sr-label">{title}</h2>
+      {hint && <p className="text-[13px] text-sala-muted mt-1 mb-3">{hint}</p>}
       {!hint && <div className="mb-3" />}
       {children}
     </section>
@@ -111,7 +111,7 @@ export function NewGameScreen({ onStart, onBack, historicScenarios = LITE_FEATUR
         className="fixed inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700"
         style={{ backgroundImage: `url(${bg})` }}
       />
-      <div className="fixed inset-0 bg-gradient-to-b from-paper/25 via-paper/60 to-paper/95" />
+      <div className="fixed inset-0 bg-[linear-gradient(180deg,rgb(var(--navy)/0.55)_0%,rgb(var(--paper)/0.7)_40%,rgb(var(--paper)/0.97)_100%)]" />
 
       <div className="relative z-10 max-w-3xl mx-auto px-4 py-5 md:p-8">
         <div className="flex items-center justify-between gap-3 mb-4">
@@ -119,15 +119,20 @@ export function NewGameScreen({ onStart, onBack, historicScenarios = LITE_FEATUR
           {onBack && (
             <button
               onClick={onBack}
-              className="flex items-center gap-1.5 h-10 px-3 rounded-md text-sm font-medium text-ink/80 hover:text-ink hover:bg-sunken/80"
+              className="flex items-center gap-1.5 h-10 px-3 rounded-md text-sm font-medium text-white/90 hover:text-white hover:bg-white/10"
             >
               <ArrowLeft size={16} /> Volver
             </button>
           )}
         </div>
 
-        <div className="bg-surface/95 backdrop-blur rounded-xl px-4 py-6 md:p-8 shadow-[0_24px_60px_-20px_rgba(20,33,61,0.45)] border border-rule">
-          <h1 className="font-display text-3xl md:text-4xl font-semibold mb-6">Nueva partida</h1>
+        <div className="sr-modal overflow-hidden">
+          <div className="sr-modal-head">
+            <span className="sr-label">Sala de situación · Versión Lite</span>
+            <h1 className="mt-1.5 text-[26px] md:text-[30px] font-bold tracking-tight text-white">Nueva partida</h1>
+            <p className="text-[13px] text-sala-on-navy mt-1">Tu nombre, tu foto, tu perfil y el país que te toca.</p>
+          </div>
+          <div className="px-4 py-6 md:p-8">
 
           <Section title="Tu nombre">
             <input
@@ -137,7 +142,7 @@ export function NewGameScreen({ onStart, onBack, historicScenarios = LITE_FEATUR
               placeholder="Ingresá tu nombre"
               aria-label="Tu nombre"
               maxLength={40}
-              className="w-full h-12 px-4 rounded-lg bg-paper border border-ink/25 text-[16px] focus:outline-none focus:ring-2 focus:ring-ink/50 placeholder-ink/50"
+              className="w-full h-12 px-4 rounded-lg bg-surface border border-rule text-[16px] focus:outline-none focus:ring-2 focus:ring-sala-cyan/60 placeholder:text-sala-dim"
             />
           </Section>
 
@@ -180,7 +185,7 @@ export function NewGameScreen({ onStart, onBack, historicScenarios = LITE_FEATUR
               />
               <label
                 htmlFor="avatar-upload"
-                className={`inline-flex items-center gap-2 h-11 px-4 rounded-md border border-ink/25 text-sm font-semibold cursor-pointer hover:bg-sunken ${processing ? 'opacity-60 pointer-events-none' : ''}`}
+                className={`sr-btn-ghost h-11 px-4 text-sm cursor-pointer ${processing ? 'opacity-60 pointer-events-none' : ''}`}
               >
                 <Camera size={16} />
                 {processing ? 'Procesando…' : uploaded ? 'Cambiar mi foto' : 'Subir mi foto'}
@@ -239,14 +244,13 @@ export function NewGameScreen({ onStart, onBack, historicScenarios = LITE_FEATUR
           <button
             onClick={handleStart}
             disabled={!name}
-            className={`w-full flex items-center justify-center gap-2 font-semibold h-14 px-6 rounded-md transition-colors text-lg ${
-              name ? 'bg-ink hover:bg-ink/90 text-paper' : 'bg-sunken text-ink/70 cursor-not-allowed'
-            }`}
+            className="sr-btn-lime w-full h-14 px-6 text-[14px]"
           >
-            <Play className={`w-5 h-5 ${name ? 'text-gold' : ''}`} />
+            <Play className="w-5 h-5" />
             Empezar
           </button>
-          {!name && <p className="text-center text-[13px] text-ink/70 mt-2">Escribí tu nombre para empezar.</p>}
+          {!name && <p className="text-center text-[13px] text-sala-muted mt-2">Escribí tu nombre para empezar.</p>}
+          </div>
         </div>
       </div>
     </div>
@@ -255,7 +259,7 @@ export function NewGameScreen({ onStart, onBack, historicScenarios = LITE_FEATUR
 
 function SelectedMark() {
   return (
-    <span className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-ink text-paper flex items-center justify-center">
+    <span className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-sala-blue text-white flex items-center justify-center">
       <Check size={12} />
     </span>
   );

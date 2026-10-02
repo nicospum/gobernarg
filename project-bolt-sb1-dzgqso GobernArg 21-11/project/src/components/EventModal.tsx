@@ -1,8 +1,6 @@
-import {
-  AlertTriangle, AlertCircle, CheckCircle,
-  Landmark, DollarSign, Users, Globe, Leaf
-} from 'lucide-react';
+import { AlertTriangle, AlertCircle, CheckCircle } from 'lucide-react';
 import { GameEvent } from '../systems/events/types';
+import { ModalHeader } from './ModalHeader';
 import { getEventImage } from '../utils/imageAssets';
 import { eventChoiceEffects } from '../engine/eventResolver';
 import { effectChip, toneChipClass } from '@/lib/causalText';
@@ -17,14 +15,6 @@ interface EventModalProps {
 /* ------------------------------------------------------------------ */
 /*  Category helpers                                                   */
 /* ------------------------------------------------------------------ */
-
-const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
-  political: Landmark,
-  economic: DollarSign,
-  social: Users,
-  international: Globe,
-  natural: Leaf,
-};
 
 const CATEGORY_LABELS: Record<string, string> = {
   political: 'Político',
@@ -51,54 +41,36 @@ export function EventModal({ event, onChoice, onClose }: EventModalProps) {
         ? AlertCircle
         : CheckCircle;
 
-  const CategoryIcon = CATEGORY_ICONS[event.category] || Landmark;
   const categoryLabel = CATEGORY_LABELS[event.category] || event.category;
 
-  const severityClasses: Record<typeof event.severity, string> = {
-    critical: 'border-red-500/40 bg-red-500/15 text-red-300',
-    high: 'border-amber-500/40 bg-amber-500/15 text-amber-300',
-    medium: 'border-blue-500/40 bg-blue-500/15 text-blue-300',
-    low: 'border-emerald-500/40 bg-emerald-500/15 text-emerald-300',
+  const iconColor: Record<typeof event.severity, string> = {
+    critical: 'text-[#ff8a6e]',
+    high: 'text-sala-sun',
+    medium: 'text-sala-sky',
+    low: 'text-sala-lime',
   };
 
-  const iconColor: Record<typeof event.severity, string> = {
-    critical: 'text-red-400',
-    high: 'text-amber-400',
-    medium: 'text-blue-400',
-    low: 'text-emerald-400',
+  const severityBar: Record<typeof event.severity, string> = {
+    critical: 'bg-sala-bad',
+    high: 'bg-sala-sun',
+    medium: 'bg-sala-blue',
+    low: 'bg-sala-good',
   };
 
   const eventImage = getEventImage(event.category, event.severity, event.id);
 
   return (
-    <div ref={dialogRef} className="outline-none fixed inset-0 bg-ink/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
-      <div className="w-full max-w-2xl rounded-2xl shadow-2xl bg-surface border border-ink/12 overflow-hidden animate-in fade-in zoom-in-95">
-        {/* ---------- Header image ---------- */}
-        <div className="relative h-48 md:h-60">
-          <img src={eventImage} alt={event.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/70 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-5 text-ink">
-            <div className="flex items-start gap-3">
-              <SeverityIcon className={`w-8 h-8 flex-shrink-0 mt-0.5 ${iconColor[event.severity]}`} />
-              <div>
-                <h3 className="font-display font-semibold text-2xl   leading-tight text-ink">
-                  {event.title}
-                </h3>
-                <p className="text-xs text-ink/80 mt-1 leading-relaxed">{event.description}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ---------- Category + severity bar ---------- */}
-        <div
-          className={`px-5 py-2 border-t border-b text-[10px] font-bold uppercase tracking-wider flex items-center gap-2 ${severityClasses[event.severity]}`}
-        >
-          <CategoryIcon className="w-3.5 h-3.5 flex-shrink-0" />
-          <span>EVENTO {categoryLabel.toUpperCase()}</span>
-          <span className="text-ink/70">·</span>
-          <span>SEVERIDAD {(SEVERITY_LABELS[event.severity] ?? event.severity).toUpperCase()}</span>
-        </div>
+    <div ref={dialogRef} className="outline-none fixed inset-0 bg-sala-navy/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="w-full max-w-2xl sr-modal overflow-hidden max-h-[92vh] overflow-y-auto animate-in fade-in zoom-in-95">
+        <ModalHeader
+          label={`Evento ${categoryLabel.toLowerCase()} · severidad ${(SEVERITY_LABELS[event.severity] ?? event.severity).toLowerCase()}`}
+          title={event.title}
+          subtitle={event.description}
+          image={eventImage}
+          imageAlt={event.title}
+          icon={<SeverityIcon className={`w-7 h-7 ${iconColor[event.severity]}`} />}
+        />
+        <div className={`h-1 ${severityBar[event.severity]}`} aria-hidden="true" />
 
         {/* ---------- Choices ---------- */}
         {event.choices && (

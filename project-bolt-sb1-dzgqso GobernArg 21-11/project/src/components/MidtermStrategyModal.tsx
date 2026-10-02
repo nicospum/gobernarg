@@ -1,6 +1,7 @@
 import { AlertTriangle, Zap, Handshake, Users, Flame } from 'lucide-react';
 import { GameState, MidtermStrategy } from '../types/game';
 import { MIDTERM_STRATEGY_EFFECTS, MIDTERM_CAUSAL } from '../data/midtermStrategies';
+import { ModalHeader } from './ModalHeader';
 import { useDialog } from '@/lib/useDialog';
 import { LEGISLATIVE_IMAGE } from '../engine/eventResolver';
 import { fmtPct } from '@/lib/format';
@@ -85,16 +86,11 @@ export function MidtermStrategyModal({
   };
 
   return (
-    <div ref={dialogRef} className="outline-none fixed inset-0 bg-ink/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div ref={dialogRef} className="outline-none fixed inset-0 bg-sala-navy/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="sr-modal w-full max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
+        <ModalHeader center label="Elecciones legislativas de medio término" title={outcomeTitles[outcome] ?? 'Resultado de las legislativas'} />
         <div className="p-6 md:p-8">
           <div className="text-center mb-6">
-            <div className="text-[11px] uppercase tracking-widest text-gold-ink font-semibold mb-1">
-              Elecciones legislativas de medio término
-            </div>
-            <h2 className="font-display text-2xl md:text-3xl font-semibold text-foreground mb-3">
-              {outcomeTitles[outcome] ?? 'Resultado de las legislativas'}
-            </h2>
             {results && (
               <div className="grid grid-cols-3 gap-2 max-w-md mx-auto mb-3">
                 <div className="rounded-lg bg-sunken px-2 py-2.5">

@@ -1,5 +1,4 @@
 import {
-  X,
   Wallet,
   AlertTriangle,
   Newspaper,
@@ -16,6 +15,7 @@ import { CAUSAL_ACTIONS_BY_ID, INDICATORS } from '@/data/causal';
 import { actorReactions, indicatorChanges } from '@/lib/turnExplain';
 import { arrows, toneOf, toneClass } from '@/lib/causalText';
 import { getActorIcon } from '../utils/actorIcons';
+import { ModalHeader } from './ModalHeader';
 import { useDialog } from '@/lib/useDialog';
 
 interface TurnSummaryModalProps {
@@ -53,27 +53,19 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
   const otherCash = record ? Math.round(cajaFinal - record.fiscal.cajaDespues) : 0;
 
   return (
-    <div ref={dialogRef} className="outline-none fixed inset-0 bg-ink/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+    <div ref={dialogRef} className="outline-none fixed inset-0 bg-sala-navy/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div
-        className="animate-in fade-in-0 zoom-in-95 duration-200 bg-surface border border-ink/12 rounded-2xl w-full max-w-2xl max-h-[92vh] overflow-y-auto shadow-2xl"
+        className="animate-in fade-in-0 zoom-in-95 duration-200 sr-modal w-full max-w-2xl max-h-[92vh] overflow-y-auto overflow-x-hidden"
       >
-        {/* Header visual */}
-        <div className="relative h-36 md:h-44">
-          <img src={headerImage} alt="Resumen del trimestre" loading="lazy" decoding="async" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/70 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-5 flex items-end justify-between gap-4">
-            <div>
-              <h2 className="font-display text-2xl font-semibold   text-ink">Resumen del trimestre</h2>
-              <p className="flex items-center gap-1.5 text-ink/80 text-xs font-mono mt-0.5">
-                <CalendarDays className="w-3.5 h-3.5 text-blue-400" />
-                Año {summary.year} · Trimestre {summary.quarter}
-              </p>
-            </div>
-            <button onClick={onClose} aria-label="Cerrar resumen" className="p-1.5 text-ink/70 hover:text-ink rounded-lg transition-colors bg-ink/5 border border-ink/8">
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
+        <ModalHeader
+          label="Cierre del trimestre"
+          title="Resumen del trimestre"
+          subtitle={<span className="inline-flex items-center gap-1.5"><CalendarDays className="w-3.5 h-3.5" /> Año {summary.year} · Trimestre {summary.quarter}</span>}
+          image={headerImage}
+          imageAlt=""
+          onClose={onClose}
+          closeLabel="Cerrar resumen"
+        />
 
         <div className="p-6 space-y-5">
           {/* Decisiones */}
