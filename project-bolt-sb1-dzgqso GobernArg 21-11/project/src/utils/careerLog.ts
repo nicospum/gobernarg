@@ -30,10 +30,6 @@ export function generateLegacyText(gameState: GameState): string {
       paragraphs.push(
         `En ${endYear} buscó la reelección como ${capitalize(milestone.position)} y obtuvo el ${milestone.votesPercentage.toFixed(1)}% de los votos, ${milestone.result === 'victory' ? 'logrando continuar' : 'sin lograr continuar'} en el cargo.`
       );
-    } else if (milestone.type === 'promotion') {
-      paragraphs.push(
-        `En ${endYear} dio el salto de ${capitalize(careerHistory[i - 1]?.position ?? 'su cargo anterior')} a ${capitalize(milestone.position)}, alcanzando el ${milestone.votesPercentage.toFixed(1)}% en una elección histórica.`
-      );
     }
   }
 

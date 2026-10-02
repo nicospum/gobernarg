@@ -501,7 +501,6 @@ const REMOVED_EFFECTS: { actionId: string; target: string }[] = [
 
 const ACTIVE_EFFECT_ROWS = EFFECT_ROWS.filter(e => !REMOVED_EFFECTS.some(r => r.actionId === e.actionId && r.target === e.target));
 
-export const EFFECTS: EffectRow[] = ACTIVE_EFFECT_ROWS;
 export const EFFECTS_BY_ACTION: Record<string, EffectRow[]> = ACTIVE_EFFECT_ROWS.reduce((acc, e) => {
   (acc[e.actionId] ??= []).push(e);
   return acc;

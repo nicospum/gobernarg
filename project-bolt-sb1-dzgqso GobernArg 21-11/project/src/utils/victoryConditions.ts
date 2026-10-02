@@ -1,86 +1,6 @@
-import { GameState, Objective } from '../types/game';
+import type { DefeatReason, GameState, Objective } from '../types/game';
 import { isIndicatorId } from '../data/causal';
 import { effective, viewRef } from '../engine/causal/context';
-
-const DEFEAT_CONDITIONS = {
-  LOW_POPULARITY_THRESHOLD: {
-    intendente: 20,
-    gobernador: 25,
-    presidente: 30
-  } as Record<string, number>,
-  LOW_POPULARITY_TURNS: 2,
-  NEGATIVE_BUDGET_TURNS: 2
-};
-
-export function checkVictoryConditions(gameState: GameState): boolean {
-  const objectivesCompleted = gameState.objectives.every(obj => obj.completed);
-  const hasRequiredPopularity = gameState.popularity >= 60;
-  const hasPositiveBudget = gameState.budget > 0;
-
-  return objectivesCompleted && hasRequiredPopularity && hasPositiveBudget;
-}
-
-export function checkDefeatConditions(gameState: GameState): boolean {
-  const popThreshold = DEFEAT_CONDITIONS.LOW_POPULARITY_THRESHOLD[gameState.position] ?? 20;
-  
-  // Check for consecutive low popularity
-  if (gameState.popularity < popThreshold) {
-    if (gameState.consecutiveLowPopularity + 1 >= DEFEAT_CONDITIONS.LOW_POPULARITY_TURNS) {
-      return true;
-    }
-  }
-
-  // Check for consecutive negative budget
-  if (gameState.budget < 0) {
-    if (gameState.consecutiveNegativeBudget + 1 >= DEFEAT_CONDITIONS.NEGATIVE_BUDGET_TURNS) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
-// Fase 4: 5 vías de derrota
-export interface DefeatResult {
-  defeated: boolean;
-  reason: import('../types/game').DefeatReason | null;
-  message: string;
-}
-
-export function checkAllDefeatConditions(state: GameState): DefeatResult {
-  const popThreshold = DEFEAT_CONDITIONS.LOW_POPULARITY_THRESHOLD[state.position] ?? 20;
-
-  // 1. Popularidad baja (ya incrementado en checkDefeat)
-  if (state.popularity < popThreshold && state.consecutiveLowPopularity >= DEFEAT_CONDITIONS.LOW_POPULARITY_TURNS) {
-    return { defeated: true, reason: 'low_popularity', message: 'Tu popularidad se desplomó y perdiste todo apoyo político.' };
-  }
-
-  // 2. Presupuesto negativo (ya incrementado en checkDefeat)
-  if (state.budget < 0 && state.consecutiveNegativeBudget >= DEFEAT_CONDITIONS.NEGATIVE_BUDGET_TURNS) {
-    return { defeated: true, reason: 'negative_budget', message: 'El déficit fiscal se volvió insostenible.' };
-  }
-
-  // 3. Impeachment: pop < 10% + estabilidad < 20% × 2 turnos
-  if (state.popularity < 10 && state.stability < 20) {
-    if ((state.impeachmentConsecutiveTurns ?? 0) >= 2) {
-      return { defeated: true, reason: 'impeachment', message: 'El Congreso inició un juicio político. Fuiste destituido.' };
-    }
-  }
-
-  // 4. Golpe institucional: estabilidad < 10% + legislativeSupport < 25% × 3 turnos
-  if (state.stability < 10 && (state.legislativeSupport ?? 100) < 25) {
-    if ((state.coupConsecutiveTurns ?? 0) >= 3) {
-      return { defeated: true, reason: 'institutional_coup', message: 'Las instituciones colapsaron. Un golpe te removió del poder.' };
-    }
-  }
-
-  // 5. Hiperinflación
-  if (state.moneyPrintingCount >= 7) {
-    return { defeated: true, reason: 'hyperinflation', message: 'La emisión descontrolada provocó hiperinflación. La economía colapsó.' };
-  }
-
-  return { defeated: false, reason: null, message: '' };
-}
 
 export function updateObjectives(gameState: GameState): GameState {
   const updatedObjectives = gameState.objectives.map(objective => {
@@ -118,7 +38,7 @@ export function updateObjectives(gameState: GameState): GameState {
       });
     }
 
-    if (objective.requirements.indicators && gameState.causal) {
+    if (objective.requirements.indicators) {
       const c = gameState.causal;
       for (const [id, range] of Object.entries(objective.requirements.indicators)) {
         if (!isIndicatorId(id)) continue;
@@ -162,126 +82,6 @@ export function updateObjectives(gameState: GameState): GameState {
   };
 }
 
-// MODO CAMPAÑA (RESERVADO POST-MVP): los objetivos/thresholds de intendente y
-// gobernador pertenecen a la carrera intendente→gobernador→presidente. Hoy
-// inalcanzables (MVP presidente-only) pero se conservan para el modo campaña
-// del roadmap.
-export function getPositionObjectives(position: string): Objective[] {
-  switch (position) {
-    case 'intendente':
-      return [
-        {
-          id: 'local-development',
-          title: 'Desarrollo Local',
-          description: 'Alcanza un presupuesto de 2000M y 70% de popularidad',
-          requirements: {
-            popularity: 70,
-            budget: 2000
-          },
-          reward: {
-            popularity: 10
-          },
-          completed: false,
-          progress: 0
-        },
-        {
-          id: 'community-support',
-          title: 'Apoyo Comunitario',
-          description: 'Completa 5 proyectos de infraestructura local',
-          requirements: {
-            completedActions: [
-              'plan_viviendas',
-              'transporte_publico',
-              'construccion_hospitales',
-              'red_comunicaciones',
-              'infraestructura_vial'
-            ]
-          },
-          reward: {
-            budget: 500
-          },
-          completed: false,
-          progress: 0
-        }
-      ];
-
-    case 'gobernador':
-      return [
-        {
-          id: 'provincial-growth',
-          title: 'Crecimiento Provincial',
-          description: 'Alcanza un presupuesto de 5000M y 75% de popularidad',
-          requirements: {
-            popularity: 75,
-            budget: 5000
-          },
-          reward: {
-            popularity: 15
-          },
-          completed: false,
-          progress: 0
-        },
-        {
-          id: 'sector-alliance',
-          title: 'Alianza Sectorial',
-          description: 'Obtén alto apoyo de sectores clave',
-          requirements: {
-            groupSupport: {
-              'empresarios': 80,
-              'sindicatos': 80,
-              'clase-media': 75
-            }
-          },
-          reward: {
-            budget: 1000
-          },
-          completed: false,
-          progress: 0
-        }
-      ];
-
-    case 'presidente':
-      return [
-        {
-          id: 'national-prosperity',
-          title: 'Prosperidad Nacional',
-          description: 'Alcanza un presupuesto de 10000M y 80% de popularidad',
-          requirements: {
-            popularity: 80,
-            budget: 10000
-          },
-          reward: {
-            popularity: 20
-          },
-          completed: false,
-          progress: 0
-        },
-        {
-          id: 'total-stability',
-          title: 'Estabilidad Total',
-          description: 'Mantené alto el apoyo de todos los sectores',
-          requirements: {
-            groupSupport: {
-              'empresarios': 85,
-              'sindicatos': 85,
-              'clase-media': 80,
-              'clase-alta': 75,
-              'sectores-populares': 80
-            }
-          },
-          reward: {
-            budget: 2000
-          },
-          completed: false,
-          progress: 0
-        }
-      ];
-
-    default:
-      return [];
-  }
-}
-
 /**
  * Metas de gestión del presidente (motor causal). Reemplazan a los objetivos
  * viejos ("10.000M y 80% de popularidad", "85 de apoyo en 5 grupos"), que el
@@ -303,9 +103,8 @@ export function getPresidentialGoals(): Objective[] {
 }
 
 /** Derrotas anticipadas del motor causal (R-24, aceptadas por el usuario). */
-export function checkCausalDefeat(state: GameState): import('../types/game').DefeatReason | null {
+export function checkCausalDefeat(state: GameState): DefeatReason | null {
   const c = state.causal;
-  if (!c) return null;
   if (c.hyperStreak >= 2) return 'hyperinflation';
   if (c.govCrisisStreak >= 2) return 'impeachment';
   return null;

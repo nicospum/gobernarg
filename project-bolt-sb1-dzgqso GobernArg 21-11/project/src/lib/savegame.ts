@@ -1,6 +1,5 @@
 import type { GameState } from '../types/game';
 import type { GameEvent } from '../systems/events/types';
-import { interestGroups } from '../data/interestGroups';
 import { resumeNotificationSeq } from '../engine/engineShared';
 
 /**
@@ -38,21 +37,10 @@ export function saveGame(state: GameState, pendingEvents: GameEvent[] = []): boo
   }
 }
 
-/**
- * Lo único del estado que no es JSON son los íconos de los subgrupos de
- * interés (componentes de React): al cargar se toman de los datos del juego.
- */
+/** Al cargar, la secuencia de ids de notificaciones sigue desde la última usada. */
 export function rehydrate(state: GameState): GameState {
   resumeNotificationSeq(state.notifications ?? []);
-  if (!state.interestGroups) return state;
-  const icons = new Map(interestGroups.flatMap(g => g.subgroups.map(s => [s.id, s.icon] as const)));
-  return {
-    ...state,
-    interestGroups: state.interestGroups.map(group => ({
-      ...group,
-      subgroups: group.subgroups.map(sub => ({ ...sub, icon: icons.get(sub.id) ?? sub.icon })),
-    })),
-  };
+  return state;
 }
 
 /** La partida guardada, o null si no hay o no se puede leer. */

@@ -108,7 +108,7 @@ export interface PlayOptions {
 export function playGame(bot: Bot, seed: number, opts: PlayOptions = {}): GameOutcome {
   const maxTurns = opts.maxTurns ?? 40;
   return withSeededRandom(seed, () => {
-    let state = createNewGame('presidente', bot.archetype, `Bot ${bot.id}`, false, '', 'normal', opts.platformId, seed, opts.scenarioId);
+    let state = createNewGame({ archetype: bot.archetype, governorName: `Bot ${bot.id}`, platformId: opts.platformId, seed, scenarioId: opts.scenarioId });
     const log: TurnLog[] = [];
     const outcome: GameOutcome = {
       bot: bot.id, seed, turnsPlayed: 0, gameOver: false, victorious: false, defeatReason: null,
@@ -121,7 +121,7 @@ export function playGame(bot: Bot, seed: number, opts: PlayOptions = {}): GameOu
         state = triggerMidtermStrategy(state, bot.midterm(state, state.availableMidtermStrategies));
       }
       if (state.pendingElection) {
-        state = resolvePendingElection(state, 'reelection');
+        state = resolvePendingElection(state);
         outcome.reelectionVotes = state.electionResults?.votesPercentage ?? null;
         state = { ...state, electionResults: null };
         if (state.gameOver) break;

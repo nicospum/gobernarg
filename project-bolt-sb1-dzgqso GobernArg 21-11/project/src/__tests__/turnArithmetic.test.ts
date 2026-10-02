@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { getGlobalTurn } from '../engine/engineShared';
-import { applyGroupSatisfactionPenalty } from '../engine/groupAgendaEngine';
 import { resolveRandomEvents } from '../engine/eventResolver';
 import { getInitialGameState } from '../engine/gameEngine';
 import { GameState } from '../types/game';
@@ -20,82 +19,6 @@ describe('getGlobalTurn - aritmética de turnos global', () => {
 
   it('turno 4 año 4 = 16 (fin de mandato)', () => {
     expect(getGlobalTurn({ year: 4, turn: 4 })).toBe(16);
-  });
-});
-
-describe('applyGroupSatisfactionPenalty - deadlines cruzan año (bug crítico)', () => {
-  function makeState(overrides?: Partial<GameState>): GameState {
-    const base = getInitialGameState();
-    return {
-      ...base,
-      groupRelations: { empresarios: 50 },
-      ...overrides,
-    };
-  }
-
-  it('demanda vencida SIN cumplir aplica penalización (deadline global 4, turno 1 año 2)', () => {
-    const state = makeState({
-      year: 2,
-      turn: 1, // global 5
-      completedActions: [],
-      groupAgendas: [
-        {
-          id: 'a1',
-          groupId: 'empresarios',
-          demand: 'test',
-          deadline: 4, // global: venció en año 1
-          satisfied: false,
-          penaltyApplied: false,
-        },
-      ],
-    });
-
-    const result = applyGroupSatisfactionPenalty(state);
-    expect(result.groupRelations['empresarios']).toBeLessThan(50);
-    expect(result.groupAgendas[0].penaltyApplied).toBe(true);
-  });
-
-  it('demanda vencida CON cumplimiento da +10 apoyo', () => {
-    const state = makeState({
-      year: 2,
-      turn: 1, // global 5
-      completedActions: ['test_action'],
-      groupAgendas: [
-        {
-          id: 'a1',
-          groupId: 'empresarios',
-          demand: 'test_action',
-          deadline: 4, // global: venció en año 1
-          satisfied: false,
-          penaltyApplied: false,
-        },
-      ],
-    });
-
-    const result = applyGroupSatisfactionPenalty(state);
-    expect(result.groupRelations['empresarios']).toBe(60);
-    expect(result.groupAgendas[0].satisfied).toBe(true);
-  });
-
-  it('demanda NO vencida no aplica cambios (deadline futuro)', () => {
-    const state = makeState({
-      year: 1,
-      turn: 2, // global 2
-      groupAgendas: [
-        {
-          id: 'a1',
-          groupId: 'empresarios',
-          demand: 'test',
-          deadline: 5, // global: aún no vence
-          satisfied: false,
-          penaltyApplied: false,
-        },
-      ],
-    });
-
-    const result = applyGroupSatisfactionPenalty(state);
-    expect(result.groupRelations['empresarios']).toBe(50);
-    expect(result.groupAgendas[0].penaltyApplied).toBe(false);
   });
 });
 

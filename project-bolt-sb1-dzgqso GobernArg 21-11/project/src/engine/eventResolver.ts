@@ -14,8 +14,7 @@ import {
   type CausalEventEffect,
 } from '../data/events/causalEvents';
 import { LEGACY_ACTION_TO_NEW } from '../data/causal';
-import { addNotification, filterAvailableMidtermStrategies, getGlobalTurn, recalcState } from './engineShared';
-import { getDifficultyModifiers } from './difficultyEngine';
+import { addNotification, filterAvailableMidtermStrategies, getGlobalTurn } from './engineShared';
 import { decisionContext, evalCondition, FOREVER } from './causal';
 import { applyCausalEffects, legislativeElection, syncLegacy, translateLegacyEffect } from './causalBridge';
 import { fmtPct } from '../lib/format';
@@ -41,49 +40,6 @@ function processCalendarEvent(state: GameState, event: CalendarEvent): GameState
   }
 
   return state;
-}
-
-/**
- * DEPRECADO para partidas con motor causal (ver legislativeElection en
- * causalBridge). Se conserva para estados legacy y sus tests.
- */
-export function calculateLegislativeResults(state: GameState): LegislativeResults {
-  const recentHistory = state.historicalPopularity.slice(-4);
-  const avgPopularity = recentHistory.length > 0
-    ? recentHistory.reduce((a, b) => a + b, 0) / recentHistory.length
-    : state.popularity;
-
-  const groupScores = Object.values(state.groupRelations);
-  const avgGroupSupport = groupScores.length > 0
-    ? groupScores.reduce((a, b) => a + b, 0) / groupScores.length
-    : 50;
-
-  const objectiveBonus = state.objectives.length > 0
-    ? (state.completedObjectives.length / state.objectives.length) * 10
-    : 0;
-
-  const stabilityBonus = (state.stability - 50) * 0.1;
-
-  let officialismVotes = 35
-    + (avgPopularity - 50) * 0.25
-    + (avgGroupSupport - 50) * 0.15
-    + objectiveBonus
-    + stabilityBonus;
-
-  officialismVotes += (Math.random() - 0.5) * 6;
-  officialismVotes = Math.min(58, Math.max(28, officialismVotes));
-
-  const oppositionVotes = Math.min(65, Math.max(30, 100 - officialismVotes + (Math.random() - 0.5) * 4));
-
-  let legislativeSupport = officialismVotes * 1.1;
-  legislativeSupport = Math.min(75, Math.max(25, legislativeSupport));
-
-  return {
-    officialismVotes: Math.round(officialismVotes * 10) / 10,
-    oppositionVotes: Math.round(oppositionVotes * 10) / 10,
-    legislativeSupport: Math.round(legislativeSupport * 10) / 10,
-    ...legislativeOutcome(officialismVotes),
-  };
 }
 
 function legislativeOutcome(votes: number): Pick<LegislativeResults, 'outcome' | 'message'> {
@@ -126,9 +82,7 @@ export function processCalendarEvents(state: GameState): GameState {
   state = processCalendarEvent(state, event);
 
   if (event.id === 'elecciones-medio-termino') {
-    state = state.causal
-      ? runLegislativeElection(state)
-      : { ...state, legislativeResults: calculateLegislativeResults(state) };
+    state = runLegislativeElection(state);
     const results = state.legislativeResults!;
     state = addNotification(state, {
       type: 'event',
@@ -218,8 +172,7 @@ export function resolveRandomEvents(state: GameState): GameEvent[] {
     if (checkEventConditions(event, state)) {
       const roll = Math.random();
       const baseProb = event.conditions?.probability ?? event.probability ?? 0;
-      const prob = baseProb * getDifficultyModifiers(state.difficulty).crisisProbabilityMultiplier;
-      if (roll < prob) {
+      if (roll < baseProb) {
         triggered.push(event);
         state.lastRandomEventTurn = getGlobalTurn(state);
         state.randomEventsThisTerm += 1;
@@ -253,39 +206,13 @@ function actionDone(state: GameState, legacyOrNewId: string): boolean {
 }
 
 /**
- * Condiciones de un evento. Con motor causal, la condición del evento es su
- * `when` sobre indicadores/actores (data/events/causalEvents.ts) y los
- * umbrales viejos de popularidad/estabilidad/presupuesto no se usan.
+ * Condiciones de un evento: su `when` sobre indicadores/actores
+ * (data/events/causalEvents.ts), las acciones requeridas y la ventana de turnos.
  */
 export function checkEventConditions(event: GameEvent, state: GameState): boolean {
   const cond = event.conditions ?? {};
   const causalDef = EVENT_CAUSAL[event.id];
-  const causalMode = !!state.causal && !!causalDef;
-
-  if (causalMode) {
-    if (causalDef.when && !evalCondition(causalDef.when, decisionContext(state.causal))) return false;
-  } else {
-    if (cond.minPopularity !== undefined && state.popularity < cond.minPopularity) return false;
-    if (cond.maxPopularity !== undefined && state.popularity > cond.maxPopularity) return false;
-    if (cond.minBudget !== undefined && state.budget < cond.minBudget) return false;
-    if (cond.maxBudget !== undefined && state.budget > cond.maxBudget) return false;
-    if (cond.minStability !== undefined && state.stability < cond.minStability) return false;
-    if (cond.maxStability !== undefined && state.stability > cond.maxStability) return false;
-    if (cond.minMoneyPrinting !== undefined && state.moneyPrintingCount < cond.minMoneyPrinting) return false;
-    if (cond.requiredGroups) {
-      for (const groupId of cond.requiredGroups) {
-        const support = state.groupRelations[groupId] ?? 0;
-        if (support <= 0) return false;
-      }
-    }
-  }
-
-  if (cond.requiredAdvisors) {
-    for (const advisorId of cond.requiredAdvisors) {
-      const advisor = state.advisors.find(a => a.id === advisorId && a.isActive);
-      if (!advisor) return false;
-    }
-  }
+  if (causalDef?.when && !evalCondition(causalDef.when, decisionContext(state.causal))) return false;
 
   if (cond.requiredActions) {
     for (const actionId of cond.requiredActions) {
@@ -293,7 +220,7 @@ export function checkEventConditions(event: GameEvent, state: GameState): boolea
     }
   }
 
-  const totalTurns = (state.year - 1) * 4 + state.turn;
+  const totalTurns = getGlobalTurn(state);
   if (cond.turnRange && (totalTurns < cond.turnRange.min || totalTurns > cond.turnRange.max)) return false;
 
   return true;
@@ -321,98 +248,34 @@ export function eventChoiceEffects(event: GameEvent, choiceId: string): CausalEv
 }
 
 export function applyImmediateEventEffects(state: GameState, event: GameEvent): void {
-  if (state.causal) {
-    applyCausalEffects(state.causal, eventTriggerEffects(event), `evento:${event.id}`, state.causal.perks.eventResilience);
-    return;
-  }
-  event.effects.immediate.forEach(effect => {
-    applyEventEffect(state, effect);
-  });
+  applyCausalEffects(state.causal, eventTriggerEffects(event), `evento:${event.id}`, state.causal.perks.eventResilience);
 }
 
 export function applyEventChoice(gameState: GameState, event: GameEvent, choiceId: string): GameState {
   const choice = event.choices?.find(c => c.id === choiceId);
   if (!choice) return gameState;
 
-  if (gameState.causal) {
-    const causal = structuredClone(gameState.causal);
-    applyCausalEffects(causal, eventChoiceEffects(event, choiceId), `evento:${event.id}`, causal.perks.eventResilience);
-    // Efectos diferidos de la opción → agenda del motor.
-    for (const [i, effect] of (choice.effects.delayed ?? []).entries()) {
-      const translated = translateLegacyEffect(effect.target ?? '', effect.value ?? 0);
-      if (!translated) continue;
-      const start = causal.turn + ((effect as { turnsUntil?: number }).turnsUntil ?? 1) - 1;
-      causal.agenda.push({
-        uid: `${event.id}.${choiceId}.${causal.turn}.${i}`,
-        effectId: `${event.id}.${choiceId}`,
-        actionId: `evento:${event.id}`,
-        originTurn: causal.turn,
-        target: translated.target,
-        mode: 'DELTA',
-        magnitude: translated.value,
-        start,
-        end: Math.min(FOREVER, start),
-        everyTurn: false,
-        appliedTotal: 0,
-        explanation: `Efecto diferido de ${event.title}`,
-      });
-    }
-    return syncLegacy({ ...gameState, causal });
-  }
-
-  // Estado legacy (sin motor causal).
-  const state: GameState = {
-    ...gameState,
-    groupRelations: { ...gameState.groupRelations },
-  };
-
-  choice.effects.immediate.forEach(effect => applyEventEffect(state, effect));
-
-  if (choice.effects.delayed) {
-    const pendingEffects = [...state.pendingEffects];
-    choice.effects.delayed.forEach(effect => {
-      const base = {
-        id: `${event.id}_${choiceId}_${state.turn}_${Math.random().toString(36).slice(2, 8)}`,
-        activationTurn: getGlobalTurn(state) + ((effect as { turnsUntil?: number }).turnsUntil || 1),
-        description: `Efecto diferido de ${event.title}`
-      };
-      const target = effect.target;
-      const value = effect.value ?? 0;
-      if (target === 'popularity') {
-        pendingEffects.push({ ...base, popularityChange: value });
-      } else if (target === 'budget') {
-        pendingEffects.push({ ...base, budgetChange: value });
-      } else if (target === 'stability') {
-        pendingEffects.push({ ...base, stabilityChange: value });
-      } else if (target) {
-        const groupId = target.startsWith('group_') ? target.slice(6) : target;
-        pendingEffects.push({ ...base, groupEffects: [{ groupId, supportChange: value }] });
-      }
+  const causal = structuredClone(gameState.causal);
+  applyCausalEffects(causal, eventChoiceEffects(event, choiceId), `evento:${event.id}`, causal.perks.eventResilience);
+  // Efectos diferidos de la opción → agenda del motor.
+  for (const [i, effect] of (choice.effects.delayed ?? []).entries()) {
+    const translated = translateLegacyEffect(effect.target ?? '', effect.value ?? 0);
+    if (!translated) continue;
+    const start = causal.turn + ((effect as { turnsUntil?: number }).turnsUntil ?? 1) - 1;
+    causal.agenda.push({
+      uid: `${event.id}.${choiceId}.${causal.turn}.${i}`,
+      effectId: `${event.id}.${choiceId}`,
+      actionId: `evento:${event.id}`,
+      originTurn: causal.turn,
+      target: translated.target,
+      mode: 'DELTA',
+      magnitude: translated.value,
+      start,
+      end: Math.min(FOREVER, start),
+      everyTurn: false,
+      appliedTotal: 0,
+      explanation: `Efecto diferido de ${event.title}`,
     });
-    state.pendingEffects = pendingEffects;
   }
-
-  return recalcState(state);
-}
-
-function applyEventEffect(state: GameState, effect: { target?: string; value?: number }): void {
-  if (!effect.target || effect.value === undefined) return;
-
-  let value = effect.value;
-  if ((effect.target === 'popularity' || effect.target === 'stability') && value < 0) {
-    value = value * (1 - (state._archetypeEventResilience ?? 0));
-  }
-
-  if (effect.target === 'popularity') {
-    state.popularity = Math.min(100, Math.max(0, state.popularity + value));
-  } else if (effect.target === 'budget') {
-    state.budget += effect.value;
-  } else if (effect.target === 'stability') {
-    state.stability = Math.min(100, Math.max(0, state.stability + value));
-  } else {
-    const groupId = effect.target.startsWith('group_') ? effect.target.slice(6) : effect.target;
-    state.groupRelations[groupId] = Math.min(100, Math.max(0,
-      (state.groupRelations[groupId] || 0) + effect.value
-    ));
-  }
+  return syncLegacy({ ...gameState, causal });
 }

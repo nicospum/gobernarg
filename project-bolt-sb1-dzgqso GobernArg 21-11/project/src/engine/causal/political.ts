@@ -1,4 +1,4 @@
-import { ACTOR_IDS, ACTORS, PARAMS, isOrganized, type ActorId } from '../../data/causal';
+import { ACTOR_IDS, ACTORS, PARAMS, isOrganized } from '../../data/causal';
 import { operativeSat } from './actors';
 import { channelStatus } from './channels';
 import { bonusSum, clamp, effective } from './context';
@@ -30,23 +30,6 @@ export function computeApro(state: CausalState): number {
     den += def.electoralWeight;
   }
   return den > 0 ? (100 * num) / den : 50;
-}
-
-/** Contribución de cada actor al componente de aprobación (para explicar la elección). */
-export function aproBreakdown(state: CausalState): { actor: ActorId; weight: number; score: number }[] {
-  const rows: { actor: ActorId; weight: number; score: number }[] = [];
-  let den = 0;
-  for (const a of ACTOR_IDS) {
-    const def = ACTORS[a];
-    if (def.electoralMode !== 'SATISFACCION' || def.electoralWeight <= 0) continue;
-    den += def.electoralWeight;
-  }
-  for (const a of ACTOR_IDS) {
-    const def = ACTORS[a];
-    if (def.electoralMode !== 'SATISFACCION' || def.electoralWeight <= 0) continue;
-    rows.push({ actor: a, weight: def.electoralWeight / den, score: 100 * logistic(state.actors[a].sat) });
-  }
-  return rows;
 }
 
 export function computeStructure(state: CausalState, structureBonus: number): number {

@@ -16,18 +16,3 @@ export interface EffectConditions {
   requiredGroups?: string[];
   probability?: number;
 }
-
-export interface EffectState {
-  activeEffects: Effect[];
-  pendingEffects: PendingEffect[];
-  historicalEffects: HistoricalEffect[];
-}
-
-export interface PendingEffect extends Effect {
-  activationTurn: number;
-}
-
-export interface HistoricalEffect extends Effect {
-  appliedAt: number;
-  success: boolean;
-}

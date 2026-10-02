@@ -17,7 +17,7 @@ function seeded(seed: number): () => number {
 afterEach(() => vi.restoreAllMocks());
 
 const newGame = (seed: number) =>
-  createNewGame('presidente', 'politico', 'Prueba', false, '', 'normal', undefined, seed, 'pais_en_calma');
+  createNewGame({ archetype: 'politico', governorName: 'Prueba', seed, scenarioId: 'pais_en_calma' });
 
 describe('Legislativas: resultado y estrategia en el mismo turno', () => {
   it('el turno de la elección ya pide la estrategia para la segunda mitad', () => {

@@ -7,12 +7,11 @@ import type { GameEvent } from '../systems/events/types';
 import { getAllEvents } from '../data/events';
 import { CHANNEL_GAME_EVENTS, CHANNEL_TO_EVENT } from '../data/events/causalEvents';
 import { ACTORS, CAUSAL_ACTIONS_BY_ID } from '../data/causal';
-import { getAvailableElectionOptions } from '../utils/electionSystem';
 import { updateObjectives, checkCausalDefeat } from '../utils/victoryConditions';
+import { MAX_TERMS } from '../data/careerRules';
 import { addNotification, type TurnResult } from './engineShared';
 import { processCalendarEvents, resolveLegislativeConsequences, resolveRandomEvents, applyImmediateEventEffects } from './eventResolver';
 import { finalizePresidentialCareer } from './electionEngine';
-import { generateTurnIntro } from './narrativeEngine';
 import { applyArchetypePassives } from './archetypeEngine';
 import { CHANNEL_EVENTS, closeTurn, countExecutions, effective, viewRef, type TurnRecord } from './causal';
 import { paForTurn, selectionsFor, syncLegacy } from './causalBridge';
@@ -126,16 +125,11 @@ export function processEndTurn(gameState: GameState): TurnResult {
   let state: GameState = {
     ...gameState,
     completedActions: [...gameState.completedActions],
-    completedObjectives: [...gameState.completedObjectives],
     turnLog: [...gameState.turnLog],
     historicalPopularity: [...gameState.historicalPopularity],
-    historicalBudget: [...gameState.historicalBudget],
-    actionUsageCount: { ...gameState.actionUsageCount },
     lastEventFiredTurns: { ...gameState.lastEventFiredTurns },
     notifications: [...gameState.notifications],
   };
-  const narrative = generateTurnIntro(state);
-
   // Bloquear avance si hay estrategia post-legislativa pendiente.
   if (state.pendingMidtermStrategy) {
     return {
@@ -150,7 +144,6 @@ export function processEndTurn(gameState: GameState): TurnResult {
         immediateEffects: { popularityChange: 0, budgetChange: 0 },
       },
       triggeredEvents: [],
-      narrative,
     };
   }
 
@@ -166,7 +159,6 @@ export function processEndTurn(gameState: GameState): TurnResult {
   const executedIds = record.actions.filter(a => !a.suspended).map(a => a.actionId);
   for (const id of executedIds) {
     if (!state.completedActions.includes(id)) state.completedActions.push(id);
-    state.actionUsageCount[id] = (state.actionUsageCount[id] ?? 0) + 1;
   }
   const systemThisTurn = causal.executions.filter(e => e.turn === record.turn && ['reunion', 'negociacion', 'acuerdo'].includes(e.actionId)).map(e => e.actionId);
   applyProfile(state, [...executedIds, ...systemThisTurn]);
@@ -205,16 +197,11 @@ export function processEndTurn(gameState: GameState): TurnResult {
     state = addNotification(state, { type: 'warning', category: 'economy', title: 'Aviso', message: note, importance: 'high' });
   }
 
-  // 7. Fin de mandato: elección presidencial (o de sucesión en el 2º mandato).
+  // 7. Fin de mandato: reelección (1er mandato) o elección de sucesión (2º).
   const isEndOfTerm = state.year === 4 && state.turn === 4;
   if (isEndOfTerm) {
-    state.pendingElection = true;
-    state.pendingElectionOptions = getAvailableElectionOptions(state);
-    if (state.position === 'presidente' && state.pendingElectionOptions.length === 0) {
-      state.pendingElection = false;
-      state.pendingElectionOptions = [];
-      state = finalizePresidentialCareer(state);
-    }
+    if (state.term < MAX_TERMS) state.pendingElection = true;
+    else state = finalizePresidentialCareer(state);
   }
 
   // 8. Avanzar calendario (salvo elección pendiente).
@@ -254,13 +241,11 @@ export function processEndTurn(gameState: GameState): TurnResult {
   state = updateObjectives(state);
   for (const obj of state.objectives) {
     if (obj.completed && !previouslyCompleted.has(obj.id)) {
-      if (!state.completedObjectives.some(o => o.id === obj.id)) state.completedObjectives.push(obj);
       state = addNotification(state, { type: 'success', category: 'political', title: 'Meta de gestión alcanzada', message: `${obj.title}. ${obj.description}`, importance: 'success' });
     }
   }
 
   state.historicalPopularity.push(state.popularity);
-  state.historicalBudget.push(state.budget);
 
   const actionTitles = executedIds.map(id => CAUSAL_ACTIONS_BY_ID[id]?.name ?? id);
   const turnLogEntry: TurnLogEntry = {
@@ -294,5 +279,5 @@ export function processEndTurn(gameState: GameState): TurnResult {
     causalTurn: record.turn,
   };
 
-  return { state, summary, triggeredEvents, narrative };
+  return { state, summary, triggeredEvents };
 }

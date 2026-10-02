@@ -311,16 +311,7 @@ export function getAdvisorPortrait(specialty: string, advisorId?: string): strin
   return IMAGES.advisors.economyMale;
 }
 
-// Fondo sugerido según cargo
-export function getPositionBackground(position: string): string {
-  switch (position) {
-    case 'intendente':
-      return IMAGES.backgrounds.municipalPlaza;
-    case 'gobernador':
-      return IMAGES.backgrounds.governmentGardens;
-    case 'presidente':
-      return IMAGES.backgrounds.congressSunrise;
-    default:
-      return IMAGES.backgrounds.congressSunset;
-  }
+// Fondo de la asunción (el cargo es siempre presidente)
+export function getPositionBackground(_position: string): string {
+  return IMAGES.backgrounds.congressSunrise;
 }

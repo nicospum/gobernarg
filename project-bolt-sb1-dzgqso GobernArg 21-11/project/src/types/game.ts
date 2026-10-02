@@ -1,100 +1,12 @@
 import type { LucideIcon } from 'lucide-react';
-import type { ElectionOption } from '../data/careerRules';
 import type { CausalState } from '../engine/causal/types';
 
 // =====================
 // Cargos y arquetipos
 // =====================
-export type Position = 'intendente' | 'gobernador' | 'presidente';
+export type Position = 'presidente';
 
 export type Archetype = 'politico' | 'empresario' | 'sindicalista' | 'comunicador';
-
-// =====================
-// Acciones políticas
-// =====================
-export type ActionCategory =
-  | 'economia'
-  | 'social'
-  | 'infraestructura'
-  | 'diplomacia'
-  | 'seguridad'
-  | 'cultura'
-  | 'educacion'
-  | 'turismo'
-  | 'tecnologia';
-
-export interface ActionRequirements {
-  minBudget: number;
-  minPopularity?: number;
-  advisorRequired?: string;
-  groupSupportRequired?: GroupSupportRequirement[];
-}
-
-export interface GroupSupportRequirement {
-  groupId: string;
-  minSupport: number;
-}
-
-export interface FutureEffect {
-  delay: number;
-  budgetChange?: number;
-  popularityChange?: number;
-  groupEffects?: GroupEffect[];
-}
-
-export interface GroupEffect {
-  groupId: string;
-  supportChange: number;
-  duration?: number;
-}
-
-export interface GameAction {
-  id: string;
-  title: string;
-  description: string;
-  icon: LucideIcon;
-  category: ActionCategory;
-  popularityChange: number;
-  budgetChange: number;
-  requirements: ActionRequirements;
-  futureEffects?: FutureEffect[];
-  unlockedActions?: string[];
-  cooldown?: number;
-  actionCost?: number; // coste en puntos de acción (por defecto 1)
-  isReform?: boolean;  // si es una reforma grande, se ve afectada por apoyo legislativo
-  /** Cargos para los que está disponible esta acción. undefined = disponible para todos. */
-  availableForPositions?: Position[];
-  /** Efectos multidimensionales (Fase 2) */
-  multiEffects?: {
-    stabilityChange?: number;
-    legitimacyChange?: number;
-    votingIntentionChange?: number;
-  };
-  /** Si esta acción es un préstamo (afecta debtCount) */
-  isLoan?: boolean;
-  /** Factor de rendimiento decreciente. default 0.80 (pierde 20% cada uso repetido) */
-  diminishingFactor?: number;
-  /**
-   * Efectos grupales explícitos (Punto 6 — Etapa 1). Si está definido,
-   * calculateGroupEffects lo usa como fuente de verdad y NO aplica el
-   * matching textual por descripción. supportChange se expresa en puntos
-   * de apoyo (misma escala que el matcher: popularityChange × influence/10).
-   */
-  explicitGroupEffects?: { groupId: string; supportChange: number }[];
-  /** Prerrequisitos de desbloqueo (Fase 3). Diferente de requirements (que son de ejecución). */
-  prerequisites?: {
-    requiredActions?: string[];
-    minLegislativeSupport?: number;
-    minLegitimacy?: number;
-    minGroupSupport?: Record<string, number>;
-  };
-}
-
-export interface ActionCategoryData {
-  id: string;
-  name: string;
-  actions: GameAction[];
-}
 
 // =====================
 // Asesores
@@ -123,45 +35,6 @@ export interface Advisor {
 export interface AdvisorWithStatus extends Advisor {
   isActive: boolean;
   turnsInactive: number;
-}
-
-// =====================
-// Grupos de interés
-// =====================
-export interface Subgroup {
-  id: string;
-  name: string;
-  description: string;
-  influence: number;
-  popularity: number;
-  interests: string[];
-  demands: string[];
-  icon: LucideIcon;
-  baseSupport: number;
-  supportMultiplier: number;
-  resourceDemand: number;
-  satisfactionLevel: number;
-  lastInteractionEffect: number;
-  support?: number;
-  /** IDs de acciones del registry que este grupo puede demandar al negociar */
-  demandActionIds: string[];
-}
-
-export interface InterestGroup {
-  id: string;
-  name: string;
-  subgroups: Subgroup[];
-  support?: number;
-}
-
-// =====================
-// Interacciones
-// =====================
-export type InteractionType = 'reunion' | 'negociar' | 'conceder';
-
-export interface InteractionRecord {
-  lastInteraction: InteractionType;
-  turnsLeft: number;
 }
 
 // =====================
@@ -225,7 +98,7 @@ export interface ElectionBreakdown {
 // =====================
 // Carrera política y registro histórico
 // =====================
-export type CareerMilestoneType = 'initial' | 'reelection' | 'promotion';
+export type CareerMilestoneType = 'initial' | 'reelection';
 
 // Fase 3: Estrategias post-legislativas
 export type MidtermStrategy = 'acelerar' | 'negociar' | 'abrirse' | 'jugada_audaz';
@@ -239,25 +112,11 @@ export interface MidtermStrategyEffect {
   description: string;
 }
 
-// Fase 4: Dificultad y derrotas
-export type Difficulty = 'easy' | 'normal' | 'hard' | 'legend';
+// Derrotas
 export type DefeatReason = 'low_popularity' | 'negative_budget' | 'impeachment' | 'institutional_coup' | 'hyperinflation' | 'election_loss';
 
-export interface GroupAgendaItem {
-  id: string;
-  groupId: string;
-  demand: string;
-  deadline: number;
-  satisfied: boolean;
-  penaltyApplied: boolean;
-}
-
-export interface GroupMood {
-  groupId: string;
-  mood: 'contento' | 'neutral' | 'disconforme' | 'enojado' | 'radicalizado';
-  ignoredTurns: number;
-  lastSatisfiedTurn: number;
-}
+/** Estado de ánimo de un actor (etiqueta del juego). */
+export type Mood = 'contento' | 'neutral' | 'disconforme' | 'enojado' | 'radicalizado';
 
 export interface CareerMilestone {
   position: Position;
@@ -304,99 +163,6 @@ export interface TurnSummary {
   };
   /** Turno absoluto cerrado (índice en causal.records). */
   causalTurn?: number;
-}
-
-// =====================
-// Efectos pendientes y eventos programados
-// =====================
-export interface PendingEffect {
-  id: string;
-  activationTurn: number;
-  target?: string;
-  value?: number;
-  budgetChange?: number;
-  popularityChange?: number;
-  groupEffects?: GroupEffect[];
-  description?: string;
-  source?: string;
-  type?: string;
-  duration?: number;
-  conditions?: Record<string, unknown>;
-  // Sprint 2: efectos económicos diferidos
-  incomeModifier?: number;    // ej: 0.10 = +10% ingresos por turno
-  costReductionCategory?: string;  // categoría de acciones con descuento
-  costReductionPercent?: number;   // ej: 0.20 = -20% costo
-  stabilityChange?: number;   // cambio directo en estabilidad
-}
-
-// =====================
-// Eventos del juego
-// =====================
-export type EventType = 'random' | 'scheduled' | 'triggered' | 'crisis';
-export type EventCategory = 'political' | 'economic' | 'social' | 'international' | 'natural';
-export type EventSeverity = 'low' | 'medium' | 'high' | 'critical';
-
-export interface EventConditions {
-  minPopularity?: number;
-  maxPopularity?: number;
-  minBudget?: number;
-  maxBudget?: number;
-  minStability?: number;
-  maxStability?: number;
-  requiredGroups?: string[];
-  requiredAdvisors?: string[];
-  requiredActions?: string[];
-  probability?: number;
-  minMoneyPrinting?: number;
-  turnRange?: {
-    min: number;
-    max: number;
-  };
-}
-
-export interface EventEffect {
-  type: 'immediate' | 'delayed' | 'conditional';
-  target: string;
-  value: number;
-  duration?: number;
-  conditions?: EventConditions;
-  source?: string;
-}
-
-export interface EventEffects {
-  immediate: EventEffect[];
-  delayed?: EventEffect[];
-  permanent?: EventEffect[];
-}
-
-export interface EventChoice {
-  id: string;
-  text: string;
-  effects: EventEffects;
-  requirements?: EventConditions;
-  probability?: number;
-  consequences?: {
-    success: EventEffects;
-    failure: EventEffects;
-  };
-}
-
-export interface GameEvent {
-  id: string;
-  type: EventType;
-  category: EventCategory;
-  severity: EventSeverity;
-  title: string;
-  description: string;
-  conditions: EventConditions;
-  effects: EventEffects;
-  choices?: EventChoice[];
-  probability: number;
-  weight?: number;
-  cooldown?: number;
-  duration?: number;
-  blockedBy?: string[];
-  requires?: string[];
 }
 
 // =====================
@@ -474,12 +240,9 @@ export interface GameState {
   archetype: Archetype;
   avatar: string;
   term: number;
-  termsByPosition: Record<Position, number>;
   careerHistory: CareerMilestone[];
   turnLog: TurnLogEntry[];
   popularity: number;
-  popularidadGrupos: number;
-  popularidadPolitica: number;
   budget: number;
   turn: number;
   year: number;
@@ -487,84 +250,45 @@ export interface GameState {
   baseActions: number;
   advisors: AdvisorWithStatus[];
   selectedActions: string[];
-  moneyPrintingCount: number;
   governorName: string;
   advisorActionUsed: boolean;
-  interactionHistory: Record<string, InteractionRecord>;
-  consecutiveLowPopularity: number;
-  consecutiveNegativeBudget: number;
   objectives: Objective[];
-  completedObjectives: Objective[];
   gameOver: boolean;
   victorious: boolean;
   votingIntention: number;
   electionResults: ElectionResults | null;
   pendingElection: boolean;
-  pendingElectionOptions: ElectionOption[];
   legislativeResults: LegislativeResults | null;
   legislativeSupport: number | null;
   historicalPopularity: number[];
-  historicalBudget: number[];
   completedActions: string[];
   groupRelations: Record<string, number>;
-  isAdminMode: boolean;
   stability: number;
-  pendingEffects: PendingEffect[];
-  interestGroups?: InterestGroup[];
-  unlockedActions?: string[];
   notifications: Notification[];
-  // Fase 2: Memoria de decisiones
-  actionUsageCount: Record<string, number>;
-  actionCooldowns: Record<string, number>;
-  debtCount: number;
-  debtServiceRatio: number;
   legitimacy: number;
-  // Fase 3: Estrategia y política
+  // Estrategia post-legislativa
   midtermStrategy: MidtermStrategy | null;
   pendingMidtermStrategy: boolean;
   availableMidtermStrategies: MidtermStrategy[];
-  // Fase 4: Profundidad
-  difficulty: Difficulty;
+  // Perfil de gestión (narrativo, pantalla de legado)
   radicalConciliadorAxis: number;
   populistaTecnicoAxis: number;
   cerradoConvocanteAxis: number;
-  groupAgendas: GroupAgendaItem[];
-  groupMoods: GroupMood[];
   abilityCooldowns: Record<string, number>;
-  impeachmentConsecutiveTurns: number;
-  coupConsecutiveTurns: number;
   defeatReason: DefeatReason | null;
-  audazTurnsCount: number;
-  // Sprint 3: Interacciones con grupos
-  demandPausedUntil: Record<string, number>;
-  negotiationPending: Record<string, number>;
-  /** Bonos de apoyo temporales por reunirse. key = subgroupId, value = { bonus, expiresAt, actionMultiplier } */
-  temporarySupportBonuses: Record<string, { bonus: number; expiresAt: number; actionMultiplier?: number }>;
-  /** Cantidad de concesiones otorgadas en el mandato actual (máx 4) */
-  concessionsThisTerm: number;
-  /** Historial de interacciones por grupo: cuántas reuniones/negociaciones hubo antes de una concesión */
-  interactionCountByGroup: Record<string, { reuniones: number; negociaciones: number }>;
   /** Turno en el que se disparó el último evento aleatorio (para cooldown global) */
   lastRandomEventTurn: number;
   /**
    * Turno global (dentro del mandato) en que se disparó cada evento por id.
-   * Se respeta el campo `cooldown` del evento — antes se ignoraba y los
-   * eventos triggered podían re-dispararse cada turno en loop.
+   * Se respeta el campo `cooldown` del evento.
    */
   lastEventFiredTurns?: Record<string, number>;
   /** Cantidad de eventos aleatorios disparados en el mandato actual */
   randomEventsThisTerm: number;
-  // Internos para motores (no persistidos)
-  _archetypeIncomeBonus?: number;
-  _archetypeExtraLoans?: number;
-  _archetypeElectionRetention?: number;
-  _archetypeEventResilience?: number;
-  _archetypeFreeInteractions?: string[];
-  _archetypeExtraActions?: number;
   // Motor causal (GobernArg_Motor_Causal_v1). Fuente de verdad del país, los
-  // actores y la política; los campos legacy (popularity, budget, stability,
-  // legitimacy, votingIntention, legislativeSupport, groupRelations) son un
-  // espejo que mantiene engine/causalBridge.ts para las pantallas existentes.
+  // actores y la política; los campos popularity, budget, stability,
+  // legitimacy, votingIntention, legislativeSupport y groupRelations son un
+  // espejo que mantiene engine/causalBridge.ts para las pantallas.
   causal: CausalState;
   /** Plataforma del oficialismo elegida al inicio (D-07 / R-23). */
   platformId: string;

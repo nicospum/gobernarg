@@ -23,12 +23,12 @@ import { lazyModal } from './lib/lazyModal';
 import { useIsMobile } from './lib/useMediaQuery';
 import { MobileBottomBar, MobileHeader, MobileKpis, MobileMenu, type MobileTab } from './components/mobile/MobileChrome';
 import { Sheet } from './components/mobile/Sheet';
-import { TutorialCard, useTutorial } from './components/Tutorial';
+import { TutorialCard } from './components/Tutorial';
+import { useTutorial } from './lib/tutorial';
 import { markGameStart } from './lib/playtest';
 
 import type { AdvisorWithStatus, ElectionResults, TurnSummary, MidtermStrategy } from './types/game';
 import type { ActorId } from './data/causal';
-import type { ElectionOption } from './data/careerRules';
 import type { GameEvent } from './systems/events/types';
 import {
   getInitialGameState,
@@ -57,7 +57,7 @@ const ElectionResultsModal = lazyModal(() => import('./components/ElectionResult
 const GameLog = lazyModal(() => import('./components/GameLog').then(m => m.GameLog));
 const MidtermStrategyModal = lazyModal(() => import('./components/MidtermStrategyModal').then(m => m.MidtermStrategyModal));
 const ManagementNotebook = lazyModal(() => import('./components/ManagementNotebook').then(m => m.ManagementNotebook));
-const HowToPlayModal = lazyModal(() => import('./components/Tutorial').then(m => m.HowToPlayModal));
+const HowToPlayModal = lazyModal(() => import('./components/HowToPlayModal').then(m => m.HowToPlayModal));
 const FeedbackModal = lazyModal(() => import('./components/FeedbackModal').then(m => m.FeedbackModal));
 
 function App() {
@@ -147,8 +147,8 @@ function App() {
 
   const handleGameStart = (platformId: string, scenarioId: string) => {
     if (!draft || !draft.governorName.trim()) return;
-    const { position, archetype, governorName, avatar } = draft;
-    const newState = createNewGame(position, archetype, governorName, false, avatar, 'normal', platformId, undefined, scenarioId);
+    const { archetype, governorName, avatar } = draft;
+    const newState = createNewGame({ archetype, governorName, avatar, platformId, scenarioId });
     markGameStart();
     setGameState(newState);
     setShowWelcome(true);
@@ -237,8 +237,8 @@ function App() {
     });
   };
 
-  const handleElectionChoice = (option: ElectionOption) => {
-    setGameState(prev => resolvePendingElection(prev, option));
+  const handleElectionChoice = () => {
+    setGameState(prev => resolvePendingElection(prev));
   };
 
   const handleCloseElectionResults = () => {

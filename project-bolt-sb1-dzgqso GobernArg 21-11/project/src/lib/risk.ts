@@ -55,29 +55,3 @@ const RISK_MAP: Record<Risk, { text: string; bg: string; border: string; fill: s
 export function riskColor(risk: Risk, variant: "text" | "bg" | "border" | "fill" = "text"): string {
   return RISK_MAP[risk][variant];
 }
-
-import type { GameAction, GameState } from "@/types/game";
-
-/**
- * Riesgo de una acción derivado de:
- * - Magnitud del cambio presupuestario (negativo = costo)
- * - Si es préstamo o emisión monetaria
- * - Si tiene futureEffects negativos diferidos
- * - Si la popularidad cae significativamente
- */
-export function getActionRisk(action: GameAction, _state: GameState): Risk {
-  void _state; // reservado para uso futuro
-  const absBudget = Math.abs(action.budgetChange);
-  const isLoanOrMoney = action.isLoan || action.id === "emitir_dinero" || action.id === "emision_monetaria";
-  const isReform = action.isReform === true;
-  const popularityHit = action.popularityChange <= -10;
-
-  // Préstamo o emisión grande → crítico
-  if (isLoanOrMoney && absBudget >= 200) return "critico";
-  if (popularityHit && absBudget >= 300) return "critico";
-  if (absBudget >= 500) return "critico";
-  if (absBudget >= 300 || (isReform && absBudget >= 200)) return "alto";
-  if (absBudget >= 150 || popularityHit) return "medio";
-  return "bajo";
-}
-

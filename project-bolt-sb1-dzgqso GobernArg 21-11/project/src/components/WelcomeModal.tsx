@@ -10,27 +10,8 @@ interface WelcomeModalProps {
 
 export function WelcomeModal({ governorName, position, onStart }: WelcomeModalProps) {
   const dialogRef = useDialog<HTMLDivElement>();
-  const getTerritory = (pos: Position) => {
-    switch (pos) {
-      case 'intendente':
-        return 'municipio';
-      case 'gobernador':
-        return 'provincia';
-      case 'presidente':
-        return 'país';
-    }
-  };
-
-  const getPositionTitle = (pos: Position) => {
-    switch (pos) {
-      case 'intendente':
-        return 'Intendente';
-      case 'gobernador':
-        return 'Gobernador';
-      case 'presidente':
-        return 'Presidente';
-    }
-  };
+  const getTerritory = (_pos: Position) => 'país';
+  const getPositionTitle = (_pos: Position) => 'Presidente';
 
   return (
     <div ref={dialogRef} className="outline-none fixed inset-0 z-50 flex items-center justify-center p-4 bg-paper">

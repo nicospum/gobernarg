@@ -1,4 +1,3 @@
-import type { ActionCategory } from '../types/game';
 import { CATEGORY_ICONS, IMAGES } from '../utils/imageAssets';
 import type { UiCategory } from './causal';
 
@@ -15,7 +14,8 @@ export interface CategoryStyle {
   label: string;
 }
 
-export const CATEGORY_STYLES: Record<ActionCategory, CategoryStyle> = {
+/** Paleta base por rubro; las categorías de UI la reutilizan. */
+const CATEGORY_STYLES = {
   economia: {
     color: 'text-green-400',
     bgColor: 'bg-green-400/15',
@@ -51,13 +51,6 @@ export const CATEGORY_STYLES: Record<ActionCategory, CategoryStyle> = {
     imageSrc: CATEGORY_ICONS.seguridad,
     label: 'Seguridad',
   },
-  cultura: {
-    color: 'text-yellow-400',
-    bgColor: 'bg-yellow-400/15',
-    borderColor: 'border-yellow-400/40',
-    imageSrc: CATEGORY_ICONS.cultura,
-    label: 'Cultura',
-  },
   educacion: {
     color: 'text-cyan-400',
     bgColor: 'bg-cyan-400/15',
@@ -65,34 +58,7 @@ export const CATEGORY_STYLES: Record<ActionCategory, CategoryStyle> = {
     imageSrc: CATEGORY_ICONS.educacion,
     label: 'Educación',
   },
-  turismo: {
-    color: 'text-teal-400',
-    bgColor: 'bg-teal-400/15',
-    borderColor: 'border-teal-400/40',
-    imageSrc: CATEGORY_ICONS.turismo,
-    label: 'Turismo',
-  },
-  tecnologia: {
-    color: 'text-indigo-400',
-    bgColor: 'bg-indigo-400/15',
-    borderColor: 'border-indigo-400/40',
-    imageSrc: CATEGORY_ICONS.tecnologia,
-    label: 'Tecnología',
-  },
 };
-
-/** Todas las categorías, en orden semántico */
-export const ALL_CATEGORIES: ActionCategory[] = [
-  'economia',
-  'social',
-  'infraestructura',
-  'diplomacia',
-  'seguridad',
-  'cultura',
-  'educacion',
-  'turismo',
-  'tecnologia',
-];
 
 /**
  * Estilos de las categorías de UI del catálogo nuevo (04_ACCIONES "Categoría UI").

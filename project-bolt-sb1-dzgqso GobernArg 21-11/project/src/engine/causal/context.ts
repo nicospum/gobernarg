@@ -8,10 +8,6 @@ export function clamp(v: number, min = 0, max = 100): number {
   return Math.min(max, Math.max(min, v));
 }
 
-export function round1(v: number): number {
-  return Math.round(v * 10) / 10;
-}
-
 /** Suma de bonus activos sobre `target` en el cierre `closeRef`. */
 export function bonusSum(state: CausalState, target: string, closeRef: number): number {
   let s = 0;

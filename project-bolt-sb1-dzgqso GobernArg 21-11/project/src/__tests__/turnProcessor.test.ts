@@ -41,12 +41,12 @@ describe('creación del TurnLogEntry', () => {
   });
 
   it('registra year, turn y position del turno procesado', () => {
-    const result = processEndTurn(baseState('gobernador'));
+    const result = processEndTurn(baseState());
     const entry = result.state.turnLog[result.state.turnLog.length - 1];
 
     expect(entry.year).toBe(1);
     expect(entry.turn).toBe(1);
-    expect(entry.position).toBe('gobernador');
+    expect(entry.position).toBe('presidente');
   });
 
   it('registra actionsTaken y events como arrays', () => {
@@ -76,10 +76,10 @@ describe('creación del TurnLogEntry', () => {
   });
 });
 
-// ===== Regresión: completedObjectives no se muta (Punto 9) =====
+// ===== Regresión: los objetivos no se mutan (Punto 9) =====
 
-describe('completedObjectives — anti mutación', () => {
-  it('processEndTurn no muta completedObjectives del estado original', () => {
+describe('objectives — anti mutación', () => {
+  it('processEndTurn completa el objetivo sin mutar el estado original', () => {
     const state = baseState();
     state.objectives = [
       {
@@ -93,12 +93,12 @@ describe('completedObjectives — anti mutación', () => {
       },
     ];
 
-    const before = state.completedObjectives;
+    const before = state.objectives;
     const result = processEndTurn(state);
 
-    expect(result.state.completedObjectives.some(o => o.id === 'obj-test')).toBe(true);
-    expect(state.completedObjectives).toBe(before);
-    expect(state.completedObjectives.some(o => o.id === 'obj-test')).toBe(false);
+    expect(result.state.objectives.find(o => o.id === 'obj-test')?.completed).toBe(true);
+    expect(state.objectives).toBe(before);
+    expect(state.objectives[0].completed).toBe(false);
   });
 });
 

@@ -12,7 +12,6 @@ import {
   Activity,
 } from 'lucide-react';
 import type { GameState } from '../types/game';
-import { actionDefinitions } from '../data/actionRegistry';
 import { ACTOR_IDS, ACTORS, CAUSAL_ACTIONS_BY_ID, PARAMS } from '@/data/causal';
 import { runningEffects, upcomingEffects } from '@/lib/agendaView';
 import { useDialog } from '@/lib/useDialog';
@@ -220,18 +219,14 @@ function HistorialRecienteSection({ gameState }: { gameState: GameState }) {
 
                 {entry.actionsTaken.length > 0 && (
                   <div className="flex flex-wrap gap-1 mb-1">
-                    {entry.actionsTaken.map((actionId, j) => {
-                      const def = actionDefinitions.find((a) => a.id === actionId);
-                      const name = def ? def.title : actionId;
-                      return (
-                        <span
-                          key={j}
-                          className="text-[9px] bg-ink/5 border border-border/50 px-1.5 py-0.5 rounded text-foreground/70"
-                        >
-                          {name}
-                        </span>
-                      );
-                    })}
+                    {entry.actionsTaken.map((name, j) => (
+                      <span
+                        key={j}
+                        className="text-[9px] bg-ink/5 border border-border/50 px-1.5 py-0.5 rounded text-foreground/70"
+                      >
+                        {name}
+                      </span>
+                    ))}
                   </div>
                 )}
 

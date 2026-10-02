@@ -31,7 +31,6 @@ describe('generateLegacyStats — cargos ocupados', () => {
     // "Ninguno" tras 4 años de gobierno.
     const state = stateWith({
       careerHistory: [milestone({ endYear: 4, result: 'defeat' })],
-      termsByPosition: { intendente: 0, gobernador: 0, presidente: 0 },
     });
 
     const stats = generateLegacyStats(state);

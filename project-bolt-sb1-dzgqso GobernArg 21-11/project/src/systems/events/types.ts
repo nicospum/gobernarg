@@ -57,31 +57,3 @@ export interface EventChoice {
     failure: EventEffects;
   };
 }
-
-export interface EventState {
-  activeEvents: ActiveEvent[];
-  scheduledEvents: ScheduledEvent[];
-  historicalEvents: HistoricalEvent[];
-  eventCooldowns: Map<string, number>;
-  blockedEvents: Set<string>;
-}
-
-export interface ActiveEvent extends GameEvent {
-  startedAt: number;
-  duration: number;
-  choiceMade?: string;
-}
-
-export interface ScheduledEvent {
-  event: GameEvent;
-  triggerTurn: number;
-  priority: number;
-}
-
-export interface HistoricalEvent {
-  event: GameEvent;
-  occurredAt: number;
-  choiceMade?: string;
-  outcome: 'success' | 'failure' | 'neutral';
-  effects: Effect[];
-}

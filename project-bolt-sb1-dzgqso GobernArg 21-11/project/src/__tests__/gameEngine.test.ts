@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { getInitialGameState, hireAdvisors, dismissAdvisor, useSpecialAbility, resolvePendingElection } from '../engine/gameEngine';
 import { availableAdvisors, ADVISOR_ROLES } from '../data/advisors';
-import { getPositionObjectives } from '../utils/victoryConditions';
 import type { GameState } from '../types/game';
 
 // getInitialGameState() devuelve un estado completo (arquetipo 'politico') sin
@@ -177,7 +176,7 @@ describe('getInitialGameState — pasivas de arquetipo', () => {
     const state = getInitialGameState();
     // Si aplicara las pasivas de 'politico' (default): retención 0.10 y
     // shifts de ejes +2/+1. El estado base debe venir sin ellas.
-    expect(state._archetypeElectionRetention ?? 0).toBe(0);
+    expect(state.causal.perks.structureMult).toBe(1);
     expect(state.radicalConciliadorAxis).toBe(0);
     expect(state.cerradoConvocanteAxis).toBe(0);
   });
@@ -192,7 +191,7 @@ describe('resolvePendingElection — anti doble-clic', () => {
       electionResults: { victory: false, votesPercentage: 30 } as any,
     });
 
-    const result = resolvePendingElection(state, 'reelection');
+    const result = resolvePendingElection(state);
 
     expect(result).toBe(state);
   });
@@ -200,7 +199,7 @@ describe('resolvePendingElection — anti doble-clic', () => {
   it('es no-op si no hay elección pendiente', () => {
     const state = stateWith({ pendingElection: false });
 
-    const result = resolvePendingElection(state, 'reelection');
+    const result = resolvePendingElection(state);
 
     expect(result).toBe(state);
   });
@@ -219,7 +218,7 @@ describe('reelección con país continuo', () => {
     state.causal.base.INFL = 77;
     state.advisors = [{ ...availableAdvisors[0], isActive: true, turnsInactive: 0 }];
 
-    const result = resolvePendingElection(state, 'reelection');
+    const result = resolvePendingElection(state);
 
     expect(result.electionResults?.victory).toBe(true);
     expect(result.term).toBe(2);
@@ -263,78 +262,24 @@ describe('hireAdvisors / dismissAdvisor — rol del asesor en el motor', () => {
 });
 
 
-// ===== Regresión: tipo de milestone al ascender en el primer mandato (Punto 11) =====
+// ===== Tipo de milestone en la reelección =====
 
-describe('resolvePendingElection — tipo de milestone (Punto 11)', () => {
-  // Estado con intención de voto alta para que cualquier opción gane.
-  function winningState(overrides: Partial<GameState> = {}): GameState {
-    const objectives = getPositionObjectives('intendente');
-    const s = stateWith({
-      position: 'intendente',
-      term: 1,
-      popularity: 90,
-      budget: 600,
-      stability: 100,
-      historicalPopularity: [90, 90, 90, 90],
-      historicalBudget: [500],
-      groupRelations: { aliados: 100 },
-      objectives,
-      completedObjectives: objectives.map(o => ({ ...o, completed: true })),
-      // 16 acciones en el mandato → activityImpact en el tope (100).
-      turnLog: [
-        {
-          year: 4,
-          turn: 4,
-          position: 'intendente',
-          term: 1,
-          actionsTaken: Array(16).fill('plan_viviendas'),
-          events: [],
-          decisions: [],
-          popularityChange: 0,
-          budgetChange: 0,
-          projectsCompleted: [],
-          crisesFaced: [],
-        },
-      ],
+describe('resolvePendingElection — tipo de milestone', () => {
+  it('ganar la reelección cierra el mandato inicial y abre uno de reelección', () => {
+    const state = stateWith({
       pendingElection: true,
       electionResults: null,
-      termsByPosition: { intendente: 0, gobernador: 0, presidente: 0 },
-      ...overrides,
-    });
-    // La elección se decide con la intención de voto del motor causal.
-    s.causal.political.iv = 90;
-    return s;
-  }
-
-  it('ascender en el primer mandato registra el milestone como promotion, no initial', () => {
-    const state = winningState({
       careerHistory: [
-        { position: 'intendente', term: 1, startYear: 1, endYear: 1, result: 'victory', type: 'initial', votesPercentage: 50 },
+        { position: 'presidente', term: 1, startYear: 1, endYear: 1, result: 'victory', type: 'initial', votesPercentage: 50 },
       ],
     });
+    state.causal.political.iv = 90;
 
-    const result = resolvePendingElection(state, 'promote-governor');
-
-    expect(result.electionResults?.victory).toBe(true);
-    expect(result.position).toBe('gobernador');
-    // Bug: `state.term === 1` pisaba el ascenso y dejaba 'initial';
-    // el legacy text no contaba el salto intendente → gobernador.
-    expect(result.careerHistory[0].type).toBe('promotion');
-  });
-
-  it('reelección en el primer mandato después de un ascenso es reelection, no initial', () => {
-    const state = winningState({
-      position: 'gobernador',
-      careerHistory: [
-        { position: 'intendente', term: 1, startYear: 1, endYear: 4, result: 'victory', type: 'initial', votesPercentage: 55 },
-        { position: 'gobernador', term: 1, startYear: 1, endYear: 1, result: 'victory', type: 'promotion', votesPercentage: 56 },
-      ],
-    });
-
-    const result = resolvePendingElection(state, 'reelection');
+    const result = resolvePendingElection(state);
 
     expect(result.electionResults?.victory).toBe(true);
-    // term === 1 pero no es el mandato inicial de la carrera: es reelección.
-    expect(result.careerHistory[1].type).toBe('reelection');
+    expect(result.careerHistory[0].type).toBe('initial');
+    expect(result.careerHistory[0].result).toBe('victory');
+    expect(result.careerHistory[1]).toMatchObject({ term: 2, type: 'reelection' });
   });
 });

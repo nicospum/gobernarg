@@ -36,8 +36,6 @@ interface GameHeaderProps {
 }
 
 const POSITION_LABEL: Record<string, string> = {
-  intendente: 'Intendente',
-  gobernador: 'Gobernador',
   presidente: 'Presidente',
 };
 

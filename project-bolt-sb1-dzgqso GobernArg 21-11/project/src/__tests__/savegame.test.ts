@@ -16,7 +16,7 @@ function seeded(seed: number): () => number {
 /** Un turno "pasivo", resolviendo lo que la UI pediría al jugador. */
 function step(state: GameState): GameState {
   if (state.pendingMidtermStrategy) state = triggerMidtermStrategy(state, state.availableMidtermStrategies[0]);
-  if (state.pendingElection) state = { ...resolvePendingElection(state, 'reelection'), electionResults: null };
+  if (state.pendingElection) state = { ...resolvePendingElection(state), electionResults: null };
   if (state.gameOver) return state;
   return processEndTurn(state).state;
 }
@@ -44,7 +44,7 @@ afterEach(() => {
 describe('Guardado automático', () => {
   it('la partida es JSON puro en todo el mandato: guardar y cargar no pierde nada', () => {
     vi.spyOn(Math, 'random').mockImplementation(seeded(7));
-    let state = createNewGame('presidente', 'politico', 'Prueba', false, '', 'normal', undefined, 7, 'herencia_pesada');
+    let state = createNewGame({ archetype: 'politico', governorName: 'Prueba', seed: 7, scenarioId: 'herencia_pesada' });
     for (let i = 0; i < 40 && !state.gameOver; i++) {
       expect(roundTrip(state)).toEqual(state);
       state = step(state);
@@ -54,7 +54,7 @@ describe('Guardado automático', () => {
 
   it('una partida cargada sigue exactamente igual que la original', () => {
     vi.spyOn(Math, 'random').mockImplementation(seeded(11));
-    let state = createNewGame('presidente', 'politico', 'Prueba', false, '', 'normal', undefined, 11, 'viento_de_cola');
+    let state = createNewGame({ archetype: 'politico', governorName: 'Prueba', seed: 11, scenarioId: 'viento_de_cola' });
     for (let i = 0; i < 5; i++) state = step(state);
     const loaded = roundTrip(state);
 
@@ -68,7 +68,7 @@ describe('Guardado automático', () => {
 
   it('entra holgado en el almacenamiento del navegador', () => {
     vi.spyOn(Math, 'random').mockImplementation(seeded(3));
-    let state = createNewGame('presidente', 'politico', 'Prueba', false, '', 'normal', undefined, 3, 'pais_en_calma');
+    let state = createNewGame({ archetype: 'politico', governorName: 'Prueba', seed: 3, scenarioId: 'pais_en_calma' });
     for (let i = 0; i < 32 && !state.gameOver; i++) state = step(state);
     // localStorage suele dar 5 MB por sitio.
     expect(JSON.stringify(state).length).toBeLessThan(2_000_000);
@@ -77,7 +77,7 @@ describe('Guardado automático', () => {
   it('guarda, carga y borra con el almacenamiento del navegador', () => {
     const storage = fakeStorage();
     vi.stubGlobal('window', { localStorage: storage });
-    const state = createNewGame('presidente', 'politico', 'Laura', false, '', 'normal', undefined, 1, 'pais_en_calma');
+    const state = createNewGame({ archetype: 'politico', governorName: 'Laura', seed: 1, scenarioId: 'pais_en_calma' });
 
     expect(loadGame()).toBeNull();
     expect(saveGame(state, [])).toBe(true);
@@ -106,7 +106,7 @@ describe('Guardado automático', () => {
         throw new Error('bloqueado');
       },
     });
-    const state = createNewGame('presidente', 'politico', 'Laura', false, '', 'normal', undefined, 1, 'pais_en_calma');
+    const state = createNewGame({ archetype: 'politico', governorName: 'Laura', seed: 1, scenarioId: 'pais_en_calma' });
     expect(saveGame(state)).toBe(false);
     expect(loadGame()).toBeNull();
     expect(() => clearSavedGame()).not.toThrow();

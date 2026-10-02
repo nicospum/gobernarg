@@ -4,7 +4,7 @@
  * menciona (arquetipos, asesores, eventos, estrategias, elecciones) se conecta
  * acá, sin meter lógica del motor en los componentes React.
  */
-import type { GameState, GroupMood, Archetype, MidtermStrategy, ElectionBreakdown } from '../types/game';
+import type { GameState, Mood, Archetype, MidtermStrategy, ElectionBreakdown } from '../types/game';
 import {
   ACTOR_IDS,
   ACTORS,
@@ -122,7 +122,7 @@ export function newCausalForGame(archetype: Archetype, platformId?: string, seed
 // ─────────────────────────────── Espejo de campos legacy ───────────────────────────────
 
 /** Estado de ánimo (etiquetas del juego) a partir de satisfacción y relación. */
-export function moodFor(sat: number, rel: number | null): GroupMood['mood'] {
+export function moodFor(sat: number, rel: number | null): Mood {
   const coop = rel === null ? sat : 0.5 * sat + 0.5 * rel;
   if (coop >= 62) return 'contento';
   if (coop >= 50) return 'neutral';
@@ -141,11 +141,9 @@ export function syncLegacy(state: GameState): GameState {
   const c = state.causal;
   const ref = viewRef(c);
   const groupRelations: Record<string, number> = {};
-  const groupMoods: GroupMood[] = [];
   for (const a of ACTOR_IDS) {
     const st = c.actors[a];
     groupRelations[a] = Math.round(st.rel ?? st.sat);
-    groupMoods.push({ groupId: a, mood: moodFor(st.sat, st.rel), ignoredTurns: 0, lastSatisfiedTurn: 0 });
   }
   return {
     ...state,
@@ -156,7 +154,6 @@ export function syncLegacy(state: GameState): GameState {
     legitimacy: Math.round(effective(c, 'INST', ref) * 10) / 10,
     legislativeSupport: Math.round(effectiveLeg(c, ref) * 10) / 10,
     groupRelations,
-    groupMoods,
   };
 }
 

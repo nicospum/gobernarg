@@ -2,7 +2,6 @@ import { afterEach, describe, it, expect, vi } from 'vitest';
 import { finalizePresidentialCareer } from '../engine/electionEngine';
 import { processEndTurn } from '../engine/turnProcessor';
 import { getInitialGameState } from '../engine/gameEngine';
-import { getAvailableElectionOptions } from '../utils/electionSystem';
 import { getPresidentialGoals } from '../utils/victoryConditions';
 import type { CareerMilestone, GameState } from '../types/game';
 
@@ -75,7 +74,6 @@ describe('processEndTurn — cierre al terminar el 2º mandato (path MVP)', () =
 
     expect(result.state.gameOver).toBe(true);
     expect(result.state.pendingElection).toBe(false);
-    expect(result.state.pendingElectionOptions).toEqual([]);
   });
 
   it('la sucesión se decide con el país tal como quedó tras el último turno', () => {
@@ -100,16 +98,12 @@ describe('processEndTurn — cierre al terminar el 2º mandato (path MVP)', () =
   });
 });
 
-describe('getAvailableElectionOptions (path MVP presidente-only)', () => {
-  it('presidente en mandato 1: solo reelección', () => {
-    const state = { ...getInitialGameState(), position: 'presidente' as const, term: 1 };
-
-    expect(getAvailableElectionOptions(state)).toEqual(['reelection']);
-  });
-
-  it('presidente en mandato 2: sin opciones (fin de carrera presidencial)', () => {
-    const state = { ...getInitialGameState(), position: 'presidente' as const, term: 2 };
-
-    expect(getAvailableElectionOptions(state)).toEqual([]);
+describe('fin de mandato según el número de mandato', () => {
+  it('mandato 1: queda pendiente la reelección', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.999);
+    const state = { ...getInitialGameState(), term: 1, year: 4, turn: 4, objectives: getPresidentialGoals() };
+    const result = processEndTurn(state);
+    expect(result.state.pendingElection).toBe(true);
+    expect(result.state.gameOver).toBe(false);
   });
 });

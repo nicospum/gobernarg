@@ -95,7 +95,6 @@ export function getAvailability(
   actionId: string,
   selected: Selection[],
   paLeft: number,
-  opts: { loansAllowed?: boolean } = {},
 ): Availability {
   const action = CAUSAL_ACTIONS_BY_ID[actionId];
   const ctx = decisionContext(state);
@@ -106,11 +105,6 @@ export function getAvailability(
   const isSelected = selected.some(s => s.actionId === actionId);
 
   const visible = !action.visibleWhen || evalCondition(action.visibleWhen, ctx) || isSelected;
-
-  if (opts.loansAllowed === false && ['prestamo_internacional', 'prestamo_local'].includes(actionId)) {
-    reasons.push('El modo de juego no permite préstamos.');
-    blocked = true;
-  }
 
   // Cooldown: no se puede repetir antes de N turnos (cooldown 1 = no dos veces por turno).
   if (action.cooldown > 0 && !isSelected) {
@@ -166,8 +160,8 @@ export function getAvailability(
   };
 }
 
-export function listPolicyAvailability(state: CausalState, selected: Selection[], paLeft: number, opts: { loansAllowed?: boolean } = {}): Availability[] {
-  return POLICY_ACTIONS.map(a => getAvailability(state, a.id, selected, paLeft, opts)).filter(a => a.visible);
+export function listPolicyAvailability(state: CausalState, selected: Selection[], paLeft: number): Availability[] {
+  return POLICY_ACTIONS.map(a => getAvailability(state, a.id, selected, paLeft)).filter(a => a.visible);
 }
 
 /** Gasto corriente permanente que agrega una acción al ejecutarse (offset 0). */
