@@ -1,124 +1,123 @@
-import { Bell, X, Check, AlertTriangle, Info, AlertCircle, Trophy } from 'lucide-react';
+import { X, Check, AlertTriangle, Info, AlertCircle, Trophy } from 'lucide-react';
 import { GameState, NotificationImportance } from '../types/game';
+import { PanelHead } from './board/PanelHead';
 
 interface NotificationCenterProps {
   gameState: GameState;
   onMarkRead: () => void;
   onDismiss: (id: string) => void;
+  index?: string;
+  /** Sin marco de panel (dentro de la hoja del celular). */
+  bare?: boolean;
 }
 
-export function NotificationCenter({ gameState, onMarkRead, onDismiss }: NotificationCenterProps) {
+export function NotificationCenter({ gameState, onMarkRead, onDismiss, index, bare = false }: NotificationCenterProps) {
   const notifications = gameState.notifications.slice(0, 10);
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <div className="bg-surface rounded-lg border border-rule px-5 py-4">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="font-display text-[18px] font-semibold text-ink flex items-center gap-2">
-          <Bell className="w-4 h-4 text-gold-ink" />
-          Notificaciones
+    <section id="panel-notificaciones" className={`${bare ? '' : 'sr-panel'} scroll-mt-24`} aria-label="Notificaciones">
+      {!bare && (
+        <PanelHead index={index} label="Mesa de entradas" title="Notificaciones">
           {unreadCount > 0 && (
-            <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-              {unreadCount}
-            </span>
+            <span className="text-[10px] font-bold text-white bg-sala-coral rounded-full px-2 py-0.5">{unreadCount}</span>
           )}
-        </h2>
-        {notifications.length > 0 && (
-          <button
-            onClick={onMarkRead}
-            className="text-sm text-primary hover:text-primary/80 flex items-center gap-1"
-          >
-            <Check className="w-4 h-4" />
-            Marcar leídas
+        </PanelHead>
+      )}
+      {notifications.length > 0 && (
+        <div className="flex justify-end px-4 pt-2.5">
+          <button onClick={onMarkRead} className="text-[11px] font-semibold text-sala-blue hover:underline flex items-center gap-1">
+            <Check className="w-3.5 h-3.5" /> Marcar leídas
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
-      <div className="space-y-2 max-h-[400px] overflow-y-auto">
+      <ul className={`${bare ? '' : 'max-h-[420px] overflow-y-auto'} px-3 pt-2 pb-3 space-y-2`}>
         {notifications.length === 0 && (
-          <p className="text-muted-foreground text-sm text-center py-4">No hay notificaciones aún.</p>
+          <li className="text-sala-muted text-[12px] text-center py-4">No hay notificaciones aún.</li>
         )}
 
         {notifications.map(notification => (
-          <div
+          <li
             key={notification.id}
-            className={`p-3 rounded-lg border flex gap-3 transition-opacity ${
-              notification.read ? 'opacity-70 bg-muted border-border' : 'bg-card border-border'
-            } ${getImportanceBorder(notification.importance)}`}
+            className={`relative pl-4 pr-2.5 py-2.5 rounded-lg border border-rule flex gap-2.5 transition-opacity ${
+              notification.read ? 'opacity-70 bg-sunken/40' : 'bg-surface'
+            }`}
           >
+            <span className={`absolute left-0 top-2.5 bottom-2.5 w-1 rounded-r ${getImportanceBar(notification.importance)}`} aria-hidden="true" />
             <div className="flex-shrink-0 mt-0.5">
               {getIcon(notification.importance)}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2">
-                <p className={`font-semibold text-sm ${getTitleColor(notification.importance)}`}>
+                <p className={`font-bold text-[12px] ${getTitleColor(notification.importance)}`}>
                   {notification.title}
                 </p>
                 <button
                   onClick={() => onDismiss(notification.id)}
-                  className="text-muted-foreground hover:text-foreground flex-shrink-0"
+                  className="text-sala-dim hover:text-ink flex-shrink-0"
                   aria-label="Descartar"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-sm text-muted-foreground mt-0.5">{notification.message}</p>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-[12px] text-sala-muted mt-0.5 leading-snug">{notification.message}</p>
+              <p className="text-[10px] text-sala-dim mt-1 uppercase tracking-[0.08em]">
                 {/* Punto 13: fecha de creación de la notificación (fallback al
                     turno vivo para notificaciones viejas sin el campo). */}
                 Año {notification.year ?? gameState.year} · Trimestre {notification.turn ?? gameState.turn}
               </p>
             </div>
-          </div>
+          </li>
         ))}
-      </div>
-    </div>
+      </ul>
+    </section>
   );
 }
 
 function getIcon(importance: NotificationImportance) {
   switch (importance) {
     case 'critical':
-      return <AlertTriangle className="w-5 h-5 text-red-400" />;
+      return <AlertTriangle className="w-4 h-4 text-sala-bad" />;
     case 'high':
-      return <AlertCircle className="w-5 h-5 text-orange-400" />;
+      return <AlertCircle className="w-4 h-4 text-sala-coral" />;
     case 'medium':
-      return <Info className="w-5 h-5 text-sky-400" />;
+      return <Info className="w-4 h-4 text-sala-blue" />;
     case 'low':
-      return <Info className="w-5 h-5 text-muted-foreground" />;
+      return <Info className="w-4 h-4 text-sala-dim" />;
     case 'success':
-      return <Trophy className="w-5 h-5 text-emerald-400" />;
+      return <Trophy className="w-4 h-4 text-sala-good" />;
     default:
-      return <Info className="w-5 h-5 text-muted-foreground" />;
+      return <Info className="w-4 h-4 text-sala-dim" />;
   }
 }
 
-function getImportanceBorder(importance: NotificationImportance): string {
+function getImportanceBar(importance: NotificationImportance): string {
   switch (importance) {
     case 'critical':
-      return 'border-l-4 border-l-red-500';
+      return 'bg-sala-bad';
     case 'high':
-      return 'border-l-4 border-l-orange-500';
+      return 'bg-sala-coral';
     case 'medium':
-      return 'border-l-4 border-l-blue-500';
+      return 'bg-sala-blue';
     case 'success':
-      return 'border-l-4 border-l-green-500';
+      return 'bg-sala-good';
     default:
-      return 'border-l-4 border-l-border';
+      return 'bg-rule';
   }
 }
 
 function getTitleColor(importance: NotificationImportance): string {
   switch (importance) {
     case 'critical':
-      return 'text-red-400';
+      return 'text-sala-bad';
     case 'high':
-      return 'text-orange-400';
+      return 'text-sala-coral';
     case 'medium':
-      return 'text-sky-400';
+      return 'text-sala-blue';
     case 'success':
-      return 'text-emerald-400';
+      return 'text-sala-good';
     default:
-      return 'text-muted-foreground';
+      return 'text-ink';
   }
 }

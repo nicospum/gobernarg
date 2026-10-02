@@ -1,14 +1,9 @@
 import {
-  PlayCircle,
-  Users,
-  Wallet,
+  Bell,
+  CalendarDays,
+  ChevronRight,
+  Flag,
   RefreshCw,
-  ArrowRight,
-  Shield,
-  Activity,
-  TrendingUp,
-  TrendingDown,
-  Minus,
   MoreHorizontal,
   BookOpen,
   MessageSquareHeart,
@@ -16,9 +11,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { ConfirmDialog } from './ConfirmDialog';
 import { GameState } from '../types/game';
-import { IMAGES } from '../utils/imageAssets';
-import { getValueRisk, riskColor } from '@/lib/risk';
-import { fmtBudget } from '@/lib/format';
+import { fmtBudget, fmtBudgetDelta } from '@/lib/format';
 import { getScenario } from '@/data/causal';
 
 interface GameHeaderProps {
@@ -29,6 +22,8 @@ interface GameHeaderProps {
   canEndTurn?: boolean;
   onOpenHelp?: () => void;
   onOpenFeedback?: () => void;
+  /** Campana: lleva al panel de notificaciones. */
+  onOpenNotifications?: () => void;
 }
 
 const POSITION_LABEL: Record<string, string> = {
@@ -39,15 +34,8 @@ export const MAX_TURNS = 16;
 /** Hitos del mandato marcados en la línea de tiempo (turno dentro del mandato). */
 export const MILESTONES: Record<number, string> = { 8: 'Legislativas', 16: 'Fin del mandato' };
 
-/** Tendencia de popularidad: compara el último valor histórico con el anterior. */
-function popularityTrend(state: GameState): number | null {
-  const hist = state.historicalPopularity;
-  if (!hist || hist.length < 2) return null;
-  return Math.round(hist[hist.length - 1] - hist[hist.length - 2]);
-}
-
 /** Línea de tiempo del mandato: un tramo por turno, con los hitos en oro. */
-export function MandateTimeline({ turn }: { turn: number }) {
+export function MandateTimeline({ turn, onNavy = false }: { turn: number; onNavy?: boolean }) {
   const current = ((turn - 1) % MAX_TURNS) + 1;
   return (
     <div className="flex items-center gap-[3px]" role="img" aria-label={`Turno ${current} de ${MAX_TURNS} del mandato`}>
@@ -61,20 +49,13 @@ export function MandateTimeline({ turn }: { turn: number }) {
             key={n}
             title={milestone ? `Turno ${n}: ${milestone}` : `Turno ${n}`}
             className={`h-1.5 flex-1 min-w-[6px] rounded-[1px] ${
-              now ? 'bg-ink' : done ? 'bg-ink/45' : milestone ? 'bg-gold' : 'bg-rule'
+              onNavy
+                ? now ? 'bg-sala-lime' : done ? 'bg-white/60' : milestone ? 'bg-sala-sun' : 'bg-white/20'
+                : now ? 'bg-sala-navy' : done ? 'bg-sala-blue/50' : milestone ? 'bg-sala-sun' : 'bg-rule'
             } ${now ? 'h-2' : ''}`}
           />
         );
       })}
-    </div>
-  );
-}
-
-function Stat({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="leading-tight">
-      <div className="text-[10px] text-ink/70 font-medium">{label}</div>
-      <div className="font-mono text-[15px] font-semibold text-ink">{children}</div>
     </div>
   );
 }
@@ -127,13 +108,13 @@ function GameMenu({ governorName, turnLabel, onRestart, onOpenHelp, onOpenFeedba
         onClick={() => setOpen(o => !o)}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="flex items-center gap-1.5 text-[12px] text-ink/70 hover:text-ink transition-colors px-2.5 h-10 rounded-md hover:bg-sunken"
+        className="flex items-center gap-1.5 text-[12px] text-sala-on-navy hover:text-white transition-colors px-2.5 h-10 rounded-md hover:bg-white/10"
       >
         <MoreHorizontal size={16} />
         <span className="hidden md:inline">Menú</span>
       </button>
       {open && (
-        <div role="menu" className="absolute right-0 top-full mt-1.5 w-60 rounded-lg border border-rule bg-surface shadow-xl p-1.5 z-50">
+        <div role="menu" className="absolute right-0 top-full mt-1.5 w-60 rounded-lg border border-rule bg-surface text-ink shadow-xl p-1.5 z-50">
           {onOpenHelp && (
             <button role="menuitem" onClick={run(onOpenHelp)} className={`${item} text-ink hover:bg-sunken`}>
               <BookOpen size={15} className="text-ink/70" /> Cómo se juega
@@ -175,113 +156,100 @@ export function GameHeader({
   canEndTurn,
   onOpenHelp,
   onOpenFeedback,
+  onOpenNotifications,
 }: GameHeaderProps) {
-  const popularityRisk = getValueRisk(gameState.popularity, 80);
-  const stabilityRisk = getValueRisk(gameState.stability, 100);
+  const c = gameState.causal;
   const absoluteTurn = (gameState.year - 1) * 4 + gameState.turn;
   const positionLabel = POSITION_LABEL[gameState.position] ?? gameState.position;
-  const popTrend = popularityTrend(gameState);
-  const scenarioDef = getScenario(gameState.causal?.scenarioId);
+  const scenarioDef = getScenario(c?.scenarioId);
   const inMandate = ((absoluteTurn - 1) % MAX_TURNS) + 1;
-  const nextMilestone = Object.keys(MILESTONES).map(Number).find(t => t >= inMandate);
+  const apro = Math.round(c.political.apro);
+  const last = c.records[c.records.length - 1];
+  const unread = gameState.notifications.slice(0, 10).filter(n => !n.read).length;
+  const divider = 'pl-4 border-l border-white/15';
 
   return (
-    <header className="sticky top-0 z-50 bg-surface/95 backdrop-blur border-b border-rule">
-      <div className="max-w-[1680px] mx-auto flex items-center gap-5 px-4 md:px-6 h-16">
-        {/* Logo y marca */}
+    <header className="sticky top-0 z-50 sr-navy-bar shadow-[0_4px_18px_rgb(7_28_48/0.25)]">
+      <div className="max-w-[1540px] mx-auto flex items-center gap-4 xl:gap-5 px-4 lg:px-7 min-h-[72px] py-2.5">
+        {/* Marca */}
         <div className="flex items-center gap-2.5 flex-none">
-          <img src={IMAGES.logo.primary} alt="GobernArg" className="h-9 w-auto object-contain mix-blend-multiply" />
-          <div className="font-display text-xl font-semibold text-ink hidden sm:block">
-            Gobern<span className="text-gold-ink">arg</span>
+          <div className="w-[38px] h-[38px] grid place-items-center rounded-xl border border-sala-sky/70 bg-[linear-gradient(135deg,rgb(11_142_174),rgb(23_100_179))]">
+            <Flag size={19} />
+          </div>
+          <div className="hidden 2xl:block">
+            <div className="text-[18px] font-extrabold tracking-[0.1em] leading-none">GOBERN<span className="text-[#79e1e7]">ARG</span></div>
+            <div className="text-[8px] font-bold tracking-[0.15em] text-sala-on-navy mt-1">SALA DE SITUACIÓN · LITE</div>
           </div>
         </div>
 
-        {/* Gobernante y cargo */}
-        <div className="flex items-center gap-2.5 flex-none pl-5 border-l border-rule">
+        {/* Gobernante */}
+        <div className={`flex items-center gap-2.5 flex-none min-w-0 ${divider}`}>
           {gameState.avatar ? (
-            <img
-              src={gameState.avatar}
-              alt={gameState.governorName}
-              className="w-9 h-9 rounded-full object-cover ring-2 ring-gold/60"
-            />
+            <img src={gameState.avatar} alt={gameState.governorName} className="w-9 h-9 rounded-full object-cover ring-2 ring-sala-sky/60" />
           ) : (
-            <div className="w-9 h-9 rounded-full bg-ink text-paper flex items-center justify-center font-display font-semibold text-sm">
+            <div className="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center font-bold text-sm">
               {gameState.governorName ? gameState.governorName[0] : 'G'}
             </div>
           )}
-          <div className="leading-tight">
-            <div className="font-display text-[15px] font-semibold text-ink truncate max-w-[160px]">
-              {gameState.governorName || '—'}
-            </div>
-            <div className="text-[11px] text-ink/70">
-              {positionLabel}
+          <div className="leading-tight min-w-0">
+            <div className="text-[8px] font-bold tracking-[0.15em] text-sala-on-navy">PRESIDENCIA</div>
+            <div className="text-[15px] font-bold truncate max-w-[170px]">{gameState.governorName || '—'}</div>
+            <div className="text-[10px] text-sala-on-navy truncate max-w-[200px]">
+              {positionLabel} · Mandato {gameState.term}
               {scenarioDef && <span title={`Escenario: ${scenarioDef.name}`}> · {scenarioDef.name}</span>}
             </div>
           </div>
         </div>
 
-        {/* Mandato: turno y línea de tiempo */}
-        <div className="hidden md:block flex-1 min-w-[180px] max-w-[420px] pl-5 border-l border-rule">
-          <div className="flex items-baseline justify-between gap-3 mb-1.5 text-[11px]">
-            <span className="text-ink/70">
-              <span className="font-semibold text-ink">Turno <span className="font-mono">{absoluteTurn}</span></span>
-              <span className="text-ink/70">/{MAX_TURNS}</span> · Año {gameState.year} · T{gameState.turn}
-            </span>
-            {nextMilestone && (
-              <span className="text-gold-ink font-medium whitespace-nowrap">
-                {MILESTONES[nextMilestone]}{nextMilestone > inMandate ? ` en ${nextMilestone - inMandate}t` : ' este turno'}
-              </span>
-            )}
+        {/* Calendario del mandato */}
+        <div className={`hidden md:flex flex-col gap-1.5 flex-1 min-w-[150px] max-w-[260px] ${divider}`}>
+          <div className="flex items-center gap-2 text-[11px] tracking-[0.08em] uppercase">
+            <CalendarDays size={14} />
+            <span>Año {gameState.year} / Trimestre {gameState.turn}</span>
           </div>
-          <MandateTimeline turn={absoluteTurn} />
+          <span className="text-[10px] text-sala-on-navy">Turno <strong className="text-white">{inMandate}</strong> de {MAX_TURNS}</span>
+          <MandateTimeline turn={absoluteTurn} onNavy />
         </div>
 
-        <div className="flex-1 md:hidden" />
+        <div className="flex-1" />
 
-        {/* Recursos del turno e indicadores rápidos */}
-        <div className="flex items-center gap-5 flex-none">
-          <div className="flex items-center gap-2" title="Acciones disponibles este turno">
-            <PlayCircle size={15} className="text-ink/70" />
-            <Stat label="Acciones">{availableActions}</Stat>
-          </div>
-          <div className="flex items-center gap-2" title="Caja del Tesoro">
-            <Wallet size={15} className="text-ink/70" />
-            <Stat label="Caja">{fmtBudget(gameState.budget)}</Stat>
-          </div>
-          <div className="hidden lg:flex items-center gap-2">
-            <Activity size={15} className="text-ink/70" />
-            <div className="leading-tight">
-              <div className="text-[10px] text-ink/70 font-medium">Aprobación</div>
-              <div className="flex items-baseline gap-1.5">
-                <span className={`font-mono text-[15px] font-semibold ${riskColor(popularityRisk)}`}>
-                  {Math.round(gameState.causal?.political.apro ?? gameState.popularity)}%
-                </span>
-                {popTrend !== null && (
-                  <span
-                    className={`inline-flex items-center gap-0.5 font-mono text-[11px] ${
-                      popTrend > 0 ? 'text-emerald-400' : popTrend < 0 ? 'text-red-400' : 'text-ink/70'
-                    }`}
-                  >
-                    {popTrend > 0 ? <TrendingUp size={11} /> : popTrend < 0 ? <TrendingDown size={11} /> : <Minus size={11} />}
-                    {popTrend !== 0 ? `${popTrend > 0 ? '+' : ''}${popTrend}` : '0'}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="hidden xl:flex items-center gap-2">
-            <Shield size={15} className="text-ink/70" />
-            <div className="leading-tight">
-              <div className="text-[10px] text-ink/70 font-medium">Gobernabilidad</div>
-              <div className={`font-mono text-[15px] font-semibold ${riskColor(stabilityRisk)}`}>
-                {Math.round(gameState.causal?.political.gob ?? gameState.stability)}
-              </div>
-            </div>
+        {/* Recursos del turno */}
+        <div className={`flex flex-col gap-0.5 flex-none ${divider}`} title="Acciones disponibles este turno">
+          <span className="text-[8px] font-bold tracking-[0.14em] text-sala-on-navy">ACCIONES</span>
+          <strong className="text-[19px] leading-none text-sala-lime font-mono">{availableActions}</strong>
+          <small className="text-[9px] text-sala-on-navy">disponibles</small>
+        </div>
+        <div className={`flex flex-col gap-0.5 flex-none ${divider}`} title="Caja del Tesoro">
+          <span className="text-[8px] font-bold tracking-[0.14em] text-sala-on-navy">CAJA</span>
+          <strong className="text-[19px] leading-none font-mono">{fmtBudget(c.caja)}</strong>
+          {last ? (
+            <small className={`text-[9px] ${last.fiscal.resultado >= 0 ? 'text-[#7fe0c7]' : 'text-[#ffa594]'}`}>
+              {fmtBudgetDelta(last.fiscal.resultado)} / turno
+            </small>
+          ) : (
+            <small className="text-[9px] text-sala-on-navy">al asumir</small>
+          )}
+        </div>
+        <div className={`hidden lg:flex flex-col gap-1 flex-none min-w-[96px] ${divider}`} title="Aprobación de gestión">
+          <span className="text-[8px] font-bold tracking-[0.14em] text-sala-on-navy">APROBACIÓN</span>
+          <strong className="text-[19px] leading-none font-mono">{apro}%</strong>
+          <div className="h-1 rounded-full bg-white/15 overflow-hidden">
+            <i className="block h-full bg-sala-lime" style={{ width: `${apro}%` }} />
           </div>
         </div>
 
         {/* Controles */}
-        <div className="flex items-center gap-2 flex-none pl-5 border-l border-rule">
+        <div className={`flex items-center gap-1.5 flex-none ${divider}`}>
+          {onOpenNotifications && (
+            <button
+              onClick={onOpenNotifications}
+              aria-label={unread > 0 ? `Notificaciones (${unread} sin leer)` : 'Notificaciones'}
+              className="relative w-10 h-10 grid place-items-center rounded-md hover:bg-white/10"
+            >
+              <Bell size={17} />
+              {unread > 0 && <i className="absolute right-2 top-2 w-2 h-2 rounded-full bg-[#ff8a6e]" />}
+            </button>
+          )}
           <GameMenu
             governorName={gameState.governorName}
             turnLabel={`turno ${inMandate} de ${MAX_TURNS}`}
@@ -299,14 +267,10 @@ export function GameHeader({
               }}
               disabled={!canEndTurn}
               data-no-restore-focus
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-md text-[13px] font-semibold transition-all ${
-                canEndTurn
-                  ? 'bg-ink hover:bg-ink/90 text-paper shadow-sm active:translate-y-px'
-                  : 'bg-sunken text-ink/70 cursor-not-allowed'
-              }`}
+              className="sr-btn-lime h-11 px-4 text-[11px] ml-1"
             >
               Finalizar turno
-              <ArrowRight size={14} className={canEndTurn ? 'text-gold' : ''} />
+              <ChevronRight size={17} />
             </button>
           )}
         </div>
@@ -314,6 +278,3 @@ export function GameHeader({
     </header>
   );
 }
-
-// Re-export del icono Users por compat
-export { Users };

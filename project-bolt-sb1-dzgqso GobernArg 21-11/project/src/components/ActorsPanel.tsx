@@ -49,17 +49,17 @@ interface ActorsPanelProps {
   onInteract: (actor: ActorId, kind: ActorInteraction) => void;
   onSelectAction: (actionId: string) => void;
   disabled: boolean;
+  /** Número del rótulo (05 en el tablero). */
+  index?: string;
 }
 
 const MOOD_RISK: Record<string, Risk> = {
   contento: 'bajo', neutral: 'bajo', disconforme: 'medio', enojado: 'alto', radicalizado: 'critico',
 };
 
-function barColor(v: number): string {
-  if (v >= 60) return 'bg-emerald-400';
-  if (v >= 42) return 'bg-amber-400';
-  return 'bg-red-400';
-}
+/** Satisfacción en coral (cómo les va); relación en cian (vínculo político). */
+const SAT_BAR = 'bg-sala-coral';
+const REL_BAR = 'bg-sala-cyan';
 
 function chanceLabel(p: number): string {
   if (p >= 0.7) return 'probable';
@@ -98,22 +98,22 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
   const offerOpen = signReason === null;
 
   return (
-    <div className="px-3 py-2.5 hover:bg-ink/2 transition-colors">
+    <div className="px-4 py-3 hover:bg-sunken/50 transition-colors">
       {/* Encabezado */}
       <div className="flex items-start gap-2 mb-1.5">
         {icon ? (
-          <img src={icon} alt="" className="w-8 h-8 rounded object-contain flex-shrink-0 bg-ink/5" />
+          <img src={icon} alt="" className="w-8 h-8 rounded-lg object-contain flex-shrink-0 bg-sunken border border-rule p-0.5" />
         ) : (
-          <div className="w-8 h-8 rounded bg-ink/5 flex-shrink-0" />
+          <div className="w-8 h-8 rounded-lg bg-sunken flex-shrink-0" />
         )}
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
-            <div className="font-medium text-[12px] text-foreground leading-tight truncate" title={def.description}>
+            <div className="font-bold text-[12px] text-ink leading-tight truncate" title={def.description}>
               {def.name}
             </div>
-            <span className={`text-[9px] uppercase tracking-wide font-semibold ${riskColor(MOOD_RISK[mood])}`}>{mood}</span>
+            <span className={`text-[9px] uppercase tracking-[0.1em] font-bold ${riskColor(MOOD_RISK[mood])}`}>{mood}</span>
           </div>
-          <div className="text-[10px] text-muted-foreground truncate" title={ACTOR_POWER_TEXT[actor] ?? def.channelMain}>
+          <div className="text-[10px] text-sala-muted truncate" title={ACTOR_POWER_TEXT[actor] ?? def.channelMain}>
             Poder: {ACTOR_POWER_TEXT[actor] ?? def.channelMain}
           </div>
         </div>
@@ -122,7 +122,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
       {/* Satisfacción */}
       <div className="mb-1">
         <div className="flex items-center justify-between text-[10px]">
-          <span className="text-muted-foreground inline-flex items-center gap-1" title="Cómo le va: depende de los indicadores que le importan">
+          <span className="text-sala-dim font-bold tracking-[0.1em] uppercase text-[9px] inline-flex items-center gap-1" title="Cómo le va: depende de los indicadores que le importan">
             {fresh ? <Eye size={9} /> : <EyeOff size={9} />}
             {actor === 'oposicion' ? 'Disposición' : 'Satisfacción'}
           </span>
@@ -139,9 +139,9 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
             <span className={`text-[10px] font-semibold ${toneClass(band.tone)}`}>{band.label}</span>
           )}
         </div>
-        <div className="h-1 w-full overflow-hidden rounded-full bg-ink/10 mt-0.5">
+        <div className="h-1 w-full overflow-hidden rounded-full bg-sunken mt-1">
           <div
-            className={`h-full rounded-full transition-all duration-500 ${fresh ? barColor(st.sat) : 'bg-ink/25'}`}
+            className={`h-full rounded-full transition-all duration-500 ${fresh ? SAT_BAR : 'bg-sala-coral/40'}`}
             style={{ width: `${fresh ? st.sat : Math.round(st.sat / 12.5) * 12.5}%` }}
           />
         </div>
@@ -151,22 +151,22 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
       {organized && st.rel !== null && (
         <div className="mb-1.5">
           <div className="flex items-center justify-between text-[10px]">
-            <span className="text-muted-foreground" title="Tu vínculo con ellos: reuniones, acuerdos cumplidos o incumplidos">Relación</span>
-            <span className="font-mono text-foreground/80">
-              {relationBand(st.rel)} <span className="text-muted-foreground">{Math.round(st.rel)}</span>
+            <span className="text-sala-dim font-bold tracking-[0.1em] uppercase text-[9px]" title="Tu vínculo con ellos: reuniones, acuerdos cumplidos o incumplidos">Relación</span>
+            <span className="font-mono text-ink/80">
+              {relationBand(st.rel)} <span className="text-sala-muted">{Math.round(st.rel)}</span>
             </span>
           </div>
-          <div className="h-1 w-full overflow-hidden rounded-full bg-ink/10 mt-0.5">
-            <div className="h-full rounded-full bg-sky-400/80 transition-all duration-500" style={{ width: `${st.rel}%` }} />
+          <div className="h-1 w-full overflow-hidden rounded-full bg-sunken mt-1">
+            <div className={`h-full rounded-full ${REL_BAR} transition-all duration-500`} style={{ width: `${st.rel}%` }} />
           </div>
         </div>
       )}
 
       {/* Información revelada */}
       {fresh ? (
-        <p className="text-[10px] text-foreground/70 leading-snug mb-1.5">{concernSentence(c, actor)}</p>
+        <p className="text-[11px] text-sala-muted leading-snug mb-1.5">{concernSentence(c, actor)}</p>
       ) : (
-        <p className="text-[10px] text-muted-foreground leading-snug mb-1.5 italic">
+        <p className="text-[11px] text-sala-dim leading-snug mb-1.5 italic">
           {organized ? 'Sin reunión reciente: no sabés qué les preocupa.' : 'Sin encuesta reciente: sólo una impresión general.'}
         </p>
       )}
@@ -215,18 +215,18 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
               onClick={() => onInteract(actor, 'reunion')}
               disabled={disabled || !!meetReason}
               title={meetReason ?? 'Reunión: revela qué les preocupa y qué piden; habilita negociar 3 turnos'}
-              className="flex-1 inline-flex items-center justify-center gap-1 text-[9px] text-muted-foreground hover:text-foreground border border-border hover:border-ink/20 px-1.5 py-1 rounded transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              className="sr-btn-ghost flex-1 gap-1 text-[10px] px-1.5 py-1.5"
             >
-              <MessageSquare size={9} />
+              <MessageSquare size={11} />
               Reunirse {!meetReason && <span className="font-mono text-[10px]">{meetingCost(c, actor) === 0 ? 'gratis' : '1 acción'}</span>}
             </button>
             {offerOpen ? (
               <button
                 onClick={() => onInteract(actor, 'acuerdo')}
                 disabled={disabled}
-                className="flex-1 inline-flex items-center justify-center gap-1 text-[9px] text-primary border border-primary/40 hover:bg-primary/10 px-1.5 py-1 rounded transition-all disabled:opacity-30"
+                className="sr-btn-navy flex-1 gap-1 text-[10px] px-1.5 py-1.5"
               >
-                <FileSignature size={9} />
+                <FileSignature size={11} />
                 Firmar acuerdo
               </button>
             ) : (
@@ -234,9 +234,9 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
                 onClick={() => onInteract(actor, 'negociar')}
                 disabled={disabled || !!negReason}
                 title={negReason ?? `Negociar su demanda (1 PA). Chance ${chanceLabel(negotiationChance(c, actor))}.`}
-                className="flex-1 inline-flex items-center justify-center gap-1 text-[9px] text-muted-foreground hover:text-foreground border border-border hover:border-ink/20 px-1.5 py-1 rounded transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                className="sr-btn-ghost flex-1 gap-1 text-[10px] px-1.5 py-1.5"
               >
-                <Handshake size={9} />
+                <Handshake size={11} />
                 Negociar {!negReason && <span className="text-[10px]">({chanceLabel(negotiationChance(c, actor))})</span>}
               </button>
             )}
@@ -246,9 +246,9 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
             onClick={() => onInteract(actor, 'encuesta')}
             disabled={disabled || !!pollReason}
             title={pollReason ?? 'Encuesta: revela su satisfacción y los dos temas que más la mueven'}
-            className="flex-1 inline-flex items-center justify-center gap-1 text-[9px] text-muted-foreground hover:text-foreground border border-border hover:border-ink/20 px-1.5 py-1 rounded transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            className="sr-btn-ghost flex-1 gap-1 text-[10px] px-1.5 py-1.5"
           >
-            <BarChart3 size={9} />
+            <BarChart3 size={11} />
             Encuesta <span className="font-mono text-[10px]">{c.perks.freePolls ? 'gratis' : fmtBudget(POLL_COST)}</span>
           </button>
         )}
@@ -257,30 +257,35 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
   );
 }
 
-export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }: ActorsPanelProps) {
-  const [expanded, setExpanded] = useState<Set<string>>(new Set(['produccion', 'sociedad']));
+export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled, index = '05' }: ActorsPanelProps) {
+  const [expanded, setExpanded] = useState<Set<string>>(new Set(['produccion']));
   const c = gameState.causal;
   const freeLeft = c.perks.freeMeetingsPerTurn - c.freeMeetingsUsed;
 
   return (
-    <section className="p-4 border-b border-ink/8">
-      <div className="flex items-center gap-2 mb-1.5">
-        <UsersIcon size={14} className="text-blue-400" />
-        <h3 className="font-display text-[16px]   text-ink font-semibold">
-          Actores & grupos de interés
-        </h3>
+    <section id="panel-actores" className="sr-panel scroll-mt-24" aria-label="Actores">
+      <div className="sr-panel-head !pb-2.5">
+        <div>
+          <span className="sr-label">{index} / Mapa de poder</span>
+          <h2 className="sr-panel-title">Actores</h2>
+        </div>
+        <UsersIcon size={17} className="text-sala-dim" />
       </div>
-      <p className="text-[10px] text-ink/70 mb-3 flex items-start gap-1 leading-snug">
-        <Info size={11} className="mt-0.5 flex-shrink-0 text-blue-400" />
-        Relación = vínculo político con tu gobierno. Satisfacción = evaluación de gestión. Mantener reuniones revela demandas y preocupaciones.
+      <p className="px-4 pt-2.5 text-[11px] text-sala-muted flex items-start gap-1.5 leading-snug">
+        <Info size={12} className="mt-0.5 flex-shrink-0 text-sala-blue" />
+        Satisfacción y relación son variables distintas: la satisfacción es cómo les va; la relación, tu vínculo político. Las reuniones revelan demandas y preocupaciones.
       </p>
+      <div className="flex gap-4 px-4 pt-2 text-[10px] text-sala-muted">
+        <span className="inline-flex items-center gap-1.5"><i className="w-2 h-2 rounded-full bg-sala-coral" /> Satisfacción</span>
+        <span className="inline-flex items-center gap-1.5"><i className="w-2 h-2 rounded-full bg-sala-cyan" /> Relación</span>
+      </div>
       {gameState.lastInteractionMessage && (
-        <div className="mb-3 px-3 py-2 rounded-lg border border-blue-500/30 bg-blue-500/10 text-[11px] text-blue-200 font-medium leading-snug">
+        <div className="mx-4 mt-3 px-3 py-2 rounded-lg border border-sala-blue/30 bg-sala-blue/10 text-[11px] text-sala-navy font-medium leading-snug">
           {gameState.lastInteractionMessage}
         </div>
       )}
 
-      <div className="space-y-2">
+      <div className="p-3 space-y-2">
         {ACTOR_FAMILIES.map((family) => {
           const isOpen = expanded.has(family.id);
           const worst = family.members.reduce<Risk>((max, a) => {
@@ -293,7 +298,7 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }:
             return d && d.revealedTurn !== null && c.turn - d.revealedTurn < PARAMS.VENTANA_DEMANDA;
           }).length;
           return (
-            <div key={family.id} className="rounded-lg border border-ink/8 overflow-hidden bg-surface ">
+            <div key={family.id} className="rounded-[10px] border border-rule overflow-hidden bg-surface">
               <button
                 onClick={() =>
                   setExpanded(prev => {
@@ -303,17 +308,18 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }:
                     return next;
                   })
                 }
-                className="w-full flex items-center justify-between gap-2 px-3.5 py-2.5 hover:bg-ink/4 transition-colors text-left"
+                aria-expanded={isOpen}
+                className="w-full flex items-center justify-between gap-2 px-3.5 py-2.5 hover:bg-sunken/70 transition-colors text-left"
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div className="flex -space-x-2 flex-shrink-0">
                     {family.members.slice(0, 3).map(a => {
                       const src = getActorIcon(a);
-                      return src ? <img key={a} src={src} alt="" className="w-6 h-6 rounded-full object-contain bg-paper border border-ink/12" /> : null;
+                      return src ? <img key={a} src={src} alt="" className="w-6 h-6 rounded-full object-contain bg-surface border border-rule" /> : null;
                     })}
                   </div>
                   <div className="min-w-0">
-                    <div className="font-display font-semibold text-sm text-ink truncate">{family.name}</div>
+                    <div className="font-bold text-[13px] text-ink truncate">{family.name}</div>
                     <div className="flex items-center gap-2 text-[9px] font-mono">
                       <span className={riskColor(worst)}>tensión {TENSION_LABEL[worst]}</span>
                       {demands > 0 && <span className="text-amber-300 font-bold">{demands} demanda{demands > 1 ? 's' : ''}</span>}
@@ -323,7 +329,7 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }:
                 {isOpen ? <ChevronDown size={14} className="text-ink/70" /> : <ChevronRight size={14} className="text-ink/70" />}
               </button>
               {isOpen && (
-                <div className="border-t border-ink/8 divide-y divide-ink/6 bg-paper/50">
+                <div className="border-t border-rule divide-y divide-rule">
                   {family.members.map(a => (
                     <ActorCard key={a} state={gameState} actor={a} onInteract={onInteract} onSelectAction={onSelectAction} disabled={disabled} />
                   ))}
@@ -333,7 +339,7 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }:
           );
         })}
       </div>
-      <p className="text-[9px] font-mono text-ink/70 mt-2.5">
+      <p className="text-[10px] text-sala-muted px-4 pb-4">
         {freeLeft > 0
           ? (freeLeft > 1 ? `Te quedan ${freeLeft} reuniones gratis este turno.` : 'Te queda 1 reunión gratis este turno.')
           : 'Las reuniones de este turno ya cuestan 1 PA.'}

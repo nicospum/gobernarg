@@ -4,50 +4,72 @@
 
 @layer base {
   /*
-   * Tema "Despacho": papel, tinta azul marino, oro del sol de mayo y celeste.
-   * Tokens propios en "r g b" (para bg-ink/10) y los de shadcn en HSL.
+   * Tema "Sala de situación" (rediseño v0): fondo celeste muy claro, tinta
+   * azul marino, barra superior marina en degradé y acentos lima, cian,
+   * coral, violeta y sol. ÚNICO lugar donde se definen los colores: todo el
+   * resto (tailwind.config.js, componentes y clases .sr-*) usa estas variables.
+   * Formato "r g b" para poder escribir bg-ink/10.
    */
   :root {
-    --paper: 244 239 230;       /* #F4EFE6 fondo de página */
-    --surface: 251 248 242;     /* #FBF8F2 tarjetas y paneles */
-    --sunken: 237 230 216;      /* #EDE6D8 hundido, hover, pistas de barras */
-    --ink: 20 33 61;            /* #14213D texto y trazos */
-    --rule: 217 209 195;        /* #D9D1C3 filetes y bordes */
-    --gold: 184 134 11;         /* #B8860B relleno del botón principal */
-    --gold-ink: 138 101 8;      /* #8A6508 oro para texto sobre papel */
-    --celeste: 91 155 213;      /* #5B9BD5 relleno celeste */
-    --celeste-ink: 31 95 153;   /* #1F5F99 celeste para texto */
+    /* Base (nombres heredados del tema anterior, usados en todo el juego) */
+    --paper: 238 245 251;       /* #EEF5FB fondo de página */
+    --surface: 255 255 255;     /* #FFFFFF tarjetas y paneles */
+    --sunken: 232 243 251;      /* #E8F3FB hundido, hover, pistas de barras */
+    --ink: 16 45 82;            /* #102D52 texto */
+    --rule: 213 228 239;        /* #D5E4EF bordes suaves */
+    --gold: 242 187 77;         /* #F2BB4D sol (relleno) */
+    --gold-ink: 156 116 25;     /* #9C7419 sol para texto */
+    --celeste: 0 169 199;       /* #00A9C7 cian (relleno) */
+    --celeste-ink: 18 105 199;  /* #1269C7 azul para texto */
 
-    --background: 39 38% 93%;
-    --foreground: 221 51% 16%;
-    --card: 40 56% 97%;
-    --card-foreground: 221 51% 16%;
-    --popover: 40 56% 97%;
-    --popover-foreground: 221 51% 16%;
-    --primary: 209 66% 36%;
-    --primary-foreground: 40 56% 97%;
-    --secondary: 40 33% 89%;
-    --secondary-foreground: 221 51% 16%;
-    --muted: 40 33% 89%;
-    --muted-foreground: 220 12% 38%;
-    --accent: 43 89% 38%;
-    --accent-foreground: 221 51% 16%;
-    --destructive: 0 51% 46%;
+    /* Sala de situación */
+    --navy: 9 44 85;            /* #092C55 barra superior, botones oscuros */
+    --navy-2: 14 72 120;        /* #0E4878 final del degradé */
+    --blue: 18 105 199;         /* #1269C7 rótulos, pestaña activa */
+    --cyan: 0 169 199;          /* #00A9C7 relación, "en vivo" */
+    --sky: 114 200 223;         /* #72C8DF */
+    --coral: 237 107 88;        /* #ED6B58 alertas, satisfacción */
+    --lime: 184 228 85;         /* #B8E455 "Finalizar turno" */
+    --lime-ink: 77 139 56;      /* #4D8B38 lima para texto */
+    --violet: 119 94 211;       /* #775ED3 */
+    --sun: 242 187 77;          /* #F2BB4D */
+    --muted-text: 93 117 144;   /* #5D7590 texto secundario */
+    --dim: 138 160 181;         /* #8AA0B5 rótulos chicos */
+    --good: 53 152 135;         /* #359887 */
+    --bad: 217 86 82;           /* #D95652 */
+    --warn: 210 138 40;         /* #D28A28 */
+    --on-navy: 175 208 227;     /* #AFD0E3 texto secundario sobre marino */
+
+    /* shadcn (HSL), alineados con la paleta de arriba */
+    --background: 207 64% 96%;
+    --foreground: 213 67% 19%;
+    --card: 0 0% 100%;
+    --card-foreground: 213 67% 19%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 213 67% 19%;
+    --primary: 211 83% 43%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 205 70% 95%;
+    --secondary-foreground: 213 67% 19%;
+    --muted: 205 70% 95%;
+    --muted-foreground: 211 21% 47%;
+    --accent: 211 83% 43%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 2 64% 59%;
     --destructive-foreground: 0 0% 100%;
-    --border: 38 23% 81%;
-    --input: 38 23% 81%;
-    --ring: 209 66% 36%;
-    --radius: 0.5rem;
+    --border: 205 44% 89%;
+    --input: 205 44% 89%;
+    --ring: 189 100% 39%;
+    --radius: 0.75rem;
   }
 
   body {
-    @apply bg-paper text-ink font-sans min-h-screen antialiased selection:bg-gold/25 selection:text-ink;
+    @apply bg-paper text-ink font-sans min-h-screen antialiased selection:bg-sala-sky selection:text-sala-navy;
   }
 
-  /* Títulos con serifa: tamaño óptico automático de Fraunces. */
+  /* Títulos: sans firme y apretado, como la sala de situación. */
   .font-display {
-    font-optical-sizing: auto;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.025em;
   }
 
   /* Cifras alineadas en columnas (reemplaza a la monoespaciada). */
@@ -56,9 +78,168 @@
   }
 
   :focus-visible {
-    outline: 2px solid rgb(var(--celeste-ink));
+    outline: 3px solid rgb(var(--sky));
     outline-offset: 2px;
   }
+}
+
+/*
+ * Sala de situación (rediseño v0): piezas comunes del tablero y de las
+ * pantallas. Sólo usan las variables de :root.
+ */
+@layer components {
+  .sr-room {
+    background:
+      radial-gradient(circle at 78% 4%, rgb(214 243 248) 0, transparent 24%),
+      linear-gradient(135deg, rgb(248 251 254), rgb(var(--paper)));
+  }
+  .sr-navy-bar {
+    background: linear-gradient(100deg, rgb(var(--navy)), rgb(var(--navy-2)));
+    color: #fff;
+  }
+  /* Rótulos chicos en versalitas: "01 / BRIEFING". */
+  .sr-label {
+    font-size: 10px;
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgb(var(--blue));
+  }
+  .sr-eyebrow {
+    font-size: 10px;
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: rgb(var(--dim));
+  }
+  .sr-panel {
+    background: rgb(var(--surface));
+    border: 1px solid rgb(var(--rule));
+    border-radius: 12px;
+    box-shadow: 0 7px 24px rgb(49 90 123 / 0.045);
+    overflow: hidden;
+  }
+  .sr-panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    border-bottom: 1px solid rgb(var(--rule));
+  }
+  .sr-panel-title {
+    margin-top: 5px;
+    font-size: 18px;
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: rgb(var(--ink));
+  }
+  .sr-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 7px;
+    border: 1px solid currentColor;
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .sr-track {
+    height: 6px;
+    border-radius: 999px;
+    background: rgb(var(--sunken));
+    overflow: hidden;
+  }
+  .sr-track > i {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+  }
+  .sr-btn-lime {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 8px;
+    background: rgb(var(--lime));
+    color: rgb(var(--navy));
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    box-shadow: 0 5px 14px rgb(7 28 48 / 0.19);
+    transition: filter 0.15s, transform 0.15s;
+  }
+  .sr-btn-lime:hover:not(:disabled) { filter: brightness(1.04) saturate(1.1); }
+  .sr-btn-lime:active:not(:disabled) { transform: translateY(1px); }
+  .sr-btn-lime:disabled {
+    background: rgb(var(--sunken));
+    color: rgb(var(--muted-text));
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+  .sr-btn-navy {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 8px;
+    background: rgb(var(--navy));
+    color: #fff;
+    font-weight: 700;
+    transition: background 0.15s;
+  }
+  .sr-btn-navy:hover:not(:disabled) { background: rgb(var(--navy-2)); }
+  .sr-btn-navy:disabled { background: rgb(var(--sunken)); color: rgb(var(--muted-text)); cursor: not-allowed; }
+  .sr-btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 1px solid rgb(159 196 221);
+    border-radius: 7px;
+    background: rgb(244 250 255);
+    color: rgb(var(--blue));
+    font-weight: 600;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .sr-btn-ghost:hover:not(:disabled) { background: rgb(var(--sunken)); border-color: rgb(var(--blue) / 0.6); }
+  .sr-btn-ghost:disabled { opacity: 0.45; cursor: not-allowed; }
+  .sr-live-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgb(var(--cyan));
+    box-shadow: 0 0 0 4px rgb(var(--cyan) / 0.12);
+  }
+  /* Modales: cabecera marina con rótulo y título. */
+  .sr-modal {
+    background: rgb(var(--surface));
+    border: 1px solid rgb(var(--rule));
+    border-radius: 14px;
+    box-shadow: 0 24px 60px -20px rgb(9 44 85 / 0.45);
+  }
+  .sr-modal-head {
+    background: linear-gradient(100deg, rgb(var(--navy)), rgb(var(--navy-2)));
+    color: #fff;
+    padding: 18px 22px;
+  }
+  .sr-modal-head .sr-label { color: rgb(var(--sky)); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sr-civic-img { animation: sr-civic-drift 14s ease-in-out alternate infinite; }
+}
+@keyframes sr-civic-drift {
+  from { transform: scale(1.01); }
+  to { transform: scale(1.05); }
 }
 
 @layer utilities {

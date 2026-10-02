@@ -1,58 +1,56 @@
-import { Clock, Zap } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import type { GameState } from '../types/game';
 import { upcomingEffects } from '@/lib/agendaView';
-import { toneChipClass } from '@/lib/causalText';
+import type { Tone } from '@/lib/causalText';
+import { PanelHead } from './board/PanelHead';
 
 interface PendingEffectsPanelProps {
   gameState: GameState;
+  index?: string;
 }
 
+const TONE: Record<Tone, string> = { good: 'text-sala-good', bad: 'text-sala-bad', neutral: 'text-sala-blue' };
+
 /**
- * Efectos en camino: consecuencias ya decididas que todavía no llegaron
+ * Próximas maduraciones: consecuencias ya decididas que todavía no llegaron
  * (obras que maduran, rebotes, mantenimiento, revisiones de metas…).
  */
-export function PendingEffectsPanel({ gameState }: PendingEffectsPanelProps) {
+export function PendingEffectsPanel({ gameState, index }: PendingEffectsPanelProps) {
   const items = upcomingEffects(gameState.causal);
-  if (items.length === 0) return null;
 
   return (
-    <section className="rounded-lg border border-ink/8 bg-surface overflow-hidden ">
-      <header className="flex items-center justify-between px-4 py-3 border-b border-ink/8 bg-surface">
-        <h2 className="font-display font-semibold text-[16px]   text-ink">
-          Efectos en camino ({items.length})
-        </h2>
-        <span className="text-[10px] text-ink/70 font-mono">Próximas maduraciones</span>
-      </header>
-      <div className="p-3.5 space-y-2.5 max-h-[420px] overflow-y-auto">
-        {items.map(item => {
-          const urgent = item.inTurns <= 1;
-          return (
-            <div
-              key={item.key}
-              className={`rounded-xl border p-3.5 shadow-md ${item.positive ? 'border-emerald-500/30 bg-emerald-500/10' : 'border-red-500/30 bg-red-500/10'}`}
-            >
-              <div className="flex items-start justify-between gap-2 mb-1.5">
-                <div className="font-display font-semibold text-base text-ink leading-tight">{item.title}</div>
-                <div className="flex items-center gap-1.5 flex-shrink-0 bg-ink/4 px-2 py-0.5 rounded border border-ink/8">
-                  <Clock size={11} className={urgent ? 'text-amber-400' : 'text-ink/70'} />
-                  <span className={`text-[10px] font-mono font-bold ${urgent ? 'text-amber-400' : 'text-ink/70'}`}>
-                    {urgent ? 'PRÓXIMO TURNO' : `en ${item.inTurns}t`}
+    <section id="panel-maduraciones" className="sr-panel scroll-mt-24" aria-label="Próximas maduraciones">
+      <PanelHead index={index} label="Efectos en camino" title="Próximas maduraciones">
+        {items.length > 0 && <span className="text-[11px] font-bold font-mono text-sala-blue">{items.length}</span>}
+      </PanelHead>
+      {items.length === 0 ? (
+        <p className="px-4 py-4 text-[12px] text-sala-muted">No hay efectos en camino: lo decidido ya llegó.</p>
+      ) : (
+        <ul className="max-h-[420px] overflow-y-auto">
+          {items.map(item => {
+            const urgent = item.inTurns <= 1;
+            return (
+              <li key={item.key} className="relative px-4 py-3 border-t border-rule first:border-t-0">
+                <span className={`absolute left-0 top-3 bottom-3 w-1 rounded-r ${item.positive ? 'bg-sala-good' : 'bg-sala-coral'}`} aria-hidden="true" />
+                <div className="flex items-start justify-between gap-2">
+                  <b className="text-[12px] text-ink leading-tight">{item.title}</b>
+                  <span className={`flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-bold font-mono ${urgent ? 'text-sala-warn' : 'text-sala-muted'}`}>
+                    <Clock size={11} /> {urgent ? 'Próximo turno' : `en ${item.inTurns}t`}
                   </span>
                 </div>
-              </div>
-              <div className="text-[10px] text-ink/70 mb-2 font-mono">↳ Origen: decisión en turno {item.origin}</div>
-              <div className="flex gap-1.5 items-center flex-wrap">
-                <Zap size={11} className="text-blue-400 flex-shrink-0" />
-                {item.chips.map((c, i) => (
-                  <span key={i} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] border font-mono ${toneChipClass(c.tone)}`}>
-                    {c.label} {c.text}
-                  </span>
-                ))}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+                <div className="text-[10px] text-sala-dim mt-0.5">Decidido en el turno {item.origin}</div>
+                <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1.5 text-[11px]">
+                  {item.chips.map((c, i) => (
+                    <span key={i} className="text-sala-muted">
+                      {c.label} <b className={`font-mono ${TONE[c.tone]}`}>{c.text}</b>
+                    </span>
+                  ))}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </section>
   );
 }

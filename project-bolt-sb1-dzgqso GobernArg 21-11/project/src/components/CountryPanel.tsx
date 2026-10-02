@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { ChevronDown, ChevronRight, Globe2, TrendingUp, TrendingDown, Minus, EyeOff } from 'lucide-react';
+import { ChevronDown, TrendingUp, TrendingDown, Minus, EyeOff } from 'lucide-react';
 import type { GameState } from '../types/game';
 import { INDICATOR_IDS, INDICATORS, type IndicatorId, type MacroCategory } from '@/data/causal';
 import { effective, viewRef } from '@/engine/causal';
-import { indicatorBand, inflationMonthly, toneClass } from '@/lib/causalText';
+import { indicatorBand, inflationMonthly, type Tone } from '@/lib/causalText';
+import { countryAlerts } from '@/lib/boardView';
 import { InfoTooltip } from './InfoTooltip';
 
 /**
@@ -16,27 +17,46 @@ import { InfoTooltip } from './InfoTooltip';
 
 const MACROS: MacroCategory[] = ['Economía', 'Estado y servicios', 'Desarrollo', 'Instituciones y sociedad'];
 
+const TONE_TEXT: Record<Tone, string> = { good: 'text-sala-good', bad: 'text-sala-bad', neutral: 'text-sala-warn' };
+
 function Trend({ delta, id }: { delta: number | null; id: IndicatorId }) {
-  if (delta === null || Math.abs(delta) < 0.4) return <Minus size={10} className="text-muted-foreground" />;
+  if (delta === null || Math.abs(delta) < 0.4) return <Minus size={10} className="text-sala-dim" />;
   const dir = INDICATORS[id].goodDirection;
   const good = dir === 0 ? null : Math.sign(delta) === dir;
-  const cls = good === null ? 'text-sky-300' : good ? 'text-emerald-400' : 'text-red-400';
+  const cls = good === null ? 'text-sala-blue' : good ? 'text-sala-good' : 'text-sala-bad';
   return delta > 0 ? <TrendingUp size={11} className={cls} /> : <TrendingDown size={11} className={cls} />;
 }
 
+/** Anillo de situación general: cuántos de los 15 indicadores están sin alerta. */
+function ScoreRing({ ok, total }: { ok: number; total: number }) {
+  const r = 22;
+  const len = 2 * Math.PI * r;
+  return (
+    <svg viewBox="0 0 54 54" className="w-[54px] h-[54px] flex-shrink-0" role="img" aria-label={`${ok} de ${total} indicadores sin alerta`}>
+      <circle cx="27" cy="27" r={r} fill="none" stroke="rgb(var(--sunken))" strokeWidth="4" />
+      <circle
+        cx="27" cy="27" r={r} fill="none" stroke="rgb(var(--cyan))" strokeWidth="4" strokeLinecap="round"
+        strokeDasharray={`${(ok / total) * len} ${len}`} transform="rotate(-90 27 27)"
+      />
+      <text x="27" y="29" textAnchor="middle" className="fill-ink" style={{ font: '700 15px Inter, sans-serif' }}>{ok}</text>
+      <text x="27" y="39" textAnchor="middle" className="fill-sala-muted" style={{ font: '600 7px Inter, sans-serif' }}>/{total}</text>
+    </svg>
+  );
+}
+
 /**
- * En la computadora es una matriz de 4 columnas que se pliega entera. En el
- * celular (`compact`) cada categoría es un grupo que se abre y se cierra, con
- * un resumen de cuántos indicadores están en rojo.
+ * En la computadora es el "briefing" de la columna izquierda. En el celular
+ * (`compact`) cada categoría es un grupo que se abre y se cierra, con un
+ * resumen de cuántos indicadores están en rojo.
  */
-export function CountryPanel({ gameState, compact = false }: { gameState: GameState; compact?: boolean }) {
-  const [open, setOpen] = useState(true);
+export function CountryPanel({ gameState, compact = false, index = '01' }: { gameState: GameState; compact?: boolean; index?: string }) {
   const [openMacro, setOpenMacro] = useState<MacroCategory | null>('Economía');
   const c = gameState.causal;
   const ref = viewRef(c);
   const last = c.records[c.records.length - 1];
   const showExpectations = c.perks.reveals.includes('desanclaje');
   const idsOf = (macro: MacroCategory) => INDICATOR_IDS.filter(id => INDICATORS[id].macro === macro);
+  const { alerts, total } = countryAlerts(gameState);
 
   const row = (id: IndicatorId) => {
     const def = INDICATORS[id];
@@ -59,19 +79,15 @@ export function CountryPanel({ gameState, compact = false }: { gameState: GameSt
           </div>
         }
       >
-        <div
-          className={`flex items-center justify-between gap-2 cursor-help group hover:bg-sunken/70 px-1 rounded transition-colors ${
-            compact ? 'min-h-[38px] border-t border-dashed border-rule first:border-t-0' : 'py-[3px]'
-          }`}
-        >
-          <span className={`${compact ? 'text-[14px]' : 'text-[11px]'} text-ink/80 group-hover:text-ink truncate flex items-center gap-1 font-medium`}>
+        <div className={`flex items-center justify-between gap-2 cursor-help rounded px-1 -mx-1 hover:bg-sunken/70 transition-colors ${compact ? 'min-h-[40px]' : 'min-h-[24px]'}`}>
+          <span className={`${compact ? 'text-[14px]' : 'text-[12px]'} text-sala-muted truncate flex items-center gap-1`}>
             {def.name}
-            {partial && <EyeOff size={9} className="text-ink/70 flex-shrink-0" />}
+            {partial && <EyeOff size={9} className="text-sala-dim flex-shrink-0" />}
           </span>
           <span className="flex items-center gap-1.5 flex-shrink-0">
-            <span className={`${compact ? 'text-[13px]' : 'text-[11px]'} font-mono font-semibold ${toneClass(band.tone)}`}>
+            <b className={`${compact ? 'text-[13px]' : 'text-[11px]'} ${TONE_TEXT[band.tone]}`}>
               {id === 'INFL' ? inflationMonthly(v) : band.label}
-            </span>
+            </b>
             <Trend delta={delta} id={id} />
           </span>
         </div>
@@ -79,21 +95,26 @@ export function CountryPanel({ gameState, compact = false }: { gameState: GameSt
     );
   };
 
-  const expectations = (
-    <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-ink/6">
-      <span className={`${compact ? 'text-[14px]' : 'text-[11px]'} text-ink/70`}>Expectativas inflación</span>
-      <span className={`${compact ? 'text-[13px]' : 'text-[10px]'} font-bold ${c.desanclaje > 20 ? 'text-red-400' : c.desanclaje > 10 ? 'text-amber-300' : 'text-emerald-400'}`}>
+  const expectations = showExpectations && (
+    <div className="flex items-center justify-between gap-2 min-h-[24px]">
+      <span className={`${compact ? 'text-[14px]' : 'text-[12px]'} text-sala-muted`}>Expectativas de inflación</span>
+      <b className={`${compact ? 'text-[13px]' : 'text-[11px]'} ${c.desanclaje > 20 ? 'text-sala-bad' : c.desanclaje > 10 ? 'text-sala-warn' : 'text-sala-good'}`}>
         {c.desanclaje > 20 ? 'Despegadas' : c.desanclaje > 10 ? 'Inquietas' : 'Ancladas'}
-      </span>
+      </b>
     </div>
   );
 
+  const groupSummary = (ids: IndicatorId[]) => {
+    const bad = ids.filter(id => indicatorBand(id, effective(c, id, ref)).tone === 'bad').length;
+    return { bad, text: bad > 0 ? `${bad} en rojo` : 'Sin alertas' };
+  };
+
   if (compact) {
     return (
-      <section className="rounded-lg border border-rule bg-surface overflow-hidden divide-y divide-rule">
+      <section className="sr-panel divide-y divide-rule" aria-label="Estado del país">
         {MACROS.map(macro => {
           const ids = idsOf(macro);
-          const bad = ids.filter(id => indicatorBand(id, effective(c, id, ref)).tone === 'bad').length;
+          const { bad, text } = groupSummary(ids);
           const isOpen = openMacro === macro;
           return (
             <div key={macro}>
@@ -103,17 +124,17 @@ export function CountryPanel({ gameState, compact = false }: { gameState: GameSt
                 className="w-full min-h-[54px] flex items-center gap-3 px-4 text-left hover:bg-sunken/60 transition-colors"
               >
                 <span className="flex-1 min-w-0">
-                  <span className="block text-[15px] font-semibold text-ink">{macro}</span>
-                  <span className={`block text-[12px] ${bad > 0 ? 'text-red-400' : 'text-ink/70'}`}>
-                    {ids.length} {ids.length === 1 ? 'indicador' : 'indicadores'} · {bad > 0 ? `${bad} en rojo` : 'sin alertas'}
+                  <span className="sr-eyebrow block !text-sala-muted">{macro}</span>
+                  <span className={`block text-[13px] mt-1 ${bad > 0 ? 'text-sala-bad' : 'text-sala-good'}`}>
+                    {ids.length} {ids.length === 1 ? 'indicador' : 'indicadores'} · {text.toLowerCase()}
                   </span>
                 </span>
-                <ChevronDown size={18} className={`text-ink/70 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown size={18} className={`text-sala-dim transition-transform ${isOpen ? 'rotate-180' : ''}`} />
               </button>
               {isOpen && (
                 <div className="px-4 pb-3">
                   {ids.map(row)}
-                  {macro === 'Economía' && showExpectations && expectations}
+                  {macro === 'Economía' && expectations}
                 </div>
               )}
             </div>
@@ -124,37 +145,37 @@ export function CountryPanel({ gameState, compact = false }: { gameState: GameSt
   }
 
   return (
-    <section className="rounded-lg border border-rule bg-surface overflow-hidden">
-      <button
-        onClick={() => setOpen(v => !v)}
-        className="w-full flex items-center justify-between px-5 py-2.5 border-b border-rule hover:bg-sunken/60 transition-colors"
-      >
-        <h2 className="font-display font-semibold text-[15px] text-ink flex items-center gap-2">
-          <Globe2 size={14} className="text-gold-ink" />
-          Detalle Macroeconómico & Motor Causal ({INDICATOR_IDS.length} Indicadores)
-        </h2>
-        <div className="flex items-center gap-2">
-          <span className="text-[11px] text-ink/70">
-            {open ? 'Ocultar matriz' : 'Desplegar matriz'}
-          </span>
-          {open ? <ChevronDown size={14} className="text-ink/70" /> : <ChevronRight size={14} className="text-ink/70" />}
+    <section className="sr-panel" aria-label="Estado del país">
+      <div className="sr-panel-head">
+        <div>
+          <span className="sr-label">{index} / Briefing</span>
+          <h2 className="sr-panel-title">Estado del país</h2>
         </div>
-      </button>
-      {open && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-rule">
-          {MACROS.map(macro => (
-            <div key={macro} className="px-4 py-3">
-              <div className="text-[10px] uppercase tracking-widest text-gold-ink font-semibold pb-1.5 mb-1 border-b border-rule">
-                {macro}
-              </div>
-              <div className="space-y-px">
-                {idsOf(macro).map(row)}
-                {macro === 'Economía' && showExpectations && expectations}
-              </div>
+      </div>
+      <div className="flex items-center gap-3.5 px-4 py-3.5 border-b border-rule">
+        <ScoreRing ok={total - alerts} total={total} />
+        <div>
+          <b className="text-[13px] text-ink">Situación general</b>
+          <p className="text-[11px] text-sala-muted mt-1 leading-snug">
+            {total - alerts} de {total} indicadores sin alerta
+            {alerts > 0 ? ` · ${alerts} ${alerts === 1 ? 'alerta activa' : 'alertas activas'}` : ''}
+          </p>
+        </div>
+      </div>
+      {MACROS.map(macro => {
+        const ids = idsOf(macro);
+        const { bad, text } = groupSummary(ids);
+        return (
+          <div key={macro} className="px-4 pt-3 pb-2 border-b border-rule last:border-b-0">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="sr-eyebrow !text-sala-muted">{macro}</span>
+              <b className={`text-[10px] ${bad > 0 ? 'text-sala-bad' : 'text-sala-good'}`}>{text}</b>
             </div>
-          ))}
-        </div>
-      )}
+            {ids.map(row)}
+            {macro === 'Economía' && expectations}
+          </div>
+        );
+      })}
     </section>
   );
 }

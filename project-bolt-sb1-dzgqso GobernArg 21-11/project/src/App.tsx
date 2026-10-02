@@ -5,11 +5,17 @@ import { NewGameScreen, type NewGameChoice } from './components/NewGameScreen';
 import { ControlPanel } from './components/ControlPanel';
 import { TurnSummaryModal } from './components/TurnSummaryModal';
 import { WelcomeScreen } from './components/WelcomeScreen';
-import { IndicatorsPanel } from './components/IndicatorsPanel';
 import { PendingEffectsPanel } from './components/PendingEffectsPanel';
 import { ActiveBenefits } from './components/ActiveBenefits';
 import { InformesPanel } from './components/InformesPanel';
-import { RightSidebar } from './components/RightSidebar';
+import { ActorsPanel } from './components/ActorsPanel';
+import { CommandStrip } from './components/board/CommandStrip';
+import { MetricsRow } from './components/board/MetricsRow';
+import { CivicBanner } from './components/board/CivicBanner';
+import { TurnPlan } from './components/board/TurnPlan';
+import { ElectoralPanel, CalendarPanel } from './components/board/ElectoralPanel';
+import { StatusFooter } from './components/board/StatusFooter';
+import { scrollToPanel } from './lib/boardView';
 import { EventModal } from './components/EventModal';
 import { NotificationCenter } from './components/NotificationCenter';
 import { CountryPanel } from './components/CountryPanel';
@@ -243,8 +249,8 @@ function App() {
   );
 
   return (
-    <div className="min-h-screen bg-paper text-ink">
-      <Toaster containerAriaLabel="Avisos" position={isMobile ? "top-center" : "bottom-right"} toastOptions={{ style: { background: "rgb(20 33 61)", color: "rgb(251 248 242)", border: "none" } }} />
+    <div className="min-h-screen sr-room text-ink">
+      <Toaster containerAriaLabel="Avisos" position={isMobile ? "top-center" : "bottom-right"} toastOptions={{ style: { background: "rgb(var(--navy))", color: "#fff", border: "none" } }} />
       <div ref={boardRef}>
       {isMobile ? (
         <>
@@ -257,11 +263,19 @@ function App() {
             <MobileKpis gameState={gameState} />
             {tutorialCard}
             {mobileTab === 'acciones' && (
-              <ControlPanel
-                gameState={gameState}
-                onActionSelect={handleActionSelect}
-                canTakeAction={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
-              />
+              <>
+                <ControlPanel
+                  gameState={gameState}
+                  onActionSelect={handleActionSelect}
+                  canTakeAction={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
+                />
+                <TurnPlan
+                  gameState={gameState}
+                  onActionSelect={handleActionSelect}
+                  onEndTurn={handleEndTurn}
+                  canEndTurn={!modalOpen}
+                />
+              </>
             )}
             {mobileTab === 'pais' && (
               <>
@@ -272,12 +286,16 @@ function App() {
               </>
             )}
             {mobileTab === 'actores' && (
-              <RightSidebar
-                gameState={gameState}
-                onInteract={handleActorInteraction}
-                onSelectAction={handleActionSelect}
-                interactionsDisabled={gameState.gameOver || gameState.pendingElection}
-              />
+              <>
+                <ElectoralPanel gameState={gameState} />
+                <ActorsPanel
+                  gameState={gameState}
+                  onInteract={handleActorInteraction}
+                  onSelectAction={handleActionSelect}
+                  disabled={gameState.gameOver || gameState.pendingElection}
+                />
+                <CalendarPanel gameState={gameState} />
+              </>
             )}
           </main>
           <MobileBottomBar
@@ -301,49 +319,60 @@ function App() {
             canEndTurn={!modalOpen}
             onOpenHelp={() => setShowHelp(true)}
             onOpenFeedback={() => setShowFeedback(true)}
+            onOpenNotifications={() => scrollToPanel('panel-notificaciones')}
           />
+          <CommandStrip gameState={gameState} />
+          <MetricsRow gameState={gameState} />
 
-          <main className="max-w-[1680px] mx-auto p-4 md:p-6 space-y-5">
-            {tutorialCard}
+          <main className="max-w-[1540px] mx-auto px-4 lg:px-7 pt-[18px] pb-11">
+            {tutorialCard && <div className="mb-4">{tutorialCard}</div>}
 
-        {/* Indicadores horizontales arriba (KPIs B0) */}
-            <IndicatorsPanel gameState={gameState} />
+            <div className="grid gap-4 grid-cols-1 lg:grid-cols-[250px_minmax(0,1fr)] xl:grid-cols-[270px_minmax(0,1fr)_332px] items-start">
+              <aside className="flex flex-col gap-4 min-w-0" aria-label="Estado del país y terreno político">
+                <CountryPanel gameState={gameState} index="01" />
+                <ElectoralPanel gameState={gameState} index="02" />
+                <CalendarPanel gameState={gameState} index="10" />
+              </aside>
 
-            {/* Detalle Macro y Motor Causal */}
-            <CountryPanel gameState={gameState} />
-
-            {/* Grid Principal: 2/3 Dashboard Acciones + 1/3 Sidebar Electoral & Actores */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-              <div className="lg:col-span-2 space-y-5">
+              <div className="flex flex-col gap-4 min-w-0">
+                <CivicBanner />
                 <ControlPanel
                   gameState={gameState}
                   onActionSelect={handleActionSelect}
                   canTakeAction={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
+                  index="03"
+                  scroll
                 />
+              </div>
 
-                <PendingEffectsPanel gameState={gameState} />
-
-                <InformesPanel gameState={gameState} />
-
+              <aside className="lg:col-span-2 xl:col-span-1 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-1 gap-4 min-w-0 items-start" aria-label="Turno y actores">
+                <TurnPlan
+                  gameState={gameState}
+                  onActionSelect={handleActionSelect}
+                  onEndTurn={handleEndTurn}
+                  canEndTurn={!modalOpen}
+                  index="04"
+                />
+                <ActorsPanel
+                  gameState={gameState}
+                  onInteract={handleActorInteraction}
+                  onSelectAction={handleActionSelect}
+                  disabled={gameState.gameOver || gameState.pendingElection}
+                  index="05"
+                />
+                <ActiveBenefits gameState={gameState} index="06" />
+                <PendingEffectsPanel gameState={gameState} index="07" />
+                <InformesPanel gameState={gameState} index="08" />
                 <NotificationCenter
                   gameState={gameState}
                   onMarkRead={() => setGameState(prev => markAllNotificationsRead(prev))}
                   onDismiss={(id) => setGameState(prev => dismissNotification(prev, id))}
+                  index="09"
                 />
-              </div>
-
-              <div className="space-y-5">
-                <RightSidebar
-                  gameState={gameState}
-                  onInteract={handleActorInteraction}
-                  onSelectAction={handleActionSelect}
-                  interactionsDisabled={gameState.gameOver || gameState.pendingElection}
-                />
-
-                <ActiveBenefits gameState={gameState} />
-              </div>
+              </aside>
             </div>
           </main>
+          <StatusFooter gameState={gameState} />
         </>
       )}
       </div>

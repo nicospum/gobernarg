@@ -2,7 +2,8 @@ import animate from "tailwindcss-animate";
 import defaultColors from "tailwindcss/colors";
 
 /**
- * Tema "Despacho": papel, tinta azul marino, oro del sol de mayo y celeste.
+ * Tema "Sala de situación" (antes "Despacho"). Los colores base viven en
+ * src/index.css (:root); acá sólo se conectan con Tailwind.
  *
  * Los componentes se escribieron para fondo oscuro (texto claro en los tonos
  * 200-400, fondos oscuros en 800-950). Sobre papel eso se invierte: estas
@@ -33,8 +34,8 @@ const despachoFamilies = Object.fromEntries(
  * y el celeste (texto y tintes), con la misma inversión de tonos.
  */
 despachoFamilies.blue = {
-  50: "#14213D", 100: "#14213D", 200: "#1B2D52", 300: "#1F5F99", 400: "#1F5F99",
-  500: "#1F3A68", 600: "#14213D", 700: "#2D5A8C", 800: "#C9DCEF", 900: "#E3EEF8", 950: "#F1F6FB",
+  50: "#092C55", 100: "#092C55", 200: "#0E4878", 300: "#1269C7", 400: "#1269C7",
+  500: "#1269C7", 600: "#092C55", 700: "#0E4878", 800: "#CDE3F7", 900: "#E3EFFA", 950: "#F1F7FD",
 };
 
 /**
@@ -53,7 +54,7 @@ const textFamilies = Object.fromEntries(
     Object.fromEntries(Object.entries(TEXT_SHADE).map(([shade, target]) => [shade, defaultColors[name][target]])),
   ]),
 );
-textFamilies.blue = { ...despachoFamilies.blue, 300: "#1A4F82", 400: "#1A4F82", 600: "#1F3A68", 700: "#1A4F82" };
+textFamilies.blue = { ...despachoFamilies.blue, 300: "#1269C7", 400: "#1269C7", 600: "#0E4878", 700: "#0E4878" };
 
 /** Token con soporte de opacidad (`bg-ink/10`): la variable guarda "r g b". */
 const token = name => `rgb(var(--${name}) / <alpha-value>)`;
@@ -77,6 +78,25 @@ export default {
         rule: token("rule"),
         gold: { DEFAULT: token("gold"), ink: token("gold-ink") },
         celeste: { DEFAULT: token("celeste"), ink: token("celeste-ink") },
+        // Sala de situación (rediseño v0): los valores viven en src/index.css (:root).
+        sala: {
+          navy: token("navy"),
+          navy2: token("navy-2"),
+          blue: token("blue"),
+          cyan: token("cyan"),
+          sky: token("sky"),
+          coral: token("coral"),
+          lime: token("lime"),
+          "lime-ink": token("lime-ink"),
+          violet: token("violet"),
+          sun: token("sun"),
+          muted: token("muted-text"),
+          dim: token("dim"),
+          good: token("good"),
+          bad: token("bad"),
+          warn: token("warn"),
+          "on-navy": token("on-navy"),
+        },
         background: "hsl(var(--background) / <alpha-value>)",
         foreground: "hsl(var(--foreground) / <alpha-value>)",
         card: {
@@ -126,7 +146,7 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Fraunces', 'Georgia', 'serif'],
+        display: ['Inter', 'system-ui', 'sans-serif'],
         // Cifras: Inter con números tabulares (ver .font-mono en index.css), no una monoespaciada.
         mono: ['Inter', 'system-ui', 'sans-serif'],
       },

@@ -1,14 +1,9 @@
-import { Info, TrendingUp, TrendingDown, Minus, Wallet } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { GameState } from '../types/game';
-import { InfoTooltip } from './InfoTooltip';
-import { getValueRisk, riskColor, riskLabel, type Risk } from '@/lib/risk';
+import type { Risk } from '@/lib/risk';
 import { fmtBudget, fmtBudgetDelta } from '@/lib/format';
 import { PARAMS } from '@/data/causal';
 import { effective, debtService, viewRef } from '@/engine/causal';
-
-interface IndicatorsPanelProps {
-  gameState: GameState;
-}
 
 export interface IndicatorCard {
   id: string;
@@ -50,63 +45,6 @@ export function TrendChip({ value, inverse = false }: { value: number | null; in
   );
 }
 
-function IndicatorCardView({ card }: { card: IndicatorCard }) {
-  const risk: Risk = getValueRisk(card.value, card.max, card.inverseRisk);
-  const pct = Math.min(100, Math.max(0, (card.value / card.max) * 100));
-  const targetPct = card.target > 0 ? Math.min(100, Math.max(0, (card.target / card.max) * 100)) : 0;
-  const displayLabel = card.inverseRisk
-    ? { bajo: 'BAJO', medio: 'MEDIO', alto: 'ALTO', critico: 'CRÍTICO' }[risk]
-    : riskLabel(risk).toUpperCase();
-
-  return (
-    <InfoTooltip
-      content={
-        <div className="flex flex-col gap-1 max-w-[260px]">
-          <div className="font-semibold text-xs text-ink">{card.label}</div>
-          <div className="text-[10px] text-ink/70">{card.tooltipDetail}</div>
-        </div>
-      }
-    >
-      <div className="flex-1 min-w-[170px] px-5 py-4 cursor-help transition-colors hover:bg-sunken/60">
-        <div className="flex items-center justify-between mb-1">
-          <span className="text-[11px] text-ink/70 font-medium flex items-center gap-1">
-            {card.label}
-            <Info size={10} className="opacity-40" />
-          </span>
-          <TrendChip value={card.trend} inverse={card.inverseRisk} />
-        </div>
-        <div className="flex items-baseline gap-1 mb-2.5">
-          <span className={`font-display text-[34px] font-semibold leading-none ${riskColor(risk)}`}>
-            {Math.round(card.value)}
-          </span>
-          <span className="font-display text-[16px] text-ink/70">{card.unit}</span>
-        </div>
-        <div className="relative h-1 w-full rounded-full bg-sunken">
-          <div
-            className={`absolute inset-y-0 left-0 rounded-full transition-all duration-500 ${riskColor(risk, 'bg')}`}
-            style={{ width: `${pct}%` }}
-          />
-          {card.target > 0 && (
-            <div
-              className="absolute -inset-y-1 w-0.5 bg-ink"
-              style={{ left: `${targetPct}%` }}
-              title={card.targetLabel}
-            />
-          )}
-        </div>
-        <div className="flex items-center justify-between mt-2">
-          <span className="text-[10px] text-ink/70">
-            {card.targetLabel ? card.targetLabel : `Escala 0-${card.max}`}
-          </span>
-          <span className={`text-[10px] font-semibold uppercase tracking-wider ${riskColor(risk)}`}>
-            {displayLabel}
-          </span>
-        </div>
-      </div>
-    </InfoTooltip>
-  );
-}
-
 /** Desglose de la caja: el cartel de la tarjeta y la hoja del celular. */
 export function BudgetDetails({ gameState }: { gameState: GameState }) {
   const c = gameState.causal;
@@ -127,51 +65,6 @@ export function BudgetDetails({ gameState }: { gameState: GameState }) {
         Deuda: {fmtBudget(c.deuda)} (intereses {fmtBudget(debtService(c))}/turno). Gasto fijo: {fmtBudget(c.gastoCorr)}/turno.
       </div>
     </div>
-  );
-}
-
-function BudgetIndicatorCard({ gameState }: { gameState: GameState }) {
-  const c = gameState.causal;
-  const last = c.records[c.records.length - 1];
-  const result = last?.fiscal.resultado ?? null;
-  const healthy = c.caja >= 0;
-  const valueColor = healthy ? 'text-emerald-400' : 'text-red-400';
-
-  return (
-    <InfoTooltip
-      content={
-        <BudgetDetails gameState={gameState} />
-      }
-    >
-      <div className="flex-1 min-w-[170px] px-5 py-4 cursor-help transition-colors hover:bg-sunken/60">
-        <div className="flex items-center justify-between mb-1">
-          <span className="text-[11px] text-ink/70 font-medium flex items-center gap-1">
-            <Wallet size={10} className="opacity-60" />
-            Caja
-            <Info size={10} className="opacity-40" />
-          </span>
-        </div>
-        <div className="flex items-baseline gap-1 mb-2.5">
-          <span className={`font-display text-[34px] font-semibold leading-none ${valueColor}`}>
-            {fmtBudget(c.caja)}
-          </span>
-        </div>
-        <div className="relative h-1 w-full rounded-full bg-sunken">
-          <div
-            className={`absolute inset-y-0 left-0 rounded-full transition-all duration-500 ${healthy ? 'bg-emerald-400' : 'bg-red-400'}`}
-            style={{ width: `${Math.min(100, Math.max(10, (c.caja / 3000) * 100))}%` }}
-          />
-        </div>
-        <div className="flex items-center justify-between mt-2">
-          <span className="text-[10px] text-ink/70">
-            {result === null ? 'Recaudación activa' : `Resultado fiscal ${fmtBudgetDelta(result)}`}
-          </span>
-          <span className={`text-[10px] font-semibold uppercase tracking-wider ${valueColor}`}>
-            {healthy ? 'OK' : 'EN ROJO'}
-          </span>
-        </div>
-      </div>
-    </InfoTooltip>
   );
 }
 
@@ -232,18 +125,6 @@ export function indicatorCards(gameState: GameState): IndicatorCard[] {
     },
   ];
   return cards;
-}
-
-export function IndicatorsPanel({ gameState }: IndicatorsPanelProps) {
-  const cards = indicatorCards(gameState);
-  return (
-    <section className="rounded-lg border border-rule bg-surface">
-      <div className="flex flex-wrap divide-x divide-rule">
-        {cards.map(card => <IndicatorCardView key={card.id} card={card} />)}
-        <BudgetIndicatorCard gameState={gameState} />
-      </div>
-    </section>
-  );
 }
 
 export type { Risk };
