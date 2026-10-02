@@ -335,6 +335,7 @@ function App() {
                       onEndTurn={handleEndTurn}
                       canEndTurn={!modalOpen}
                       index="02"
+                      compact
                     />
                   </div>
                   <div className="min-w-0 xl:flex-1 xl:min-h-0 xl:overflow-y-auto xl:pr-1 [scrollbar-gutter:stable]">

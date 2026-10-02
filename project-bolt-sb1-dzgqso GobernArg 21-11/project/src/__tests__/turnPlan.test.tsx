@@ -69,3 +69,12 @@ describe('modo simple: avisos de derrota arriba del tablero', () => {
     expect(texts.every(t => !/\d/.test(t))).toBe(true);
   });
 });
+
+describe('Este turno compacto (modo simple en escritorio)', () => {
+  it('encabezado en una línea, sin acciones todavía y el botón de cerrar', () => {
+    render(<TurnPlan gameState={game()} onActionSelect={() => {}} onEndTurn={() => {}} canEndTurn compact />);
+    expect(screen.getByText('Sin acciones todavía.')).toBeTruthy();
+    expect(screen.getByRole('button', { name: /Cerrar el trimestre/ })).toBeTruthy();
+    expect(screen.getByText(/Caja al cierre/)).toBeTruthy();
+  });
+});

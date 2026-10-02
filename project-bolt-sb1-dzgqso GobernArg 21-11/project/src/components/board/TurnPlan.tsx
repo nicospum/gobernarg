@@ -12,13 +12,15 @@ interface TurnPlanProps {
   canEndTurn: boolean;
   /** Número del rótulo (04 en el tablero). */
   index?: string;
+  /** Versión baja (modo simple en escritorio): todo en tres líneas. */
+  compact?: boolean;
 }
 
 /**
  * "Este turno": la agenda elegida, las acciones que quedan y la caja
  * proyectada al cierre, con el botón para cerrar el turno.
  */
-export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, index }: TurnPlanProps) {
+export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, index, compact = false }: TurnPlanProps) {
   const c = gameState.causal;
   const selected = getPolicyAvailability(gameState).filter(av => gameState.selectedActions.includes(av.action.id));
   const projection = projectedCloseCaja(c, gameState.selectedActions.map(actionId => ({ actionId })));
@@ -30,6 +32,64 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
     c.hyperStreak === 1 && 'Al borde de la hiperinflación: otro trimestre así y el gobierno cae.',
     c.govCrisisStreak === 1 && 'Crisis de gobernabilidad: si no se recupera el próximo trimestre, avanza el juicio político.',
   ].filter((t): t is string => !!t);
+
+  const endTurnButton = (cls: string) => (
+    <button
+      onClick={e => {
+        e.currentTarget.blur();
+        onEndTurn();
+      }}
+      disabled={!canEndTurn}
+      data-no-restore-focus
+      className={`sr-btn-lime justify-between ${cls}`}
+    >
+      Cerrar el trimestre
+      <ChevronRight size={17} />
+    </button>
+  );
+
+  if (compact) {
+    // Encabezado en una línea, lo elegido en chips, y caja y botón en la misma fila.
+    return (
+      <section className="sr-panel px-4 py-3 flex flex-col gap-2.5" aria-label="Este turno">
+        <div className="flex items-baseline gap-2">
+          {index && <span className="sr-label">{index} /</span>}
+          <h2 className="text-[15px] font-bold text-ink">Este turno</h2>
+          <span className="text-[12px] text-sala-muted">· {left} {left === 1 ? 'acción' : 'acciones'}</span>
+        </div>
+        {selected.length === 0 ? (
+          <p className="text-[12px] text-sala-muted">Sin acciones todavía.</p>
+        ) : (
+          <ul className="flex flex-wrap gap-1.5">
+            {selected.map(av => (
+              <li key={av.action.id} className="inline-flex items-center gap-1 rounded-md bg-sunken pl-2.5 pr-1 py-0.5 text-[12px] font-medium text-ink">
+                {av.action.name}
+                <button
+                  onClick={() => onActionSelect(av.action.id)}
+                  aria-label={`Quitar ${av.action.name} de la agenda`}
+                  className="w-6 h-6 grid place-items-center rounded text-sala-muted hover:text-ink hover:bg-surface"
+                >
+                  <X size={12} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        <div className="flex items-center gap-3">
+          <span className="text-[12px] text-sala-muted whitespace-nowrap" title="Estimación: no incluye efectos diferidos ni eventos.">
+            Caja al cierre{' '}
+            <strong className={`text-[15px] font-mono ${projection.caja >= 0 ? 'text-ink' : 'text-sala-bad'}`}>{fmtBudget(projection.caja)}</strong>
+          </span>
+          {endTurnButton('ml-auto px-4 h-10 text-[12px] min-w-[200px]')}
+        </div>
+        {projection.caja < 0 && (
+          <p className="flex items-center gap-1.5 text-[11px] font-semibold text-sala-bad">
+            <AlertTriangle size={12} className="flex-shrink-0" /> La caja queda en rojo: el Tesoro va a emitir.
+          </p>
+        )}
+      </section>
+    );
+  }
 
   return (
     <section className="sr-panel" aria-label="Este turno">
@@ -115,18 +175,7 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
         </p>
       ))}
       <div className="px-4 pb-4">
-        <button
-          onClick={e => {
-            e.currentTarget.blur();
-            onEndTurn();
-          }}
-          disabled={!canEndTurn}
-          data-no-restore-focus
-          className="sr-btn-lime w-full justify-between px-4 h-12 text-[12px]"
-        >
-          Cerrar el trimestre
-          <ChevronRight size={17} />
-        </button>
+        {endTurnButton('w-full px-4 h-12 text-[12px]')}
       </div>
     </section>
   );
