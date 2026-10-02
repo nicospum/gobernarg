@@ -17,6 +17,8 @@ import { Tooltip, TooltipContent } from './Tooltip';
 import { fmtBudget } from '@/lib/format';
 import { UI_CATEGORY_STYLES } from '@/data/categoryStyles';
 import { actionImage } from '@/lib/liteImages';
+import { detailed } from '@/lite/config';
+import { simpleEffects } from '@/lib/simpleView';
 import { ACTORS, SENSITIVITIES, type ActorId } from '@/data/causal';
 import { ACTION_PLAYER_NOTES, ACTION_RISK_TEXT } from '@/data/causal/playerTexts';
 import { COALITION_ACTIONS, type Availability } from '@/engine/causal';
@@ -88,6 +90,25 @@ function ChipInline({ chip }: { chip: EffectChip }) {
   );
 }
 
+/** Modo simple: hasta 3 efectos con flecha y "ahora / más adelante", sin números. */
+function SimpleEffectList({ actionId }: { actionId: string }) {
+  const list = simpleEffects(actionId);
+  if (list.length === 0) return <span className="text-[11px] text-sala-muted">Sin efectos directos en el país</span>;
+  return (
+    <ul>
+      {list.map(e => (
+        <li key={e.label} className="flex items-center justify-between gap-2 py-[3px] text-[12px]">
+          <span className="flex items-center gap-1.5 min-w-0">
+            <b className={`flex-shrink-0 ${TONE_TEXT[e.tone === 'neutral' ? 'neutral' : e.tone]}`} aria-label={e.up ? 'sube' : 'baja'}>{e.up ? '↑' : '↓'}</b>
+            <span className="text-ink/85 truncate">{e.label}</span>
+          </span>
+          <span className="text-[10px] text-sala-dim flex-shrink-0">{e.when}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export function ActionCard({ availability, requestedBy, onSelect, isSelected, disabled }: ActionCardProps) {
   const { action, pa, caja, reasons, available, needsDnu, repetitionWarning } = availability;
   const style = UI_CATEGORY_STYLES[action.category];
@@ -106,6 +127,15 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
   const [showDetail, setShowDetail] = useState(false);
   // Ilustración de la política (src/lite/imageMap.ts); no todas tienen.
   const illustration = actionImage(action.id);
+  // Modo simple (LITE_FEATURES.modoDetallado = false): sin números ni plazos.
+  const simple = !detailed();
+  const favorLine = (winners.length > 0 || losers.length > 0) && (
+    <p className="mt-2.5 text-[11px] text-sala-muted leading-snug">
+      {winners.length > 0 && <><b className="text-sala-good">Favorece:</b> {winners.slice(0, 2).map(a => ACTORS[a].shortName).join(', ')}</>}
+      {winners.length > 0 && losers.length > 0 && ' · '}
+      {losers.length > 0 && <><b className="text-sala-bad">Perjudica:</b> {losers.slice(0, 2).map(a => ACTORS[a].shortName).join(', ')}</>}
+    </p>
+  );
   const illustrationImg = (cls: string) =>
     illustration ? <img src={illustration} alt="" loading="lazy" decoding="async" className={`object-cover bg-sunken ${cls}`} /> : null;
 
@@ -113,7 +143,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
     <div className="flex flex-col gap-1.5 max-w-[280px]">
       {!touch && illustrationImg('w-full aspect-[2/1] rounded-md mb-1')}
       {playerNote && <p className="text-[11px] text-ink/80 leading-snug">{playerNote}</p>}
-      {timeline.length > 0 && (
+      {!simple && timeline.length > 0 && (
         <div>
           <div className="font-semibold text-[11px] text-ink mb-0.5">Qué produce</div>
           {timeline.map(t => (
@@ -126,13 +156,13 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
           ))}
         </div>
       )}
-      {notes.conditional.length > 0 && (
+      {!simple && notes.conditional.length > 0 && (
         <div>
           <div className="font-semibold text-[11px] text-ink mb-0.5">Según el contexto</div>
           {notes.conditional.slice(0, 3).map(n => <div key={n} className="text-[10px] text-ink/70">• {n}</div>)}
         </div>
       )}
-      {notes.repetition.length > 0 && (
+      {!simple && notes.repetition.length > 0 && (
         <div>
           <div className="font-semibold text-[11px] text-ink mb-0.5">Si se repite</div>
           {notes.repetition.slice(0, 2).map(n => <div key={n} className="text-[10px] text-amber-300">• {n}</div>)}
@@ -146,7 +176,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
       )}
       {riskText && <div className="text-[10px] text-amber-300">Riesgo: {riskText}</div>}
       <div className="text-[10px] text-ink/70">
-        {costLabel} · {pa} {pa === 1 ? 'acción' : 'acciones'}{action.cooldown > 1 ? ` · repetible cada ${action.cooldown} turnos` : ''}
+        {costLabel} · {pa} {pa === 1 ? 'acción' : 'acciones'}{!simple && action.cooldown > 1 ? ` · repetible cada ${action.cooldown} turnos` : ''}
       </div>
     </div>
   );
@@ -187,16 +217,16 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
             <img src={style.imageSrc} alt="" className="w-3.5 h-3.5 object-contain" />
             {style.label}
           </span>
-          {action.ley && (
+          {!simple && action.ley && (
             <span className="inline-flex items-center gap-0.5 text-[10px] text-sala-violet font-bold uppercase tracking-wider">
               <Scale size={10} />
               {needsDnu && available ? 'Ley por DNU' : 'Ley'}
             </span>
           )}
-          {action.tags.map(t => (
+          {!simple && action.tags.map(t => (
             <span key={t} className="text-[10px] text-sala-muted uppercase tracking-wider">· {TAG_LABEL[t] ?? t}</span>
           ))}
-          {action.cooldown > 1 && (
+          {!simple && action.cooldown > 1 && (
             <span className="inline-flex items-center gap-1 text-[10px] text-sala-muted" title="Turnos entre usos">
               <Clock size={11} /> cada {action.cooldown} turnos
             </span>
@@ -225,7 +255,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
             Abre una interna en tu partido (+{COALITION_ACTIONS[action.id]}): tus políticas rinden menos y cuestan más.
           </p>
         )}
-        {repetitionWarning ? (
+        {simple ? favorLine : repetitionWarning ? (
           <p className="mt-2 flex items-start gap-1.5 text-[11px] text-sala-warn leading-snug">
             <AlertTriangle size={11} className="mt-0.5 flex-shrink-0" /> {repetitionWarning}
           </p>
@@ -247,8 +277,10 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
 
       {/* Efectos previstos */}
       <div className="md:border-l border-t md:border-t-0 border-rule pt-3 md:pt-0 md:pl-3.5 min-w-0">
-        <span className="sr-eyebrow block mb-1.5">Efectos previstos</span>
-        {effects.length === 0 ? (
+        <span className="sr-eyebrow block mb-1.5">{simple ? 'Qué mueve' : 'Efectos previstos'}</span>
+        {simple ? (
+          <SimpleEffectList actionId={action.id} />
+        ) : effects.length === 0 ? (
           <span className="text-[11px] text-sala-muted">Sin efectos directos en indicadores</span>
         ) : (
           effects.map((e, i) => (
@@ -261,12 +293,12 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
             </div>
           ))
         )}
-        {timeline.length > 2 && <div className="text-[10px] text-sala-dim mt-0.5">+ efectos posteriores (ver detalle)</div>}
+        {!simple && timeline.length > 2 && <div className="text-[10px] text-sala-dim mt-0.5">+ efectos posteriores (ver detalle)</div>}
       </div>
 
       {/* Impacto fiscal */}
       <div className="flex flex-wrap md:flex-nowrap md:flex-col items-center md:items-start gap-x-3 gap-y-1.5">
-        <span className="sr-eyebrow">Impacto fiscal</span>
+        <span className="sr-eyebrow">{simple ? 'Costo' : 'Impacto fiscal'}</span>
         <strong className={`text-[15px] font-mono ${caja > 0 ? 'text-sala-good' : caja === 0 ? 'text-sala-muted' : blockReason === 'No alcanza la caja.' ? 'text-sala-bad' : 'text-ink'}`}>
           {costLabel}
         </strong>
