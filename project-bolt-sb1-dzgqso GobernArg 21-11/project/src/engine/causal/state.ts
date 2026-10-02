@@ -108,6 +108,26 @@ export function createCausalState(opts: CreateOptions = {}): CausalState {
     perks: opts.perks ?? defaultPerks(),
   };
 
+  // Condiciones vigentes del escenario (p. ej. default de deuda).
+  for (const [name, turns] of Object.entries(scenario.flags ?? {})) {
+    state.flags[name] = { value: 1, start: 1, end: turns === null ? null : turns, source: `escenario:${scenario.id}` };
+  }
+
+  if (scenario.emergencia) {
+    state.bonuses.push({
+      id: `escenario.${scenario.id}.GOB`, target: 'GOB', value: scenario.emergencia.gob,
+      start: 0, end: scenario.emergencia.turns - 1, source: 'escenario', label: 'Ley de emergencia',
+    });
+  }
+
+  (scenario.impulsos ?? []).forEach((imp, i) => {
+    state.agenda.push({
+      uid: `escenario.${scenario.id}.${i}`, effectId: `escenario.${scenario.id}.${i}`, actionId: 'escenario', originTurn: 0,
+      target: imp.target, mode: 'DELTA', magnitude: imp.perTurn, start: 1, end: imp.turns, everyTurn: true,
+      appliedTotal: 0, explanation: imp.label,
+    });
+  });
+
   // SAT inicial = objetivo con los indicadores iniciales (E = valor: sin componente relativo).
   // Primero los actores no políticos (APRO depende de ellos), después APRO y los políticos.
   for (const a of ACTOR_IDS) {

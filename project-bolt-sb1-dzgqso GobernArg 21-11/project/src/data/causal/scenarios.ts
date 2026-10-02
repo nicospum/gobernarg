@@ -1,16 +1,22 @@
 import type { ActorId, IndicatorId } from './index';
 
 /**
- * Escenarios de partida (decisión del usuario, sep-2026): se elige con qué país
- * arrancás. El escenario base del Excel es "Herencia pesada"; se suman un modo
- * de exploración tranquilo y el boom de 2003.
+ * Escenarios de partida (decisión del usuario, sep-2026): como en Civilization o
+ * Age of Empires, se elige con qué país arrancás. El escenario base del Excel
+ * pasa a ser "Herencia pesada"; se suma un modo de exploración tranquilo y
+ * escenarios inspirados en momentos de la historia argentina.
  *
  * Los escenarios sólo cambian el PUNTO DE PARTIDA (indicadores, cuentas,
  * Congreso, relaciones, condiciones vigentes). Las reglas del motor son las
  * mismas en todos.
  *
- * Versión Lite: tres niveles (Fácil, Normal y "Argentina"), uno por escenario.
- * Sin escenarios históricos ni desbloqueos.
+ * Flujo de inicio (decisión del usuario, sep-2026): primero se crea el
+ * personaje y después se elige la dificultad. Tres niveles abren un escenario
+ * cada uno (Fácil, Normal y "Argentina"); los escenarios históricos restantes
+ * se desbloquean ganando reelecciones.
+ *
+ * Lite: los históricos siguen acá y funcionan, pero están ocultos detrás de
+ * LITE_FEATURES.escenariosHistoricos (src/lite/config.ts).
  */
 export type ScenarioDifficulty = 'Exploración' | 'Normal' | 'Difícil' | 'Muy difícil';
 
@@ -38,6 +44,23 @@ export interface ScenarioDef {
   legAdj?: number;
   imagen?: number;
   relDelta?: Partial<Record<ActorId, number>>;
+  /**
+   * Ley de emergencia: el Congreso y los actores dan margen extra de
+   * gobernabilidad los primeros turnos (crisis heredadas).
+   */
+  emergencia?: { gob: number; turns: number };
+  /**
+   * Inercias del país heredado: cambios por turno durante los primeros turnos
+   * (p. ej. rebote por capacidad ociosa después de una crisis).
+   */
+  impulsos?: { target: IndicatorId; perTurn: number; turns: number; label: string }[];
+  /** Condiciones vigentes al inicio: nombre → turnos de duración (null = hasta que se resuelva). */
+  flags?: Record<string, number | null>;
+  /**
+   * Desbloqueo: reelecciones ganadas (en cualquier escenario) que hacen falta
+   * para jugarlo. 0 = disponible desde el inicio.
+   */
+  reelectionsToUnlock: number;
 }
 
 export const SCENARIOS: ScenarioDef[] = [
@@ -53,6 +76,7 @@ export const SCENARIOS: ScenarioDef[] = [
     caja: 2000,
     deuda: 0,
     desanclaje: 0,
+    reelectionsToUnlock: 0,
   },
   {
     id: 'herencia_pesada',
@@ -62,6 +86,7 @@ export const SCENARIOS: ScenarioDef[] = [
     description: 'El país que recibís arrastra inflación alta, pocas divisas y deuda. Es el escenario de diseño del motor: exige ordenar sin romper.',
     highlights: ['Inflación alta y expectativas desancladas', 'Deuda de $3.000M y reservas flacas', 'Caja justa: cada gasto se nota'],
     image: { group: 'backgrounds', key: 'presidentialOffice' },
+    reelectionsToUnlock: 0,
   },
   {
     id: 'viento_de_cola',
@@ -76,6 +101,47 @@ export const SCENARIOS: ScenarioDef[] = [
     deuda: 3000,
     ingresoMult: 1.1,
     desanclaje: 2,
+    reelectionsToUnlock: 0,
+  },
+  {
+    id: 'corralito',
+    name: 'Corralito',
+    era: 'Diciembre de 2001',
+    difficulty: 'Difícil',
+    description: 'Los depósitos están atrapados, el país está en default y la calle se llenó de cacerolas. No hay crédito: hay que reconstruir con lo que hay.',
+    highlights: ['Default: 8 turnos sin crédito (tampoco se pagan intereses)', 'Desempleo, pobreza y conflicto muy altos', 'Ley de emergencia: el Congreso te da margen los primeros turnos'],
+    image: { group: 'events', key: 'economicCrisis' },
+    indicators: { INFL: 40, ACTV: 36, PODA: 34, INVC: 38, PRES: 55, SOLV: 18, EXTE: 50, PSOC: 34, SEGU: 36, INST: 38, CONF: 55 },
+    caja: 700,
+    gastoCorr: 820,
+    deuda: 6000,
+    desanclaje: 8,
+    legAdj: 4,
+    imagen: 50,
+    emergencia: { gob: 12, turns: 6 },
+    impulsos: [{ target: 'ACTV', perTurn: 1.8, turns: 8, label: 'Rebote: capacidad ociosa después del derrumbe' }],
+    relDelta: { financiero: -15, sindicatos: -10, org_sociales: -10, oposicion: -10 },
+    flags: { default_deuda: 8 },
+    reelectionsToUnlock: 1,
+  },
+  {
+    id: 'pais_en_llamas',
+    name: 'País en llamas',
+    era: '1989: la hiperinflación',
+    difficulty: 'Muy difícil',
+    description: 'La inflación está al borde de la hiper, la caja vacía y los saqueos en la tapa de los diarios. El primer año decide todo.',
+    highlights: ['Inflación al borde de la hiper: dos turnos sobre 90 y caés', 'Caja flaca y expectativas desancladas', 'Asumís con apoyo: ley de emergencia y buena imagen, por poco tiempo'],
+    image: { group: 'events', key: 'socialProtest' },
+    indicators: { INFL: 72, ACTV: 40, PODA: 33, INVC: 38, SOLV: 30, EXTE: 38, PSOC: 38, SEGU: 40, INST: 46, CONF: 52 },
+    caja: 900,
+    deuda: 5000,
+    gastoCorr: 850,
+    desanclaje: 10,
+    legAdj: 4,
+    imagen: 58,
+    emergencia: { gob: 12, turns: 6 },
+    impulsos: [{ target: 'ACTV', perTurn: 1.6, turns: 8, label: 'Rebote: la economía vuelve a moverse si se calma la inflación' }],
+    reelectionsToUnlock: 2,
   },
 ];
 
@@ -85,6 +151,11 @@ export const DESIGN_SCENARIO_ID = 'herencia_pesada';
 
 export function getScenario(id: string | null | undefined): ScenarioDef {
   return SCENARIOS.find(s => s.id === id) ?? SCENARIOS.find(s => s.id === DESIGN_SCENARIO_ID)!;
+}
+
+/** Escenarios disponibles según las reelecciones ganadas. */
+export function isScenarioUnlocked(s: ScenarioDef, reelectionsWon: number, unlockAll = false): boolean {
+  return unlockAll || reelectionsWon >= s.reelectionsToUnlock;
 }
 
 export type DifficultyLevelId = 'facil' | 'normal' | 'argentina';
@@ -103,3 +174,8 @@ export const DIFFICULTY_LEVELS: DifficultyLevel[] = [
   { id: 'normal', label: 'Normal', tagline: 'El mundo te compra todo. Disfrutalo mientras dure.', scenarioId: 'viento_de_cola' },
   { id: 'argentina', label: 'Argentina', tagline: 'Deuda, inflación y reservas flacas. Lo de siempre.', scenarioId: 'herencia_pesada' },
 ];
+
+/** Escenarios históricos: los que no abre ningún nivel y se ganan con reelecciones. */
+export const HISTORIC_SCENARIOS: ScenarioDef[] = SCENARIOS.filter(
+  s => !DIFFICULTY_LEVELS.some(l => l.scenarioId === s.id),
+);

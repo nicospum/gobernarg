@@ -18,9 +18,13 @@ A y B comparten las funciones de las fases 0 a 3: inicio en dos pasos con nivele
 
 Versión reducida y compacta de A, con la misma estética y el mismo motor causal (indicadores, actores, acciones, eventos, mandatos, elecciones, legislativas y estrategia post-legislativa sin cambios).
 
-- **Qué se sacó:** asesores y gabinete, habilidades activas de los perfiles (quedan sus ventajas fijas), cuaderno político, historial de gestión, plataforma del partido, escenarios históricos desbloqueables (Corralito y País en llamas) con el sistema de desbloqueo, y el código del juego viejo que ya no se usaba.
+- **Qué se sacó:** asesores y gabinete, habilidades activas de los perfiles (quedan sus ventajas fijas), cuaderno político, plataforma del partido, la pantalla de asunción y el código del juego viejo que ya no se usaba.
+- **Qué está oculto (sigue en el código):**
+  - *Historial de gestión:* no hay panel ni botón, pero el registro de turnos se sigue grabando y alimenta la pantalla de legado (obras, crisis, estadísticas).
+  - *Escenarios históricos* (Corralito y País en llamas), con sus mecánicas (default de deuda, ley de emergencia, rebote) y el desbloqueo por reelecciones. Están apagados en `project/src/lite/config.ts`.
 - **Inicio en una pantalla:** bienvenida (Empezar / Continuar) y "Nueva partida" con nombre, foto (de la grilla o propia, recortada a 256×256), perfil y nivel (Fácil, Normal o Argentina).
 - **Guardado propio:** la partida se guarda en `gobernarg.lite.partida` (con versión de guardado), así no se mezcla con la de la versión completa en el mismo navegador. El formulario de playtest llega con la versión `A Lite`.
+- **Reactivar los escenarios históricos:** en `src/lite/config.ts` poner `LITE_FEATURES.escenariosHistoricos = true`. Con eso vuelven a "Nueva partida" (bloqueados hasta ganar reelecciones; el progreso se guarda en `gobernarg.lite.progress.v1`), se registra el desbloqueo al ganar una reelección y `npm run playtest` los incluye. No hace falta tocar nada más: los datos están en `src/data/causal/scenarios.ts` y las pruebas (`scenariosInterna.test.ts`, `liteFeatures.test.tsx`) los cubren con el flag apagado o prendido.
 - **Publicar en Netlify:** un sitio aparte apuntando a la rama `version-a-lite`, con los mismos pasos de abajo (el `netlify.toml` sirve tal cual).
 
 ## Correr el juego

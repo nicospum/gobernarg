@@ -263,11 +263,14 @@ export interface CausalActionDef {
  */
 const REQUIREMENTS: Record<string, Requirement[]> = {
   control_cambios: [{ when: 'not FLAG(cepo)', reason: 'Ya hay un control de cambios vigente.' }],
+  // FLAG(default_deuda): sólo lo activa el escenario Corralito (oculto en Lite).
+  prestamo_internacional: [{ when: 'not FLAG(default_deuda)', reason: 'País en default: sin acceso a organismos hasta renegociar.' }],
   liberar_cambios: [
     { when: 'FLAG(cepo)', reason: 'Sólo se puede liberar un cepo vigente.' },
     { when: 'EXTE>=45', reason: 'Primero hay que reconstruir reservas (sector externo más sólido).' },
   ],
   prestamo_local: [
+    { when: 'not FLAG(default_deuda)', reason: 'País en default: el mercado local está cerrado.' },
     { when: 'SOLV>=25', reason: 'Con este riesgo país el mercado local está cerrado.' },
     { when: 'SAT(financiero)>=35', reason: 'El sector financiero cerró el grifo.' },
   ],

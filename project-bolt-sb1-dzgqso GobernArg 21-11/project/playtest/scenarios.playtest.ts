@@ -3,7 +3,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { ALL_BOTS } from '../src/playtest/bots';
 import { playGame, type GameOutcome } from '../src/playtest/runner';
-import { SCENARIOS } from '../src/data/causal';
+import { playableScenarios } from '../src/lite/config';
 
 /**
  * Matriz de escenarios: cada escenario jugado por varias estrategias, con la
@@ -32,7 +32,7 @@ it(`genera la matriz de escenarios (${SEEDS} semillas)`, () => {
   const bots = ALL_BOTS.filter(b => BOT_IDS.includes(b.id));
   const header = `| Escenario | ${bots.map(b => `${b.id} · ${b.name}`).join(' | ')} |\n|---|${bots.map(() => '---').join('|')}|`;
   const rows: string[] = [];
-  for (const sc of SCENARIOS) {
+  for (const sc of playableScenarios()) {
     const cells = bots.map(bot => cell(Array.from({ length: SEEDS }, (_, i) => playGame(bot, i + 1, { scenarioId: sc.id }))));
     rows.push(`| ${sc.name} (${sc.difficulty}) | ${cells.join(' | ')} |`);
   }

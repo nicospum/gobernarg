@@ -6,6 +6,8 @@ import { THUMBNAIL_ARCHETYPES } from '../utils/iconThumbnails';
 import { ARCHETYPE_CARDS } from '../data/archetypes';
 import { DEFAULT_SCENARIO_ID, DIFFICULTY_LEVELS, getScenario, type ScenarioDef } from '../data/causal';
 import { photoToDataUrl, validatePhotoFile } from '@/lib/avatarPhoto';
+import { LITE_FEATURES } from '@/lite/config';
+import { HistoricScenarios } from './HistoricScenarios';
 
 export interface NewGameChoice {
   governorName: string;
@@ -17,6 +19,8 @@ export interface NewGameChoice {
 interface NewGameScreenProps {
   onStart: (choice: NewGameChoice) => void;
   onBack?: () => void;
+  /** Escenarios históricos desbloqueables (apagados en Lite; ver src/lite/config.ts). */
+  historicScenarios?: boolean;
 }
 
 /** Fotos de la grilla. Sin nombres a la vista: el texto alternativo es genérico. */
@@ -62,7 +66,7 @@ function Section({ title, hint, children }: { title: string; hint?: string; chil
 /**
  * Nueva partida en una sola pantalla (Lite): nombre, foto, perfil y nivel.
  */
-export function NewGameScreen({ onStart, onBack }: NewGameScreenProps) {
+export function NewGameScreen({ onStart, onBack, historicScenarios = LITE_FEATURES.escenariosHistoricos }: NewGameScreenProps) {
   const [governorName, setGovernorName] = useState('');
   const [avatar, setAvatar] = useState<string>(AVATARS[0]);
   const [uploaded, setUploaded] = useState<string | null>(null);
@@ -229,6 +233,8 @@ export function NewGameScreen({ onStart, onBack }: NewGameScreenProps) {
               })}
             </div>
           </Section>
+
+          {historicScenarios && <HistoricScenarios scenarioId={scenarioId} onSelect={setScenarioId} />}
 
           <button
             onClick={handleStart}

@@ -3,7 +3,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { ALL_BOTS } from '../src/playtest/bots';
 import { playGame, type GameOutcome } from '../src/playtest/runner';
-import { SCENARIOS } from '../src/data/causal';
+import { playableScenarios } from '../src/lite/config';
 
 /**
  * Asimetría ideológica (Fase 3): los programas heterodoxo y ortodoxo, jugados
@@ -42,7 +42,7 @@ it(`mide la asimetría ideológica (${SEEDS} semillas)`, () => {
   const json: Record<string, Record<string, Cell>> = {};
   lines.push(`| Escenario | ${bots.map(b => `${b.id} · ${b.name}`).join(' | ')} | Brecha G2c − G1c |`);
   lines.push(`|---|${bots.map(() => '---').join('|')}|---|`);
-  for (const sc of SCENARIOS) {
+  for (const sc of playableScenarios()) {
     json[sc.id] = {};
     for (const bot of bots) {
       json[sc.id][bot.id] = summarize(Array.from({ length: SEEDS }, (_, i) => playGame(bot, i + 1, { scenarioId: sc.id })));
@@ -63,7 +63,7 @@ it(`mide la asimetría ideológica (${SEEDS} semillas)`, () => {
     '',
     '## Motivos de derrota',
     '',
-    ...SCENARIOS.map(sc => `- **${sc.name}:** ${bots.map(b => `${b.id} ${JSON.stringify(json[sc.id][b.id].reasons)}`).join(' · ')}`),
+    ...playableScenarios().map(sc => `- **${sc.name}:** ${bots.map(b => `${b.id} ${JSON.stringify(json[sc.id][b.id].reasons)}`).join(' · ')}`),
     '',
   ].join('\n');
   writeFileSync(path.join(OUT, 'IDEOLOGIA.md'), md, 'utf-8');

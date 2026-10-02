@@ -14,6 +14,8 @@ import { EventModal } from './components/EventModal';
 import { NotificationCenter } from './components/NotificationCenter';
 import { CountryPanel } from './components/CountryPanel';
 import { clearSavedGame, loadGame, saveGame } from './lib/savegame';
+import { recordReelectionWin, recordScenarioWin } from './lib/progress';
+import { LITE_FEATURES } from './lite/config';
 import { lazyModal } from './lib/lazyModal';
 import { useIsMobile } from './lib/useMediaQuery';
 import { MobileBottomBar, MobileHeader, MobileKpis, MobileMenu, type MobileTab } from './components/mobile/MobileChrome';
@@ -22,7 +24,7 @@ import { TutorialCard } from './components/Tutorial';
 import { useTutorial } from './lib/tutorial';
 import { markGameStart } from './lib/playtest';
 
-import type { TurnSummary, MidtermStrategy } from './types/game';
+import type { ElectionResults, TurnSummary, MidtermStrategy } from './types/game';
 import type { ActorId } from './data/causal';
 import type { GameEvent } from './systems/events/types';
 import {
@@ -85,6 +87,26 @@ function App() {
     if (gameStarted) saveGame(gameState, pendingEvents);
   }, [gameStarted, gameState, pendingEvents]);
 
+  // Escenarios históricos (apagados en Lite, ver src/lite/config.ts): ganar la
+  // partida queda registrado por escenario y cada reelección ganada desbloquea
+  // el siguiente. Con el flag apagado no se registra nada.
+  useEffect(() => {
+    if (!LITE_FEATURES.escenariosHistoricos) return;
+    if (gameState.gameOver && gameState.victorious) recordScenarioWin(gameState.causal.scenarioId);
+  }, [gameState.gameOver, gameState.victorious, gameState.causal]);
+
+  // Se cuenta una sola vez por resultado (el objeto se conserva mientras el modal está abierto).
+  const countedElectionRef = useRef<ElectionResults | null>(null);
+  useEffect(() => {
+    const results = gameState.electionResults;
+    if (!results || results === countedElectionRef.current) return;
+    countedElectionRef.current = results;
+    if (LITE_FEATURES.escenariosHistoricos && results.kind === 'reelection' && results.victory) {
+      recordReelectionWin();
+      toast('Ganaste la reelección: desbloqueaste un escenario histórico nuevo.');
+    }
+  }, [gameState.electionResults]);
+
   // Perdiste o terminó el mandato: los eventos que quedaban ya no se responden.
   useEffect(() => {
     if (gameState.gameOver) setPendingEvents([]);
@@ -97,6 +119,8 @@ function App() {
   const handleContinue = () => {
     if (!savedGame) return;
     const { state, pendingEvents: events } = savedGame;
+    // La elección que ya estaba en pantalla no se vuelve a contar para desbloqueos.
+    countedElectionRef.current = state.electionResults;
     setGameState(state);
     setPendingEvents(events);
     setShowMidtermStrategy(!!state.pendingMidtermStrategy);

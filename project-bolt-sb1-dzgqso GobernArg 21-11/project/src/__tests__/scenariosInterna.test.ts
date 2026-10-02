@@ -1,7 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { DIFFICULTY_LEVELS, EFFECTS_BY_ACTION, SCENARIOS, getScenario } from '../data/causal';
+import {
+  DIFFICULTY_LEVELS,
+  EFFECTS_BY_ACTION,
+  HISTORIC_SCENARIOS,
+  SCENARIOS,
+  getScenario,
+  isScenarioUnlocked,
+} from '../data/causal';
 import {
   cajaCost,
+  debtService,
+  getAvailability,
   closeTurn,
   contributions,
   createCausalState,
@@ -39,17 +48,46 @@ describe('Escenarios', () => {
     expect(s.base.INFL).toBeLessThan(30);
   });
 
+  it('corralito: default sin crédito y sin intereses durante 8 turnos', () => {
+    let s = createCausalState({ scenarioId: 'corralito' });
+    expect(debtService(s)).toBe(0);
+    const loan = getAvailability(s, 'prestamo_internacional', [], 4);
+    expect(loan.available).toBe(false);
+    expect(loan.reasons.join(' ')).toMatch(/default/i);
+    for (let i = 0; i < 8; i++) s = step(s);
+    expect(debtService(s)).toBeGreaterThan(0);
+    expect(getAvailability(s, 'prestamo_internacional', [], 4).reasons.join(' ')).not.toMatch(/default/i);
+  });
+
+  it('las crisis traen ley de emergencia (gobernabilidad extra) y rebote de actividad', () => {
+    const sc = getScenario('corralito');
+    let s = createCausalState({ scenarioId: 'corralito' });
+    expect(s.bonuses.some(b => b.target === 'GOB' && b.value === sc.emergencia!.gob)).toBe(true);
+    const actv0 = s.base.ACTV;
+    s = step(s);
+    expect(s.records[0].applied.some(a => a.effectId?.startsWith('escenario.corralito'))).toBe(true);
+    expect(s.base.ACTV).not.toBe(actv0);
+  });
+
   it('dificultad: Fácil, Normal y Argentina abren un escenario cada una desde el inicio', () => {
     expect(DIFFICULTY_LEVELS.map(l => [l.label, l.scenarioId])).toEqual([
       ['Fácil', 'pais_en_calma'],
       ['Normal', 'viento_de_cola'],
       ['Argentina', 'herencia_pesada'],
     ]);
-    // Lite: sólo los escenarios de los tres niveles, sin históricos desbloqueables.
-    expect(SCENARIOS.map(s => s.id).sort()).toEqual(DIFFICULTY_LEVELS.map(l => l.scenarioId).sort());
-    for (const l of DIFFICULTY_LEVELS) expect(getScenario(l.scenarioId).id).toBe(l.scenarioId);
+    for (const l of DIFFICULTY_LEVELS) expect(isScenarioUnlocked(getScenario(l.scenarioId), 0)).toBe(true);
+    expect(HISTORIC_SCENARIOS.map(s => s.id)).toEqual(['corralito', 'pais_en_llamas']);
   });
 
+  it('desbloqueo: cada reelección ganada abre el siguiente escenario histórico', () => {
+    const corralito = getScenario('corralito');
+    const llamas = getScenario('pais_en_llamas');
+    expect(isScenarioUnlocked(corralito, 0)).toBe(false);
+    expect(isScenarioUnlocked(corralito, 1)).toBe(true);
+    expect(isScenarioUnlocked(llamas, 1)).toBe(false);
+    expect(isScenarioUnlocked(llamas, 2)).toBe(true);
+    expect(isScenarioUnlocked(llamas, 0, true)).toBe(true);
+  });
 });
 
 describe('Sin plataforma del partido', () => {
