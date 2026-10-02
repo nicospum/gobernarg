@@ -185,7 +185,7 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
       <button type="button" aria-label="Cerrar turno" data-no-restore-focus className="causal-primary b-close-turn" disabled={!canClose} onClick={e => closeTurn(e.currentTarget)}><FileSignature size={18} /><span><small>Despacho oficial</small>Cerrar turno</span><ArrowRight size={17} /></button>
     </header>
     {detailed && <NewsWire state={state} />}<CommandStatus state={state} />
-    <main className="b-cockpit" aria-label="Sala de situación presidencial">
+    <main className={`b-cockpit ${detailed ? '' : 'b-cockpit-lite'}`} aria-label="Sala de situación presidencial">
       <aside className="b-country-column b-scroll-region" aria-label="Briefing nacional">{country}<ProfileCard state={state} /></aside>
       <section className="b-decisions-column">
         <nav className="b-desk-tabs" aria-label="Secciones del despacho">{([['decisiones', 'Decisiones', LayoutGrid], ['finanzas', 'Tesoro', Wallet], ['agenda', 'Gestión', NotebookPen]] as const).filter(([id]) => detailed || id !== 'agenda').map(([id, label, Icon]) => <button type="button" key={id} aria-current={deskTab === id ? 'page' : undefined} onClick={() => { setDeskTab(id); setPreview(null); }}><Icon size={15} />{label}</button>)}<span>{scenarioName ?? 'País inicial'}</span></nav>

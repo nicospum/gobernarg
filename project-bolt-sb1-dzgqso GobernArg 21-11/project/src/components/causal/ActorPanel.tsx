@@ -35,7 +35,7 @@ export function ActorPanel({ state, onExecute, previewTargets = [] }: Props) {
   return <section className="b-actors-panel bg-card border border-border rounded-xl overflow-hidden">
     <div className="p-4 border-b border-border flex items-center gap-2"><Users size={17} className="text-blue-300" /><h2 className="font-display font-bold text-lg uppercase tracking-wide">{LITE_FEATURES.modoDetallado ? 'Factores de poder' : 'Actores'}</h2></div>
     {LITE_FEATURES.modoDetallado ? <p className="text-xs text-muted-foreground px-4 py-3">Satisfacción con los resultados y relación política son dos cosas distintas.</p> : <p className="text-xs text-muted-foreground px-4 py-3">Primero, los más descontentos.</p>}
-    <div className="max-h-[720px] overflow-y-auto divide-y divide-border">
+    <div className="b-actor-list max-h-[720px] overflow-y-auto divide-y divide-border">
       {(LITE_FEATURES.modoDetallado ? ACTORS : [...ACTORS].sort((a, b) => state.actors[a.id].satisfaction - state.actors[b.id].satisfaction)).map(actor => {
         const status = state.actors[actor.id];
         const relevant = actor.sensitivities.some(item => previewTargets.includes(item.indicatorId));

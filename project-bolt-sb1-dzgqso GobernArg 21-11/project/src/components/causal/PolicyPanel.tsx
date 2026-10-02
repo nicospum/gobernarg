@@ -40,7 +40,7 @@ export function PolicyPanel({ state, onExecute, onPreview }: Props) {
     </div>
     <label className="mx-4 mb-3 flex items-center gap-2 border border-border rounded px-3 py-2 text-muted-foreground"><Search size={15} /><input value={query} onChange={event => setQuery(event.target.value)} aria-label="Buscar políticas" placeholder="Buscar una política" className="min-w-0 w-full bg-transparent outline-none text-sm text-foreground" /></label>
     {LITE_FEATURES.modoDetallado && <p className="text-xs text-muted-foreground px-4 pb-3">Consultá los efectos y requisitos antes de confirmar. Los recursos se comprometen al ejecutar.</p>}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-4 pt-0">
+    <div className="b-policy-grid grid grid-cols-1 md:grid-cols-2 gap-3 p-4 pt-0">
       {policies.map(policy => {
         const availability = policyAvailability(state, policy.id);
         const allEffects = policyEffectsPreview(state, policy);

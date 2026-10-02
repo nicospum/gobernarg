@@ -38,6 +38,9 @@ describe('Avisos de derrota en modo simple', () => {
     const state = game();
     state.campaign!.insolvencyTurns = 1; state.campaign!.coupTurns = 2; state.campaign!.hyperinflationTurns = 1; state.campaign!.impeachmentTurns = 1;
     const texts = defeatWarnings(state).map(w => w.text);
+    // Rojo solo cuando el próximo cierre puede terminar el gobierno.
+    expect(defeatWarnings(state).find(w => w.id === 'insolvency')!.critical).toBe(false);
+    expect(defeatWarnings(state).find(w => w.id === 'coup')!.critical).toBe(true);
     expect(texts).toEqual(expect.arrayContaining([
       expect.stringMatching(/plata.*perdés en 2 turnos/),
       expect.stringMatching(/partido se aleja.*perdés en 1 turno/),

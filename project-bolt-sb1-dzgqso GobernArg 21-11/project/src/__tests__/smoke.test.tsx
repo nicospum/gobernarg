@@ -109,7 +109,7 @@ describe('Prueba de humo de la interfaz (versión B Lite)', { timeout: 30000 }, 
     // Actores en una lista plana, sin "factores de poder" ni grupos.
     expect(screen.getByRole('heading', { name: 'Actores' })).toBeTruthy();
     expect(screen.queryByText('Factores de poder')).toBeNull();
-    expect(screen.queryByText('Aprobación material')).toBeNull();
+    for (const metric of ['Aprobación material', 'Estabilidad', 'Legitimidad']) expect(screen.queryByText(metric)).toBeNull();
     expect(screen.getByRole('region', { name: 'El país' }).querySelectorAll('[data-indicator]')).toHaveLength(7);
     expect(screen.getByRole('region', { name: 'El país' }).querySelector('[data-indicator="proteccion"]')).toBeNull();
     for (const hidden of ['Cable de gobierno', 'Expediente del trimestre', 'Briefing del país', 'Componente electoral social']) expect(screen.queryByText(hidden)).toBeNull();
