@@ -19,7 +19,7 @@ export function TutorialCard({ actions, onDismiss, onOpenGuide }: {
           <span className="sr-label inline-flex items-center gap-1.5"><BookOpen size={13} /> Briefing inicial</span>
           <h2 className="mt-1 text-[18px] font-bold tracking-tight text-ink">Tu primer turno</h2>
         </div>
-        <button onClick={dismiss} aria-label="Cerrar la ayuda" className="w-9 h-9 -mt-1 -mr-1 flex items-center justify-center rounded-md text-ink/70 hover:text-ink hover:bg-ink/5">
+        <button onClick={dismiss} aria-label="Cerrar la ayuda" className="w-11 h-11 -mt-2 -mr-2 flex items-center justify-center rounded-md text-ink/70 hover:text-ink hover:bg-ink/5">
           <X size={18} />
         </button>
       </div>
@@ -35,10 +35,10 @@ export function TutorialCard({ actions, onDismiss, onOpenGuide }: {
         ))}
       </ol>
       <div className="flex flex-wrap items-center gap-2 mt-4">
-        <button onClick={dismiss} className="sr-btn-navy h-10 px-4 text-sm">
+        <button onClick={dismiss} className="sr-btn-navy h-11 px-4 text-sm">
           Entendido
         </button>
-        <button onClick={onOpenGuide} className="h-10 px-3 rounded-md text-sm font-semibold text-sala-blue hover:bg-sunken">
+        <button onClick={onOpenGuide} className="h-11 px-3 rounded-md text-sm font-semibold text-sala-blue hover:bg-sunken">
           Ver la guía completa
         </button>
       </div>

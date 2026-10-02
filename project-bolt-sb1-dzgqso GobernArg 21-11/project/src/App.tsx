@@ -168,7 +168,8 @@ function App() {
     const result = processEndTurn(gameState);
     setGameState(result.state);
 
-    toast(`Turno finalizado — Año ${result.summary.year}, Trimestre ${result.summary.quarter}`);
+    // En el celular el aviso tapaba el título del resumen, que ya dice año y trimestre.
+    if (!isMobile) toast(`Turno finalizado — Año ${result.summary.year}, Trimestre ${result.summary.quarter}`);
 
     // Si hay estrategia pendiente, mostrar modal
     if (result.state.pendingMidtermStrategy) {

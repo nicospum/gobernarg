@@ -108,10 +108,11 @@ function GameMenu({ governorName, turnLabel, onRestart, onOpenHelp, onOpenFeedba
         onClick={() => setOpen(o => !o)}
         aria-haspopup="menu"
         aria-expanded={open}
+        aria-label="Menú"
         className="flex items-center gap-1.5 text-[12px] text-sala-on-navy hover:text-white transition-colors px-2.5 h-10 rounded-md hover:bg-white/10"
       >
         <MoreHorizontal size={16} />
-        <span className="hidden md:inline">Menú</span>
+        <span className="hidden xl:inline">Menú</span>
       </button>
       {open && (
         <div role="menu" className="absolute right-0 top-full mt-1.5 w-60 rounded-lg border border-rule bg-surface text-ink shadow-xl p-1.5 z-50">
@@ -181,7 +182,8 @@ export function GameHeader({
         </div>
 
         {/* Gobernante */}
-        <div className={`flex items-center gap-2.5 flex-none min-w-0 ${divider}`}>
+        {/* Entre 1024 y 1279 px el nombre y el escenario se acortan para que entre todo. */}
+        <div className={`flex items-center gap-2.5 flex-initial min-w-0 ${divider}`}>
           {gameState.avatar ? (
             <img src={gameState.avatar} alt={gameState.governorName} className="w-9 h-9 rounded-full object-cover ring-2 ring-sala-sky/60" />
           ) : (
@@ -200,7 +202,7 @@ export function GameHeader({
         </div>
 
         {/* Calendario del mandato */}
-        <div className={`hidden md:flex flex-col gap-1.5 flex-1 min-w-[150px] max-w-[260px] ${divider}`}>
+        <div className={`hidden md:flex flex-col gap-1.5 flex-1 min-w-[136px] max-w-[260px] ${divider}`}>
           <div className="flex items-center gap-2 text-[11px] tracking-[0.08em] uppercase">
             <CalendarDays size={14} />
             <span>Año {gameState.year} / Trimestre {gameState.turn}</span>

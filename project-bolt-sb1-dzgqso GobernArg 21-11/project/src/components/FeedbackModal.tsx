@@ -22,7 +22,7 @@ function Choice({ name, value, options, onChange }: {
           role="radio"
           aria-checked={value === v}
           onClick={() => onChange(value === v ? '' : v)}
-          className={`min-h-10 px-3 rounded-md border text-sm ${
+          className={`min-h-11 min-w-11 px-3 rounded-md border text-sm ${
             value === v ? 'bg-sala-blue text-white border-sala-blue' : 'bg-surface text-ink border-rule hover:bg-sunken'
           }`}
         >
@@ -156,7 +156,7 @@ export function FeedbackModal({ gameState, onClose }: { gameState: GameState; on
             {status === 'failed' && (
               <div role="alert" className="rounded-md border border-amber-800 bg-amber-950 p-3 text-sm text-ink space-y-2">
                 <p>No se pudo enviar desde acá (pasa cuando el juego corre en tu computadora y no en la web). Copiá tus respuestas y mandáselas a quien te invitó a probarlo.</p>
-                <button onClick={copy} className="inline-flex items-center gap-1.5 h-10 px-3 rounded-md border border-rule bg-surface font-medium">
+                <button onClick={copy} className="inline-flex items-center gap-1.5 h-11 px-3 rounded-md border border-rule bg-surface font-medium">
                   {copied ? <Check size={16} /> : <Copy size={16} />} {copied ? 'Copiado' : 'Copiar respuestas'}
                 </button>
               </div>

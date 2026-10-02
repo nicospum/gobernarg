@@ -113,7 +113,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction, index, 
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-2.5 py-1.5 rounded-md text-[12px] whitespace-nowrap transition-colors ${
+                className={`px-2.5 py-1.5 max-lg:min-h-[44px] rounded-md text-[12px] whitespace-nowrap transition-colors ${
                   isActive ? 'bg-sala-blue text-white font-bold' : 'text-sala-muted hover:text-ink hover:bg-sunken'
                 }`}
               >
@@ -136,7 +136,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction, index, 
           </span>
           <button
             onClick={() => setShowBlocked(v => !v)}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-rule bg-surface hover:bg-sunken text-ink/80 transition-colors whitespace-nowrap"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 max-lg:min-h-[44px] rounded-md border border-rule bg-surface hover:bg-sunken text-ink/80 transition-colors whitespace-nowrap"
           >
             {showBlocked ? <EyeOff size={11} /> : <Eye size={11} />}
             {showBlocked ? 'Ocultar bloqueadas' : 'Ver también las bloqueadas'}

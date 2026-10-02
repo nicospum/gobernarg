@@ -162,12 +162,12 @@ export function MobileBottomBar({ gameState, tab, onTab, onEndTurn, canEndTurn }
   const caja = gameState.causal.caja;
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 bg-surface border-t border-rule shadow-[0_-6px_18px_rgb(9_44_85/0.08)] pb-[env(safe-area-inset-bottom)]">
-      <div className="flex items-center gap-3.5 h-[68px] pl-4 pr-3">
+      <div className="flex items-center gap-2.5 min-[400px]:gap-3.5 h-[68px] pl-4 pr-3">
         <div className="leading-tight">
           <div className="sr-eyebrow">Acciones</div>
           <div className="text-[18px] font-bold text-sala-lime-ink font-mono mt-0.5">{gameState.actions}</div>
         </div>
-        <button onClick={() => setShowBudget(true)} className="text-left leading-tight -mx-1 px-1 rounded hover:bg-sunken">
+        <button onClick={() => setShowBudget(true)} className="text-left leading-tight -mx-1 px-1 min-h-[44px] rounded hover:bg-sunken">
           <div className="sr-eyebrow">Caja</div>
           <div className={`text-[17px] font-bold font-mono mt-0.5 whitespace-nowrap ${caja >= 0 ? 'text-ink' : 'text-sala-bad'}`}>{fmtBudget(caja)}</div>
         </button>
@@ -178,9 +178,12 @@ export function MobileBottomBar({ gameState, tab, onTab, onEndTurn, canEndTurn }
           }}
           disabled={!canEndTurn}
           data-no-restore-focus
-          className="sr-btn-lime ml-auto h-12 px-3.5 gap-1.5 text-[11px]"
+          aria-label="Finalizar turno"
+          className="sr-btn-lime ml-auto h-12 px-3 min-[400px]:px-3.5 gap-1 whitespace-nowrap text-[11px]"
         >
-          Finalizar turno
+          {/* En pantallas de 360 px no entra "Finalizar turno" junto a la caja. */}
+          <span className="min-[400px]:hidden">Finalizar</span>
+          <span className="hidden min-[400px]:inline">Finalizar turno</span>
           <ChevronRight size={18} />
         </button>
       </div>

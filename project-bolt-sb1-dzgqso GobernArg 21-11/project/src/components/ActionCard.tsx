@@ -91,18 +91,18 @@ function ChipInline({ chip }: { chip: EffectChip }) {
 }
 
 /**
- * Modo simple en pantallas anchas: la columna de acciones mide lo mismo que
- * la de actores, así que la tarjeta pasa a dos columnas: arriba la imagen y
- * el texto; abajo "Qué mueve" a la izquierda y costo y botón a la derecha.
+ * Modo simple desde 1024 px: la columna de acciones es angosta (y desde 1280
+ * van dos tarjetas por fila), así que la tarjeta se apila: imagen, texto,
+ * "Qué mueve", y costo, riesgo y botón abajo.
  */
 const SIMPLE_XL = {
-  card: 'xl:grid-cols-1 xl:items-start xl:content-start xl:gap-2.5',
+  card: 'lg:grid-cols-1 lg:items-start lg:content-start lg:gap-2.5',
   info: '',
-  infoRow: 'xl:block',
-  image: 'xl:w-full xl:h-[120px] xl:mb-3',
-  effects: 'xl:border-l-0 xl:border-t xl:pt-2.5 xl:pl-0',
-  impact: 'xl:flex-row xl:flex-wrap xl:items-center xl:gap-x-3 xl:pt-1',
-  action: '',
+  infoRow: 'lg:block',
+  image: 'lg:w-full lg:h-[120px] lg:mb-3',
+  effects: 'lg:border-l-0 lg:border-t lg:pt-2.5 lg:pl-0',
+  impact: 'lg:flex-row lg:flex-wrap lg:items-center lg:gap-x-3 lg:pt-1',
+  action: 'lg:col-span-1 lg:flex-col lg:items-stretch',
 };
 
 /** Modo simple: hasta 3 efectos con flecha y "ahora / más adelante", sin números. */
@@ -333,7 +333,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
             type="button"
             onClick={e => { e.stopPropagation(); setShowDetail(true); }}
             onKeyDown={e => e.stopPropagation()}
-            className="h-10 px-3 rounded-md border border-rule text-[13px] font-medium text-ink bg-surface"
+            className="h-11 px-3 rounded-md border border-rule text-[13px] font-medium text-ink bg-surface"
           >
             Ver detalle
           </button>

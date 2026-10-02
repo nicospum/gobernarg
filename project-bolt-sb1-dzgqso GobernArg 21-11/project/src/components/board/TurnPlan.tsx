@@ -67,7 +67,7 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
                 <button
                   onClick={() => onActionSelect(av.action.id)}
                   aria-label={`Quitar ${av.action.name} de la agenda`}
-                  className="w-6 h-6 grid place-items-center rounded text-sala-muted hover:text-ink hover:bg-surface"
+                  className="w-6 h-6 max-lg:w-11 max-lg:h-11 grid place-items-center rounded text-sala-muted hover:text-ink hover:bg-surface"
                 >
                   <X size={12} />
                 </button>
@@ -129,7 +129,7 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
                 <button
                   onClick={() => onActionSelect(av.action.id)}
                   aria-label={`Quitar ${av.action.name} de la agenda`}
-                  className="w-7 h-7 grid place-items-center rounded text-sala-muted hover:text-ink hover:bg-sunken"
+                  className="w-7 h-7 max-lg:w-11 max-lg:h-11 grid place-items-center rounded text-sala-muted hover:text-ink hover:bg-sunken"
                 >
                   <X size={13} />
                 </button>

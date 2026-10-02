@@ -217,14 +217,14 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
       )}
 
       {/* Botones */}
-      <div className="flex gap-1.5 mt-1.5">
+      <div className="flex flex-wrap gap-1.5 mt-1.5">
         {organized ? (
           <>
             <button
               onClick={() => onInteract(actor, 'reunion')}
               disabled={disabled || !!meetReason}
               title={meetReason ?? 'Reunión: revela qué les preocupa y qué piden; habilita negociar 3 turnos'}
-              className="sr-btn-ghost flex-1 gap-1 text-[10px] px-1.5 py-1.5"
+              className="sr-btn-ghost flex-1 min-w-[124px] whitespace-nowrap gap-1 text-[10px] px-1.5 py-1.5 max-lg:min-h-[44px]"
             >
               <MessageSquare size={11} />
               Reunirse {!meetReason && <span className="font-mono text-[10px]">{meetingCost(c, actor) === 0 ? 'gratis' : '1 acción'}</span>}
@@ -233,7 +233,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
               <button
                 onClick={() => onInteract(actor, 'acuerdo')}
                 disabled={disabled}
-                className="sr-btn-navy flex-1 gap-1 text-[10px] px-1.5 py-1.5"
+                className="sr-btn-navy flex-1 min-w-[124px] whitespace-nowrap gap-1 text-[10px] px-1.5 py-1.5 max-lg:min-h-[44px]"
               >
                 <FileSignature size={11} />
                 Firmar acuerdo
@@ -243,7 +243,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
                 onClick={() => onInteract(actor, 'negociar')}
                 disabled={disabled || !!negReason}
                 title={negReason ?? `Negociar su demanda (1 PA). Chance ${chanceLabel(negotiationChance(c, actor))}.`}
-                className="sr-btn-ghost flex-1 gap-1 text-[10px] px-1.5 py-1.5"
+                className="sr-btn-ghost flex-1 min-w-[124px] whitespace-nowrap gap-1 text-[10px] px-1.5 py-1.5 max-lg:min-h-[44px]"
               >
                 <Handshake size={11} />
                 Negociar {!negReason && <span className="text-[10px]">({chanceLabel(negotiationChance(c, actor))})</span>}
@@ -255,7 +255,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
             onClick={() => onInteract(actor, 'encuesta')}
             disabled={disabled || !!pollReason}
             title={pollReason ?? 'Encuesta: revela su satisfacción y los dos temas que más la mueven'}
-            className="sr-btn-ghost flex-1 gap-1 text-[10px] px-1.5 py-1.5"
+            className="sr-btn-ghost flex-1 min-w-[124px] whitespace-nowrap gap-1 text-[10px] px-1.5 py-1.5 max-lg:min-h-[44px]"
           >
             <BarChart3 size={11} />
             Encuesta <span className="font-mono text-[10px]">{c.perks.freePolls ? 'gratis' : fmtBudget(POLL_COST)}</span>

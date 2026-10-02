@@ -47,7 +47,7 @@ export function ModalHeader({ label, title, subtitle, image, imageAlt = '', veil
           <button
             onClick={onClose}
             aria-label={closeLabel}
-            className={`${center ? 'absolute right-3 top-3' : 'flex-shrink-0'} w-10 h-10 grid place-items-center rounded-md text-white/80 hover:text-white hover:bg-white/10`}
+            className={`${center ? 'absolute right-3 top-3' : 'flex-shrink-0'} w-11 h-11 grid place-items-center rounded-md text-white/80 hover:text-white hover:bg-white/10`}
           >
             <X size={20} />
           </button>

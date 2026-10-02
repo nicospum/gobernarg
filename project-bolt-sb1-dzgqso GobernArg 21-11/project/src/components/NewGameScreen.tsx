@@ -120,7 +120,7 @@ export function NewGameScreen({ onStart, onBack, historicScenarios = LITE_FEATUR
           {onBack && (
             <button
               onClick={onBack}
-              className="flex items-center gap-1.5 h-10 px-3 rounded-md text-sm font-medium text-white/90 hover:text-white hover:bg-white/10"
+              className="flex items-center gap-1.5 h-11 px-3 rounded-md text-sm font-medium text-white/90 hover:text-white hover:bg-white/10"
             >
               <ArrowLeft size={16} /> Volver
             </button>

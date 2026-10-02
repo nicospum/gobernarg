@@ -99,18 +99,18 @@
   }
   /* Rótulos chicos en versalitas: "01 / BRIEFING". */
   .sr-label {
-    font-size: 10px;
+    font-size: 12px;
     line-height: 1.2;
     font-weight: 800;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: rgb(var(--blue));
   }
   .sr-eyebrow {
-    font-size: 10px;
+    font-size: 12px;
     line-height: 1.2;
     font-weight: 800;
-    letter-spacing: 0.13em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: rgb(var(--dim));
   }
@@ -144,7 +144,7 @@
     padding: 4px 7px;
     border: 1px solid currentColor;
     border-radius: 5px;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -288,4 +288,15 @@
 }
 .info-sheet > div > div + div {
   margin-top: 0.35rem;
+}
+
+/*
+ * Pulido responsive: ninguna letra por debajo de 12 px. Los tamaños chicos
+ * del rediseño (8–11 px) se leen a 12; las hojas de ayuda siguen en 14.
+ */
+.text-\[8px\],
+.text-\[9px\],
+.text-\[10px\],
+.text-\[11px\] {
+  font-size: 12px;
 }
