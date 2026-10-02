@@ -257,7 +257,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
   );
 }
 
-export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled, index = '05' }: ActorsPanelProps) {
+export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled, index }: ActorsPanelProps) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set(['produccion']));
   const c = gameState.causal;
   const freeLeft = c.perks.freeMeetingsPerTurn - c.freeMeetingsUsed;
@@ -266,7 +266,7 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled, i
     <section id="panel-actores" className="sr-panel scroll-mt-24" aria-label="Actores">
       <div className="sr-panel-head !pb-2.5">
         <div>
-          <span className="sr-label">{index} / Mapa de poder</span>
+          <span className="sr-label">{index ? `${index} / ` : ''}Mapa de poder</span>
           <h2 className="sr-panel-title">Actores</h2>
         </div>
         <UsersIcon size={17} className="text-sala-dim" />

@@ -17,7 +17,7 @@ interface TurnPlanProps {
  * "Este turno": la agenda elegida, las acciones que quedan y la caja
  * proyectada al cierre, con el botón para cerrar el turno.
  */
-export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, index = '04' }: TurnPlanProps) {
+export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, index }: TurnPlanProps) {
   const c = gameState.causal;
   const selected = getPolicyAvailability(gameState).filter(av => gameState.selectedActions.includes(av.action.id));
   const projection = projectedCloseCaja(c, gameState.selectedActions.map(actionId => ({ actionId })));
@@ -27,7 +27,7 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
     <section className="sr-panel" aria-label="Este turno">
       <div className="sr-panel-head">
         <div>
-          <span className="sr-label">{index} / Plan de gobierno</span>
+          <span className="sr-label">{index ? `${index} / ` : ''}Plan de gobierno</span>
           <h2 className="sr-panel-title">Este turno</h2>
         </div>
         <span className="flex-shrink-0 whitespace-nowrap rounded px-2 py-1.5 text-[11px] font-bold bg-sala-lime/25 text-sala-lime-ink" title="Acciones que te quedan este turno">

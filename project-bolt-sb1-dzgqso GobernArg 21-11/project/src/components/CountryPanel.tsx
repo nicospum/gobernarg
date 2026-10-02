@@ -49,7 +49,7 @@ function ScoreRing({ ok, total }: { ok: number; total: number }) {
  * (`compact`) cada categoría es un grupo que se abre y se cierra, con un
  * resumen de cuántos indicadores están en rojo.
  */
-export function CountryPanel({ gameState, compact = false, index = '01' }: { gameState: GameState; compact?: boolean; index?: string }) {
+export function CountryPanel({ gameState, compact = false, index }: { gameState: GameState; compact?: boolean; index?: string }) {
   const [openMacro, setOpenMacro] = useState<MacroCategory | null>('Economía');
   const c = gameState.causal;
   const ref = viewRef(c);
@@ -148,7 +148,7 @@ export function CountryPanel({ gameState, compact = false, index = '01' }: { gam
     <section className="sr-panel" aria-label="Estado del país">
       <div className="sr-panel-head">
         <div>
-          <span className="sr-label">{index} / Briefing</span>
+          <span className="sr-label">{index ? `${index} / ` : ''}Briefing</span>
           <h2 className="sr-panel-title">Estado del país</h2>
         </div>
       </div>

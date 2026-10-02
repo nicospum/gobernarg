@@ -23,11 +23,11 @@ export function Sheet({ title, onClose, children, footer, tall = false }: SheetP
     <div
       ref={dialogRef}
       data-sheet
-      className="outline-none fixed inset-0 z-[60] flex items-end justify-center bg-ink/55 animate-in fade-in-0 duration-150"
+      className="outline-none fixed inset-0 z-[60] flex items-end justify-center bg-sala-navy/55 animate-in fade-in-0 duration-150"
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div
-        className={`w-full max-w-lg bg-surface rounded-t-2xl shadow-2xl flex flex-col ${
+        className={`w-full max-w-lg bg-surface rounded-t-2xl shadow-2xl flex flex-col border-t-4 border-sala-cyan ${
           tall ? 'h-[92dvh]' : 'max-h-[85dvh]'
         } animate-in slide-in-from-bottom-8 duration-200`}
       >
@@ -35,7 +35,7 @@ export function Sheet({ title, onClose, children, footer, tall = false }: SheetP
           <span className="w-10 h-1 rounded-full bg-rule" />
         </div>
         <div className="flex items-start gap-2 pl-5 pr-2 pt-1">
-          <div className="flex-1 min-w-0 pt-2 font-display text-[20px] font-semibold text-ink leading-tight">{title}</div>
+          <div className="flex-1 min-w-0 pt-2 text-[19px] font-bold tracking-tight text-ink leading-tight">{title}</div>
           <button onClick={onClose} aria-label="Cerrar" className="w-11 h-11 flex items-center justify-center text-ink rounded-md hover:bg-sunken">
             <X size={20} />
           </button>

@@ -26,7 +26,7 @@ interface ControlPanelProps {
 
 type TabValue = 'todas' | UiCategory;
 
-export function ControlPanel({ gameState, onActionSelect, canTakeAction, index = '03', scroll = false }: ControlPanelProps) {
+export function ControlPanel({ gameState, onActionSelect, canTakeAction, index, scroll = false }: ControlPanelProps) {
   const [selectedCategory, setSelectedCategory] = useState<TabValue>('todas');
   const [showBlocked, setShowBlocked] = useState(false);
   const availability = getPolicyAvailability(gameState);
@@ -66,7 +66,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction, index =
       {/* Encabezado de la mesa de decisiones */}
       <div className="flex items-start justify-between gap-3 px-1 pb-3">
         <div>
-          <span className="sr-label">{index} / Mesa de decisiones</span>
+          <span className="sr-label">{index ? `${index} / ` : ''}Mesa de decisiones</span>
           <h2 className="mt-1.5 text-[24px] leading-tight font-bold tracking-tight text-ink">
             Acciones políticas{' '}
             <sup className="text-[12px] text-sala-blue font-bold align-top">{inCategory.filter(a => a.available).length}</sup>

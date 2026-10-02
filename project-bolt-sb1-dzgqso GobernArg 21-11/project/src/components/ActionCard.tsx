@@ -254,7 +254,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
       </div>
 
       {/* Impacto fiscal */}
-      <div className="flex md:flex-col items-center md:items-start gap-x-3 gap-y-1.5">
+      <div className="flex flex-wrap md:flex-nowrap md:flex-col items-center md:items-start gap-x-3 gap-y-1.5">
         <span className="sr-eyebrow">Impacto fiscal</span>
         <strong className={`text-[15px] font-mono ${caja > 0 ? 'text-sala-good' : caja === 0 ? 'text-sala-muted' : blockReason === 'No alcanza la caja.' ? 'text-sala-bad' : 'text-ink'}`}>
           {costLabel}

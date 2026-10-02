@@ -391,6 +391,7 @@ function App() {
       {isMobile && showNotifications && (
         <Sheet title="Notificaciones" onClose={() => setShowNotifications(false)}>
           <NotificationCenter
+            bare
             gameState={gameState}
             onMarkRead={() => setGameState(prev => markAllNotificationsRead(prev))}
             onDismiss={(id) => setGameState(prev => dismissNotification(prev, id))}

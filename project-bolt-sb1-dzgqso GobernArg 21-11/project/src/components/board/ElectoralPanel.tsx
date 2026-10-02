@@ -25,7 +25,7 @@ function Component({ label, value, weight, hint, color }: { label: string; value
 }
 
 /** Situación electoral: próxima elección, intención de voto y sus componentes. */
-export function ElectoralPanel({ gameState, index = '02' }: { gameState: GameState; index?: string }) {
+export function ElectoralPanel({ gameState, index }: { gameState: GameState; index?: string }) {
   const c = gameState.causal;
   const p = c.political;
   const risk = defeatRisk(p.iv);
@@ -48,7 +48,7 @@ export function ElectoralPanel({ gameState, index = '02' }: { gameState: GameSta
     <section className="sr-panel" aria-label="Situación electoral">
       <div className="sr-panel-head">
         <div>
-          <span className="sr-label">{index} / Terreno político</span>
+          <span className="sr-label">{index ? `${index} / ` : ''}Terreno político</span>
           <h2 className="sr-panel-title">Situación electoral</h2>
         </div>
         <span className={`sr-pill ${RISK_PILL[risk]}`}>Riesgo {riskLabel(risk).toLowerCase()}</span>
@@ -97,7 +97,7 @@ export function ElectoralPanel({ gameState, index = '02' }: { gameState: GameSta
 }
 
 /** Calendario político: los próximos hitos del mandato. */
-export function CalendarPanel({ gameState, index = '03' }: { gameState: GameState; index?: string }) {
+export function CalendarPanel({ gameState, index }: { gameState: GameState; index?: string }) {
   const current = (gameState.year - 1) * 4 + gameState.turn;
   const upcoming = POLITICAL_CALENDAR.map(ev => ({ ev, abs: (ev.year - 1) * 4 + ev.turn }))
     .filter(x => x.abs > current)
@@ -108,7 +108,7 @@ export function CalendarPanel({ gameState, index = '03' }: { gameState: GameStat
     <section className="sr-panel" aria-label="Calendario político">
       <div className="sr-panel-head">
         <div>
-          <span className="sr-label">{index} / Agenda</span>
+          <span className="sr-label">{index ? `${index} / ` : ''}Agenda</span>
           <h2 className="sr-panel-title">Calendario político</h2>
         </div>
         <CalendarDays size={17} className="text-sala-dim" />
