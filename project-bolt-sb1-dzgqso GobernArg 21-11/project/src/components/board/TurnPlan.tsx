@@ -22,6 +22,11 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
   const selected = getPolicyAvailability(gameState).filter(av => gameState.selectedActions.includes(av.action.id));
   const projection = projectedCloseCaja(c, gameState.selectedActions.map(actionId => ({ actionId })));
   const left = gameState.actions;
+  // Avisos que antes sólo estaban en Notificaciones: un trimestre más así y la partida termina.
+  const critical = [
+    c.hyperStreak === 1 && 'Al borde de la hiperinflación: otro trimestre así y el gobierno cae.',
+    c.govCrisisStreak === 1 && 'Crisis de gobernabilidad: si no se recupera el próximo trimestre, avanza el juicio político.',
+  ].filter((t): t is string => !!t);
 
   return (
     <section className="sr-panel" aria-label="Este turno">
@@ -88,6 +93,12 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
           Alerta fiscal: la caja caerá en déficit y el Tesoro emitirá moneda en el próximo turno.
         </p>
       )}
+      {critical.map(text => (
+        <p key={text} role="alert" className="mx-4 mb-3 flex items-start gap-1.5 rounded-md bg-red-500/10 px-2.5 py-2 text-[11px] font-semibold text-sala-bad">
+          <AlertTriangle size={13} className="mt-px flex-shrink-0" />
+          {text}
+        </p>
+      ))}
       <div className="px-4 pb-4">
         <button
           onClick={e => {

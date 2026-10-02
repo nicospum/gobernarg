@@ -19,6 +19,7 @@ A y B comparten las funciones de las fases 0 a 3: inicio en dos pasos con nivele
 Versión reducida y compacta de A, con la misma estética y el mismo motor causal (indicadores, actores, acciones, eventos, mandatos, elecciones, legislativas y estrategia post-legislativa sin cambios).
 
 - **Qué se sacó:** asesores y gabinete, habilidades activas de los perfiles (quedan sus ventajas fijas), cuaderno político, plataforma del partido, la pantalla de asunción y el código del juego viejo que ya no se usaba.
+- **Tablero:** muestra la barra superior, la barra de comando (próxima elección y riesgo), las 5 métricas, Estado del país, Situación electoral, Acciones políticas, Este turno y Actores. Se sacaron los paneles de condiciones vigentes, próximas maduraciones, informes de gestión, notificaciones (con la campanita) y calendario político; el motor sigue registrando esos datos. Los avisos de "un trimestre más y caés" (hiperinflación, crisis de gobernabilidad) se ven en "Este turno".
 - **Qué está oculto (sigue en el código):**
   - *Historial de gestión:* no hay panel ni botón, pero el registro de turnos se sigue grabando y alimenta la pantalla de legado (obras, crisis, estadísticas).
   - *Escenarios históricos* (Corralito y País en llamas), con sus mecánicas (default de deuda, ley de emergencia, rebote) y el desbloqueo por reelecciones. Están apagados en `project/src/lite/config.ts`.
