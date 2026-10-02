@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Lock, Trophy } from 'lucide-react';
 import { IMAGES } from '../utils/imageAssets';
 import {
-  DEFAULT_SCENARIO_ID,
   HISTORIC_SCENARIOS,
   getScenario,
   isScenarioUnlocked,
@@ -10,6 +9,7 @@ import {
   type ScenarioDifficulty,
 } from '../data/causal';
 import { loadProgress, setUnlockAll } from '@/lib/progress';
+import { DEFAULT_LEVEL_SCENARIO_ID } from '@/lite/config';
 
 /**
  * Escenarios históricos (Corralito y País en llamas), que se desbloquean
@@ -57,7 +57,7 @@ export function HistoricScenarios({ scenarioId, onSelect }: { scenarioId: string
     if (progress.unlockAll) {
       setProgress(setUnlockAll(false));
       const current = getScenario(scenarioId);
-      if (!isScenarioUnlocked(current, reelections, false)) onSelect(DEFAULT_SCENARIO_ID);
+      if (!isScenarioUnlocked(current, reelections, false)) onSelect(DEFAULT_LEVEL_SCENARIO_ID);
       return;
     }
     setDenied(true);

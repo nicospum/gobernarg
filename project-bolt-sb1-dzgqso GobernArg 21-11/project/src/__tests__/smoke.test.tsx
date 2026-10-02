@@ -52,8 +52,10 @@ describe('Prueba de humo de la interfaz', { timeout: 30000 }, () => {
     await click(screen.getByRole('radio', { name: 'Avatar 3' }));
     expect(screen.getByRole('radio', { name: 'Avatar 3' }).getAttribute('aria-checked')).toBe('true');
     await click(screen.getByRole('radio', { name: /^Sindicalista/ }));
-    await click(screen.getByRole('radio', { name: /^Fácil/ }));
-    expect(screen.getAllByRole('radio', { name: /^(Fácil|Normal|Argentina)/ })).toHaveLength(3);
+    // Niveles de la Lite: Normal (elegido de entrada) y Argentina; Fácil está oculto.
+    expect(screen.getAllByRole('radio', { name: /^(Fácil|Normal|Argentina)/ })).toHaveLength(2);
+    expect(screen.getByRole('radio', { name: /^Normal/ }).getAttribute('aria-checked')).toBe('true');
+    await click(screen.getByRole('radio', { name: /^Argentina/ }));
     await click(screen.getByRole('button', { name: /^Empezar$/ }));
 
     // Tablero: encabezado con el nombre y la tarjeta del primer turno.

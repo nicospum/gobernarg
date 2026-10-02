@@ -4,9 +4,9 @@ import type { Archetype } from '../types/game';
 import { IMAGES } from '../utils/imageAssets';
 import { THUMBNAIL_ARCHETYPES } from '../utils/iconThumbnails';
 import { ARCHETYPE_CARDS } from '../data/archetypes';
-import { DEFAULT_SCENARIO_ID, DIFFICULTY_LEVELS, getScenario, type ScenarioDef } from '../data/causal';
+import { getScenario, type ScenarioDef } from '../data/causal';
 import { photoToDataUrl, validatePhotoFile } from '@/lib/avatarPhoto';
-import { LITE_FEATURES } from '@/lite/config';
+import { DEFAULT_LEVEL_SCENARIO_ID, LITE_FEATURES, playableLevels } from '@/lite/config';
 import { HistoricScenarios } from './HistoricScenarios';
 
 export interface NewGameChoice {
@@ -73,7 +73,8 @@ export function NewGameScreen({ onStart, onBack, historicScenarios = LITE_FEATUR
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const [archetype, setArchetype] = useState<Archetype>('politico');
-  const [scenarioId, setScenarioId] = useState<string>(DEFAULT_SCENARIO_ID);
+  const [scenarioId, setScenarioId] = useState<string>(DEFAULT_LEVEL_SCENARIO_ID);
+  const levels = playableLevels();
   const fileRef = useRef<HTMLInputElement>(null);
 
   const name = governorName.trim();
@@ -218,8 +219,8 @@ export function NewGameScreen({ onStart, onBack, historicScenarios = LITE_FEATUR
           </Section>
 
           <Section title="Nivel">
-            <div role="radiogroup" aria-label="Nivel" className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {DIFFICULTY_LEVELS.map(level => {
+            <div role="radiogroup" aria-label="Nivel" className={`grid grid-cols-1 ${levels.length === 2 ? 'sm:grid-cols-2' : 'sm:grid-cols-3'} gap-3`}>
+              {levels.map(level => {
                 const sc = getScenario(level.scenarioId);
                 const selected = scenarioId === sc.id;
                 return (
