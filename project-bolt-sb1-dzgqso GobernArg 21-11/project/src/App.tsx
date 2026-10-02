@@ -5,19 +5,14 @@ import { NewGameScreen, type NewGameChoice } from './components/NewGameScreen';
 import { ControlPanel } from './components/ControlPanel';
 import { TurnSummaryModal } from './components/TurnSummaryModal';
 import { WelcomeScreen } from './components/WelcomeScreen';
-import { PendingEffectsPanel } from './components/PendingEffectsPanel';
-import { ActiveBenefits } from './components/ActiveBenefits';
-import { InformesPanel } from './components/InformesPanel';
 import { ActorsPanel } from './components/ActorsPanel';
 import { CommandStrip } from './components/board/CommandStrip';
 import { MetricsRow } from './components/board/MetricsRow';
 import { CivicBanner } from './components/board/CivicBanner';
 import { TurnPlan } from './components/board/TurnPlan';
-import { ElectoralPanel, CalendarPanel } from './components/board/ElectoralPanel';
+import { ElectoralPanel } from './components/board/ElectoralPanel';
 import { StatusFooter } from './components/board/StatusFooter';
-import { scrollToPanel } from './lib/boardView';
 import { EventModal } from './components/EventModal';
-import { NotificationCenter } from './components/NotificationCenter';
 import { CountryPanel } from './components/CountryPanel';
 import { clearSavedGame, loadGame, saveGame } from './lib/savegame';
 import { recordReelectionWin, recordScenarioWin } from './lib/progress';
@@ -25,7 +20,6 @@ import { LITE_FEATURES } from './lite/config';
 import { lazyModal } from './lib/lazyModal';
 import { useIsMobile } from './lib/useMediaQuery';
 import { MobileBottomBar, MobileHeader, MobileKpis, MobileMenu, type MobileTab } from './components/mobile/MobileChrome';
-import { Sheet } from './components/mobile/Sheet';
 import { TutorialCard } from './components/Tutorial';
 import { useTutorial } from './lib/tutorial';
 import { markGameStart } from './lib/playtest';
@@ -42,8 +36,6 @@ import {
   applyEventChoice,
   resolvePendingElection,
   retireFromReelection,
-  markAllNotificationsRead,
-  dismissNotification,
   triggerMidtermStrategy,
   type ActorInteraction,
 } from './engine/gameEngine';
@@ -77,11 +69,10 @@ function App() {
   // Partida guardada en el navegador (se lee una vez, al abrir el juego).
   const [savedGame, setSavedGame] = useState(() => loadGame());
   const boardRef = useRef<HTMLDivElement>(null);
-  // Celular: tablero en pestañas, con menú y notificaciones en hojas.
+  // Celular: tablero en pestañas, con el menú en una hoja.
   const isMobile = useIsMobile();
   const [mobileTab, setMobileTab] = useState<MobileTab>('acciones');
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
   // Ayuda: tarjeta del primer turno y guía "Cómo se juega" desde el menú.
   const tutorial = useTutorial();
   const [showHelp, setShowHelp] = useState(false);
@@ -256,7 +247,6 @@ function App() {
         <>
           <MobileHeader
             gameState={gameState}
-            onOpenNotifications={() => setShowNotifications(true)}
             onOpenMenu={() => setShowMobileMenu(true)}
           />
           <main className="px-3 pt-3 pb-[calc(9rem+env(safe-area-inset-bottom))] space-y-3">
@@ -277,14 +267,7 @@ function App() {
                 />
               </>
             )}
-            {mobileTab === 'pais' && (
-              <>
-                <CountryPanel gameState={gameState} compact />
-                <PendingEffectsPanel gameState={gameState} />
-                <ActiveBenefits gameState={gameState} />
-                <InformesPanel gameState={gameState} />
-              </>
-            )}
+            {mobileTab === 'pais' && <CountryPanel gameState={gameState} compact />}
             {mobileTab === 'actores' && (
               <>
                 <ElectoralPanel gameState={gameState} />
@@ -294,7 +277,6 @@ function App() {
                   onSelectAction={handleActionSelect}
                   disabled={gameState.gameOver || gameState.pendingElection}
                 />
-                <CalendarPanel gameState={gameState} />
               </>
             )}
           </main>
@@ -319,7 +301,6 @@ function App() {
             canEndTurn={!modalOpen}
             onOpenHelp={() => setShowHelp(true)}
             onOpenFeedback={() => setShowFeedback(true)}
-            onOpenNotifications={() => scrollToPanel('panel-notificaciones')}
           />
           <CommandStrip gameState={gameState} />
           <MetricsRow gameState={gameState} />
@@ -331,7 +312,6 @@ function App() {
               <aside className="flex flex-col gap-4 min-w-0" aria-label="Estado del país y terreno político">
                 <CountryPanel gameState={gameState} index="01" />
                 <ElectoralPanel gameState={gameState} index="02" />
-                <CalendarPanel gameState={gameState} index="10" />
               </aside>
 
               <div className="flex flex-col gap-4 min-w-0">
@@ -360,15 +340,6 @@ function App() {
                   disabled={gameState.gameOver || gameState.pendingElection}
                   index="05"
                 />
-                <ActiveBenefits gameState={gameState} index="06" />
-                <PendingEffectsPanel gameState={gameState} index="07" />
-                <InformesPanel gameState={gameState} index="08" />
-                <NotificationCenter
-                  gameState={gameState}
-                  onMarkRead={() => setGameState(prev => markAllNotificationsRead(prev))}
-                  onDismiss={(id) => setGameState(prev => dismissNotification(prev, id))}
-                  index="09"
-                />
               </aside>
             </div>
           </main>
@@ -381,22 +352,10 @@ function App() {
         <MobileMenu
           gameState={gameState}
           onClose={() => setShowMobileMenu(false)}
-          onOpenNotifications={() => setShowNotifications(true)}
           onOpenHelp={() => setShowHelp(true)}
           onOpenFeedback={() => setShowFeedback(true)}
           onRestart={handleRestart}
         />
-      )}
-
-      {isMobile && showNotifications && (
-        <Sheet title="Notificaciones" onClose={() => setShowNotifications(false)}>
-          <NotificationCenter
-            bare
-            gameState={gameState}
-            onMarkRead={() => setGameState(prev => markAllNotificationsRead(prev))}
-            onDismiss={(id) => setGameState(prev => dismissNotification(prev, id))}
-          />
-        </Sheet>
       )}
 
       {showTurnSummary && turnSummary && !showMidtermStrategy && !gameState.pendingElection && !gameState.electionResults && (

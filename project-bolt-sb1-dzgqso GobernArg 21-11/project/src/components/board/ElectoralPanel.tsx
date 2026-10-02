@@ -1,6 +1,4 @@
-import { CalendarDays } from 'lucide-react';
 import type { GameState } from '../../types/game';
-import { POLITICAL_CALENDAR } from '../../data/calendar';
 import { ACTOR_IDS, ACTORS, PARAMS, type ActorId } from '@/data/causal';
 import { riskLabel, type Risk } from '@/lib/risk';
 import { defeatRisk, nextElection } from '@/lib/boardView';
@@ -45,7 +43,7 @@ export function ElectoralPanel({ gameState, index }: { gameState: GameState; ind
   const target = PARAMS.VOTOS_PARA_GANAR;
 
   return (
-    <section className="sr-panel" aria-label="Situación electoral">
+    <section id="panel-electoral" className="sr-panel scroll-mt-24" aria-label="Situación electoral">
       <div className="sr-panel-head">
         <div>
           <span className="sr-label">{index ? `${index} / ` : ''}Terreno político</span>
@@ -92,49 +90,6 @@ export function ElectoralPanel({ gameState, index }: { gameState: GameState; ind
         <p><b className="text-sala-good">A favor</b> · {who(favor)}</p>
         <p><b className="text-sala-bad">En contra</b> · {who(contra)}</p>
       </div>
-    </section>
-  );
-}
-
-/** Calendario político: los próximos hitos del mandato. */
-export function CalendarPanel({ gameState, index }: { gameState: GameState; index?: string }) {
-  const current = (gameState.year - 1) * 4 + gameState.turn;
-  const upcoming = POLITICAL_CALENDAR.map(ev => ({ ev, abs: (ev.year - 1) * 4 + ev.turn }))
-    .filter(x => x.abs > current)
-    .sort((a, b) => a.abs - b.abs)
-    .slice(0, 4);
-
-  return (
-    <section className="sr-panel" aria-label="Calendario político">
-      <div className="sr-panel-head">
-        <div>
-          <span className="sr-label">{index ? `${index} / ` : ''}Agenda</span>
-          <h2 className="sr-panel-title">Calendario político</h2>
-        </div>
-        <CalendarDays size={17} className="text-sala-dim" />
-      </div>
-      {upcoming.length === 0 ? (
-        <p className="px-4 py-4 text-[12px] text-sala-muted">Sin eventos próximos en agenda.</p>
-      ) : (
-        <ul>
-          {upcoming.map(({ ev, abs }) => {
-            const diff = abs - current;
-            const hot = ev.type === 'election' || ev.type === 'crisis';
-            return (
-              <li key={ev.id} className="flex gap-3 px-4 py-3 border-t border-rule first:border-t-0">
-                <div className={`flex-shrink-0 w-12 text-center rounded-md py-1 ${hot ? 'bg-red-500/10 text-sala-bad' : 'bg-sunken text-sala-blue'}`}>
-                  <div className="text-[13px] font-bold font-mono leading-none">T{abs}</div>
-                  <div className="text-[9px] mt-0.5">en {diff}t</div>
-                </div>
-                <div className="min-w-0">
-                  <b className="block text-[12px] text-ink leading-tight">{ev.title}</b>
-                  <p className="text-[11px] text-sala-muted leading-snug mt-0.5">{ev.description}</p>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      )}
     </section>
   );
 }

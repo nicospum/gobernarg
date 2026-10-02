@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  Bell,
   BarChart3,
   ChevronRight,
   LayoutGrid,
@@ -31,22 +30,15 @@ const SHORT_LABEL: Record<string, string> = {
   voto: 'Voto',
 };
 
-export function unreadNotifications(state: GameState): number {
-  return state.notifications.slice(0, 10).filter(n => !n.read).length;
-}
-
-/** Encabezado del celular: banda marina con gobernante, turno y línea del mandato; campana y menú. */
-export function MobileHeader({ gameState, onOpenNotifications, onOpenMenu }: {
+/** Encabezado del celular: banda marina con gobernante, turno y línea del mandato; menú. */
+export function MobileHeader({ gameState, onOpenMenu }: {
   gameState: GameState;
-  onOpenNotifications: () => void;
   onOpenMenu: () => void;
 }) {
   const absoluteTurn = (gameState.year - 1) * 4 + gameState.turn;
   const inMandate = ((absoluteTurn - 1) % MAX_TURNS) + 1;
   const nextMilestone = Object.keys(MILESTONES).map(Number).find(t => t >= inMandate);
   const scenario = getScenario(gameState.causal?.scenarioId);
-  const unread = unreadNotifications(gameState);
-
   return (
     <header className="sticky top-0 z-40 sr-navy-bar shadow-[0_4px_18px_rgb(7_28_48/0.25)] pl-4 pr-1.5 pt-2.5 pb-3">
       <div className="flex items-center gap-2.5">
@@ -65,18 +57,6 @@ export function MobileHeader({ gameState, onOpenNotifications, onOpenMenu }: {
             {scenario && <> · {scenario.name}</>}
           </div>
         </div>
-        <button
-          onClick={onOpenNotifications}
-          aria-label={unread > 0 ? `Notificaciones (${unread} sin leer)` : 'Notificaciones'}
-          className="relative w-11 h-11 flex items-center justify-center rounded-md hover:bg-white/10"
-        >
-          <Bell size={21} />
-          {unread > 0 && (
-            <span className="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-sala-coral text-white text-[10px] font-bold flex items-center justify-center">
-              {unread}
-            </span>
-          )}
-        </button>
         <button
           onClick={onOpenMenu}
           aria-label="Menú"
@@ -218,17 +198,15 @@ export function MobileBottomBar({ gameState, tab, onTab, onEndTurn, canEndTurn }
   );
 }
 
-/** Menú del celular: notificaciones, ayuda y Reiniciar con confirmación. */
-export function MobileMenu({ gameState, onClose, onOpenNotifications, onOpenHelp, onOpenFeedback, onRestart }: {
+/** Menú del celular: ayuda, opinión y Reiniciar con confirmación. */
+export function MobileMenu({ gameState, onClose, onOpenHelp, onOpenFeedback, onRestart }: {
   gameState: GameState;
   onClose: () => void;
-  onOpenNotifications: () => void;
   onOpenHelp: () => void;
   onOpenFeedback: () => void;
   onRestart: () => void;
 }) {
   const [confirming, setConfirming] = useState(false);
-  const unread = unreadNotifications(gameState);
   const absoluteTurn = (gameState.year - 1) * 4 + gameState.turn;
   const inMandate = ((absoluteTurn - 1) % MAX_TURNS) + 1;
   const item = 'w-full min-h-[52px] flex items-center justify-between px-1 text-[15px] text-ink rounded-md hover:bg-sunken';
@@ -241,13 +219,6 @@ export function MobileMenu({ gameState, onClose, onOpenNotifications, onOpenHelp
     <Sheet title="Menú" onClose={onClose}>
       <div className="flex flex-col">
         <span className="sr-label mb-1">Partida</span>
-        <button className={item} onClick={go(onOpenNotifications)}>
-          Notificaciones
-          <span className="flex items-center gap-1 text-[13px] text-sala-muted">
-            {unread > 0 && `${unread} sin leer`}
-            <ChevronRight size={18} />
-          </span>
-        </button>
         <button className={item} onClick={go(onOpenHelp)}>Cómo se juega <ChevronRight size={18} className="text-sala-dim" /></button>
         <button className={item} onClick={go(onOpenFeedback)}>Contanos cómo te fue <ChevronRight size={18} className="text-sala-dim" /></button>
         <div className="h-px bg-rule my-2" />

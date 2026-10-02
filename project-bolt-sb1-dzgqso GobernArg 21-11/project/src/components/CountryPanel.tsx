@@ -145,7 +145,7 @@ export function CountryPanel({ gameState, compact = false, index }: { gameState:
   }
 
   return (
-    <section className="sr-panel" aria-label="Estado del país">
+    <section id="panel-pais" className="sr-panel scroll-mt-24" aria-label="Estado del país">
       <div className="sr-panel-head">
         <div>
           <span className="sr-label">{index ? `${index} / ` : ''}Briefing</span>

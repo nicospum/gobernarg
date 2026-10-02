@@ -1,4 +1,4 @@
-import { AlertCircle, FileText, Newspaper, Users } from 'lucide-react';
+import { AlertCircle, BarChart3, Users, Vote } from 'lucide-react';
 import type { GameState } from '../../types/game';
 import { riskLabel } from '@/lib/risk';
 import { defeatRisk, nextElection, scrollToPanel, turnInMandate } from '@/lib/boardView';
@@ -9,9 +9,9 @@ export function CommandStrip({ gameState }: { gameState: GameState }) {
   const risk = defeatRisk(gameState.causal.political.iv);
   const inMandate = turnInMandate(gameState);
   const links = [
-    { id: 'panel-informes', label: 'Informes', icon: Newspaper },
+    { id: 'panel-pais', label: 'País', icon: BarChart3 },
+    { id: 'panel-electoral', label: 'Electoral', icon: Vote },
     { id: 'panel-actores', label: 'Actores', icon: Users },
-    { id: 'panel-condiciones', label: 'Condiciones', icon: FileText },
   ];
   return (
     <div className="bg-surface border-b border-rule">

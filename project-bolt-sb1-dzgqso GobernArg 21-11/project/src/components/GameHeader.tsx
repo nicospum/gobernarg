@@ -1,5 +1,4 @@
 import {
-  Bell,
   CalendarDays,
   ChevronRight,
   Flag,
@@ -23,7 +22,6 @@ interface GameHeaderProps {
   onOpenHelp?: () => void;
   onOpenFeedback?: () => void;
   /** Campana: lleva al panel de notificaciones. */
-  onOpenNotifications?: () => void;
 }
 
 const POSITION_LABEL: Record<string, string> = {
@@ -156,7 +154,6 @@ export function GameHeader({
   canEndTurn,
   onOpenHelp,
   onOpenFeedback,
-  onOpenNotifications,
 }: GameHeaderProps) {
   const c = gameState.causal;
   const absoluteTurn = (gameState.year - 1) * 4 + gameState.turn;
@@ -165,7 +162,6 @@ export function GameHeader({
   const inMandate = ((absoluteTurn - 1) % MAX_TURNS) + 1;
   const apro = Math.round(c.political.apro);
   const last = c.records[c.records.length - 1];
-  const unread = gameState.notifications.slice(0, 10).filter(n => !n.read).length;
   const divider = 'pl-4 border-l border-white/15';
 
   return (
@@ -240,16 +236,6 @@ export function GameHeader({
 
         {/* Controles */}
         <div className={`flex items-center gap-1.5 flex-none ${divider}`}>
-          {onOpenNotifications && (
-            <button
-              onClick={onOpenNotifications}
-              aria-label={unread > 0 ? `Notificaciones (${unread} sin leer)` : 'Notificaciones'}
-              className="relative w-10 h-10 grid place-items-center rounded-md hover:bg-white/10"
-            >
-              <Bell size={17} />
-              {unread > 0 && <i className="absolute right-2 top-2 w-2 h-2 rounded-full bg-[#ff8a6e]" />}
-            </button>
-          )}
           <GameMenu
             governorName={gameState.governorName}
             turnLabel={`turno ${inMandate} de ${MAX_TURNS}`}
