@@ -70,6 +70,18 @@ export const ACTION_IMAGE: Record<string, string> = {
   reforma_educativa: 'programa_educativo',
   fortalecimiento_justicia: 'fortalecimiento_justicia',
   transparencia_anticorrupcion: 'transparencia_publica',
+  // Tercera tanda (Obras, hospitales y ambiente).
+  energia_renovable: 'energia_renovable',
+  construccion_hospitales: 'construccion_hospitales',
+  plan_conectividad: 'plan_conectividad',
+  infraestructura_vial: 'infraestructura_vial',
+  obras_hidricas: 'plan_hidrico',
+  // Gasoducto en construcción: "gasoductos, redes eléctricas y de gas".
+  infraestructura_energetica: 'red_gas',
+  estudio_factibilidad: 'estudio_factibilidad',
+  mantenimiento_infraestructura: 'mantenimiento_urbano',
+  // Plantación de monte nativo: la parte de bosques de la ley ambiental.
+  proteccion_ambiental: 'reforestacion',
 };
 
 /** Pantallas (pantallas/<nombre>.webp). */
