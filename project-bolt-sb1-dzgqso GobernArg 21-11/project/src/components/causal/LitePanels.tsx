@@ -1,5 +1,5 @@
-import type { CSSProperties } from 'react';
-import { AlertTriangle, ArrowDown, ArrowRight, ArrowUp, CalendarClock, Landmark, Wallet } from 'lucide-react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { AlertTriangle, ArrowDown, ChevronRight, ArrowRight, ArrowUp, CalendarClock, Landmark, Wallet } from 'lucide-react';
 import { policyEffectsPreview } from '../../causal/engine';
 import { AGREEMENT_LABELS } from '../../causal/interactions';
 import { actorName, totalArrears, totalDebt } from '../../causal/selectors';
@@ -93,7 +93,19 @@ export function LiteDefeatAlerts({ state }: { state: CausalState }) {
 export function LiteStatusStrip({ state, preview }: { state: CausalState; preview: PolicyDefinition | null }) {
   const c = state.campaign;
   const effects = preview ? policyEffectsPreview(state, preview) : [];
-  return <section className="b-lite-strip" aria-label="El país">
+  // Si la franja no entra, se desliza: un degradé y una flecha a la derecha lo avisan.
+  const strip = useRef<HTMLElement>(null);
+  const [more, setMore] = useState(false);
+  useEffect(() => {
+    const el = strip.current;
+    if (!el) return;
+    const update = () => setMore(el.scrollWidth - el.clientWidth - el.scrollLeft > 4);
+    update();
+    el.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    return () => { el.removeEventListener('scroll', update); window.removeEventListener('resize', update); };
+  }, []);
+  return <div className={`b-lite-strip-wrap ${more ? 'b-lite-strip-more' : ''}`}>{more && <span className="b-lite-strip-hint" aria-hidden="true"><ChevronRight size={18} /></span>}<section ref={strip} className="b-lite-strip" aria-label="El país">
     {c && <div className={`b-lite-chip b-lite-chip-vote ${c.votes < 45 ? 'b-tone-bad' : 'b-tone-good'}`}><span>Voto</span><strong>{fmtPct(c.votes, 0)}</strong><span className="b-kpi-goal" aria-hidden="true"><span style={{ width: `${Math.max(0, Math.min(100, c.votes))}%`, background: 'var(--tone)' }} /><i /></span><small>meta 45 %</small></div>}
     <div className={`b-lite-chip b-lite-chip-cash ${totalArrears(state) > 0 ? 'b-tone-critical' : 'b-tone-good'}`}><span>Caja</span><strong>{fmtMoney(state.cash)}</strong><small>{totalArrears(state) > 0 ? `Debés ${fmtMoney(totalArrears(state))}` : 'Tesoro'}</small></div>
     {VISIBLE_INDICATORS.map(({ id, label }) => {
@@ -108,5 +120,5 @@ export function LiteStatusStrip({ state, preview }: { state: CausalState; previe
         {arrows ? <small className={effectIsGood(id, total) ? 'text-emerald-300' : 'text-rose-300'} aria-label={`${label}: ${effectIsGood(id, total) ? 'mejora' : 'empeora'}`}>{arrows}</small> : <span className="b-meter" aria-hidden="true"><span style={{ width: `${goodness(id, value)}%`, background: 'var(--tone)' }} /></span>}
       </div>;
     })}
-  </section>;
+  </section></div>;
 }

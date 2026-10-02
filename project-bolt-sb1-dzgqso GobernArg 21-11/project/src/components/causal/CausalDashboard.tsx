@@ -143,10 +143,10 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
       <header className="sticky top-0 z-40 bg-card/95 backdrop-blur border-b border-border pl-4 pr-2 pt-2 pb-2.5">
         <div className="flex items-center gap-3">
           <PresidentialMark compact />{avatar && <img src={avatar} alt="" className="b-mobile-avatar h-8 w-8 shrink-0 rounded-full object-cover border border-amber-200/50" />}
-          <div className="flex-1 min-w-0"><h1 className="text-sm font-semibold truncate">{state.name}</h1><p className="text-[11px] text-muted-foreground truncate">Año {Math.ceil(inTerm / 4)} · Turno {inTerm} de {TURNS_PER_TERM} · Mandato {state.term}{scenarioName ? ` · ${scenarioName}` : ''}</p></div>
+          <div className="flex-1 min-w-0"><h1 className="text-sm font-semibold truncate">{state.name}</h1><p className="text-[11px] text-muted-foreground truncate">Año {Math.ceil(inTerm / 4)} · Turno {inTerm} de {TURNS_PER_TERM}{detailed ? ` · Mandato ${state.term}${scenarioName ? ` · ${scenarioName}` : ''}` : ''}</p></div>
           <button type="button" aria-label="Menú" className="w-11 h-11 flex items-center justify-center rounded hover:bg-white/10" onClick={() => setMenu(true)}><MoreHorizontal size={22} /></button>
         </div>
-        <div className="pr-2"><MandateTimeline inTerm={inTerm} wide /><div className="flex justify-between text-[10px] text-muted-foreground mt-1"><span>Mandato</span>{nextMilestone && <span className="text-amber-200 font-semibold">{MILESTONES[nextMilestone]}{nextMilestone > inTerm ? ` en ${nextMilestone - inTerm} ${nextMilestone - inTerm === 1 ? 'turno' : 'turnos'}` : ' este turno'}</span>}<span>Fin T{TURNS_PER_TERM}</span></div></div>
+        <div className="pr-2"><MandateTimeline inTerm={inTerm} wide /><div className="flex justify-between text-[10px] text-muted-foreground mt-1"><span>Mandato{detailed ? '' : ` ${state.term}`}</span>{nextMilestone && <span className="text-amber-200 font-semibold">{MILESTONES[nextMilestone]}{nextMilestone > inTerm ? ` en ${nextMilestone - inTerm} ${nextMilestone - inTerm === 1 ? 'turno' : 'turnos'}` : ' este turno'}</span>}<span>Fin T{TURNS_PER_TERM}</span></div></div>
       </header>
       <main className="px-3 pt-3 pb-[calc(9rem+env(safe-area-inset-bottom))] space-y-4">
         {detailed ? <><NewsWire state={state} /><PoliticalStatus state={state} compact /></> : <LiteStatusStrip state={state} preview={null} />}
@@ -164,10 +164,10 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
         </>}
       </main>
       <div className="fixed inset-x-0 bottom-0 z-40 bg-card border-t border-border shadow-[0_-8px_20px_rgba(0,0,0,.35)] pb-[env(safe-area-inset-bottom)]">
-        <div className="flex items-center gap-4 h-[68px] pl-4 pr-3">
-          <div className="leading-tight"><p className="text-[10px] text-muted-foreground">Agenda</p><strong className="text-base">{acciones(state.actionPoints)}</strong></div>
-          <div className="leading-tight"><p className="text-[10px] text-muted-foreground">Caja</p><strong className="text-base">{fmtMoney(state.cash)}</strong></div>
-          <button type="button" data-no-restore-focus className="causal-primary ml-auto h-12 flex items-center gap-2" disabled={!canClose} onClick={e => closeTurn(e.currentTarget)}>Cerrar turno <ArrowRight size={16} /></button>
+        <div className="b-mobile-dock flex items-center gap-3 h-[68px] pl-4 pr-3">
+          <div className="leading-tight whitespace-nowrap"><p className="text-[10px] text-muted-foreground">Agenda</p><strong className="text-base">{acciones(state.actionPoints)}</strong></div>
+          <div className="b-dock-cash leading-tight whitespace-nowrap"><p className="text-[10px] text-muted-foreground">Caja</p><strong className="text-base">{fmtMoney(state.cash)}</strong></div>
+          <button type="button" data-no-restore-focus className="causal-primary ml-auto h-12 shrink-0 whitespace-nowrap flex items-center gap-2" disabled={!canClose} onClick={e => closeTurn(e.currentTarget)}>Cerrar turno <ArrowRight size={16} /></button>
         </div>
         <nav aria-label="Secciones" className="grid grid-cols-3 h-16 border-t border-border">
           {TABS.map(({ id, label, icon: Icon }) => <button key={id} type="button" aria-current={tab === id ? 'page' : undefined} onClick={() => { setTab(id); setPreview(null); window.scrollTo({ top: 0 }); }} className={`-mt-px flex flex-col items-center justify-center gap-0.5 text-xs border-t-[3px] ${tab === id ? 'border-amber-200 text-white font-semibold' : 'border-transparent text-muted-foreground'}`}><Icon size={21} strokeWidth={1.8} />{label}</button>)}

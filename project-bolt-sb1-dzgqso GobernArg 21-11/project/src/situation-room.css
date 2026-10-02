@@ -333,6 +333,45 @@
 .b-lite-chip-vote, .b-lite-chip-cash { flex-basis: 150px; min-width: 140px; }
 .b-lite-chip-vote > strong, .b-lite-chip-cash > strong { font: 700 18px/1.2 'JetBrains Mono', monospace; }
 .b-lite-chip-vote .b-kpi-goal { margin-top: 2px; }
-.b-mobile .b-lite-strip { margin: 0 -12px; padding: 0 12px 2px; border-bottom: 0; }
+.b-mobile .b-lite-strip-wrap { margin: 0 -12px; }
+.b-mobile .b-lite-strip { padding: 0 12px 2px; border-bottom: 0; }
 .b-mobile .b-lite-chip { flex: 0 0 auto; min-width: 104px; }
 .b-mobile .b-lite-chip-vote, .b-mobile .b-lite-chip-cash { min-width: 120px; }
+
+/* ─── Pulido responsive (Lite) ─── */
+/* La franja de arriba se desliza: degradé y flecha a la derecha mientras haya más. */
+.b-lite-strip-wrap { position: relative; flex-shrink: 0; min-width: 0; }
+.b-lite-strip-more::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 56px; pointer-events: none; background: linear-gradient(90deg, transparent, #06090d 85%); }
+.b-lite-strip-hint { position: absolute; z-index: 1; right: 6px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #16202d; border: 1px solid #2c405b; color: #9cc3e6; pointer-events: none; animation: b-strip-nudge 1.6s ease-in-out infinite; }
+@keyframes b-strip-nudge { 0%, 100% { transform: translate(0, -50%); } 50% { transform: translate(3px, -50%); } }
+.b-lite-strip { scroll-snap-type: x proximity; scroll-padding-inline: 16px; }
+.b-mobile .b-lite-strip { scroll-padding-inline: 12px; }
+.b-lite-chip { scroll-snap-align: start; }
+/* Celular: la cabecera deja lugar al nombre (el sello alcanza como marca). */
+.b-mobile > header .b-brand > div { display: none; }
+.b-mobile-dock .causal-primary { padding-inline: 16px; }
+/* Legibilidad: nada por debajo de 12 px. */
+.situation-room .text-\[9px\], .situation-room .text-\[10px\], .situation-room .text-\[11px\],
+.b-eyebrow, .b-edition, .b-president-name, .b-president-name small, .b-turn-clock span, .b-agenda-resource span, .b-close-turn small, .b-wire,
+.b-kpi-label, .b-kpi-value small, .b-kpi-detail, .b-tag, .b-briefing-note, .b-preview-legend, .b-indicator-group h3, .b-indicator-top, .b-indicator-bottom, .b-indicator-preview,
+.b-desk-tabs > span, .b-congress-brief strong, .b-congress-brief span, .b-desktop .b-policy-panel [aria-label="Categorías de políticas"] button,
+.b-policy-effects, .b-policy-effects small, .b-policy-effects .b-eyebrow, .b-execution-ledger > div, .b-execution-ledger > p, .b-execution-tag,
+.b-power-column .b-actors-panel > p, .b-actor-channel, .b-actor-metrics > span, .b-actor-footnote, .b-classification, .b-scene-stamp, .b-welcome-footer,
+.b-new-label, .b-new-hint, .b-new-upload, .b-new-option em, .b-new-historic-head span, .b-mobile .b-edition, .b-mobile .b-wire-label, .b-mobile .b-indicator-top, .b-mobile .b-indicator-preview,
+.b-lite-money > span, .b-lite-money > small, .b-lite-change small, .b-lite-chip > span:first-child, .b-lite-chip > small { font-size: 12px; }
+.b-eyebrow, .b-edition { letter-spacing: .08em; }
+/* Celular, tablet y pantallas táctiles: todo lo que se toca mide al menos 44 px de alto. */
+@media (max-width: 1023px), (pointer: coarse) {
+  .situation-room button:not(.b-new-avatar):not(.b-actor-card):not(.b-policy-card), .situation-room select, .situation-room input:not([type=file]):not(.sr-only) { min-height: 44px; }
+  .situation-room summary { padding-block: 14px; }
+  .situation-room .b-policy-panel > label { padding-block: 0; }
+}
+/* Celulares angostos: la caja ya está en la franja de arriba; "Cerrar turno" entra entero. */
+@media (max-width: 399px) { .b-dock-cash { display: none; } }
+/* Escritorio chico (1024–1279): sin rótulos decorativos que aprietan la cabecera. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .b-command-header .b-edition, .b-close-turn small { display: none; }
+  .b-agenda-resource span { white-space: nowrap; }
+}
+/* Escritorio Lite: las categorías de políticas se acomodan en renglones en vez de quedar cortadas. */
+.b-cockpit-lite .b-policy-panel [aria-label="Categorías de políticas"] { flex-wrap: wrap; overflow: visible; }
