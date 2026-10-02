@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ConfirmDialog } from './ConfirmDialog';
 import { GameState } from '../types/game';
 import { fmtBudget, fmtBudgetDelta } from '@/lib/format';
+import { detailed } from '@/lite/config';
 import { getScenario } from '@/data/causal';
 
 interface GameHeaderProps {
@@ -218,7 +219,9 @@ export function GameHeader({
         <div className={`flex flex-col gap-0.5 flex-none ${divider}`} title="Caja del Tesoro">
           <span className="text-[8px] font-bold tracking-[0.14em] text-sala-on-navy">CAJA</span>
           <strong className="text-[19px] leading-none font-mono">{fmtBudget(c.caja)}</strong>
-          {last ? (
+          {!detailed() ? (
+            <small className={`text-[9px] ${c.caja >= 0 ? 'text-sala-on-navy' : 'text-[#ffa594]'}`}>{c.caja >= 0 ? 'con fondos' : 'en rojo'}</small>
+          ) : last ? (
             <small className={`text-[9px] ${last.fiscal.resultado >= 0 ? 'text-[#7fe0c7]' : 'text-[#ffa594]'}`}>
               {fmtBudgetDelta(last.fiscal.resultado)} / turno
             </small>

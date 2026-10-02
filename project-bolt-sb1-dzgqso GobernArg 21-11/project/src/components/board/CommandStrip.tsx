@@ -2,6 +2,7 @@ import { AlertCircle, BarChart3, Users, Vote } from 'lucide-react';
 import type { GameState } from '../../types/game';
 import { riskLabel } from '@/lib/risk';
 import { defeatRisk, nextElection, scrollToPanel, turnInMandate } from '@/lib/boardView';
+import { detailed } from '@/lite/config';
 
 /** Barra de comando: briefing del turno, próxima elección y accesos a los paneles. */
 export function CommandStrip({ gameState }: { gameState: GameState }) {
@@ -13,6 +14,19 @@ export function CommandStrip({ gameState }: { gameState: GameState }) {
     { id: 'panel-electoral', label: 'Electoral', icon: Vote },
     { id: 'panel-actores', label: 'Actores', icon: Users },
   ];
+  if (!detailed()) {
+    // Modo simple: solo la próxima elección y el riesgo.
+    return (
+      <div className="bg-surface border-b border-rule">
+        <div className="max-w-[1540px] mx-auto min-h-[40px] flex items-center gap-1.5 px-4 lg:px-7 py-2 text-[12px] text-sala-muted">
+          <AlertCircle size={15} className="text-sala-coral" />
+          <b className="text-sala-coral">{next.label}</b>
+          {next.turns === 0 ? ' al cerrar este turno' : ` en ${next.turns} ${next.turns === 1 ? 'turno' : 'turnos'}`}
+          <span>·</span> riesgo de derrota {riskLabel(risk).toLowerCase()}
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="bg-surface border-b border-rule">
       <div className="max-w-[1540px] mx-auto min-h-[46px] flex flex-wrap items-center gap-x-6 gap-y-2 px-4 lg:px-7 py-2">

@@ -2,10 +2,13 @@ import { Save } from 'lucide-react';
 import type { GameState } from '../../types/game';
 import { getScenario } from '@/data/causal';
 import { turnInMandate } from '@/lib/boardView';
+import { detailed } from '@/lite/config';
 
 /** Pie de estado: partida en curso, guardado automático y escenario. */
 export function StatusFooter({ gameState }: { gameState: GameState }) {
   const scenario = getScenario(gameState.causal.scenarioId);
+  // Modo simple: sin pie (el guardado es automático y el escenario ya está arriba).
+  if (!detailed()) return null;
   return (
     <footer className="bg-surface border-t border-rule">
       <div className="max-w-[1540px] mx-auto flex flex-wrap items-center gap-x-6 gap-y-1.5 px-4 lg:px-7 py-3 text-[11px] text-sala-muted">
