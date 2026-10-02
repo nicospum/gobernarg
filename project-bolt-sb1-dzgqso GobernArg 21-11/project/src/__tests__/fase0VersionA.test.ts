@@ -1,16 +1,26 @@
 import { describe, expect, it } from 'vitest';
 import { applyCommand, createCausalGame } from '../causal/engine';
 import { deserializeSession, newSession, serializeSession } from '../causal/persistence';
-import { DIFFICULTY_LEVELS, SCENARIOS } from '../causal/scenarios';
+import { DIFFICULTY_LEVELS, HISTORIC_SCENARIOS, SCENARIOS, getScenario, isScenarioUnlocked } from '../causal/scenarios';
 import { totalDebt } from '../causal/selectors';
 import type { GameCommand } from '../causal/types';
 
 describe('Escenarios y niveles de dificultad (traídos de la versión A)', () => {
-  it('Fácil, Normal y Argentina abren un escenario cada uno; no hay escenarios para desbloquear', () => {
+  it('Fácil, Normal y Argentina abren un escenario cada uno desde el inicio', () => {
     expect(DIFFICULTY_LEVELS.map(l => [l.label, l.scenarioId])).toEqual([
       ['Fácil', 'pais_en_calma'], ['Normal', 'viento_de_cola'], ['Argentina', 'herencia_pesada'],
     ]);
-    expect(SCENARIOS.map(s => s.id)).toEqual(['pais_en_calma', 'viento_de_cola', 'herencia_pesada']);
+    for (const l of DIFFICULTY_LEVELS) expect(isScenarioUnlocked(getScenario(l.scenarioId)!, 0)).toBe(true);
+    expect(HISTORIC_SCENARIOS.map(s => s.id)).toEqual(['corralito', 'pais_en_llamas']);
+  });
+
+  it('cada reelección ganada abre el siguiente escenario histórico', () => {
+    const [corralito, llamas] = HISTORIC_SCENARIOS;
+    expect(isScenarioUnlocked(corralito, 0)).toBe(false);
+    expect(isScenarioUnlocked(corralito, 1)).toBe(true);
+    expect(isScenarioUnlocked(llamas, 1)).toBe(false);
+    expect(isScenarioUnlocked(llamas, 2)).toBe(true);
+    expect(isScenarioUnlocked(llamas, 0, true)).toBe(true);
   });
 
   it('cada escenario arranca con su país heredado', () => {

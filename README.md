@@ -19,10 +19,17 @@ Las dos comparten las funciones de las fases 0 a 3: inicio en dos pasos con nive
 Versión reducida de la B, con la misma estética "Sala de situación". Sale de `version-b` y se recortó por fases (un commit cada una):
 
 - **Sin código heredado**: el motor viejo (`engine/`, `utils/`, `data/`, `systems/`), sus pruebas, las imágenes que no se usaban y las dependencias `embla-carousel-react`, `@radix-ui/react-tooltip`, `clsx` y `tailwind-merge`.
-- **Sin estos sistemas**: gabinete de asesores (y Charly Abad), habilidades activas de los perfiles, cuaderno de gestión, historial de gobierno, plataforma del partido y escenarios históricos desbloqueables (Corralito, País en llamas).
+- **Sin estos sistemas**: gabinete de asesores (y Charly Abad), habilidades activas de los perfiles, cuaderno de gestión y plataforma del partido.
+- **Ocultos, no borrados**:
+  - *Historial*: la partida sigue registrando cada cierre (decisiones, caja, mensajes), pero no hay panel ni botón de historial; el registro aparece en el legado final ("Revisar informes de gestión").
+  - *Escenarios históricos* (Corralito y País en llamas, que se desbloquean ganando reelecciones): siguen en el código y en las pruebas, apagados con un flag.
 - **Se mantiene**: los 4 perfiles con sus ventajas fijas, las estrategias postlegislativas, los niveles Fácil / Normal / Argentina, mandatos, elecciones, eventos, indicadores, actores y políticas.
 - **Inicio en una sola pantalla**: nombre, foto (grilla o "Subir mi foto", que se recorta a 256 × 256), perfil y nivel.
 - **Guardado propio**: `localStorage['gobernarg.lite.v1']`, con versión de guardado (`SAVE_VERSION` en `src/causal/persistence.ts`). No pisa ni lee la partida de la versión completa.
+
+### Reactivar los escenarios históricos
+
+En `project/src/lite/config.ts` cambiar `escenariosHistoricos: false` por `true`. Aparece la sección "Escenarios históricos" en "Nueva partida" y el aviso al desbloquear uno. Las reelecciones ganadas se cuentan aunque el flag esté apagado (`localStorage['gobernarg.progress.v1']`), y `unlockAll: true` en ese mismo objeto los abre todos para probar. No hace falta subir `SAVE_VERSION`: las partidas de los tres niveles no cambian.
 
 ### Publicar la Lite en Netlify
 

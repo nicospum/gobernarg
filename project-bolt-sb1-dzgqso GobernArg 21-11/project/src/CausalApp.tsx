@@ -8,7 +8,9 @@ import { applyCommand } from './causal/engine';
 import { deserializeSession, newSession, SAVE_KEY, serializeSession, type GameSession } from './causal/persistence';
 import type { CommandParams, GameCommand } from './causal/types';
 import { TURNS_PER_TERM } from './causal/catalog';
-import { DIFFICULTY_LEVELS, getScenario } from './causal/scenarios';
+import { getScenario } from './causal/scenarios';
+import { recordReelectionWin } from './causal/progress';
+import { LITE_FEATURES } from './lite/config';
 
 /** "Laura Méndez · Mandato 1, turno 5 · Herencia pesada" para el botón Continuar partida. */
 function savedLabel(session: GameSession | null): string | null {
@@ -50,13 +52,23 @@ export default function CausalApp() {
     current.current = next; setSession(next); toast.success(result.message);
     return true;
   }, []);
-  // El nivel fija el país (escenario) y la exigencia que sugiere.
+  // El nivel (o el escenario histórico) fija el país y la exigencia que sugiere.
   const start = (choice: NewGameChoice) => {
-    const level = DIFFICULTY_LEVELS.find(item => item.id === choice.level) ?? DIFFICULTY_LEVELS[0];
-    const scenario = getScenario(level.scenarioId);
-    const next = newSession({ name: choice.name, profile: choice.profile, avatar: choice.avatar, difficulty: scenario?.suggestedDifficulty ?? 'normal', scenarioId: level.scenarioId });
+    const scenario = getScenario(choice.scenarioId);
+    const next = newSession({ name: choice.name, profile: choice.profile, avatar: choice.avatar, difficulty: scenario?.suggestedDifficulty ?? 'normal', scenarioId: scenario?.id });
     current.current = next; setSession(next); setScreen('game'); markGameStart();
   };
+  // Ganar la reelección desbloquea el siguiente escenario histórico. Se cuenta una
+  // sola vez por elección (la partida se reconstruye comando por comando al recargar).
+  // Con los escenarios ocultos (LITE_FEATURES) se cuenta igual, pero sin aviso.
+  useEffect(() => {
+    const elections = session?.state.campaign?.elections ?? [];
+    const last = elections[elections.length - 1];
+    if (!session || !last || last.kind !== 'presidential' || !last.won) return;
+    const resolved = [...session.commands].reverse().find(cmd => cmd.type === 'resolve_election');
+    if (!resolved) return;
+    if (recordReelectionWin(resolved.id).counted && LITE_FEATURES.escenariosHistoricos) toast.success('Ganaste la reelección: desbloqueaste un escenario histórico nuevo.');
+  }, [session]);
   const restart = () => {
     try { window.localStorage.removeItem(SAVE_KEY); } catch { /* Storage failure must not crash restart. */ }
     current.current = null; setSession(null); setScreen('new');

@@ -4,6 +4,7 @@ export const DIFFICULTIES: Record<Difficulty, { name: string; revenue: number; e
   easy: { name: 'Aprendiz', revenue: 1.12, eventChance: .18, electionPenalty: -3 },
   normal: { name: 'Normal', revenue: 1, eventChance: .28, electionPenalty: 0 },
   hard: { name: 'Difícil', revenue: .92, eventChance: .38, electionPenalty: 3 },
+  legend: { name: 'Leyenda', revenue: .85, eventChance: .48, electionPenalty: 5 },
 };
 /** Perfiles: solo ventajas fijas. `summary` es la ventaja en una línea (pantalla de nueva partida). */
 export const PROFILES: Record<Profile, { name: string; summary: string; description: string }> = {
