@@ -12,7 +12,6 @@ export function closeFinances(state: CausalState): FiscalReport {
   let recurringExpense = BALANCE.spending_base;
   if (state.campaign) {
     revenue *= DIFFICULTIES[state.campaign.difficulty].revenue;
-    recurringExpense += state.campaign.advisors.reduce((sum, advisor) => sum + advisor.level * 10, 0);
     if (state.campaign.strategy === 'abrirse') recurringExpense += 20;
   }
   let oneOffNet = 0;

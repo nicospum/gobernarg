@@ -1,18 +1,16 @@
 import { useCallback, useState } from 'react';
 import { CAMPAIGN_EVENTS, STRATEGIES } from '../../causal/campaignCatalog';
 import { campaignActionReason } from '../../causal/campaign';
-import { policyName, totalDebt } from '../../causal/selectors';
+import { totalDebt } from '../../causal/selectors';
 import { fmtPct, fmtScore, fmtU } from '../../causal/format';
 
 const SEAT_LABEL: Record<string, string> = { oficialismo: 'Oficialismo', aliados: 'Aliados', oposicion: 'Oposición' };
 import { IMAGES } from '../../utils/imageAssets';
-import type { CampaignProps } from './GovernmentPanel';
 import { Dialog } from './Dialog';
-import { ObjectivesPanel } from './CivicPanels';
+import { ObjectivesPanel, type CampaignProps } from './CivicPanels';
 
 export function CampaignFlow({ state, onCommand, onRestart, onFeedback }: CampaignProps & { onRestart: () => void; onFeedback?: () => void }) {
   const noClose = useCallback(() => {}, []);
-  const [showLegacy, setShowLegacy] = useState(false);
   // Retirarse termina la partida: se confirma antes (igual que Reiniciar).
   const [confirmRetire, setConfirmRetire] = useState(false);
   const c = state.campaign;
@@ -30,8 +28,6 @@ export function CampaignFlow({ state, onCommand, onRestart, onFeedback }: Campai
       <ObjectivesPanel state={state} />
       <div className="grid sm:grid-cols-2 gap-3 text-sm"><div><h3 className="text-emerald-300 font-semibold">Fortalezas</h3><p className="text-xs mt-2">{c.approval >= 55 ? 'Resultados sociales valorados. ' : ''}{c.legitimacy >= 60 ? 'Garantías y confianza sostenidas. ' : ''}{c.objectives.filter(o => o.completed).length} objetivos cumplidos; {state.agreements.filter(a => a.status === 'fulfilled').length} acuerdos concretados.</p></div><div><h3 className="text-amber-200 font-semibold">Desafíos pendientes</h3><p className="text-xs mt-2">{c.objectives.filter(o => !o.completed).map(o => o.title).join(' · ') || 'Todos los objetivos cumplidos.'} {state.indicators.inflacion > 65 ? 'Presión inflacionaria elevada.' : ''}</p></div></div>
       <details className="text-sm"><summary className="cursor-pointer">Trayectoria electoral</summary>{c.elections.map(e => <p key={`${e.turn}:${e.kind}`} className="text-xs border-t border-border py-2 mt-2">T{e.turn} · {e.kind === 'legislative' ? 'Legislativas' : 'Presidenciales'} · {fmtPct(e.votes)} · {e.won ? 'Victoria' : 'Derrota'} · {e.ownSeats} bancas propias</p>)}</details>
-      <button className="causal-secondary" onClick={() => setShowLegacy(!showLegacy)}>{showLegacy ? 'Ocultar informes de gestión' : 'Revisar informes de gestión'}</button>
-      {showLegacy && [...state.reports].reverse().map(r => <details key={r.turn} className="text-xs border border-border p-3 rounded"><summary>T{r.turn} · Caja {fmtU(r.fiscal.closingCash, 0)} · Componente social {fmtScore(r.socialComponent)}</summary><p className="mt-2">{r.messages.join(' ') || 'Cierre sin incidentes adicionales.'}</p><p className="mt-2">{r.executions.map(e => policyName(e.actionId)).join(', ') || 'Sin nuevas decisiones.'}</p></details>)}
       {ended && <div className="flex flex-wrap gap-3">{onFeedback && <button className="causal-secondary" onClick={onFeedback}>Contanos cómo te fue</button>}<button className="causal-primary" onClick={onRestart}>Nueva partida</button></div>}
     </Dialog>;
   }

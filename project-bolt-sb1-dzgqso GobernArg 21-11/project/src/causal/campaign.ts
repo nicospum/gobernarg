@@ -1,10 +1,10 @@
-import { ACTORS, POLICIES } from './catalog';
-import { ABILITIES, CABINET, CAMPAIGN_EVENTS, DIFFICULTIES, STRATEGIES } from './campaignCatalog';
-import { clamp, hasRecentMeeting, isProject, totalArrears } from './selectors';
+import { ACTIONS_PER_TURN, ACTORS, POLICIES } from './catalog';
+import { CAMPAIGN_EVENTS, DIFFICULTIES, STRATEGIES } from './campaignCatalog';
+import { clamp, isProject, totalArrears } from './selectors';
 import type { CampaignDelta, Difficulty, Strategy } from './campaignTypes';
 import type { CausalState, GameCommand, IndicatorId, PolicyDefinition } from './types';
 
-export const CAMPAIGN_COMMANDS = ['hire_advisor', 'dismiss_advisor', 'train_advisor', 'use_ability', 'choose_event', 'choose_strategy', 'resolve_election', 'acknowledge_result', 'read_news', 'dismiss_news'];
+export const CAMPAIGN_COMMANDS = ['choose_event', 'choose_strategy', 'resolve_election', 'acknowledge_result', 'read_news', 'dismiss_news'];
 export function addNews(state: CausalState, title: string, text: string, importance: 'normal' | 'warning' | 'critical' = 'normal') {
   const c = state.campaign;
   if (c) c.news.push({ id: `news:${state.turn}:${c.news.length}`, turn: state.turn, title, text, importance, read: false, dismissed: false });
@@ -12,7 +12,7 @@ export function addNews(state: CausalState, title: string, text: string, importa
 export function enableCampaign(state: CausalState, difficulty: Difficulty = 'normal') {
   if (state.campaign) return;
   state.campaign = {
-    version: 1, difficulty, advisors: [], cabinetActionTurn: 0, abilities: {}, communication: { value: 0, until: 0 },
+    version: 1, difficulty,
     axes: { radical: 0, technical: 0, open: 0 }, seats: { oficialismo: 40, aliados: 15, oposicion: 45 },
     strategy: null, strategyUntil: 0, strategyPending: false, pendingEvent: null, eventHistory: [], randomSeed: 20260924,
     lastEventTurn: state.turn, news: [], objectives: [
@@ -21,11 +21,11 @@ export function enableCampaign(state: CausalState, difficulty: Difficulty = 'nor
       { id: 'publicworks', title: 'Capacidad para el futuro', description: 'Ejecutar tres obras distintas y alcanzar infraestructura 55.', progress: 0, completed: false, reward: 150 },
     ], elections: [], resultPending: false, votes: state.socialComponent, approval: state.socialComponent,
     stability: 70, legitimacy: 55, lowApprovalTurns: 0, insolvencyTurns: 0, impeachmentTurns: 0, coupTurns: 0,
-    hyperinflationTurns: 0, outcome: null, outcomeReason: '', governanceUntil: 0,
+    hyperinflationTurns: 0, outcome: null, outcomeReason: '',
   };
   refreshPolitics(state);
   state.actionPoints += state.profile === 'sindicalista' ? 1 : 0;
-  addNews(state, 'Comienza una nueva etapa', 'Gabinete, perfiles, eventos y calendario electoral activos. Tus compromisos y deudas se conservan.');
+  addNews(state, 'Comienza una nueva etapa', 'Perfil, eventos y calendario electoral activos. Tus compromisos y deudas se conservan.');
 }
 export function campaignBlock(state: CausalState): string | null {
   const c = state.campaign;
@@ -35,9 +35,8 @@ export function campaignBlock(state: CausalState): string | null {
   return null;
 }
 export function campaignActionPoints(state: CausalState) {
-  if (!state.campaign) return 4;
-  return 4 + (state.profile === 'sindicalista' ? 1 : 0) + state.campaign.advisors
-    .filter(a => a.activeFrom <= state.turn).reduce((sum, a) => sum + (CABINET.find(d => d.id === a.id)?.bonusActions ?? 0), 0);
+  if (!state.campaign) return ACTIONS_PER_TURN;
+  return ACTIONS_PER_TURN + (state.profile === 'sindicalista' ? 1 : 0);
 }
 export function electoralBreakdown(state: CausalState) {
   const c = state.campaign;
@@ -45,12 +44,11 @@ export function electoralBreakdown(state: CausalState) {
   const organization = (state.actors.oficialismo.relationship * .6 + state.actors.aliados.relationship * .25 + state.actors.gobernadores.relationship * .15) * .15;
   const resolved = state.agreements.filter(a => a.status !== 'pending');
   const credibility = (resolved.length ? resolved.filter(a => a.status === 'fulfilled').length / resolved.length * 100 : 50) * .10;
-  const communication = c && state.turn < c.communication.until ? c.communication.value : 0;
   const wear = Math.min(4, Math.floor((state.turn - 1) / 8));
   const difficulty = c ? DIFFICULTIES[c.difficulty].electionPenalty : 0;
-  const base = clamp(social + organization + credibility + communication - wear - difficulty);
+  const base = clamp(social + organization + credibility - wear - difficulty);
   const incumbency = c && state.profile === 'politico' && state.term === 1 ? .05 * (100 - base) : 0;
-  return { social, organization, credibility, communication, wear, difficulty, incumbency, total: clamp(base + incumbency) };
+  return { social, organization, credibility, wear, difficulty, incumbency, total: clamp(base + incumbency) };
 }
 export function refreshPolitics(state: CausalState) {
   const c = state.campaign;
@@ -64,14 +62,6 @@ export function refreshPolitics(state: CausalState) {
   c.votes = electoralBreakdown(state).total;
 }
 function scheduleDelta(state: CausalState, delta: CampaignDelta, executionId: string, label: string, start: number) {
-  const c = state.campaign!;
-  if (delta.cabinet && c.advisors.length) {
-    const member = c.advisors[0];
-    const bonus = CABINET.find(a => a.id === member.id)?.bonusActions ?? 0;
-    if (member.activeFrom <= state.turn) state.actionPoints = Math.max(0, state.actionPoints - bonus);
-    if (delta.cabinet === 'resign') c.advisors.shift();
-    else member.activeFrom = Math.max(member.activeFrom, state.turn + 2);
-  }
   for (const [key, original] of Object.entries(delta.indicator ?? {})) {
     const target = key as IndicatorId;
     const adverse = target === 'inflacion' ? original! > 0 : original! < 0;
@@ -80,11 +70,10 @@ function scheduleDelta(state: CausalState, delta: CampaignDelta, executionId: st
       startTurn: start, endExclusive: start + 1, magnitude, kind: 'indicator', target, operation: 'pulse', lastAppliedTurn: null });
   }
   for (const actor of ACTORS) if (delta.relationship?.[actor.id]) state.actors[actor.id].relationship = clamp(state.actors[actor.id].relationship + delta.relationship[actor.id]!);
-  if (delta.communication) c.communication = { value: Math.max(c.communication.value && state.turn < c.communication.until ? c.communication.value : 0, delta.communication), until: state.turn + 3 };
 }
-function recordExpense(state: CausalState, cmd: GameCommand, title: string, cost: number, points: number) {
-  state.cash -= cost; state.actionPoints -= points;
-  state.history.push({ id: cmd.id, actionId: title, turn: state.turn, params: {}, cashDelta: -cost, actionCost: points, efficacy: 1 });
+function recordExpense(state: CausalState, cmd: GameCommand, title: string, cost: number) {
+  state.cash -= cost;
+  state.history.push({ id: cmd.id, actionId: title, turn: state.turn, params: {}, cashDelta: -cost, actionCost: 0, efficacy: 1 });
 }
 export function campaignPolicyExecuted(state: CausalState, policy: PolicyDefinition) {
   const c = state.campaign;
@@ -157,7 +146,6 @@ export function eligibleCampaignEvents(state: CausalState) {
     if (event.id.startsWith('oposicion_')) return !!midterm && !midterm.won;
     if (event.id.startsWith('desgaste_')) return !!midterm && midterm.won;
     switch (event.id) {
-      case 'minister_resignation': return c.advisors.length > 0;
       case 'debt_default': return totalArrears(state) > 0;
       case 'police_violence_scandal': return state.indicators.derechos < 55 && state.history.some(h => state.turn - h.turn < 3 && POLICIES.some(p => p.id === h.actionId && p.category === 'Seguridad'));
       case 'energy_crisis': return state.indicators.infraestructura < 50;
@@ -236,7 +224,7 @@ export function runCampaignCommand(state: CausalState, cmd: GameCommand): string
     else {
       state.term += 1; state.phase = 'governing'; c.strategy = null; c.strategyPending = false; c.resultPending = true;
       state.actionPoints = campaignActionPoints(state);
-      addNews(state, 'Reelección ganada', `${c.votes.toFixed(1)}% de votos. Comienza el segundo mandato; se mantienen deudas, obras, asesores y compromisos.`);
+      addNews(state, 'Reelección ganada', `${c.votes.toFixed(1)}% de votos. Comienza el segundo mandato; se mantienen deudas, obras y compromisos.`);
       refreshPolitics(state);
     }
     return null;
@@ -256,56 +244,10 @@ export function runCampaignCommand(state: CausalState, cmd: GameCommand): string
     const choice = event.choices.find(o => o.id === cmd.choiceId);
     if (!choice) return 'Respuesta desconocida.';
     if (state.cash < choice.cost) return `Necesitás ${choice.cost} U.`;
-    recordExpense(state, cmd, `Evento: ${event.title} — ${choice.label}`, choice.cost, 0);
+    recordExpense(state, cmd, `Evento: ${event.title} — ${choice.label}`, choice.cost);
     scheduleDelta(state, choice.effect, cmd.id, `Evento: ${event.title}`, state.turn);
     c.eventHistory.push({ id: event.id, turn: state.turn, choiceId: choice.id }); c.pendingEvent = null;
     addNews(state, event.title, `Decisión: ${choice.label}. ${choice.description}`); refreshPolitics(state); return null;
-  }
-  if (state.phase !== 'governing') return 'Primero resolvé el cierre del mandato.';
-  const block = campaignBlock(state); if (block) return block;
-  if (state.actionPoints < 1) return 'Necesitás un punto de acción.';
-  if (['hire_advisor', 'dismiss_advisor', 'train_advisor'].includes(cmd.type)) {
-    const definition = CABINET.find(a => a.id === cmd.targetId);
-    if (!definition) return 'Asesor desconocido.';
-    const member = c.advisors.find(a => a.id === cmd.targetId);
-    if (c.cabinetActionTurn === state.turn) return 'Ya gestionaste el gabinete este turno.';
-    if (cmd.type === 'hire_advisor') {
-      if (member || c.advisors.length >= 2) return 'Hay dos cargos disponibles y cada asesor solo puede ocupar uno.';
-      if (c.approval < definition.minimumApproval) return `Requiere aprobación de ${definition.minimumApproval}.`;
-      if (state.cash < definition.cost || totalArrears(state) > 0) return `Necesitás ${definition.cost} U y no tener atrasos.`;
-      recordExpense(state, cmd, `Contratar: ${definition.name}`, definition.cost, 1);
-      c.advisors.push({ id: definition.id, level: definition.level, hiredTurn: state.turn, activeFrom: state.turn + 1 });
-    } else if (cmd.type === 'dismiss_advisor') {
-      if (!member) return 'Ese asesor no pertenece al gabinete.';
-      recordExpense(state, cmd, `Despedir: ${definition.name}`, 0, 1);
-      // Remove unused bonus capacity immediately; hiring never grants same-turn capacity.
-      state.actionPoints = Math.max(0, state.actionPoints - (member.activeFrom <= state.turn ? definition.bonusActions : 0));
-      c.advisors = c.advisors.filter(a => a.id !== member.id);
-    } else {
-      if (!member || member.level >= 5 || member.activeFrom > state.turn) return 'El asesor debe estar activo y tener nivel menor a 5.';
-      const cost = 50 * (member.level + 1);
-      if (state.cash < cost || totalArrears(state) > 0) return `Necesitás ${cost} U y no tener atrasos.`;
-      recordExpense(state, cmd, `Capacitar: ${definition.name}`, cost, 1);
-      state.actionPoints = Math.max(0, state.actionPoints - definition.bonusActions);
-      member.level += 1; member.activeFrom = state.turn + 2;
-    }
-    c.cabinetActionTurn = state.turn;
-    addNews(state, 'Gabinete presidencial', `${definition.name}: ${cmd.type === 'hire_advisor' ? 'se incorpora el próximo turno' : cmd.type === 'dismiss_advisor' ? 'deja el gabinete' : 'entra en capacitación y vuelve dentro de dos turnos'}.`);
-    return null;
-  }
-  if (cmd.type === 'use_ability') {
-    const ability = ABILITIES.find(a => a.id === cmd.targetId && a.profile === state.profile);
-    if (!ability) return 'Esta habilidad no corresponde a tu perfil.';
-    if ((c.abilities[ability.id] ?? 0) > state.turn) return `Disponible desde T${c.abilities[ability.id]}.`;
-    if (state.cash < ability.cost || totalArrears(state) > 0) return `Necesitás ${ability.cost} U y no tener atrasos.`;
-    if (ability.requirement === 'investment' && (!hasRecentMeeting(state, 'industria') || state.indicators.credito < 35)) return 'Requiere reunión vigente con industria y crédito de al menos 35.';
-    if (ability.requirement === 'labor' && !hasRecentMeeting(state, 'sindicatos')) return 'Requiere reunión vigente con sindicatos.';
-    if (ability.requirement === 'pact' && (!hasRecentMeeting(state, 'aliados') || !hasRecentMeeting(state, 'oposicion'))) return 'Requiere reuniones vigentes con aliados y oposición.';
-    recordExpense(state, cmd, ability.name, ability.cost, 1);
-    scheduleDelta(state, ability.effect, cmd.id, ability.name, state.turn + 1);
-    if (ability.requirement === 'pact') c.governanceUntil = state.turn + 3;
-    c.abilities[ability.id] = state.turn + ability.cooldown;
-    addNews(state, ability.name, ability.description); refreshPolitics(state); return null;
   }
   return 'Comando político desconocido.';
 }

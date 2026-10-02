@@ -1,5 +1,5 @@
 import { ACTORS, BALANCE, INDICATORS, POLICIES } from './catalog';
-import { CABINET, STRATEGIES } from './campaignCatalog';
+import { STRATEGIES } from './campaignCatalog';
 import type { ActorDefinition, ActorId, AgreementTemplate, CausalState, Comparator, IndicatorId, Indicators, PolicyDefinition } from './types';
 
 export const clamp = (value: number, min = 0, max = 100) => Math.max(min, Math.min(max, value));
@@ -33,20 +33,12 @@ export function actorTarget(id: ActorId, indicators: Indicators, sensitivities =
   return sensitivities.reduce((sum, item) => sum + Math.abs(item.weight)
     * (item.weight < 0 ? 100 - indicators[item.indicatorId] : indicators[item.indicatorId]), 0) / weight;
 }
-/** Prioridades vigentes de un actor: el oficialismo sigue la plataforma del partido si hay una con contenido. */
-export function sensitivitiesOf(state: CausalState, id: ActorId) {
-  if (id === 'oficialismo' && state.platform && state.platform.items.length > 0) return state.platform.items;
-  return actorById(id)!.sensitivities;
-}
-export function actorTargetFor(state: CausalState, id: ActorId, indicators: Indicators): number {
-  return actorTarget(id, indicators, sensitivitiesOf(state, id));
-}
 export function socialComponent(state: CausalState): number {
   const total = ACTORS.reduce((sum, actor) => sum + actor.electoralWeight, 0);
   return ACTORS.reduce((sum, actor) => sum + actor.electoralWeight * state.actors[actor.id].satisfaction, 0) / total;
 }
 export function priorities(state: CausalState, id: ActorId) {
-  return sensitivitiesOf(state, id).filter(item => Math.abs(item.weight) >= 6).map(item => ({
+  return actorById(id)!.sensitivities.filter(item => Math.abs(item.weight) >= 6).map(item => ({
     ...item, value: state.indicators[item.indicatorId],
     utility: item.weight < 0 ? 100 - state.indicators[item.indicatorId] : state.indicators[item.indicatorId],
     trend: state.indicators[item.indicatorId] - state.previousIndicators[item.indicatorId],
@@ -70,8 +62,7 @@ export function legislativeSupport(state: CausalState, billId: string): number {
     const willingness = id === 'oficialismo' ? 0.30 + 0.40 * s + 0.30 * r
       : id === 'aliados' ? 0.05 + 0.15 * s + 0.20 * r + 0.60 * pact
         : 0.05 + 0.10 * s + 0.15 * r + 0.70 * pact;
-    const coordination = state.campaign && state.turn < state.campaign.governanceUntil ? .05 : 0;
-    support += seats * clamp(willingness + coordination, 0, 1);
+    support += seats * clamp(willingness, 0, 1);
   }
   return support;
 }
@@ -86,14 +77,6 @@ export function channelOffsets(state: CausalState): Partial<Indicators> {
   }
   for (const id of Object.keys(offsets) as IndicatorId[]) offsets[id] = clamp(offsets[id]!, -BALANCE.channel_cap, BALANCE.channel_cap);
   return offsets;
-}
-/** Charly Abad (broker de salud): arma hospitales y su calidez abarata el diálogo. */
-export const CHARLY_ID = 'advisor8';
-export const CHARLY_HOSPITAL = 'construccion_hospitales';
-/** Con empresarios y líderes religiosos (canalizados por las organizaciones sociales) el diálogo es todavía más barato. */
-export const CHARLY_CLOSE_ACTORS: ActorId[] = ['industria', 'pymes', 'organizaciones'];
-export function charlyActive(state: CausalState): boolean {
-  return !!state.campaign?.advisors.some(a => a.id === CHARLY_ID && a.activeFrom <= state.turn);
 }
 export function efficacy(state: CausalState, policy: PolicyDefinition): number {
   let penalty = 0, bonus = 0;
@@ -112,8 +95,6 @@ export function efficacy(state: CausalState, policy: PolicyDefinition): number {
     bonus += Math.max(0, 0.15 - existing);
   }
   if (state.campaign && policy.role === 'policy') {
-    bonus += Math.min(.15, state.campaign.advisors.filter(a => a.activeFrom <= state.turn
-      && (CABINET.find(d => d.id === a.id)?.categories.includes(policy.category) || (a.id === CHARLY_ID && policy.id === CHARLY_HOSPITAL))).reduce((sum, a) => sum + a.level * .02, 0));
     if (state.campaign.strategy) bonus += STRATEGIES[state.campaign.strategy].efficacy;
     if (Math.abs(state.campaign.axes.radical) > 80 && policy.requirements.some(r => r.kind === 'legislative')) penalty += .05;
     if (state.campaign.axes.technical < -80 && isProject(policy.id)) penalty += .05;

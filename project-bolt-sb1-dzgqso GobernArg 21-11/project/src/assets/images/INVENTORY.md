@@ -5,10 +5,6 @@ Los PNG originales se conservan en `src/assets/images/raw/` como respaldo.
 
 | Archivo WebP | Original | Dimensiones | Tamaño PNG | Tamaño WebP | Uso sugerido |
 |---|---|---|---|---|---|
-| advisors/advisor-communication-female.webp | image_034.png | 1254x1254 | 1693742 | 69090 | Vocera / asesora de Comunicación. |
-| advisors/advisor-economy-male.webp | image_033.png | 1254x1254 | 1817499 | 83742 | Ministro / asesor de Economía. |
-| advisors/advisor-security-female.webp | image_021.png | 1254x1254 | 1589221 | 62842 | Ministra / asesora de Seguridad. |
-| advisors/advisor-social-female.webp | image_022.png | 1254x1254 | 1743696 | 89880 | Ministra / asesora de Desarrollo Social. |
 | backgrounds/balcony-casa-rosada-sunset.webp | image_008.png | 1672x941 | 1359038 | 52996 | Fondo de bienvenida / escenario nacional. |
 | backgrounds/balcony-congress-flags.webp | image_025.png | 941x1672 | 1588468 | 120590 | Pantalla de título / carga. |
 | backgrounds/congress-sunrise-panorama.webp | image_024.png | 1672x941 | 1711582 | 102096 | Fondo de pantalla de inicio / menú principal. |

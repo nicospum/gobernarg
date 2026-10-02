@@ -3,17 +3,15 @@ import { activeAt, closeFinances, fiscalForecast } from './finance';
 import { CAMPAIGN_COMMANDS, campaignActionPoints, campaignBlock, campaignPolicyExecuted, refreshPolitics, runCampaignCommand, settleCampaignClose } from './campaign';
 import { STRATEGIES } from './campaignCatalog';
 import { makeOffer, meetActor, offerReasons, resolveAgreements, signOffer, updateActorChannels } from './interactions';
-import { actorById, actorTarget, actorTargetFor, agreementActive, charlyActive, CHARLY_CLOSE_ACTORS, CHARLY_HOSPITAL, channelOffsets, clamp, compare, countUses, efficacy,
+import { actorById, actorTarget, agreementActive, channelOffsets, clamp, compare, countUses, efficacy,
   hasRecentMeeting, indicatorName, isProject, legislativeSupport, policyById, policyName, socialComponent, totalArrears, totalDebt } from './selectors';
-import { applyScenario, deriveOwnPlatform, getPlatform, getScenario, OWN_PLATFORM_ID, OWN_PLATFORM_WINDOW } from './scenarios';
+import { applyScenario, getScenario } from './scenarios';
 import type { Availability, CausalState, CommandParams, CommandResult, EffectInstance, GameCommand,
   IndicatorContribution, IndicatorEffect, Indicators, PolicyDefinition, TurnReport } from './types';
 
 export interface NewGameOptions {
   /** Escenario de partida (scenarios.ts). Sin escenario: el país base de la versión B. */
   scenarioId?: string;
-  /** Plataforma del partido: 'ninguna' (default), una prearmada o 'propia'. */
-  platformId?: string;
 }
 
 export function createCausalGame(name = 'Presidente', profile = 'politico', avatar = '', options: NewGameOptions = {}): CausalState {
@@ -34,33 +32,10 @@ export function createCausalGame(name = 'Presidente', profile = 'politico', avat
     applyScenario(state, scenario);
     state.scenarioId = scenario.id;
   }
-  const preset = getPlatform(options.platformId);
-  if (preset) state.platform = { mode: 'preset', id: preset.id, items: preset.items };
-  else if (options.platformId === OWN_PLATFORM_ID) state.platform = { mode: 'propia', id: OWN_PLATFORM_ID, items: [] };
-  for (const actor of ACTORS) state.actors[actor.id].satisfaction = actorTargetFor(state, actor.id, state.indicators);
+  for (const actor of ACTORS) state.actors[actor.id].satisfaction = actorTarget(actor.id, state.indicators);
   state.socialComponent = socialComponent(state);
   refreshLegislature(state);
   return state;
-}
-
-/** Plataforma propia: el partido adopta lo que más empujaste con tus políticas en los últimos turnos. */
-function updateOwnPlatform(state: CausalState, messages: string[]): void {
-  if (state.platform?.mode !== 'propia') return;
-  const push: Partial<Indicators> = {};
-  for (const item of state.history) {
-    if (item.turn <= state.turn - OWN_PLATFORM_WINDOW || item.turn > state.turn) continue;
-    for (const effect of policyById(item.actionId)?.effects ?? []) {
-      if (effect.kind !== 'indicator') continue;
-      push[effect.target] = (push[effect.target] ?? 0) + effect.magnitude;
-    }
-  }
-  const items = deriveOwnPlatform(push);
-  const key = (xs: { indicatorId: string; weight: number }[]) => xs.map(x => `${x.indicatorId}${x.weight}`).join(',');
-  if (key(items) === key(state.platform.items)) return;
-  state.platform = { ...state.platform, items };
-  messages.push(items.length > 0
-    ? `Tu partido ahora espera: ${items.map(x => `${indicatorName(x.indicatorId)} ${x.weight > 0 ? '↑' : '↓'}`).join(', ')}.`
-    : 'Tu partido todavía no tiene una plataforma: mira lo de siempre.');
 }
 
 function refreshLegislature(state: CausalState): void {
@@ -81,7 +56,6 @@ function monetaryCost(state: CausalState, policy: PolicyDefinition, params: Comm
       if (policy.id === 'reunirse' && ((state.profile === 'politico' && actor?.id === 'aliados')
         || (state.profile === 'sindicalista' && ['sindicatos', 'organizaciones'].includes(actor?.id ?? '')))) return 0;
       if ((policy.id === 'negociar' && state.campaign.strategy === 'negociar') || (policy.id === 'reunirse' && state.campaign.strategy === 'abrirse')) cost *= .75;
-      if (charlyActive(state)) cost *= actor && CHARLY_CLOSE_ACTORS.includes(actor.id) ? .6 : .8;
       if (state.campaign.axes.open < -80) cost *= 1.25;
     }
     return cost;
@@ -95,7 +69,6 @@ function monetaryCost(state: CausalState, policy: PolicyDefinition, params: Comm
     if (state.profile === 'empresario' && policy.category === 'Economía') cost *= .9;
     if (state.campaign.strategy) cost *= STRATEGIES[state.campaign.strategy].cost;
     if (policy.id === 'estudio_factibilidad' && state.campaign.axes.technical > 80) cost *= .9;
-    if (policy.id === CHARLY_HOSPITAL && charlyActive(state)) cost *= .85;
   }
   return cost;
 }
@@ -298,7 +271,7 @@ function closeTurn(state: CausalState): void {
   const indicators = indicatorClose(state, fiscal.margin);
   const actors = ACTORS.map(actor => {
     const before = state.actors[actor.id].satisfaction;
-    const target = actorTargetFor(state, actor.id, state.indicators);
+    const target = actorTarget(actor.id, state.indicators);
     state.actors[actor.id].satisfaction = clamp((1 - BALANCE.smoothing) * before + BALANCE.smoothing * target);
     return { id: actor.id, before, target, after: state.actors[actor.id].satisfaction, relationship: 0, conflict: false };
   });
@@ -320,7 +293,6 @@ function closeTurn(state: CausalState): void {
   if (state.indicators.ambiente >= 40) state.waterCrisis = false;
   if (state.waterCrisis) messages.push('Crisis hídrica: fondos extraordinarios reducen 10% el costo inicial del plan hídrico.');
   if (fiscal.arrears > 0) messages.push(`${state.crisisTurns >= 2 ? 'Crisis fiscal' : 'Advertencia fiscal'}: ${fiscal.arrears.toFixed(1)} U pendientes de pago. La deuda y los atrasos no se borran.`);
-  updateOwnPlatform(state, messages);
   settleCampaignClose(state);
   state.reports.push({ turn: state.turn, term: state.term, executions: state.history.filter(item => item.turn === state.turn), fiscal,
     indicators, actors, socialComponent: state.socialComponent, messages });
@@ -360,6 +332,7 @@ export function applyCommand(input: CausalState, command: GameCommand): CommandR
     state.processedCommands.push(command.id);
     return { state, accepted: true, message: `${policy.name}: ejecución registrada.` };
   }
+  if (command.type !== 'close_turn' && command.type !== 'end_game') return reject('Comando desconocido.');
   if (command.type === 'close_turn' && input.phase !== 'governing') return reject('El mandato está pendiente de revisión.');
   if (command.type === 'close_turn' && campaignBlock(input)) return reject(campaignBlock(input)!);
   const state = structuredClone(input);

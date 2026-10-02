@@ -1,4 +1,4 @@
-import type { CampaignDelta, CampaignEvent, Difficulty, Strategy } from './campaignTypes';
+import type { CampaignEvent, Difficulty, Strategy } from './campaignTypes';
 
 export const DIFFICULTIES: Record<Difficulty, { name: string; revenue: number; eventChance: number; electionPenalty: number }> = {
   easy: { name: 'Aprendiz', revenue: 1.12, eventChance: .18, electionPenalty: -3 },
@@ -10,30 +10,8 @@ export const PROFILES: Record<string, { name: string; description: string }> = {
   politico: { name: 'Político de Raza', description: 'Reuniones gratuitas con aliados. Retiene el 5% del margen electoral restante al buscar su primera reelección.' },
   empresario: { name: 'Empresario', description: '10% menos de desembolso en políticas económicas. Capacidad adicional de deuda: 500 U.' },
   sindicalista: { name: 'Sindicalista', description: 'Un punto de acción adicional. Reuniones gratuitas con sindicatos y organizaciones sociales.' },
-  comunicador: { name: 'Comunicador', description: 'Reduce 30% los impactos negativos de indicadores en eventos. Sus habilidades sostienen la comunicación pública.' },
+  comunicador: { name: 'Comunicador', description: 'Reduce 30% los impactos negativos de indicadores en eventos.' },
 };
-export interface CabinetDefinition { id: string; name: string; specialty: string; description: string; cost: number; level: number; bonusActions: number; minimumApproval: number; categories: string[] }
-export const CABINET: CabinetDefinition[] = [
-  { id: 'advisor1', name: 'Dr. Carlos Méndez', specialty: 'Economista', description: 'Experto en política monetaria y desarrollo económico', cost: 300, level: 3, bonusActions: 2, minimumApproval: 0, categories: ['Economía'] },
-  { id: 'advisor2', name: 'Lic. María González', specialty: 'Comunicación Social', description: 'Especialista en manejo de medios y opinión pública', cost: 250, level: 2, bonusActions: 1, minimumApproval: 0, categories: ['Cultura', 'Instituciones'] },
-  { id: 'advisor3', name: 'Ing. Roberto Silva', specialty: 'Infraestructura', description: 'Experto en desarrollo urbano y obras públicas', cost: 400, level: 4, bonusActions: 2, minimumApproval: 0, categories: ['Infraestructura'] },
-  { id: 'advisor4', name: 'Dra. Ana Martínez', specialty: 'Políticas Sociales', description: 'Especialista en programas de desarrollo social', cost: 200, level: 3, bonusActions: 1, minimumApproval: 0, categories: ['Servicios'] },
-  { id: 'advisor5', name: 'Dr. Jorge Ramírez', specialty: 'Relaciones Internacionales', description: 'Diplomático con amplia experiencia internacional', cost: 500, level: 5, bonusActions: 2, minimumApproval: 60, categories: ['Desarrollo'] },
-  { id: 'advisor6', name: 'Lic. Patricia Sánchez', specialty: 'Seguridad Pública', description: 'Experta en políticas de seguridad y prevención', cost: 350, level: 3, bonusActions: 1, minimumApproval: 0, categories: ['Seguridad'] },
-  { id: 'advisor7', name: 'Dr. Miguel Ángel Torres', specialty: 'Educación', description: 'Especialista en reforma educativa', cost: 300, level: 4, bonusActions: 2, minimumApproval: 55, categories: ['Servicios', 'Desarrollo'] },
-  { id: 'advisor8', name: 'Charly Abad', specialty: 'Broker de Salud', description: 'Broker de salud: te arma un hospital llave en mano y te garantiza resultados en salud. Cálido y de trato fácil, se lleva bien con empresarios y líderes religiosos, y con su calidez mejora la relación con todos los sectores.', cost: 350, level: 4, bonusActions: 1, minimumApproval: 0, categories: ['Servicios'] },
-];
-export interface Ability { id: string; name: string; profile: string; cost: number; cooldown: number; description: string; effect: CampaignDelta; requirement?: 'investment' | 'labor' | 'pact' }
-export const ABILITIES: Ability[] = [
-  { id: 'discurso_patriotico', name: 'Discurso Patriótico', profile: 'politico', cost: 30, cooldown: 4, description: 'Explicás el rumbo del gobierno: comunicación +4 durante tres turnos, sin alterar resultados materiales.', effect: { communication: 4 } },
-  { id: 'pacto_gobernabilidad', name: 'Pacto de Gobernabilidad', profile: 'politico', cost: 100, cooldown: 5, requirement: 'pact', description: 'Tras consultar a aliados y oposición, coordinás la agenda. Durante tres turnos, +5 puntos de disposición parlamentaria por bloque.', effect: {} },
-  { id: 'inversion_privada', name: 'Inversión Privada', profile: 'empresario', cost: 80, cooldown: 5, requirement: 'investment', description: 'Cofinanciás proyectos con industria: actividad +3 y crédito +2 al cierre siguiente; ambiente −1.', effect: { indicator: { actividad: 3, credito: 2, ambiente: -1 } } },
-  { id: 'llamado_inversores', name: 'Llamado a Inversores', profile: 'empresario', cost: 50, cooldown: 6, requirement: 'investment', description: 'Una ronda de inversión mejora capacidad exportadora +3 y actividad +2 desde el cierre siguiente.', effect: { indicator: { externo: 3, actividad: 2 } } },
-  { id: 'movilizacion_social', name: 'Movilización Social', profile: 'sindicalista', cost: 50, cooldown: 4, requirement: 'labor', description: 'Organizás redes de contención: protección +2; movilización comunicacional +3 durante tres turnos.', effect: { indicator: { proteccion: 2 }, communication: 3 } },
-  { id: 'paro_controlado', name: 'Paro Controlado', profile: 'sindicalista', cost: 25, cooldown: 5, requirement: 'labor', description: 'Una protesta acordada amplía garantías +2 y comunicación +3, con costo de actividad −2 al cierre siguiente.', effect: { indicator: { derechos: 2, actividad: -2 }, communication: 3 } },
-  { id: 'campania_mediatica', name: 'Campaña Mediática', profile: 'comunicador', cost: 80, cooldown: 3, description: 'Difundís la gestión: comunicación +5 durante tres turnos. No cambia la satisfacción material.', effect: { communication: 5 } },
-  { id: 'gira_medios', name: 'Gira de Medios', profile: 'comunicador', cost: 50, cooldown: 6, description: 'Rendís cuentas públicamente: comunicación +4 durante tres turnos y garantías +1 al cierre siguiente.', effect: { communication: 4, indicator: { derechos: 1 } } },
-];
 export const STRATEGIES: Record<Strategy, { name: string; description: string; efficacy: number; cost: number }> = {
   acelerar: { name: 'Acelerar', description: '+10% de eficacia y +10% de costo inicial. Desplaza el estilo hacia la radicalidad.', efficacy: .10, cost: 1.10 },
   negociar: { name: 'Negociar', description: 'Negociaciones 25% más baratas; políticas con 5% menos de eficacia.', efficacy: -.05, cost: 1 },
@@ -44,10 +22,6 @@ export const CAMPAIGN_EVENTS: CampaignEvent[] = [
   { id: 'police_violence_scandal', title: 'Escándalo de violencia policial', description: 'Se denuncian abusos durante un operativo. La respuesta define las garantías de control.', image: 'policeViolenceScandal', choices: [
     { id: 'investigate', label: 'Investigar y reparar', cost: 60, description: 'Garantías +3; seguridad −1 durante la reorganización.', effect: { indicator: { derechos: 3, seguridad: -1 } } },
     { id: 'defend', label: 'Respaldar el operativo', cost: 0, description: 'Garantías −4; seguridad +1.', effect: { indicator: { derechos: -4, seguridad: 1 } } },
-  ] },
-  { id: 'minister_resignation', title: 'Renuncia de un integrante del gabinete', description: 'El primer asesor del gabinete ofrece su renuncia tras un desgaste público.', image: 'ministerResignation', choices: [
-    { id: 'accept', label: 'Aceptar la renuncia', cost: 0, description: 'El primer asesor deja su cargo y se pierden sus bonificaciones. Garantías +1 por la rendición de cuentas.', effect: { cabinet: 'resign', indicator: { derechos: 1 } } },
-    { id: 'retain', label: 'Reorganizar su equipo', cost: 60, description: 'El asesor permanece, inactivo hasta dentro de dos turnos.', effect: { cabinet: 'suspend' } },
   ] },
   { id: 'debt_default', title: 'Default selectivo de deuda', description: 'Los atrasos complican la relación con los acreedores. El principal no desaparece por elegir una respuesta.', image: 'debtDefault', choices: [
     { id: 'dialogue', label: 'Abrir una mesa con acreedores', cost: 25, description: 'Relación financiera +3. El reperfilamiento debe negociarse y ejecutarse sobre un contrato.', effect: { relationship: { financiero: 3 } } },

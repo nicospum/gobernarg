@@ -1,13 +1,14 @@
 import { ACTORS, POLICIES } from '../../causal/catalog';
-import { DIFFICULTIES, STRATEGIES } from '../../causal/campaignCatalog';
+import { DIFFICULTIES, PROFILES, STRATEGIES } from '../../causal/campaignCatalog';
 import { electoralBreakdown } from '../../causal/campaign';
-import { agreementDescription } from '../../causal/interactions';
-import { actorName, indicatorName, isProject, policyName } from '../../causal/selectors';
+import { isProject, policyName } from '../../causal/selectors';
 import { IMAGES } from '../../utils/imageAssets';
-import type { CausalState } from '../../causal/types';
-import type { CampaignProps } from './GovernmentPanel';
-import { Dialog } from './Dialog';
+import { THUMBNAIL_ARCHETYPES } from '../../utils/iconThumbnails';
+import type { CausalState, GameCommand } from '../../causal/types';
 import { fmtPct, fmtScore } from '../../causal/format';
+
+export type CampaignDispatch = (type: GameCommand['type'], targetId?: string, choiceId?: string) => boolean;
+export interface CampaignProps { state: CausalState; onCommand: CampaignDispatch }
 
 export function PoliticalSidebar({ state, onCommand, view = 'all' }: CampaignProps & { view?: 'all' | 'electoral' | 'updates' }) {
   const c = state.campaign;
@@ -21,7 +22,7 @@ export function PoliticalSidebar({ state, onCommand, view = 'all' }: CampaignPro
   const visibleNews = [...c.news].reverse().filter(n => !n.dismissed);
   return <>
     {view !== 'updates' && <section className="b-electoral-panel bg-card border border-border rounded-xl overflow-hidden"><img src={IMAGES.backgrounds.congressFlags} alt="Congreso Nacional" className="h-28 w-full object-cover" /><div className="p-4 space-y-3"><h2 className="font-display text-lg font-bold">Terminal electoral</h2><div className="flex justify-between items-end"><div><p className="text-xs text-muted-foreground">Proyección de voto</p><strong className="font-display text-3xl text-amber-200">{fmtPct(c.votes)}</strong></div><p className={`text-xs ${c.votes < 45 ? 'text-red-300' : 'text-emerald-300'}`}>{c.votes < 40 ? 'Riesgo alto' : c.votes < 45 ? 'Elección disputada' : 'Sobre el umbral'}<span className="block text-muted-foreground">Victoria: 45 %</span></p></div>
-      <details className="text-xs text-muted-foreground"><summary className="cursor-pointer">Cómo se calcula la proyección</summary><p className="mt-2 leading-5">Resultados sociales {score.social.toFixed(1)} + organización {score.organization.toFixed(1)} + cumplimiento {score.credibility.toFixed(1)} + comunicación {score.communication.toFixed(1)} + incumbencia {score.incumbency.toFixed(1)} − desgaste {score.wear} − ajuste de dificultad {score.difficulty}. Balance de juego provisional; no representa una encuesta real.</p></details>
+      <details className="text-xs text-muted-foreground"><summary className="cursor-pointer">Cómo se calcula la proyección</summary><p className="mt-2 leading-5">Resultados sociales {score.social.toFixed(1)} + organización {score.organization.toFixed(1)} + cumplimiento {score.credibility.toFixed(1)} + incumbencia {score.incumbency.toFixed(1)} − desgaste {score.wear} − ajuste de dificultad {score.difficulty}. Balance de juego provisional; no representa una encuesta real.</p></details>
       <div className="grid grid-cols-2 gap-3 text-xs"><div><h3 className="text-emerald-300 mb-2">Sectores satisfechos</h3>{satisfied.map(a => <p className="mb-1" key={a.id}>{a.name}</p>)}{!satisfied.length && <p className="text-muted-foreground">Sin sectores sobre 55.</p>}</div><div><h3 className="text-amber-200 mb-2">Sectores descontentos</h3>{dissatisfied.map(a => <p className="mb-1" key={a.id}>{a.name}</p>)}{!dissatisfied.length && <p className="text-muted-foreground">Sin sectores bajo 45.</p>}</div></div>
       <p className="text-[10px] text-muted-foreground">Satisfacción sectorial no equivale a un respaldo electoral explícito.</p>
     </div></section>}
@@ -54,8 +55,11 @@ export function ProjectReports({ state }: { state: CausalState }) {
     return <article key={project.id} className="rounded border border-border p-3"><h3 className="text-sm font-semibold">{policy.name}</h3><div className="flex justify-between text-[10px] text-muted-foreground mt-3"><span>Estudio ✓</span><span>Inicio T{project.turn} ✓</span><span>Entrega T{delivery}{complete ? ' ✓' : ''}</span><span>{complete ? 'En operación' : 'En ejecución'}</span></div><div className="h-2 bg-white/10 rounded mt-2"><div className="h-full rounded bg-sky-300" style={{ width: `${progress}%` }} /></div></article>;
   })}{!projects.length && <p className="text-xs text-muted-foreground">Al iniciar una obra aparecerán sus hitos. Los estudios y efectos futuros conservan sus fechas entre mandatos.</p>}</div></section>;
 }
-export function ManagementNotebook({ state, onClose }: { state: CausalState; onClose: () => void }) {
-  return <Dialog title="Cuaderno de gestión" onClose={onClose}><ObjectivesPanel state={state} /><h3 className="font-semibold">Compromisos políticos</h3>{state.agreements.map(a => <div key={a.id} className="p-3 border border-border rounded text-sm"><strong>{actorName(a.actorId)}</strong><p className="text-xs mt-1">{agreementDescription(a)}</p><p className="text-xs text-blue-200 mt-1">{a.status === 'pending' ? `Pendiente · vence T${a.deadline}` : a.status === 'fulfilled' ? 'Cumplido' : 'Incumplido'}</p></div>)}{!state.agreements.length && <p className="text-sm text-muted-foreground">Todavía no firmaste compromisos.</p>}<ProjectReports state={state} /><h3 className="font-semibold">Efectos y obligaciones programados</h3>{state.effects.map(e => <p className="text-xs border-b border-border py-2" key={e.id}>{policyName(e.actionId)} · {e.kind === 'indicator' ? indicatorName(e.target) : e.target === 'revenue_once' ? 'Aporte extraordinario' : e.target === 'expense_once' ? 'Desembolso' : e.target === 'expense_recurring' ? 'Gasto recurrente' : e.target === 'financing_issue' ? 'Financiación' : 'Ingreso recurrente'} · {e.magnitude > 0 ? '+' : ''}{e.magnitude.toFixed(1)} · desde T{e.startTurn}{e.endExclusive ? ` hasta T${e.endExclusive - 1}` : ' de forma permanente'}</p>)}<h3 className="font-semibold">Decisiones recientes</h3>{[...state.history].reverse().slice(0, 30).map(h => <p className="text-xs py-1" key={h.id}>T{h.turn} · {policyName(h.actionId)} · {h.cashDelta.toFixed(1)} U</p>)}</Dialog>;
+/** Perfil del presidente: sus ventajas son fijas durante toda la partida. */
+export function ProfileCard({ state }: { state: CausalState }) {
+  const profile = PROFILES[state.profile];
+  if (!profile) return null;
+  return <section className="b-profile-card bg-card border border-border rounded-xl p-4 flex gap-3 items-start" aria-label="Tu perfil"><img src={THUMBNAIL_ARCHETYPES[state.profile]} alt="" className="w-12 h-12 rounded-lg shrink-0" /><div><p className="b-eyebrow">Tu perfil</p><h2 className="font-display font-bold mt-1">{profile.name}</h2><p className="text-xs text-muted-foreground leading-5 mt-1">{profile.description}</p></div></section>;
 }
 export function AxesPanel({ state }: { state: CausalState }) {
   if (!state.campaign) return null;

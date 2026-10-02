@@ -155,8 +155,6 @@
 .situation-room .b-dialog { background: linear-gradient(180deg, #16202d, #0b1017); border-color: #c9a96e66; animation: b-dossier-in .24s cubic-bezier(.2,.8,.2,1); }
 .b-dialog > div:first-child { background: #0b1017; }
 .b-dialog > div:first-child h2 { font-size: 19px; line-height: 1.5; }
-.situation-room .b-drawer-backdrop { justify-content: flex-end; align-items: stretch; padding: 0; }
-.situation-room .b-drawer { max-width: 640px; height: 100dvh; max-height: 100dvh; border-radius: 0; border-width: 0 0 0 1px; animation: b-drawer-in .3s cubic-bezier(.2,.8,.2,1); }
 .b-mission { position: relative; overflow: hidden; min-height: 165px; border: 1px solid #1e2d40; border-radius: 9px; }
 .b-mission > img { position: absolute; inset: 0; height: 100%; width: 100%; object-fit: cover; opacity: .32; }
 .b-mission > div { position: relative; padding: 20px; background: linear-gradient(90deg, #0b1017, #0b101730); }
@@ -211,14 +209,13 @@
 @keyframes b-status-pulse { 0%,100% { box-shadow: 0 0 0 3px #34d39915; } 50% { box-shadow: 0 0 0 6px #34d39905; } }
 @keyframes b-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes b-dossier-in { from { opacity: 0; transform: translateY(12px) scale(.99); } to { opacity: 1; transform: none; } }
-@keyframes b-drawer-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
 @keyframes b-pane-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 @keyframes b-value-in { from { opacity: .45; } to { opacity: 1; } }
 .b-value-update { display: inline-block; animation: b-value-in .35s ease-out; }
 @media (min-width: 1024px) and (max-width: 1279px) {
   .b-cockpit { grid-template-columns: 210px minmax(0,1fr) 255px; gap: 9px; padding: 9px; }
   .b-command-header { gap: 8px; padding: 10px; }
-  .b-president-name small, .b-header-cabinet, .b-kpi-ring, .b-desk-tabs > span { display: none !important; }
+  .b-president-name small, .b-kpi-ring, .b-desk-tabs > span { display: none !important; }
   .b-turn-clock { min-width: 165px; }
   .b-agenda-resource { padding: 9px; }
   .b-policy-panel > .grid { grid-template-columns: 1fr; }

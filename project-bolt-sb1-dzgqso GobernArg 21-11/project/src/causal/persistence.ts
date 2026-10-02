@@ -4,13 +4,13 @@ import { AGREEMENT_LABELS } from './interactions';
 import { CAMPAIGN_COMMANDS, enableCampaign } from './campaign';
 import { DIFFICULTIES } from './campaignCatalog';
 import type { Difficulty } from './campaignTypes';
-import { getScenario, isValidPlatformId } from './scenarios';
+import { getScenario } from './scenarios';
 import type { CausalState, GameCommand } from './types';
 
 export const SAVE_KEY = 'gobernarg.causal.v1';
-interface Player { name: string; profile: string; avatar: string; difficulty?: Difficulty; scenarioId?: string; platformId?: string }
-/** El escenario y la plataforma son parte de la creación: la reconstrucción parte del mismo país. */
-const gameOptions = (player: Player) => ({ scenarioId: player.scenarioId, platformId: player.platformId });
+interface Player { name: string; profile: string; avatar: string; difficulty?: Difficulty; scenarioId?: string }
+/** El escenario es parte de la creación: la reconstrucción parte del mismo país. */
+const gameOptions = (player: Player) => ({ scenarioId: player.scenarioId });
 export interface GameSession { player: Player; commands: GameCommand[]; state: CausalState }
 export function newSession(player: Player): GameSession {
   const state = createCausalGame(player.name, player.profile, player.avatar, gameOptions(player));
@@ -50,12 +50,10 @@ export function deserializeSession(text: string): GameSession {
     || !Array.isArray(value.commands) || value.commands.length > 10_000) throw new Error('La partida guardada tiene datos inválidos.');
   if (value.player.difficulty !== undefined && !Object.prototype.hasOwnProperty.call(DIFFICULTIES, String(value.player.difficulty))) throw new Error('Dificultad inválida.');
   if (value.player.scenarioId !== undefined && !getScenario(String(value.player.scenarioId))) throw new Error('Escenario inválido.');
-  if (value.player.platformId !== undefined && !isValidPlatformId(value.player.platformId)) throw new Error('Plataforma inválida.');
   if (value.campaignVersion !== 1) throw new Error('Versión de campaña no compatible.');
   const player: Player = { name: value.player.name, profile: value.player.profile, avatar: value.player.avatar,
     ...(value.player.difficulty ? { difficulty: value.player.difficulty as Difficulty } : {}),
-    ...(value.player.scenarioId ? { scenarioId: String(value.player.scenarioId) } : {}),
-    ...(value.player.platformId ? { platformId: String(value.player.platformId) } : {}) };
+    ...(value.player.scenarioId ? { scenarioId: String(value.player.scenarioId) } : {}) };
   const session = newSession(player);
   for (const item of value.commands) {
     if (!validCommand(item)) throw new Error('El historial guardado contiene un comando inválido.');

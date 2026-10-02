@@ -1,6 +1,6 @@
-const STEPS = ['Tu gobernante', 'Dificultad y partido'];
+const STEPS = ['Tu gobernante', 'Dificultad'];
 
-/** Indicador del inicio de partida: 1 = personaje, 2 = dificultad y plataforma. */
+/** Indicador del inicio de partida: 1 = personaje, 2 = dificultad. */
 export function SetupSteps({ current }: { current: 1 | 2 }) {
   return (
     <ol className="flex items-center gap-2 text-xs md:text-sm" aria-label="Pasos para empezar">

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ArrowRight, BarChart3, BookOpen, MessageSquareHeart, Briefcase, Clock3, History, Info, Landmark, LayoutGrid, MoreHorizontal, NotebookPen, RefreshCw, Users, Wallet, CalendarClock, Zap, ShieldCheck, FileSignature } from 'lucide-react';
+import { ArrowRight, BarChart3, BookOpen, MessageSquareHeart, Clock3, Info, Landmark, LayoutGrid, MoreHorizontal, NotebookPen, RefreshCw, Users, Wallet, CalendarClock, Zap, ShieldCheck, FileSignature } from 'lucide-react';
 import { INDICATORS, TURNS_PER_TERM } from '../../causal/catalog';
 import { fiscalForecast } from '../../causal/finance';
 import { indicatorName, policyName, totalArrears, totalDebt } from '../../causal/selectors';
@@ -13,8 +13,7 @@ import { PROFILES } from '../../causal/campaignCatalog';
 import { PolicyPanel } from './PolicyPanel';
 import { ActorPanel } from './ActorPanel';
 import { Dialog } from './Dialog';
-import { GovernmentPanel, type CampaignDispatch } from './GovernmentPanel';
-import { AxesPanel, ManagementNotebook, ObjectivesPanel, PoliticalSidebar, PoliticalStatus, ProjectReports } from './CivicPanels';
+import { AxesPanel, ObjectivesPanel, PoliticalSidebar, PoliticalStatus, ProfileCard, ProjectReports, type CampaignDispatch } from './CivicPanels';
 import { CampaignFlow } from './CampaignFlow';
 import { HowToPlay, TutorialCard, useTutorial } from './Tutorial';
 import { FeedbackForm } from './FeedbackForm';
@@ -45,35 +44,28 @@ function campaignModalOpen(state: CausalState): boolean {
   return state.phase === 'ended' || state.phase === 'mandate_review' || !!c.pendingEvent || !!c.resultPending || !!c.strategyPending;
 }
 
-type MobileTab = 'acciones' | 'pais' | 'actores' | 'gabinete';
+type MobileTab = 'acciones' | 'pais' | 'actores';
 const TABS: { id: MobileTab; label: string; icon: typeof LayoutGrid }[] = [
   { id: 'acciones', label: 'Acciones', icon: LayoutGrid },
   { id: 'pais', label: 'País', icon: BarChart3 },
   { id: 'actores', label: 'Actores', icon: Users },
-  { id: 'gabinete', label: 'Gabinete', icon: Briefcase },
 ];
 
 export function CausalDashboard({ state, onExecute, onCommand, onRestart, savingError }: Props) {
   const [indicator, setIndicator] = useState<IndicatorId | null>(null);
-  const [history, setHistory] = useState(false);
   const [restart, setRestart] = useState(false);
   const [review, setReview] = useState<TurnReport | null>(null);
-  const [notebook, setNotebook] = useState(false);
   const [menu, setMenu] = useState(false);
   const [help, setHelp] = useState(false);
   const [feedback, setFeedback] = useState(false);
   const closeFeedback = useCallback(() => setFeedback(false), []);
   const [tab, setTab] = useState<MobileTab>('acciones');
   const [deskTab, setDeskTab] = useState<'decisiones' | 'finanzas' | 'agenda'>('decisiones');
-  const [cabinet, setCabinet] = useState(false);
   const [preview, setPreview] = useState<PolicyDefinition | null>(null);
-  const closeCabinet = useCallback(() => setCabinet(false), []);
   const previewTargets = preview ? policyEffectsPreview(state, preview).map(effect => effect.target) : [];
   const isMobile = useIsMobile();
   const tutorial = useTutorial();
-  const closeNotebook = useCallback(() => setNotebook(false), []);
   const closeIndicator = useCallback(() => setIndicator(null), []);
-  const closeHistory = useCallback(() => setHistory(false), []);
   const closeRestart = useCallback(() => setRestart(false), []);
   const closeReview = useCallback(() => setReview(null), []);
   const closeMenu = useCallback(() => setMenu(false), []);
@@ -100,15 +92,13 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
   const showTutorial = !tutorial.dismissed && state.term === 1 && state.turn === 1 && state.reports.length === 0;
   const tutorialCard = showTutorial && <TutorialCard onDismiss={tutorial.dismiss} onOpenGuide={() => setHelp(true)} />;
 
-  const menuItems: [string, typeof History, () => void, boolean?][] = [
-    ['Cuaderno de gestión', NotebookPen, () => setNotebook(true)],
-    ['Historial de gobierno', History, () => setHistory(true)],
+  const menuItems: [string, typeof BookOpen, () => void, boolean?][] = [
     ['Cómo se juega', BookOpen, () => setHelp(true)],
     ['Contanos cómo te fue', MessageSquareHeart, () => setFeedback(true)],
     ['Reiniciar partida…', RefreshCw, () => setRestart(true), true],
   ];
 
-  const hero = <section className="b-mission"><img src={IMAGES.backgrounds.casaRosadaSunset} alt="Casa Rosada al atardecer" /><div><p className="b-eyebrow">República Argentina / Presidencia</p><h2 className="font-display">Mandato {state.term} · Sala de situación</h2><p>{scenarioNameForHero(state)} · Decisiones, acuerdos y consecuencias.</p><button className="causal-secondary mt-3" onClick={() => setNotebook(true)}>Abrir cuaderno de gestión</button></div></section>;
+  const hero = <section className="b-mission"><img src={IMAGES.backgrounds.casaRosadaSunset} alt="Casa Rosada al atardecer" /><div><p className="b-eyebrow">República Argentina / Presidencia</p><h2 className="font-display">Mandato {state.term} · Sala de situación</h2><p>{scenarioNameForHero(state)} · Decisiones, acuerdos y consecuencias.</p></div></section>;
   const savingAlert = savingError && <p role="alert" className="text-sm border border-amber-400/30 bg-amber-400/10 p-3 rounded text-amber-100">{savingError}</p>;
   const country = <><CountryBriefing state={state} preview={preview} onIndicator={setIndicator} />
     {lastReport && <div className="b-last-report bg-card border border-border rounded-lg p-3"><p className="text-xs text-muted-foreground">Turno {lastReport.turn} cerrado · Caja {fmtU(lastReport.fiscal.closingCash)}</p><button type="button" className="causal-secondary mt-2" onClick={() => setReview(lastReport)}>Ver cierre</button></div>}
@@ -125,16 +115,13 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
   const socialComponent = <section className="bg-primary/10 border border-primary/25 rounded-xl p-4"><h2 className="text-sm font-semibold">Componente electoral social</h2><p className="text-3xl font-display font-bold mt-2">{fmtScore(state.socialComponent)}<span className="text-sm text-muted-foreground"> /100</span></p><p className="text-xs text-muted-foreground mt-2 leading-5">Resume satisfacción y peso de los actores sociales. Es una parte del sistema electoral; no es un porcentaje de votos ni garantiza una victoria.</p></section>;
 
   const overlays = <>
-    {cabinet && <Dialog title="Gabinete presidencial" variant="drawer" onClose={closeCabinet}><GovernmentPanel state={state} onCommand={onCommand} /></Dialog>}
-    {notebook && <ManagementNotebook state={state} onClose={closeNotebook} />}
     <CampaignFlow state={state} onCommand={onCommand} onRestart={onRestart} onFeedback={() => setFeedback(true)} />
     {selectedIndicator && <Dialog title={selectedIndicator.name} onClose={closeIndicator}><p className="text-sm leading-6">{selectedIndicator.description}</p><div className="grid grid-cols-2 gap-3 text-sm"><p className="bg-background/50 p-3 rounded">Alto: {selectedIndicator.high}</p><p className="bg-background/50 p-3 rounded">Bajo: {selectedIndicator.low}</p></div>{lastReport?.indicators.filter(trace => trace.id === indicator).map(trace => <div key={trace.id}><h3 className="text-sm font-semibold mb-3">Último cierre: {fmtScore(trace.before)} → {fmtScore(trace.after)}</h3>{trace.contributions.map((contribution, index) => <p key={`${contribution.sourceId}:${index}`} className="flex justify-between gap-3 text-sm py-2 border-b border-border"><span>{contribution.label}</span><span className="font-mono shrink-0">{fmtSigned(contribution.amount)}</span></p>)}</div>)}</Dialog>}
-    {history && <Dialog title="Historial de gobierno" onClose={closeHistory}>{state.reports.length === 0 ? <p className="text-sm text-muted-foreground">Todavía no cerraste un turno.</p> : [...state.reports].reverse().map(report => <button type="button" key={report.turn} className="w-full text-left border border-border rounded p-3 hover:border-primary" onClick={() => { setHistory(false); setReview(report); }}><strong className="text-sm">Turno {report.turn} · Mandato {report.term}</strong><p className="text-xs text-muted-foreground mt-1">{report.executions.map(execution => policyName(execution.actionId)).join(', ') || 'Sin nuevas políticas'} · Caja {fmtU(report.fiscal.closingCash)}</p></button>)}</Dialog>}
     {review && !campaignOpen && <Dialog title={`Cierre del turno ${review.turn}`} onClose={closeReview}><ReportContent report={review} /><button type="button" className="causal-primary w-full" onClick={closeReview}>Seguir gobernando</button></Dialog>}
     {menu && <Dialog title="Menú" onClose={closeMenu}><div className="flex flex-col">{menuItems.map(([label, Icon, action, danger]) => <button key={label} type="button" className={`flex items-center gap-3 min-h-[52px] px-2 rounded text-left hover:bg-white/10 ${danger ? 'text-red-300 border-t border-border mt-2 pt-2' : ''}`} onClick={() => { setMenu(false); action(); }}><Icon size={18} /> {label}</button>)}</div></Dialog>}
     {help && <HowToPlay onClose={closeHelp} />}
     {feedback && <FeedbackForm state={state} onClose={closeFeedback} />}
-    {restart && <Dialog title="Reiniciar partida" onClose={closeRestart}><p className="text-sm">Esto reemplaza la partida guardada en este navegador y su historial.</p><div className="flex gap-3"><button type="button" className="causal-secondary" onClick={closeRestart}>Seguir jugando</button><button type="button" className="causal-primary" onClick={onRestart}>Reiniciar</button></div></Dialog>}
+    {restart && <Dialog title="Reiniciar partida" onClose={closeRestart}><p className="text-sm">Esto reemplaza la partida guardada en este navegador.</p><div className="flex gap-3"><button type="button" className="causal-secondary" onClick={closeRestart}>Seguir jugando</button><button type="button" className="causal-primary" onClick={onRestart}>Reiniciar</button></div></Dialog>}
   </>;
 
   const scenarioName = getScenario(state.scenarioId)?.name;
@@ -154,9 +141,8 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
         {tutorialCard}
         {savingAlert}
         {tab === 'acciones' && <><ObjectivesPanel state={state} /><PolicyPanel state={state} onExecute={onExecute} onPreview={setPreview} /><ProjectReports state={state} /></>}
-        {tab === 'pais' && <>{country}{futureEffects}{cashAndDebt}{hero}</>}
+        {tab === 'pais' && <>{country}<ProfileCard state={state} />{futureEffects}{cashAndDebt}{hero}</>}
         {tab === 'actores' && <><PoliticalSidebar state={state} onCommand={onCommand} />{governability}{socialComponent}<ActorPanel state={state} onExecute={onExecute} previewTargets={previewTargets} /><AxesPanel state={state} /></>}
-        {tab === 'gabinete' && <><GovernmentPanel state={state} onCommand={onCommand} /></>}
       </main>
       <div className="fixed inset-x-0 bottom-0 z-40 bg-card border-t border-border shadow-[0_-8px_20px_rgba(0,0,0,.35)] pb-[env(safe-area-inset-bottom)]">
         <div className="flex items-center gap-4 h-[68px] pl-4 pr-3">
@@ -164,7 +150,7 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
           <div className="leading-tight"><p className="text-[10px] text-muted-foreground">Caja</p><strong className="text-base">{fmtU(state.cash, 0)}</strong></div>
           <button type="button" data-no-restore-focus className="causal-primary ml-auto h-12 flex items-center gap-2" disabled={!canClose} onClick={e => closeTurn(e.currentTarget)}>Cerrar turno <ArrowRight size={16} /></button>
         </div>
-        <nav aria-label="Secciones" className="grid grid-cols-4 h-16 border-t border-border">
+        <nav aria-label="Secciones" className="grid grid-cols-3 h-16 border-t border-border">
           {TABS.map(({ id, label, icon: Icon }) => <button key={id} type="button" aria-current={tab === id ? 'page' : undefined} onClick={() => { setTab(id); setPreview(null); window.scrollTo({ top: 0 }); }} className={`-mt-px flex flex-col items-center justify-center gap-0.5 text-xs border-t-[3px] ${tab === id ? 'border-amber-200 text-white font-semibold' : 'border-transparent text-muted-foreground'}`}><Icon size={21} strokeWidth={1.8} />{label}</button>)}
         </nav>
       </div>
@@ -178,20 +164,19 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
       <div className="b-president"><div className="b-president-identity"><PresidentialMark />{state.avatar && <img src={state.avatar} alt={state.name} className="b-president-avatar" />}</div><div className="b-president-name"><ShieldCheck size={13} /><span>{state.name}</span><small>{PROFILES[state.profile]?.name ?? state.profile}</small></div></div>
       <div className="b-turn-clock"><Clock3 size={16} /><div><strong>Año {Math.ceil(inTerm / 4)} · T{(inTerm - 1) % 4 + 1}</strong><span>Turno global {state.turn} · Mandato {state.term}</span><MandateTimeline inTerm={inTerm} wide /></div></div>
       <div className="b-agenda-resource"><Zap size={19} /><div><span>Agenda disponible</span><strong>{acciones(state.actionPoints)}</strong></div></div>
-      <button type="button" className="causal-secondary b-header-cabinet" onClick={() => setCabinet(true)}><Briefcase size={15} />Gabinete</button>
       <button type="button" aria-haspopup="dialog" className="causal-secondary b-header-menu" onClick={() => setMenu(true)}><MoreHorizontal size={17} />Menú</button>
       <button type="button" aria-label="Cerrar turno" data-no-restore-focus className="causal-primary b-close-turn" disabled={!canClose} onClick={e => closeTurn(e.currentTarget)}><FileSignature size={18} /><span><small>Despacho oficial</small>Cerrar turno</span><ArrowRight size={17} /></button>
     </header>
     <NewsWire state={state} /><CommandStatus state={state} />
     <main className="b-cockpit" aria-label="Sala de situación presidencial">
-      <aside className="b-country-column b-scroll-region" aria-label="Briefing nacional">{country}<button type="button" className="causal-secondary w-full mt-3" onClick={() => setCabinet(true)}><Briefcase size={15} />Equipo y habilidades</button></aside>
+      <aside className="b-country-column b-scroll-region" aria-label="Briefing nacional">{country}<ProfileCard state={state} /></aside>
       <section className="b-decisions-column">
         <nav className="b-desk-tabs" aria-label="Secciones del despacho">{([['decisiones', 'Decisiones', LayoutGrid], ['finanzas', 'Tesoro', Wallet], ['agenda', 'Gestión', NotebookPen]] as const).map(([id, label, Icon]) => <button type="button" key={id} aria-current={deskTab === id ? 'page' : undefined} onClick={() => { setDeskTab(id); setPreview(null); }}><Icon size={15} />{label}</button>)}<span>{scenarioName ?? 'País inicial'}</span></nav>
         <div className="b-desk-content b-scroll-region" key={deskTab}>
           {tutorialCard}{savingAlert}
-          {deskTab === 'decisiones' && <><div className="b-congress-brief"><Landmark size={17} /><p><strong>Congreso de la Nación</strong><span>{state.campaign?.seats.oficialismo ?? 40} bancas propias · {state.campaign?.seats.aliados ?? 15} aliadas · El apoyo se consulta para cada ley.</span></p><button className="causal-secondary" onClick={() => setNotebook(true)}><BookOpen size={14} />Cuaderno</button></div><PolicyPanel state={state} onExecute={onExecute} onPreview={setPreview} /></>}
+          {deskTab === 'decisiones' && <><div className="b-congress-brief"><Landmark size={17} /><p><strong>Congreso de la Nación</strong><span>{state.campaign?.seats.oficialismo ?? 40} bancas propias · {state.campaign?.seats.aliados ?? 15} aliadas · El apoyo se consulta para cada ley.</span></p></div><PolicyPanel state={state} onExecute={onExecute} onPreview={setPreview} /></>}
           {deskTab === 'finanzas' && <>{cashAndDebt}{futureEffects}{governability}</>}
-          {deskTab === 'agenda' && <>{hero}<PoliticalSidebar state={state} onCommand={onCommand} view="updates" /><ObjectivesPanel state={state} /><ProjectReports state={state} /><AxesPanel state={state} /><button type="button" className="causal-secondary" onClick={() => setHistory(true)}><History size={15} />Historial de gobierno</button></>}
+          {deskTab === 'agenda' && <>{hero}<PoliticalSidebar state={state} onCommand={onCommand} view="updates" /><ObjectivesPanel state={state} /><ProjectReports state={state} /><AxesPanel state={state} /></>}
         </div>
         <section className="b-execution-ledger" aria-label="Decisiones ejecutadas este turno"><div><FileSignature size={15} /><strong>Expediente del trimestre</strong><span className="font-mono">T{state.turn}</span></div><p>{executed.length ? executed.map(execution => <span className="b-execution-tag" key={execution.id}>{policyName(execution.actionId)}</span>) : 'Sin decisiones ejecutadas este trimestre.'}</p></section>
       </section>

@@ -5,7 +5,6 @@ import logoPrimary from '../assets/images/logo/logo-primary.webp';
 import bgCasaRosadaSunset from '../assets/images/backgrounds/balcony-casa-rosada-sunset.webp';
 import bgCongressSunrise from '../assets/images/backgrounds/congress-sunrise-panorama.webp';
 import bgCongressFlags from '../assets/images/backgrounds/balcony-congress-flags.webp';
-import bgCabinetRoom from '../assets/images/backgrounds/bg-cabinet-room.webp';
 import bgCongressInterior from '../assets/images/backgrounds/bg-congress-interior.webp';
 import bgPresidentialOffice from '../assets/images/backgrounds/bg-presidential-office.webp';
 import bgMapArgentina from '../assets/images/backgrounds/bg-map-argentina.webp';
@@ -27,15 +26,6 @@ import charIndigenousLeader from '../assets/images/characters/character-indigeno
 import charYouthActivist from '../assets/images/characters/character-youth-activist.webp';
 import charBusinessExecutive from '../assets/images/characters/character-business-executive.webp';
 
-import advisorSecurityFemale from '../assets/images/advisors/advisor-security-female.webp';
-import advisorSocialFemale from '../assets/images/advisors/advisor-social-female.webp';
-import advisorEconomyMale from '../assets/images/advisors/advisor-economy-male.webp';
-import advisorCommunicationFemale from '../assets/images/advisors/advisor-communication-female.webp';
-import advisorInfrastructureMale from '../assets/images/advisors/advisor-infrastructure-male.webp';
-import advisorForeignMale from '../assets/images/advisors/advisor-foreign-male.webp';
-import advisorEducationMale from '../assets/images/advisors/advisor-education-male.webp';
-import advisorCharlyAbad from '../assets/images/advisors/advisor-charly-abad.webp';
-
 import eventEconomicCrisis from '../assets/images/events/event-economic-crisis.webp';
 import eventSocialProtest from '../assets/images/events/event-social-protest.webp';
 import eventCorruption from '../assets/images/events/event-corruption-scandal.webp';
@@ -52,7 +42,6 @@ import eventDrought from '../assets/images/events/event-drought.webp';
 import eventPrisonRiot from '../assets/images/events/event-prison-riot.webp';
 import eventDrugWave from '../assets/images/events/event-drug-wave.webp';
 import eventPoliceViolence from '../assets/images/events/event-police-violence-scandal.webp';
-import eventMinisterResignation from '../assets/images/events/event-minister-resignation.webp';
 
 import uiShieldEmblem from '../assets/images/ui/shield-emblem.webp';
 import uiShieldEmblemPremium from '../assets/images/ui/shield-emblem-premium.webp';
@@ -73,7 +62,6 @@ export const IMAGES = {
     casaRosadaSunset: bgCasaRosadaSunset,
     congressSunrise: bgCongressSunrise,
     congressFlags: bgCongressFlags,
-    cabinetRoom: bgCabinetRoom,
     congressInterior: bgCongressInterior,
     presidentialOffice: bgPresidentialOffice,
     mapArgentina: bgMapArgentina,
@@ -113,7 +101,6 @@ export const IMAGES = {
     prisonRiot: eventPrisonRiot,
     drugWave: eventDrugWave,
     policeViolenceScandal: eventPoliceViolence,
-    ministerResignation: eventMinisterResignation,
   },
   ui: {
     shieldEmblem: uiShieldEmblem,
@@ -131,15 +118,3 @@ export const IMAGES = {
     },
   },
 } as const;
-
-/** Retrato de cada asesor del gabinete (campaignCatalog.CABINET). */
-export const ADVISOR_PORTRAITS: Record<string, string> = {
-  advisor1: advisorEconomyMale,
-  advisor2: advisorCommunicationFemale,
-  advisor3: advisorInfrastructureMale,
-  advisor4: advisorSocialFemale,
-  advisor5: advisorForeignMale,
-  advisor6: advisorSecurityFemale,
-  advisor7: advisorEducationMale,
-  advisor8: advisorCharlyAbad,
-};

@@ -1,11 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { applyCommand, policyAvailability } from '../causal/engine';
 import { campaignActionReason, electoralBreakdown, eligibleCampaignEvents, settleCampaignClose } from '../causal/campaign';
-import { ABILITIES, CABINET, CAMPAIGN_EVENTS } from '../causal/campaignCatalog';
+import { CAMPAIGN_EVENTS, PROFILES } from '../causal/campaignCatalog';
 import { deserializeSession, newSession, serializeSession } from '../causal/persistence';
-import { actorTarget, efficacy, legislativeSupport, totalDebt } from '../causal/selectors';
-import { ACTORS, INDICATORS, POLICIES } from '../causal/catalog';
-import { fiscalForecast } from '../causal/finance';
+import { actorTarget, legislativeSupport, totalDebt } from '../causal/selectors';
+import { ACTORS, INDICATORS } from '../causal/catalog';
 import type { CausalState, GameCommand } from '../causal/types';
 
 let seq = 0;
@@ -29,62 +28,29 @@ function settlePrompts(state: CausalState): CausalState {
 function next(state: CausalState) { return issue(settlePrompts(state), 'close_turn'); }
 function game(profile = 'politico') { return newSession({ name: 'Prueba', profile, avatar: '' }).state; }
 
-describe('restored cabinet, profiles and abilities', () => {
-  it('restores the eight advisors (incl. Charly Abad) and eight profile abilities', () => {
-    expect(CABINET).toHaveLength(8); expect(ABILITIES).toHaveLength(8);
-    for (const id of ['politico', 'empresario', 'sindicalista', 'comunicador']) expect(ABILITIES.filter(a => a.profile === id)).toHaveLength(2);
-  });
-  it('activates extra capacity next turn and pays cabinet salaries in the fiscal ledger', () => {
-    let state = game();
-    const baseEfficacy = efficacy(state, POLICIES.find(p => p.id === 'mejorar_recaudacion')!);
-    state = issue(state, 'hire_advisor', 'advisor1');
-    expect(state.cash).toBe(900); expect(state.actionPoints).toBe(3);
-    expect(efficacy(state, POLICIES.find(p => p.id === 'mejorar_recaudacion')!)).toBe(baseEfficacy);
-    expect(fiscalForecast(state)[0].expense).toBe(450);
-    state = next(state);
-    expect(state.actionPoints).toBe(6); expect(state.reports[0].fiscal.recurringExpense).toBe(450);
-    expect(efficacy(state, POLICIES.find(p => p.id === 'mejorar_recaudacion')!)).toBeCloseTo(1.06);
-  });
-  it('enforces cabinet capacity, availability, cash and one operation per turn', () => {
-    let state = issue(game(), 'hire_advisor', 'advisor1');
-    expect(campaignActionReason(state, 'hire_advisor', 'advisor2')).toContain('este turno');
-    state = next(state); state = issue(state, 'hire_advisor', 'advisor2'); state = next(state);
-    expect(campaignActionReason(state, 'hire_advisor', 'advisor3')).toContain('dos cargos');
-    expect(campaignActionReason(game(), 'hire_advisor', 'advisor5')).toContain('aprobación');
-    const poor = game(); poor.cash = 0;
-    expect(campaignActionReason(poor, 'hire_advisor', 'advisor1')).toContain('300');
-  });
-  it('training suspends extra capacity and returns a higher-level advisor on its stated date', () => {
-    let state = next(issue(game(), 'hire_advisor', 'advisor1'));
-    state = issue(state, 'train_advisor', 'advisor1');
-    expect(state.campaign!.advisors[0]).toMatchObject({ level: 4, activeFrom: 4 });
-    expect(state.actionPoints).toBe(3);
-    state = next(state); expect(state.actionPoints).toBe(4);
-    state = next(state); expect(state.actionPoints).toBe(6);
-    state = settlePrompts(state); state = issue(state, 'dismiss_advisor', 'advisor1');
-    expect(state.campaign!.advisors).toHaveLength(0); expect(state.actionPoints).toBe(3);
+describe('perfiles con ventajas fijas (sin gabinete ni habilidades)', () => {
+  it('keeps the four profiles and no longer accepts cabinet or ability commands', () => {
+    expect(Object.keys(PROFILES)).toEqual(['politico', 'empresario', 'sindicalista', 'comunicador']);
+    const state = game();
+    for (const type of ['hire_advisor', 'dismiss_advisor', 'train_advisor', 'use_ability']) {
+      const result = applyCommand(state, { id: `removed-${type}`, expectedTurn: 1, type: type as GameCommand['type'], targetId: 'advisor8' });
+      expect(result.accepted).toBe(false); expect(result.state).toBe(state);
+    }
+    expect(state.campaign).not.toHaveProperty('advisors');
+    expect(state.campaign).not.toHaveProperty('abilities');
+    expect(state.campaign).not.toHaveProperty('communication');
   });
   it('profile advantages change agenda, meeting costs and policy costs', () => {
     expect(game('sindicalista').actionPoints).toBe(5);
+    expect(next(game('sindicalista')).actionPoints).toBe(5);
+    expect(next(game()).actionPoints).toBe(4);
     expect(policyAvailability(game('sindicalista'), 'reunirse', { actorId: 'sindicatos' }).cashCost).toBe(0);
     expect(policyAvailability(game(), 'reunirse', { actorId: 'aliados' }).cashCost).toBe(0);
     expect(policyAvailability(game('empresario'), 'mejorar_recaudacion').cashCost).toBe(90);
   });
-  it('communication does not purchase material satisfaction and has a finite duration', () => {
-    let state = game('comunicador'); const before = structuredClone(state.actors);
-    state = issue(state, 'use_ability', 'campania_mediatica');
-    expect(state.actors).toEqual(before); expect(electoralBreakdown(state).communication).toBe(5);
-    expect(campaignActionReason(state, 'use_ability', 'campania_mediatica')).toContain('T4');
-    while (state.turn < 4) state = next(state);
-    expect(electoralBreakdown(state).communication).toBe(0);
-    expect(state.campaign!.votes).toBeCloseTo(electoralBreakdown(state).total);
-  });
-  it('abilities respect profile, agenda and prerequisites', () => {
-    expect(campaignActionReason(game(), 'use_ability', 'inversion_privada')).toContain('perfil');
-    expect(campaignActionReason(game('empresario'), 'use_ability', 'inversion_privada')).toContain('industria');
-    expect(campaignActionReason(game(), 'use_ability', 'pacto_gobernabilidad')).toContain('reuniones');
-    const state = game(); state.actionPoints = 0;
-    expect(campaignActionReason(state, 'use_ability', 'discurso_patriotico')).toContain('punto');
+  it('without a cabinet the recurring expense is the base budget only', () => {
+    const state = next(game());
+    expect(state.reports[0].fiscal.recurringExpense).toBe(420);
   });
 });
 
@@ -92,31 +58,18 @@ describe('events, news and government objectives', () => {
   it('only offers crises and post-election events when their context exists', () => {
     const state = game();
     const eligible = () => eligibleCampaignEvents(state).map(e => e.id);
-    expect(CAMPAIGN_EVENTS).toHaveLength(24);
-    expect(eligible()).not.toContain('minister_resignation');
+    expect(CAMPAIGN_EVENTS).toHaveLength(23);
+    expect(CAMPAIGN_EVENTS.some(e => e.id === 'minister_resignation')).toBe(false);
     expect(eligible()).not.toContain('debt_default');
     expect(eligible().some(id => id.startsWith('oposicion_') || id.startsWith('desgaste_'))).toBe(false);
-    state.campaign!.advisors.push({ id: 'advisor1', level: 3, activeFrom: 1, hiredTurn: 1 });
     state.arrears.push({ id: 'arrear', category: 'interest', amount: 10, dueTurn: 1 });
-    expect(eligible()).toContain('minister_resignation'); expect(eligible()).toContain('debt_default');
+    expect(eligible()).toContain('debt_default');
     state.campaign!.elections.push({ kind: 'legislative', term: 1, turn: 8, votes: 40, won: false, ownSeats: 40 });
     expect(eligible()).toContain('oposicion_bloqueo'); expect(eligible()).not.toContain('desgaste_soberbia');
     state.campaign!.elections[0].won = true;
     expect(eligible()).not.toContain('oposicion_bloqueo'); expect(eligible()).toContain('desgaste_soberbia');
     state.term = 2;
     expect(eligible().some(id => id.startsWith('oposicion_') || id.startsWith('desgaste_'))).toBe(false);
-  });
-  it.each(['accept', 'retain'])('the minister event %s changes actual cabinet capacity', choice => {
-    let state = next(issue(game(), 'hire_advisor', 'advisor1'));
-    state.campaign!.pendingEvent = { id: 'minister_resignation', turn: 1 };
-    state = issue(state, 'choose_event', 'minister_resignation', choice);
-    expect(state.actionPoints).toBe(4);
-    if (choice === 'accept') expect(state.campaign!.advisors).toHaveLength(0);
-    else {
-      expect(state.campaign!.advisors[0].activeFrom).toBe(4);
-      state = next(state); expect(state.actionPoints).toBe(4);
-      state = next(state); expect(state.actionPoints).toBe(6);
-    }
   });
   it('every event offers an affordable exit and choices block unrelated commands', () => {
     for (const event of CAMPAIGN_EVENTS) expect(event.choices.some(c => c.cost === 0)).toBe(true);
@@ -187,15 +140,15 @@ describe('elections, defeats and a complete presidential career', () => {
     state = next(state); expect(state.campaign!.strategy).toBe('jugada_audaz');
     state = next(state); expect(state.campaign!.strategy).toBe('negociar');
   });
-  it('reelection preserves debt, effects, cabinet and contracts', () => {
-    let state = game(); state = issue(state, 'hire_advisor', 'advisor1'); state = issue(state, 'execute', 'prestamo_local');
+  it('reelection preserves debt, effects and contracts', () => {
+    let state = game(); state = issue(state, 'execute', 'prestamo_local');
     state.phase = 'mandate_review'; state.turn = 17; state.campaign!.votes = 55;
-    const debt = totalDebt(state), effects = structuredClone(state.effects), cabinet = structuredClone(state.campaign!.advisors);
+    const debt = totalDebt(state), effects = structuredClone(state.effects);
     state = issue(state, 'resolve_election');
     expect(state.term).toBe(2); expect(state.campaign!.resultPending).toBe(true);
     expect(state.campaign!.elections[state.campaign!.elections.length - 1]?.votes).toBe(55);
     expect(state.campaign!.votes).toBeCloseTo(electoralBreakdown(state).total);
-    expect(totalDebt(state)).toBe(debt); expect(state.effects).toEqual(effects); expect(state.campaign!.advisors).toEqual(cabinet);
+    expect(totalDebt(state)).toBe(debt); expect(state.effects).toEqual(effects);
     expect(campaignActionReason(state, 'resolve_election')).not.toBeNull();
   });
   it('a lost election ends the game and cannot be bypassed by closing the turn', () => {
@@ -235,14 +188,13 @@ describe('elections, defeats and a complete presidential career', () => {
 });
 
 describe('persistence and deterministic simulation', () => {
-  it('replays a full first mandate, cabinet decisions, events and election exactly', () => {
+  it('replays a full first mandate, events and election exactly', () => {
     const session = newSession({ name: 'Partida completa', profile: 'politico', avatar: '', difficulty: 'easy' });
     const submit = (type: GameCommand['type'], targetId?: string, choiceId?: string) => {
       const cmd: GameCommand = { id: `save-${++seq}`, expectedTurn: session.state.turn, type, targetId, choiceId };
       const result = applyCommand(session.state, cmd); expect(result.accepted, result.message).toBe(true);
       session.state = result.state; session.commands.push(cmd);
     };
-    submit('hire_advisor', 'advisor1');
     while (session.state.turn <= 16) {
       const c = session.state.campaign!;
       if (c.pendingEvent) { const event = CAMPAIGN_EVENTS.find(e => e.id === c.pendingEvent!.id)!; submit('choose_event', event.id, event.choices.find(x => x.cost === 0)!.id); }
@@ -262,15 +214,8 @@ describe('persistence and deterministic simulation', () => {
   });
   it('does not mutate state when previewing unavailable campaign actions', () => {
     const state = game(), snapshot = JSON.stringify(state);
-    campaignActionReason(state, 'hire_advisor', 'advisor1'); campaignActionReason(state, 'use_ability', 'discurso_patriotico');
+    campaignActionReason(state, 'choose_event', 'health', 'wait'); campaignActionReason(state, 'resolve_election');
     expect(JSON.stringify(state)).toBe(snapshot);
-  });
-  it('can safely close after a special ability while a material agreement is pending', () => {
-    let state = game('comunicador');
-    state.agreements.push({ id: 'a', actorId: 'sindicatos', templateId: 'resultado', indicatorId: 'ingreso_real', createdTurn: 1, delta: 4, signedTurn: 1, signedExecutionId: 'signature', baseline: 45, deadline: 5, activeFrom: 99, activeUntilExclusive: 99, status: 'pending' });
-    state.history.push({ id: 'signature', actionId: 'firmar_acuerdo', params: { actorId: 'sindicatos' }, turn: 1, cashDelta: 0, actionCost: 1, efficacy: 1 });
-    state = issue(state, 'use_ability', 'gira_medios'); state = next(state);
-    expect(state.agreements[0].status).toBe('pending');
   });
   it('keeps all generated indicators finite and bounded over repeated full careers', () => {
     for (const profile of ['politico', 'sindicalista', 'empresario', 'comunicador']) {
