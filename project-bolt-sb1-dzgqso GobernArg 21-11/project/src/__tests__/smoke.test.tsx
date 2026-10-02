@@ -106,6 +106,9 @@ describe('Prueba de humo de la interfaz (versión B Lite)', { timeout: 30000 }, 
     renderGame();
     await startGame('Lite');
     expect(screen.getByRole('region', { name: 'El país' })).toBeTruthy();
+    // Actores en una lista plana, sin "factores de poder" ni grupos.
+    expect(screen.getByRole('heading', { name: 'Actores' })).toBeTruthy();
+    expect(screen.queryByText('Factores de poder')).toBeNull();
     for (const hidden of ['Cable de gobierno', 'Expediente del trimestre', 'Briefing del país', 'Componente electoral social']) expect(screen.queryByText(hidden)).toBeNull();
     expect(screen.queryByRole('button', { name: 'Gestión' })).toBeNull();
     await click(screen.getByRole('button', { name: 'Tesoro' }));
