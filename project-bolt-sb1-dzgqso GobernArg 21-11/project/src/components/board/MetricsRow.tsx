@@ -134,7 +134,7 @@ function SimpleMetricsRow({ gameState, className }: { gameState: GameState; clas
         status={c.caja >= 0 ? 'Con fondos' : 'En rojo'}
         statusTone={c.caja >= 0 ? 'text-sala-good' : 'text-sala-bad'}
         series={history(gameState, 'caja')}
-        detail={<div className="text-[11px] text-ink/80 max-w-[240px]">La plata disponible del Tesoro. {lastCaja === undefined ? '' : trendWord(c.caja - lastCaja) + ' desde el último turno.'}</div>}
+        detail={<div className="text-[11px] text-ink/80 max-w-[240px]">La plata disponible del Tesoro. {lastCaja === undefined ? '' : trendWord(c.caja - lastCaja) + ' en el último turno.'}</div>}
       />
     </section>
   );

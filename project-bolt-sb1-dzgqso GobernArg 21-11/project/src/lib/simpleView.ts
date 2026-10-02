@@ -16,7 +16,8 @@ export const SIMPLE_INDICATORS: { key: string; label: string; ids: IndicatorId[]
   { key: 'INFL', label: 'Inflación', ids: ['INFL'] },
   { key: 'ACTV', label: 'Empleo y actividad', ids: ['ACTV'] },
   { key: 'PODA', label: 'Salario', ids: ['PODA'] },
-  { key: 'SOLV', label: 'Riesgo país', ids: ['SOLV'] },
+  // Solvencia fiscal: que suba es bueno ("riesgo país" se leería al revés).
+  { key: 'SOLV', label: 'Cuentas públicas', ids: ['SOLV'] },
   { key: 'EXTE', label: 'Dólar y reservas', ids: ['EXTE'] },
   { key: 'CONF', label: 'Conflictividad', ids: ['CONF'] },
   { key: 'SERV', label: 'Servicios del Estado', ids: ['INFR', 'EDUC', 'PSOC', 'SEGU'] },
@@ -62,8 +63,9 @@ export interface SimpleEffect {
 }
 
 /**
- * Hasta `max` efectos de una acción, sin números: primero los indicadores que
- * se ven en el tablero (los de servicios se agrupan) y, si no alcanza, los otros.
+ * Hasta `max` efectos de una acción, sin números, sobre los indicadores que se
+ * ven en el tablero (los de servicios se agrupan). Solo si la acción no toca
+ * ninguno se nombran los otros (p. ej. ciencia), para que no quede vacía.
  */
 export function simpleEffects(actionId: string, max = 3): SimpleEffect[] {
   const rows = (EFFECTS_BY_ACTION[actionId] ?? []).filter(
@@ -86,7 +88,7 @@ export function simpleEffects(actionId: string, max = 3): SimpleEffect[] {
     };
     (simple ? visible : hidden).push(effect);
   }
-  return [...visible, ...hidden].slice(0, max);
+  return (visible.length > 0 ? visible : hidden).slice(0, max);
 }
 
 export interface SimpleChange {
@@ -116,5 +118,5 @@ export function topChanges(record: TurnRecord, political: { apro: number; iv: nu
 export function trendWord(delta: number | null): string {
   if (delta === null) return 'Primer turno';
   if (Math.abs(delta) < 0.5) return 'Estable';
-  return delta > 0 ? 'Sube' : 'Baja';
+  return delta > 0 ? 'Subió' : 'Bajó';
 }
