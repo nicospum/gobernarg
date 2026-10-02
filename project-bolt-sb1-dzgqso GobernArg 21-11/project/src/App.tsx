@@ -1,11 +1,9 @@
 import { useEffect, useState, useRef } from 'react';
 import { Toaster, toast } from 'sonner';
 import { GameHeader } from './components/GameHeader';
-import { CharacterCreation, type CharacterDraft } from './components/CharacterCreation';
-import { GameSetup } from './components/GameSetup';
+import { NewGameScreen, type NewGameChoice } from './components/NewGameScreen';
 import { ControlPanel } from './components/ControlPanel';
 import { TurnSummaryModal } from './components/TurnSummaryModal';
-import { WelcomeModal } from './components/WelcomeModal';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { IndicatorsPanel } from './components/IndicatorsPanel';
 import { PendingEffectsPanel } from './components/PendingEffectsPanel';
@@ -56,10 +54,6 @@ function App() {
   const [gameState, setGameState] = useState(() => getInitialGameState());
   const [gameStarted, setGameStarted] = useState(false);
   const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
-  const [showWelcome, setShowWelcome] = useState(false);
-  // Inicio en dos pasos: personaje (draft) y después dificultad.
-  const [draft, setDraft] = useState<CharacterDraft | null>(null);
-  const [setupStep, setSetupStep] = useState<'character' | 'setup'>('character');
   const [showTurnSummary, setShowTurnSummary] = useState(false);
   const [turnSummary, setTurnSummary] = useState<TurnSummary | null>(null);
   const [pendingEvents, setPendingEvents] = useState<GameEvent[]>([]);
@@ -96,7 +90,7 @@ function App() {
     if (gameState.gameOver) setPendingEvents([]);
   }, [gameState.gameOver]);
 
-  const handleStart = (_isAdmin: boolean) => {
+  const handleStart = () => {
     setShowWelcomeScreen(false);
   };
 
@@ -110,18 +104,14 @@ function App() {
     setGameStarted(true);
   };
 
-  const handleCharacterContinue = (next: CharacterDraft) => {
-    setDraft(next);
-    setSetupStep('setup');
-  };
-
-  const handleGameStart = (scenarioId: string) => {
-    if (!draft || !draft.governorName.trim()) return;
-    const { archetype, governorName, avatar } = draft;
+  // Nueva partida en una sola pantalla: se arranca directo en el tablero.
+  const handleGameStart = ({ archetype, governorName, avatar, scenarioId }: NewGameChoice) => {
+    if (!governorName.trim()) return;
     const newState = createNewGame({ archetype, governorName, avatar, scenarioId });
     markGameStart();
     setGameState(newState);
-    setShowWelcome(true);
+    setGameStarted(true);
+    window.scrollTo({ top: 0 });
   };
 
   const handleActionSelect = (actionId: string) => {
@@ -208,12 +198,10 @@ function App() {
     setSavedGame(null);
     setGameState(getInitialGameState());
     setGameStarted(false);
-    setShowWelcome(false);
     setShowTurnSummary(false);
     setTurnSummary(null);
     setPendingEvents([]);
     setShowLegacy(false);
-    setSetupStep('character');
   };
 
   if (showWelcomeScreen) {
@@ -221,22 +209,7 @@ function App() {
   }
 
   if (!gameStarted) {
-    if (showWelcome) {
-      return (
-        <WelcomeModal
-          governorName={gameState.governorName}
-          position={gameState.position}
-          onStart={() => {
-            setShowWelcome(false);
-            setGameStarted(true);
-          }}
-        />
-      );
-    }
-    if (setupStep === 'setup' && draft) {
-      return <GameSetup draft={draft} onBack={() => setSetupStep('character')} onStart={handleGameStart} />;
-    }
-    return <CharacterCreation initial={draft} onContinue={handleCharacterContinue} />;
+    return <NewGameScreen onStart={handleGameStart} onBack={() => setShowWelcomeScreen(true)} />;
   }
 
   const currentEvent = pendingEvents[0] || null;

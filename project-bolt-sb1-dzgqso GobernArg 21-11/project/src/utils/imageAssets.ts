@@ -166,8 +166,3 @@ export function getEventImage(category: string, _severity: string, eventId?: str
       return IMAGES.events.electionDay;
   }
 }
-
-// Fondo de la asunción (el cargo es siempre presidente)
-export function getPositionBackground(_position: string): string {
-  return IMAGES.backgrounds.congressSunrise;
-}

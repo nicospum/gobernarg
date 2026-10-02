@@ -4,7 +4,7 @@ import type { GameState } from '../types/game';
 import { getScenario } from '@/data/causal';
 
 interface WelcomeScreenProps {
-  onStart: (isAdmin: boolean) => void;
+  onStart: () => void;
   /** Partida guardada en el navegador, si hay una para retomar. */
   saved?: GameState | null;
   onContinue?: () => void;
@@ -51,7 +51,7 @@ export function WelcomeScreen({ onStart, saved, onContinue }: WelcomeScreenProps
             </button>
             <p className="text-sm text-ink/70">{savedLabel(saved)}</p>
             <button
-              onClick={() => onStart(false)}
+              onClick={onStart}
               className="inline-flex items-center gap-1.5 text-sm font-medium text-ink/75 hover:text-ink px-3 py-2 rounded-md hover:bg-sunken transition-colors"
             >
               <RotateCcw className="w-4 h-4" />
@@ -60,7 +60,7 @@ export function WelcomeScreen({ onStart, saved, onContinue }: WelcomeScreenProps
           </div>
         ) : (
           <button
-            onClick={() => onStart(false)}
+            onClick={onStart}
             className="inline-flex items-center gap-2 bg-ink hover:bg-ink/90 text-paper font-semibold px-10 py-3.5 rounded-md transition-colors text-lg"
           >
             <Play className="w-5 h-5 text-gold" />

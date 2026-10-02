@@ -89,6 +89,15 @@ describe('Guardado automático', () => {
     expect(loadGame()).toBeNull();
   });
 
+  it('la foto subida (data URL) se guarda y vuelve con la partida', () => {
+    const storage = fakeStorage();
+    vi.stubGlobal('window', { localStorage: storage });
+    const photo = 'data:image/jpeg;base64,' + 'A'.repeat(30000);
+    const state = createNewGame({ archetype: 'comunicador', governorName: 'Laura', avatar: photo, seed: 1, scenarioId: 'pais_en_calma' });
+    expect(saveGame(state, [])).toBe(true);
+    expect(loadGame()?.state.avatar).toBe(photo);
+  });
+
   it('ignora guardados rotos o de otra versión', () => {
     const storage = fakeStorage();
     vi.stubGlobal('window', { localStorage: storage });

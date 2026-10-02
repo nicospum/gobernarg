@@ -50,3 +50,11 @@ export const ARCHETYPE_PASSIVES: Record<Archetype, ArchetypePassive[]> = {
     { name: 'Alfombra roja', description: 'Encuestas gratis durante todo el mandato', cerradoConvocanteShift: 2, start: { freePolls: true } },
   ],
 };
+
+/** Lo que muestra la pantalla de nueva partida: nombre y ventajas en una línea. */
+export const ARCHETYPE_CARDS: { id: Archetype; title: string; advantages: string }[] = [
+  { id: 'politico', title: 'Político de raza', advantages: 'Su aparato pesa más en las elecciones, se reúne gratis con los aliados y la oposición lo recibe mejor.' },
+  { id: 'empresario', title: 'Empresario', advantages: 'Recauda un poco más, se endeuda en mejores condiciones y asume con la inflación más anclada.' },
+  { id: 'sindicalista', title: 'Sindicalista', advantages: 'Se reúne gratis con sindicatos y organizaciones sociales, que arrancan de su lado, y suma una reunión gratis por turno.' },
+  { id: 'comunicador', title: 'Comunicador', advantages: 'Arranca con mejor imagen, los escándalos le pegan menos y las encuestas le salen gratis.' },
+];

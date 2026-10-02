@@ -2,8 +2,8 @@
 /**
  * Prueba de humo de la interfaz (Fase 4): abre el juego completo en un
  * navegador simulado y recorre lo que hace cualquier persona el primer
- * minuto: portada → personaje → dificultad → tablero → cerrar un turno →
- * recargar y continuar la partida guardada.
+ * minuto: portada → nueva partida (una sola pantalla) → tablero → cerrar un
+ * turno → recargar y continuar la partida guardada.
  */
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
@@ -44,12 +44,17 @@ describe('Prueba de humo de la interfaz', { timeout: 30000 }, () => {
     renderGame();
 
     await click(screen.getByRole('button', { name: /Empezar/ }));
+    // Nueva partida: nombre, foto, perfil y nivel en la misma pantalla.
+    expect(screen.getByText('Nueva partida')).toBeTruthy();
+    const empezar = screen.getByRole('button', { name: /^Empezar$/ }) as HTMLButtonElement;
+    expect(empezar.disabled).toBe(true);
     fireEvent.change(screen.getByPlaceholderText('Ingresá tu nombre'), { target: { value: 'Prueba de humo' } });
-    await click(screen.getByRole('button', { name: /^Continuar$/ }));
-
+    await click(screen.getByRole('radio', { name: 'Avatar 3' }));
+    expect(screen.getByRole('radio', { name: 'Avatar 3' }).getAttribute('aria-checked')).toBe('true');
+    await click(screen.getByRole('radio', { name: /^Sindicalista/ }));
     await click(screen.getByRole('radio', { name: /^Fácil/ }));
-    await click(screen.getByRole('button', { name: /Comenzar gestión/ }));
-    await click(screen.getByRole('button', { name: /Entendido/ }));
+    expect(screen.getAllByRole('radio', { name: /^(Fácil|Normal|Argentina)/ })).toHaveLength(3);
+    await click(screen.getByRole('button', { name: /^Empezar$/ }));
 
     // Tablero: encabezado con el nombre y la tarjeta del primer turno.
     expect(screen.getAllByText('Prueba de humo').length).toBeGreaterThan(0);
@@ -74,8 +79,7 @@ describe('Prueba de humo de la interfaz', { timeout: 30000 }, () => {
     renderGame();
     await click(screen.getByRole('button', { name: /Empezar/ }));
     fireEvent.change(screen.getByPlaceholderText('Ingresá tu nombre'), { target: { value: 'Menú' } });
-    await click(screen.getByRole('button', { name: /^Continuar$/ }));
-    await click(screen.getByRole('button', { name: /Comenzar gestión/ }));
+    await click(screen.getByRole('button', { name: /^Empezar$/ }));
     await click(screen.getByRole('button', { name: /Entendido/ }));
 
     await click(screen.getByRole('button', { name: /Menú/ }));
