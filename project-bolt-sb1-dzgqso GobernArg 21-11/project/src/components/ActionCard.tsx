@@ -179,8 +179,10 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
 
       {/* Información (con la ilustración: banda arriba en el celular, miniatura al lado en pantallas anchas) */}
       <div className="min-w-0">
-        {illustrationImg('block w-full h-[84px] rounded-md mb-3 md:float-left md:w-[96px] md:h-[72px] md:mr-3.5 md:mb-1')}
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className={illustration ? 'md:flex md:items-start md:gap-3.5' : ''}>
+        {illustrationImg('block w-full h-[84px] rounded-md mb-3 md:mb-0 md:w-[96px] md:h-[72px] md:flex-none')}
+        <div className="min-w-0 md:flex-1">
+        <div className="flex items-center gap-x-2 gap-y-1 flex-wrap">
           <span className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.11em] ${style.color}`}>
             <img src={style.imageSrc} alt="" className="w-3.5 h-3.5 object-contain" />
             {style.label}
@@ -216,6 +218,8 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
         </div>
         <h3 className="text-[16px] font-bold text-ink leading-snug mt-2">{action.name}</h3>
         <p className="text-[12px] text-sala-muted leading-snug mt-1">{action.description}</p>
+        </div>
+        </div>
         {COALITION_ACTIONS[action.id] && (
           <p className="mt-2 text-[11px] text-sala-warn leading-snug bg-amber-500/10 px-2 py-1 rounded">
             Abre una interna en tu partido (+{COALITION_ACTIONS[action.id]}): tus políticas rinden menos y cuestan más.

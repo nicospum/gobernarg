@@ -58,6 +58,18 @@ export const ACTION_IMAGE: Record<string, string> = {
   reduccion_impuestos: 'alivio_tributario',
   regimen_grandes_inversiones: 'atraccion_inversiones',
   politica_monetaria_contractiva: 'estabilizacion_monetaria',
+  // Segunda tanda (Social, Educación, Instituciones).
+  plan_viviendas: 'plan_viviendas',
+  asistencia_alimentaria: 'programa_alimentario',
+  salud_preventiva: 'salud_preventiva',
+  empleo_joven: 'empleo_joven',
+  genero_y_cuidados: 'igualdad_genero',
+  // Adultos aprendiendo a leer: la alfabetización de la inversión educativa.
+  inversion_educativa: 'alfabetizacion',
+  // Docentes planificando con materiales nuevos: cambios curriculares y de gestión.
+  reforma_educativa: 'programa_educativo',
+  fortalecimiento_justicia: 'fortalecimiento_justicia',
+  transparencia_anticorrupcion: 'transparencia_publica',
 };
 
 /** Pantallas (pantallas/<nombre>.webp). */
