@@ -38,6 +38,7 @@ import type { ActorInteraction } from '@/engine/gameEngine';
 import { concernSentence, relationBand, satisfactionBand, toneClass } from '@/lib/causalText';
 import { riskColor, type Risk } from '@/lib/risk';
 import { getActorIcon } from '../utils/actorIcons';
+import { detailed } from '@/lite/config';
 import { fmtBudget } from '@/lib/format';
 import { ACTOR_POWER_TEXT } from '@/data/causal/playerTexts';
 
@@ -96,6 +97,8 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
   const negReason = organized ? canNegotiate(c, actor, state.actions) : 'n/a';
   const signReason = organized ? canSignAgreement(c, actor) : 'n/a';
   const offerOpen = signReason === null;
+  // Modo simple: retrato, ánimo y dos barras sin números.
+  const simple = !detailed();
 
   return (
     <div className="px-4 py-3 hover:bg-sunken/50 transition-colors">
@@ -113,9 +116,11 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
             </div>
             <span className={`text-[9px] uppercase tracking-[0.1em] font-bold ${riskColor(MOOD_RISK[mood])}`}>{mood}</span>
           </div>
-          <div className="text-[10px] text-sala-muted truncate" title={ACTOR_POWER_TEXT[actor] ?? def.channelMain}>
-            Poder: {ACTOR_POWER_TEXT[actor] ?? def.channelMain}
-          </div>
+          {!simple && (
+            <div className="text-[10px] text-sala-muted truncate" title={ACTOR_POWER_TEXT[actor] ?? def.channelMain}>
+              Poder: {ACTOR_POWER_TEXT[actor] ?? def.channelMain}
+            </div>
+          )}
         </div>
       </div>
 
@@ -123,10 +128,10 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
       <div className="mb-1">
         <div className="flex items-center justify-between text-[10px]">
           <span className="text-sala-dim font-bold tracking-[0.1em] uppercase text-[9px] inline-flex items-center gap-1" title="Cómo le va: depende de los indicadores que le importan">
-            {fresh ? <Eye size={9} /> : <EyeOff size={9} />}
-            {actor === 'oposicion' ? 'Disposición' : 'Satisfacción'}
+            {!simple && (fresh ? <Eye size={9} /> : <EyeOff size={9} />)}
+            {simple ? (actor === 'oposicion' ? 'Disposición' : 'Cómo le va') : actor === 'oposicion' ? 'Disposición' : 'Satisfacción'}
           </span>
-          {fresh ? (
+          {simple ? null : fresh ? (
             <span className={`font-mono font-bold ${toneClass(band.tone)}`}>
               {Math.round(st.sat)}
               {Math.abs(satDelta) >= 0.5 && (
@@ -151,10 +156,12 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
       {organized && st.rel !== null && (
         <div className="mb-1.5">
           <div className="flex items-center justify-between text-[10px]">
-            <span className="text-sala-dim font-bold tracking-[0.1em] uppercase text-[9px]" title="Tu vínculo con ellos: reuniones, acuerdos cumplidos o incumplidos">Relación</span>
-            <span className="font-mono text-ink/80">
-              {relationBand(st.rel)} <span className="text-sala-muted">{Math.round(st.rel)}</span>
-            </span>
+            <span className="text-sala-dim font-bold tracking-[0.1em] uppercase text-[9px]" title="Tu vínculo con ellos: reuniones, acuerdos cumplidos o incumplidos">{simple ? 'Relación con vos' : 'Relación'}</span>
+            {!simple && (
+              <span className="font-mono text-ink/80">
+                {relationBand(st.rel)} <span className="text-sala-muted">{Math.round(st.rel)}</span>
+              </span>
+            )}
           </div>
           <div className="h-1 w-full overflow-hidden rounded-full bg-sunken mt-1">
             <div className={`h-full rounded-full ${REL_BAR} transition-all duration-500`} style={{ width: `${st.rel}%` }} />
@@ -165,7 +172,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
       {/* Información revelada */}
       {fresh ? (
         <p className="text-[11px] text-sala-muted leading-snug mb-1.5">{concernSentence(c, actor)}</p>
-      ) : (
+      ) : simple ? null : (
         <p className="text-[11px] text-sala-dim leading-snug mb-1.5 italic">
           {organized ? 'Sin reunión reciente: no sabés qué les preocupa.' : 'Sin encuesta reciente: sólo una impresión general.'}
         </p>
@@ -271,14 +278,18 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled, i
         </div>
         <UsersIcon size={17} className="text-sala-dim" />
       </div>
-      <p className="px-4 pt-2.5 text-[11px] text-sala-muted flex items-start gap-1.5 leading-snug">
-        <Info size={12} className="mt-0.5 flex-shrink-0 text-sala-blue" />
-        Satisfacción y relación son variables distintas: la satisfacción es cómo les va; la relación, tu vínculo político. Las reuniones revelan demandas y preocupaciones.
-      </p>
-      <div className="flex gap-4 px-4 pt-2 text-[10px] text-sala-muted">
-        <span className="inline-flex items-center gap-1.5"><i className="w-2 h-2 rounded-full bg-sala-coral" /> Satisfacción</span>
-        <span className="inline-flex items-center gap-1.5"><i className="w-2 h-2 rounded-full bg-sala-cyan" /> Relación</span>
-      </div>
+      {detailed() && (
+        <>
+          <p className="px-4 pt-2.5 text-[11px] text-sala-muted flex items-start gap-1.5 leading-snug">
+            <Info size={12} className="mt-0.5 flex-shrink-0 text-sala-blue" />
+            Satisfacción y relación son variables distintas: la satisfacción es cómo les va; la relación, tu vínculo político. Las reuniones revelan demandas y preocupaciones.
+          </p>
+          <div className="flex gap-4 px-4 pt-2 text-[10px] text-sala-muted">
+            <span className="inline-flex items-center gap-1.5"><i className="w-2 h-2 rounded-full bg-sala-coral" /> Satisfacción</span>
+            <span className="inline-flex items-center gap-1.5"><i className="w-2 h-2 rounded-full bg-sala-cyan" /> Relación</span>
+          </div>
+        </>
+      )}
       {gameState.lastInteractionMessage && (
         <div className="mx-4 mt-3 px-3 py-2 rounded-lg border border-sala-blue/30 bg-sala-blue/10 text-[11px] text-sala-navy font-medium leading-snug">
           {gameState.lastInteractionMessage}

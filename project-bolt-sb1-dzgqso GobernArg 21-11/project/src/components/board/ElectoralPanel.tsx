@@ -2,6 +2,7 @@ import type { GameState } from '../../types/game';
 import { ACTOR_IDS, ACTORS, PARAMS, type ActorId } from '@/data/causal';
 import { riskLabel, type Risk } from '@/lib/risk';
 import { defeatRisk, nextElection } from '@/lib/boardView';
+import { detailed } from '@/lite/config';
 
 const RISK_PILL: Record<Risk, string> = {
   bajo: 'text-sala-good',
@@ -11,10 +12,12 @@ const RISK_PILL: Record<Risk, string> = {
 };
 
 function Component({ label, value, weight, hint, color }: { label: string; value: number; weight: number; hint: string; color: string }) {
+  // Modo simple: la barra sola, sin el valor ni el peso.
+  const simple = !detailed();
   return (
     <div title={hint} className="grid grid-cols-[1fr_auto] gap-1.5">
-      <span className="text-[11px] text-sala-muted">{label} <span className="text-sala-dim">({Math.round(weight * 100)}%)</span></span>
-      <b className="text-[12px] font-mono text-ink">{Math.round(value)}</b>
+      <span className="text-[11px] text-sala-muted">{label} {!simple && <span className="text-sala-dim">({Math.round(weight * 100)}%)</span>}</span>
+      {simple ? <span /> : <b className="text-[12px] font-mono text-ink">{Math.round(value)}</b>}
       <div className="sr-track col-span-2 !h-[5px]">
         <i style={{ width: `${Math.max(0, Math.min(100, value))}%`, background: `rgb(var(${color}))` }} />
       </div>
@@ -38,8 +41,9 @@ export function ElectoralPanel({ gameState, index }: { gameState: GameState; ind
     .sort((x, y) => (50 - c.actors[y].sat) * ACTORS[y].electoralWeight - (50 - c.actors[x].sat) * ACTORS[x].electoralWeight)
     .slice(0, 3);
   const known = (a: ActorId) => c.actors[a].revealedUntil >= c.turn || c.perks.reveals.includes('encuestas');
+  const simple = !detailed();
   const who = (list: ActorId[]) =>
-    list.length === 0 ? <span className="text-sala-dim">ninguno definido</span> : list.map(a => `${ACTORS[a].shortName}${known(a) ? ` (${Math.round(c.actors[a].sat)})` : ''}`).join(' · ');
+    list.length === 0 ? <span className="text-sala-dim">ninguno definido</span> : list.map(a => `${ACTORS[a].shortName}${!simple && known(a) ? ` (${Math.round(c.actors[a].sat)})` : ''}`).join(simple ? ', ' : ' · ');
   const target = PARAMS.VOTOS_PARA_GANAR;
 
   return (
@@ -85,11 +89,17 @@ export function ElectoralPanel({ gameState, index }: { gameState: GameState; ind
         <Component label="Imagen" value={p.otros} weight={PARAMS.PESO_OTROS_EN_IV} color="--violet" hint="Tu imagen y el desgaste de la gestión" />
       </div>
 
-      <div className="px-4 py-3.5 text-[11px] text-sala-muted space-y-1.5">
-        <span className="sr-eyebrow block mb-1">Sectores</span>
-        <p><b className="text-sala-good">A favor</b> · {who(favor)}</p>
-        <p><b className="text-sala-bad">En contra</b> · {who(contra)}</p>
-      </div>
+      {simple ? (
+        <p className="px-4 py-3 text-[11px] text-sala-muted leading-snug">
+          <b className="text-sala-good">A favor:</b> {who(favor)} · <b className="text-sala-bad">En contra:</b> {who(contra)}
+        </p>
+      ) : (
+        <div className="px-4 py-3.5 text-[11px] text-sala-muted space-y-1.5">
+          <span className="sr-eyebrow block mb-1">Sectores</span>
+          <p><b className="text-sala-good">A favor</b> · {who(favor)}</p>
+          <p><b className="text-sala-bad">En contra</b> · {who(contra)}</p>
+        </div>
+      )}
     </section>
   );
 }
