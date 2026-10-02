@@ -5,7 +5,7 @@ import type { CausalState, IndicatorId } from '../causal/types';
  * palabras, colores y flechas, sin números. Solo lectura del estado.
  */
 
-/** Los 8 indicadores que se ven, con su nombre corto. El resto sigue en el motor. */
+/** Los 7 indicadores que se ven, con su nombre corto. El resto sigue en el motor. */
 export const VISIBLE_INDICATORS: { id: IndicatorId; label: string }[] = [
   { id: 'inflacion', label: 'Precios' },
   { id: 'actividad', label: 'Empleo' },
@@ -13,7 +13,6 @@ export const VISIBLE_INDICATORS: { id: IndicatorId; label: string }[] = [
   { id: 'infraestructura', label: 'Obras' },
   { id: 'educacion', label: 'Educación' },
   { id: 'salud', label: 'Salud' },
-  { id: 'proteccion', label: 'Protección' },
   { id: 'seguridad', label: 'Seguridad' },
 ];
 

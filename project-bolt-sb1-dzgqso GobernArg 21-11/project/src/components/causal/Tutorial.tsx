@@ -22,7 +22,8 @@ const STEPS = [
 ];
 
 const MORE = [
-  { title: 'Aprobación, estabilidad y legitimidad', text: 'La aprobación mide cómo le va a la gente; la estabilidad, los conflictos y los atrasos fiscales; la legitimidad, las garantías y los compromisos cumplidos.' },
+  LITE_FEATURES.modoDetallado ? { title: 'Aprobación, estabilidad y legitimidad', text: 'La aprobación mide cómo le va a la gente; la estabilidad, los conflictos y los atrasos fiscales; la legitimidad, las garantías y los compromisos cumplidos.' }
+    : { title: 'Estabilidad y legitimidad', text: 'La estabilidad baja con los conflictos y las deudas impagas; la legitimidad, con las instituciones débiles y los compromisos incumplidos. Si se desploman, el gobierno cae.' },
   { title: 'La caja', text: 'Entra la recaudación y salen el gasto recurrente, los intereses y tus políticas. Si falta plata podés financiarte, pero la deuda vence.' },
   { title: 'Eventos', text: 'Cada tanto pasa algo que no elegiste. Siempre hay más de una forma de responder, y al menos una no cuesta caja.' },
   { title: 'Guardado', text: 'La partida se guarda sola en este navegador. Si cerrás la pestaña, en la portada aparece "Continuar partida".' },

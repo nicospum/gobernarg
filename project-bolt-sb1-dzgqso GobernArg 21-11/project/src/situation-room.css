@@ -311,3 +311,7 @@
 .b-lite-change small { display: block; color: #a1b2c7; font-size: 11px; }
 .b-lite-cash { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 14px; }
 .b-kpi-word { font-size: .78em; letter-spacing: .01em; }
+/* Lite: la fila de métricas tiene 4 tarjetas (sin "Aprobación material"). */
+.b-command-status.b-command-status-lite { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+/* Con 7 índices, el último ocupa la fila entera. */
+.b-lite-indicators > :last-child:nth-child(odd) { grid-column: 1 / -1; }

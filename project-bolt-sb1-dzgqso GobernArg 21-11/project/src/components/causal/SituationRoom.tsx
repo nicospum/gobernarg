@@ -30,6 +30,7 @@ function Ring({ value }: { value: number }) {
 export function CommandStatus({ state }: { state: CausalState }) {
   const c = state.campaign;
   if (!c) return null;
+  // Lite: sin "Aprobación material" (el motor la sigue calculando).
   const items = [
     { label: 'Aprobación material', value: c.approval, detail: 'Satisfacción social ponderada', icon: HeartHandshake, color: '#fbbf24', unit: '/100' },
     { label: 'Estabilidad', value: c.stability, detail: 'Conflictos y obligaciones fiscales', icon: Activity, color: '#75aadb', unit: '/100' },
@@ -39,8 +40,9 @@ export function CommandStatus({ state }: { state: CausalState }) {
   const forecast = fiscalForecast(state)[0];
   // Lite: palabras en vez de cifras (el voto se ve en % porque es la meta: 45 %).
   const lite = !LITE_FEATURES.modoDetallado;
+  const visibleItems = lite ? items.filter(item => item.label !== 'Aprobación material') : items;
   const shown = (label: string, value: number, unit: string) => lite ? label === 'Proyección electoral' ? <>{Math.round(value)}<small>%</small></> : <span className="b-kpi-word">{describeKpi(value).word}</span> : <>{fmtScore(value)}<small>{unit}</small></>;
-  return <section className="b-command-status" aria-label="Estado político y fiscal">{items.map(({ label, value, detail, icon: Icon, color, unit }) => <article className="b-kpi" key={label} style={{ '--metric-color': color } as CSSProperties}><div><p className="b-kpi-label"><Icon size={13} />{label}</p><strong className="b-kpi-value"><span key={value} className="b-value-update">{shown(label, value, unit)}</span></strong>{(!lite || label === 'Proyección electoral') && <p className="b-kpi-detail">{lite ? `Necesitás 45 % · ${value < 45 ? 'Por debajo' : 'Sobre el umbral'}` : detail}</p>}</div><Ring value={value} /></article>)}
+  return <section className={`b-command-status ${lite ? 'b-command-status-lite' : ''}`} aria-label="Estado político y fiscal">{visibleItems.map(({ label, value, detail, icon: Icon, color, unit }) => <article className="b-kpi" key={label} style={{ '--metric-color': color } as CSSProperties}><div><p className="b-kpi-label"><Icon size={13} />{label}</p><strong className="b-kpi-value"><span key={value} className="b-value-update">{shown(label, value, unit)}</span></strong>{(!lite || label === 'Proyección electoral') && <p className="b-kpi-detail">{lite ? `Necesitás 45 % · ${value < 45 ? 'Por debajo' : 'Sobre el umbral'}` : detail}</p>}</div><Ring value={value} /></article>)}
     <article className="b-kpi b-kpi-cash" style={{ '--metric-color': '#34d399' } as CSSProperties}><div><p className="b-kpi-label"><Wallet size={13} />Caja del Tesoro</p><strong className="b-kpi-value"><span key={state.cash} className="b-value-update">{fmtMoney(state.cash)}</span></strong>{!lite && <p className="b-kpi-detail">Prevista T{forecast?.turn}: {forecast ? fmtMoney(forecast.cash) : '—'}</p>}</div></article>
   </section>;
 }
