@@ -1,4 +1,4 @@
-import { CATEGORY_ICONS, IMAGES } from '../utils/imageAssets';
+import { IMAGES } from '../utils/imageAssets';
 import type { UiCategory } from './causal';
 
 export interface CategoryStyle {
@@ -20,42 +20,42 @@ const CATEGORY_STYLES = {
     color: 'text-green-400',
     bgColor: 'bg-green-400/15',
     borderColor: 'border-green-400/40',
-    imageSrc: CATEGORY_ICONS.economia,
+    imageSrc: IMAGES.icons.categories.economy,
     label: 'Economía',
   },
   social: {
     color: 'text-orange-400',
     bgColor: 'bg-orange-400/15',
     borderColor: 'border-orange-400/40',
-    imageSrc: CATEGORY_ICONS.social,
+    imageSrc: IMAGES.icons.categories.social,
     label: 'Social',
   },
   infraestructura: {
     color: 'text-gray-400',
     bgColor: 'bg-gray-400/15',
     borderColor: 'border-gray-400/40',
-    imageSrc: CATEGORY_ICONS.infraestructura,
+    imageSrc: IMAGES.icons.categories.infrastructure,
     label: 'Infraestructura',
   },
   diplomacia: {
     color: 'text-violet-400',
     bgColor: 'bg-violet-400/15',
     borderColor: 'border-violet-400/40',
-    imageSrc: CATEGORY_ICONS.diplomacia,
+    imageSrc: IMAGES.icons.categories.diplomacy,
     label: 'Diplomacia',
   },
   seguridad: {
     color: 'text-blue-400',
     bgColor: 'bg-blue-400/15',
     borderColor: 'border-blue-400/40',
-    imageSrc: CATEGORY_ICONS.seguridad,
+    imageSrc: IMAGES.icons.categories.security,
     label: 'Seguridad',
   },
   educacion: {
     color: 'text-cyan-400',
     bgColor: 'bg-cyan-400/15',
     borderColor: 'border-cyan-400/40',
-    imageSrc: CATEGORY_ICONS.educacion,
+    imageSrc: IMAGES.icons.categories.education,
     label: 'Educación',
   },
 };

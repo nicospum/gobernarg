@@ -3,7 +3,6 @@ import {
   ACTORS,
   PARAMS,
   SENSITIVITIES,
-  getPlatform,
   isIndicatorId,
   type ActorId,
   type SensitivityTarget,
@@ -31,12 +30,10 @@ export interface Contribution {
   contribution: number;
 }
 
-function resolveTarget(state: CausalState, target: SensitivityTarget, baseS: number): { indicator: string; s: number } {
-  if (target.startsWith('PLATAFORMA_')) {
-    const idx = Number(target.slice(-1)) - 1;
-    const item = getPlatform(state.platformId).items[idx];
-    return item ? { indicator: item.indicator, s: item.s } : { indicator: 'APRO', s: 0 };
-  }
+function resolveTarget(target: SensitivityTarget, baseS: number): { indicator: string; s: number } {
+  // Sin plataforma del partido: las columnas PLATAFORMA_n de la matriz no pesan
+  // y el oficialismo sólo mira la aprobación.
+  if (target.startsWith('PLATAFORMA_')) return { indicator: 'APRO', s: 0 };
   return { indicator: target, s: baseS };
 }
 
@@ -51,7 +48,7 @@ function saliencyMult(state: CausalState, actor: ActorId, indicator: string, clo
 export function contributions(state: CausalState, actor: ActorId, closeRef: number): Contribution[] {
   const out: Contribution[] = [];
   for (const sens of SENSITIVITIES[actor]) {
-    const { indicator, s: rawS } = resolveTarget(state, sens.target, sens.s);
+    const { indicator, s: rawS } = resolveTarget(sens.target, sens.s);
     if (rawS === 0) continue;
     const s = rawS * saliencyMult(state, actor, indicator, closeRef);
     const value = isIndicatorId(indicator) ? effective(state, indicator, closeRef) : state.political.apro;

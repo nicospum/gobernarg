@@ -90,15 +90,13 @@ export function resolvePendingElection(gameState: GameState): GameState {
   state.lastRandomEventTurn = 0;
   state.randomEventsThisTerm = 0;
   state.lastEventFiredTurns = {};
-  state.advisorActionUsed = false;
   state.midtermStrategy = null;
   state.pendingMidtermStrategy = false;
   state.availableMidtermStrategies = [];
-  state.abilityCooldowns = {};
   state.completedActions = [];
 
   // Decisión de diseño (usuario): PAÍS CONTINUO. No se reinician indicadores,
-  // deuda, caja, relaciones, asesores ni efectos diferidos: el segundo
+  // deuda, caja, relaciones ni efectos diferidos: el segundo
   // mandato hereda las consecuencias del primero. Empieza una nueva luna de
   // miel legislativa y se reinician las legislativas del nuevo mandato.
   state.causal.mandateStart = state.causal.turn;

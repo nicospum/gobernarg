@@ -22,7 +22,6 @@ ICON="scale='min(iw,256)':'min(ih,256)':force_original_aspect_ratio=decrease"
 shrink icons/groups "$ICON" 80
 shrink icons/categories "$ICON" 80
 shrink icons/archetypes "$ICON" 80
-shrink advisors "$ICON" 80
 shrink characters "scale='min(iw,384)':'min(ih,384)':force_original_aspect_ratio=decrease" 80
 shrink events "scale='min(iw,1200)':-2" 72
 shrink backgrounds "scale='min(iw,1600)':-2" 70

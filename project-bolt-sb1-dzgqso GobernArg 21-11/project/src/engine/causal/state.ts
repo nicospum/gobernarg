@@ -4,9 +4,6 @@ import {
   INDICATOR_IDS,
   INDICATORS,
   PARAMS,
-  PLATFORMS,
-  NO_PLATFORM_ID,
-  OWN_PLATFORM_ID,
   DESIGN_SCENARIO_ID,
   getScenario,
   type ActorId,
@@ -36,7 +33,6 @@ export function defaultPerks(): Perks {
 }
 
 export interface CreateOptions {
-  platformId?: string;
   perks?: Perks;
   seed?: number;
   /** Imagen inicial del presidente (componente OTROS). */
@@ -96,9 +92,6 @@ export function createCausalState(opts: CreateOptions = {}): CausalState {
       imagen: opts.imagen ?? scenario.imagen ?? 50, umbralLey: PARAMS.UMBRAL_LEY,
       interna: 0, coalicion: 0,
     },
-    // Plataforma propia: arranca sin exigencias y se arma con lo que hagas (engine/causal/platform.ts).
-    platformId: opts.platformId === OWN_PLATFORM_ID ? NO_PLATFORM_ID : opts.platformId ?? PLATFORMS[0].id,
-    ...(opts.platformId === OWN_PLATFORM_ID ? { platformMode: 'propia' as const } : {}),
     scenarioId: scenario.id,
     agreements: [],
     credibility: 0,
@@ -114,26 +107,6 @@ export function createCausalState(opts: CreateOptions = {}): CausalState {
     rng: (opts.seed ?? 20260924) >>> 0,
     perks: opts.perks ?? defaultPerks(),
   };
-
-  // Condiciones vigentes del escenario (p. ej. default de deuda).
-  for (const [name, turns] of Object.entries(scenario.flags ?? {})) {
-    state.flags[name] = { value: 1, start: 1, end: turns === null ? null : turns, source: `escenario:${scenario.id}` };
-  }
-
-  if (scenario.emergencia) {
-    state.bonuses.push({
-      id: `escenario.${scenario.id}.GOB`, target: 'GOB', value: scenario.emergencia.gob,
-      start: 0, end: scenario.emergencia.turns - 1, source: 'escenario', label: 'Ley de emergencia',
-    });
-  }
-
-  (scenario.impulsos ?? []).forEach((imp, i) => {
-    state.agenda.push({
-      uid: `escenario.${scenario.id}.${i}`, effectId: `escenario.${scenario.id}.${i}`, actionId: 'escenario', originTurn: 0,
-      target: imp.target, mode: 'DELTA', magnitude: imp.perTurn, start: 1, end: imp.turns, everyTurn: true,
-      appliedTotal: 0, explanation: imp.label,
-    });
-  });
 
   // SAT inicial = objetivo con los indicadores iniciales (E = valor: sin componente relativo).
   // Primero los actores no políticos (APRO depende de ellos), después APRO y los políticos.

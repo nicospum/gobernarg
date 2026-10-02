@@ -9,35 +9,6 @@ export type Position = 'presidente';
 export type Archetype = 'politico' | 'empresario' | 'sindicalista' | 'comunicador';
 
 // =====================
-// Asesores
-// =====================
-export interface Advisor {
-  id: string;
-  name: string;
-  specialty: string;
-  bonusActions: number;
-  influence: number;
-  cost: number;
-  description: string;
-  popularityEffect: number;
-  unlockRequirement: null | {
-    type: string;
-    value: number;
-  };
-  level: number;
-  specialAbilities: string[];
-  groupBonuses: Record<string, number>;
-  policyModifiers: Record<string, number>;
-  traits: string[];
-  effectiveness: number;
-}
-
-export interface AdvisorWithStatus extends Advisor {
-  isActive: boolean;
-  turnsInactive: number;
-}
-
-// =====================
 // Objetivos
 // =====================
 export interface ObjectiveRequirements {
@@ -126,20 +97,6 @@ export interface CareerMilestone {
   result: 'victory' | 'defeat';
   type: CareerMilestoneType;
   votesPercentage: number;
-}
-
-export interface TurnLogEntry {
-  year: number;
-  turn: number;
-  position: Position;
-  term: number;
-  actionsTaken: string[];
-  events: string[];
-  decisions: string[];
-  popularityChange: number;
-  budgetChange: number;
-  projectsCompleted: string[];
-  crisesFaced: string[];
 }
 
 // =====================
@@ -241,17 +198,14 @@ export interface GameState {
   avatar: string;
   term: number;
   careerHistory: CareerMilestone[];
-  turnLog: TurnLogEntry[];
   popularity: number;
   budget: number;
   turn: number;
   year: number;
   actions: number;
   baseActions: number;
-  advisors: AdvisorWithStatus[];
   selectedActions: string[];
   governorName: string;
-  advisorActionUsed: boolean;
   objectives: Objective[];
   gameOver: boolean;
   victorious: boolean;
@@ -274,7 +228,6 @@ export interface GameState {
   radicalConciliadorAxis: number;
   populistaTecnicoAxis: number;
   cerradoConvocanteAxis: number;
-  abilityCooldowns: Record<string, number>;
   defeatReason: DefeatReason | null;
   /** Turno en el que se disparó el último evento aleatorio (para cooldown global) */
   lastRandomEventTurn: number;
@@ -290,8 +243,6 @@ export interface GameState {
   // legitimacy, votingIntention, legislativeSupport y groupRelations son un
   // espejo que mantiene engine/causalBridge.ts para las pantallas.
   causal: CausalState;
-  /** Plataforma del oficialismo elegida al inicio (D-07 / R-23). */
-  platformId: string;
   /** Mensajes de la última interacción con actores (feedback inmediato en el panel). */
   lastInteractionMessage?: string | null;
 }

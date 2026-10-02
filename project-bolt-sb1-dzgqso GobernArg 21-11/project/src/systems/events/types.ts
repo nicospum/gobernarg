@@ -30,7 +30,6 @@ export interface EventConditions {
   minStability?: number;
   maxStability?: number;
   requiredGroups?: string[];
-  requiredAdvisors?: string[];
   requiredActions?: string[];
   probability?: number;
   minMoneyPrinting?: number;

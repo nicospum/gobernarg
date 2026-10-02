@@ -1,12 +1,7 @@
 import { RotateCcw, Trophy, Skull, ScrollText, Award, Target } from 'lucide-react';
 import { GameState } from '../types/game';
 import { effective, viewRef } from '../engine/causal';
-import {
-  generateLegacyText,
-  generateLegacyStats,
-  getRecentCrises,
-  getRecentProjects,
-} from '../utils/careerLog';
+import { generateLegacyText, generateLegacyStats } from '../utils/careerLog';
 import { IMAGES } from '../utils/imageAssets';
 import { DEFEAT_REASON_CONFIG } from '../data/defeatReasons';
 import { AxisBar } from './AxisBar';
@@ -80,8 +75,6 @@ export function LegacyScreen({ gameState, onRestart, onClose, onFeedback }: Lega
   const defeatConfig = !isVictory && reason ? DEFEAT_REASON_CONFIG[reason] : null;
   const legacyText = generateLegacyText(gameState);
   const stats = generateLegacyStats(gameState);
-  const recentCrises = getRecentCrises(gameState);
-  const recentProjects = getRecentProjects(gameState);
   const perf = derivePerformance(gameState);
   const ratingRisk = getValueRisk(perf.rating, 10, false);
   const targetRisk = getValueRisk(perf.targetAchievement, 100, false);
@@ -237,48 +230,6 @@ export function LegacyScreen({ gameState, onRestart, onClose, onFeedback }: Lega
               </p>
             </div>
           </div>
-
-          {/* Obras y crisis */}
-          {(recentProjects.length > 0 || recentCrises.length > 0) && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {recentProjects.length > 0 && (
-                <div>
-                  <h4 className="font-display text-[12px] font-semibold text-emerald-400   mb-2">
-                    Obras destacadas
-                  </h4>
-                  <ul className="space-y-1.5">
-                    {recentProjects.map((project, i) => (
-                      <li
-                        key={i}
-                        className="flex items-start gap-2 text-[13px] text-foreground/80"
-                      >
-                        <span className="w-1 h-1 rounded-full bg-emerald-400 mt-2 flex-shrink-0" />
-                        {project}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {recentCrises.length > 0 && (
-                <div>
-                  <h4 className="font-display text-[12px] font-semibold text-red-400   mb-2">
-                    Crisis superadas
-                  </h4>
-                  <ul className="space-y-1.5">
-                    {recentCrises.map((crisis, i) => (
-                      <li
-                        key={i}
-                        className="flex items-start gap-2 text-[13px] text-foreground/80"
-                      >
-                        <span className="w-1 h-1 rounded-full bg-red-400 mt-2 flex-shrink-0" />
-                        {crisis}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          )}
 
           {/* Botones */}
           <div className="flex flex-wrap items-center justify-center gap-3">

@@ -1,8 +1,4 @@
-import type {
-  GameState,
-  TurnSummary,
-  TurnLogEntry,
-} from '../types/game';
+import type { GameState, TurnSummary } from '../types/game';
 import type { GameEvent } from '../systems/events/types';
 import { getAllEvents } from '../data/events';
 import { CHANNEL_GAME_EVENTS, CHANNEL_TO_EVENT } from '../data/events/causalEvents';
@@ -125,7 +121,6 @@ export function processEndTurn(gameState: GameState): TurnResult {
   let state: GameState = {
     ...gameState,
     completedActions: [...gameState.completedActions],
-    turnLog: [...gameState.turnLog],
     historicalPopularity: [...gameState.historicalPopularity],
     lastEventFiredTurns: { ...gameState.lastEventFiredTurns },
     notifications: [...gameState.notifications],
@@ -213,10 +208,7 @@ export function processEndTurn(gameState: GameState): TurnResult {
     }
   }
 
-  // 9. Recursos del turno siguiente: PA (paro general quita 1), habilidades, pasivas.
-  const abilityCooldowns: Record<string, number> = {};
-  for (const [id, cd] of Object.entries(state.abilityCooldowns)) if (cd > 1) abilityCooldowns[id] = cd - 1;
-  state.abilityCooldowns = abilityCooldowns;
+  // 9. Recursos del turno siguiente: PA (paro general quita 1) y pasivas.
   state = applyArchetypePassives(state);
   state.baseActions = paForTurn(state.causal);
   state.actions = state.baseActions;
@@ -247,24 +239,10 @@ export function processEndTurn(gameState: GameState): TurnResult {
 
   state.historicalPopularity.push(state.popularity);
 
-  const actionTitles = executedIds.map(id => CAUSAL_ACTIONS_BY_ID[id]?.name ?? id);
-  const turnLogEntry: TurnLogEntry = {
-    year: closingYear,
-    turn: closingQuarter,
-    position: gameState.position,
-    term: gameState.term,
-    actionsTaken: actionTitles,
-    events: triggeredEvents.map(e => e.title),
-    decisions: [],
-    popularityChange: state.causal.political.apro - aproBefore,
-    budgetChange: state.causal.caja - cajaBefore,
-    projectsCompleted: executedIds.filter(id => CAUSAL_ACTIONS_BY_ID[id]?.category === 'Infraestructura').map(id => CAUSAL_ACTIONS_BY_ID[id].name),
-    crisesFaced: triggeredEvents.filter(e => e.severity === 'high' || e.severity === 'critical').map(e => e.title),
-  };
-  state.turnLog.push(turnLogEntry);
+  const popularityChange = state.causal.political.apro - aproBefore;
+  const budgetChange = state.causal.caja - cajaBefore;
 
   state.selectedActions = [];
-  state.advisorActionUsed = false;
   state.lastInteractionMessage = null;
 
   const emissions = countExecutions(state.causal, 'emitir_dinero', 6, record.turn);
@@ -272,10 +250,10 @@ export function processEndTurn(gameState: GameState): TurnResult {
     year: closingYear,
     quarter: closingQuarter,
     events: [...lines, ...triggeredEvents.map(e => e.title)],
-    popularityChange: turnLogEntry.popularityChange,
-    budgetChange: turnLogEntry.budgetChange,
+    popularityChange,
+    budgetChange,
     inflationEvent: { triggered: record.indicatorsAfter.INFL >= 70, count: emissions },
-    immediateEffects: { popularityChange: turnLogEntry.popularityChange, budgetChange: turnLogEntry.budgetChange },
+    immediateEffects: { popularityChange, budgetChange },
     causalTurn: record.turn,
   };
 

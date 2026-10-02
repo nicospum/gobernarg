@@ -53,23 +53,23 @@ describe('applyArchetypePassives — perfil de gestión', () => {
 
 describe('pasivas de arquetipo en el motor (computePerks)', () => {
   it('político: más estructura electoral y reuniones gratis con aliados', () => {
-    const p = computePerks('politico', []);
+    const p = computePerks('politico');
     expect(p.structureMult).toBeCloseTo(1.2);
     expect(p.freeMeetingActors).toEqual(['aliados']);
   });
 
   it('empresario: préstamos en mejores condiciones', () => {
-    expect(computePerks('empresario', []).loanDiscount).toBeCloseTo(0.1);
+    expect(computePerks('empresario').loanDiscount).toBeCloseTo(0.1);
   });
 
   it('sindicalista: reuniones gratis con sindicatos y organizaciones sociales, y una extra por turno', () => {
-    const p = computePerks('sindicalista', []);
+    const p = computePerks('sindicalista');
     expect(p.freeMeetingActors).toEqual(['sindicatos', 'org_sociales']);
     expect(p.freeMeetingsPerTurn).toBeGreaterThanOrEqual(1);
   });
 
   it('comunicador: resiliencia ante eventos y encuestas gratis', () => {
-    const p = computePerks('comunicador', []);
+    const p = computePerks('comunicador');
     expect(p.eventResilience).toBeCloseTo(0.3);
     expect(p.freePolls).toBe(true);
   });

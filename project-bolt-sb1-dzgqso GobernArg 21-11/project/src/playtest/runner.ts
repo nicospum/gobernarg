@@ -2,16 +2,14 @@
  * Runner de playtest: juega partidas completas con las MISMAS funciones que
  * usa la UI (createNewGame, interactWithActor, toggleActionSelection,
  * processEndTurn, applyEventChoice, resolvePendingElection,
- * triggerMidtermStrategy, hireAdvisors) y registra cada turno para poder
+ * triggerMidtermStrategy) y registra cada turno para poder
  * responder "¿por qué ocurrió esto?".
  */
 import type { GameState } from '../types/game';
 import { ACTOR_IDS, ACTORS, CAUSAL_ACTIONS_BY_ID, type ActorId } from '../data/causal';
-import { availableAdvisors } from '../data/advisors';
 import {
   applyEventChoice,
   createNewGame,
-  hireAdvisors,
   interactWithActor,
   processEndTurn,
   resolvePendingElection,
@@ -100,15 +98,13 @@ function snapshotIndicators(state: GameState): Record<string, number> {
 export interface PlayOptions {
   /** Escenario (por defecto el del Excel: herencia pesada). */
   scenarioId?: string;
-  /** Plataforma (por defecto la sugerida por el arquetipo; 'ninguna' la desactiva). */
-  platformId?: string;
   maxTurns?: number;
 }
 
 export function playGame(bot: Bot, seed: number, opts: PlayOptions = {}): GameOutcome {
   const maxTurns = opts.maxTurns ?? 40;
   return withSeededRandom(seed, () => {
-    let state = createNewGame({ archetype: bot.archetype, governorName: `Bot ${bot.id}`, platformId: opts.platformId, seed, scenarioId: opts.scenarioId });
+    let state = createNewGame({ archetype: bot.archetype, governorName: `Bot ${bot.id}`, seed, scenarioId: opts.scenarioId });
     const log: TurnLog[] = [];
     const outcome: GameOutcome = {
       bot: bot.id, seed, turnsPlayed: 0, gameOver: false, victorious: false, defeatReason: null,
@@ -125,12 +121,6 @@ export function playGame(bot: Bot, seed: number, opts: PlayOptions = {}): GameOu
         outcome.reelectionVotes = state.electionResults?.votesPercentage ?? null;
         state = { ...state, electionResults: null };
         if (state.gameOver) break;
-      }
-
-      // Asesores (una vez por partida, al principio).
-      if (state.causal.turn === 1 && bot.advisors) {
-        const wanted = availableAdvisors.filter(a => bot.advisors!(state).includes(a.id));
-        state = hireAdvisors(state, wanted);
       }
 
       const before = snapshotIndicators(state);

@@ -3,7 +3,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { ALL_BOTS } from '../src/playtest/bots';
 import { playGame, type GameOutcome } from '../src/playtest/runner';
-import { NO_PLATFORM_ID, SCENARIOS } from '../src/data/causal';
+import { SCENARIOS } from '../src/data/causal';
 
 /**
  * Asimetría ideológica (Fase 3): los programas heterodoxo y ortodoxo, jugados
@@ -45,7 +45,7 @@ it(`mide la asimetría ideológica (${SEEDS} semillas)`, () => {
   for (const sc of SCENARIOS) {
     json[sc.id] = {};
     for (const bot of bots) {
-      json[sc.id][bot.id] = summarize(Array.from({ length: SEEDS }, (_, i) => playGame(bot, i + 1, { scenarioId: sc.id, platformId: NO_PLATFORM_ID })));
+      json[sc.id][bot.id] = summarize(Array.from({ length: SEEDS }, (_, i) => playGame(bot, i + 1, { scenarioId: sc.id })));
     }
     const cells = bots.map(b => {
       const c = json[sc.id][b.id];
@@ -57,7 +57,7 @@ it(`mide la asimetría ideológica (${SEEDS} semillas)`, () => {
   const md = [
     '# Asimetría ideológica — datos',
     '',
-    `${SEEDS} partidas por celda, plataforma desactivada. Celda: **reelecto · votos promedio en la reelección · caídas antes de tiempo · (heterodoxos) partidas que firmaron el pacto social**.`,
+    `${SEEDS} partidas por celda. Celda: **reelecto · votos promedio en la reelección · caídas antes de tiempo · (heterodoxos) partidas que firmaron el pacto social**.`,
     '',
     ...lines,
     '',

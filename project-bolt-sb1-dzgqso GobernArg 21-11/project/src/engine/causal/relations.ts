@@ -6,7 +6,6 @@ import {
   MEETINGS,
   PARAMS,
   SENSITIVITIES,
-  getPlatform,
   isIndicatorId,
   isOrganized,
   type ActorId,
@@ -45,9 +44,6 @@ export function demandScore(state: CausalState, actor: ActorId, actionId: string
   for (const s of SENSITIVITIES[actor]) {
     if (s.target.startsWith('PLATAFORMA_')) continue;
     sens.set(s.target, s.s);
-  }
-  if (actor === 'oficialismo') {
-    for (const it of getPlatform(state.platformId).items) sens.set(it.indicator, it.s);
   }
   let score = 0;
   for (const r of rows) {

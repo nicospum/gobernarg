@@ -10,7 +10,6 @@ import {
   INDICATOR_IDS,
   INDICATORS,
   SENSITIVITIES,
-  getPlatform,
   isIndicatorId,
   type ActorId,
   type IndicatorId,
@@ -111,19 +110,15 @@ const REASON: Record<string, [string, string]> = {
 };
 
 /** Actores cuya satisfacción más cambió y el indicador que más lo explica. */
-export function actorReactions(record: TurnRecord, platformId: string, max = 4): ActorReaction[] {
+export function actorReactions(record: TurnRecord, max = 4): ActorReaction[] {
   const out: ActorReaction[] = [];
   for (const a of ACTOR_IDS) {
     const delta = record.actorsAfter[a].sat - record.actorsBefore[a].sat;
     if (Math.abs(delta) < 0.6) continue;
     let best: { ind: string; score: number } | null = null;
-    const sens = SENSITIVITIES[a].map(s => {
-      if (s.target.startsWith('PLATAFORMA_')) {
-        const it = getPlatform(platformId).items[Number(s.target.slice(-1)) - 1];
-        return it ? { target: it.indicator as string, s: it.s } : { target: 'APRO', s: 0 };
-      }
-      return { target: s.target as string, s: s.s };
-    });
+    const sens = SENSITIVITIES[a]
+      .filter(s => !s.target.startsWith('PLATAFORMA_'))
+      .map(s => ({ target: s.target as string, s: s.s }));
     for (const s of sens) {
       let d = 0;
       if (isIndicatorId(s.target)) d = record.indicatorsAfter[s.target] - record.indicatorsBefore[s.target];

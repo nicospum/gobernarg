@@ -3,7 +3,6 @@ import {
   ArrowRight,
   Bell,
   BarChart3,
-  Briefcase,
   ChevronRight,
   LayoutGrid,
   MoreHorizontal,
@@ -18,13 +17,12 @@ import { BudgetDetails, TrendChip, indicatorCards } from '../IndicatorsPanel';
 import { MAX_TURNS, MILESTONES, MandateTimeline } from '../GameHeader';
 import { Sheet } from './Sheet';
 
-export type MobileTab = 'acciones' | 'pais' | 'actores' | 'gabinete';
+export type MobileTab = 'acciones' | 'pais' | 'actores';
 
 export const MOBILE_TABS: { id: MobileTab; label: string; icon: typeof LayoutGrid }[] = [
   { id: 'acciones', label: 'Acciones', icon: LayoutGrid },
   { id: 'pais', label: 'País', icon: BarChart3 },
   { id: 'actores', label: 'Actores', icon: Users },
-  { id: 'gabinete', label: 'Gabinete', icon: Briefcase },
 ];
 
 const SHORT_LABEL: Record<string, string> = {
@@ -182,7 +180,7 @@ export function MobileBottomBar({ gameState, tab, onTab, onEndTurn, canEndTurn }
           <ArrowRight size={18} className={canEndTurn ? 'text-gold' : ''} />
         </button>
       </div>
-      <nav aria-label="Secciones" className="grid grid-cols-4 h-16 border-t border-rule">
+      <nav aria-label="Secciones" className="grid grid-cols-3 h-16 border-t border-rule">
         {MOBILE_TABS.map(({ id, label, icon: Icon }) => {
           const active = id === tab;
           return (
@@ -209,12 +207,10 @@ export function MobileBottomBar({ gameState, tab, onTab, onEndTurn, canEndTurn }
   );
 }
 
-/** Menú del celular: historial, cuaderno, notificaciones y Reiniciar con confirmación. */
-export function MobileMenu({ gameState, onClose, onOpenLog, onOpenNotebook, onOpenNotifications, onOpenHelp, onOpenFeedback, onRestart }: {
+/** Menú del celular: notificaciones, ayuda y Reiniciar con confirmación. */
+export function MobileMenu({ gameState, onClose, onOpenNotifications, onOpenHelp, onOpenFeedback, onRestart }: {
   gameState: GameState;
   onClose: () => void;
-  onOpenLog: () => void;
-  onOpenNotebook: () => void;
   onOpenNotifications: () => void;
   onOpenHelp: () => void;
   onOpenFeedback: () => void;
@@ -233,8 +229,6 @@ export function MobileMenu({ gameState, onClose, onOpenLog, onOpenNotebook, onOp
   return (
     <Sheet title="Menú" onClose={onClose}>
       <div className="flex flex-col">
-        <button className={item} onClick={go(onOpenLog)}>Historial de gestión <ChevronRight size={18} className="text-ink/70" /></button>
-        <button className={item} onClick={go(onOpenNotebook)}>Cuaderno político <ChevronRight size={18} className="text-ink/70" /></button>
         <button className={item} onClick={go(onOpenNotifications)}>
           Notificaciones
           <span className="flex items-center gap-1 text-[13px] text-ink/70">

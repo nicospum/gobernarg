@@ -40,10 +40,3 @@ export function fmtNumber(n: number, decimals = 0): string {
 export function fmtPct(n: number, decimals = 0): string {
   return `${fmtNumber(n, decimals)}${NBSP}%`;
 }
-
-/** Variación con signo: +2, −3, 0 (enteros en el tablero, como pide el glosario). */
-export function fmtSigned(n: number, decimals = 0): string {
-  const r = Number(n.toFixed(decimals));
-  if (r === 0) return fmtNumber(0, decimals);
-  return (r > 0 ? "+" : "") + fmtNumber(r, decimals);
-}

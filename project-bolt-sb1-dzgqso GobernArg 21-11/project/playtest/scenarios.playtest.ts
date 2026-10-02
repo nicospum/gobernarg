@@ -3,11 +3,11 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { ALL_BOTS } from '../src/playtest/bots';
 import { playGame, type GameOutcome } from '../src/playtest/runner';
-import { NO_PLATFORM_ID, SCENARIOS } from '../src/data/causal';
+import { SCENARIOS } from '../src/data/causal';
 
 /**
  * Matriz de escenarios: cada escenario jugado por varias estrategias, con la
- * plataforma desactivada (el default del juego). Sirve para calibrar la
+ * sin plataforma del partido. Sirve para calibrar la
  * dificultad relativa. Salida: _analisis_gobernarg/playtest/ESCENARIOS.md
  */
 const SEEDS = Number(process.env.SEEDS ?? 20);
@@ -33,13 +33,13 @@ it(`genera la matriz de escenarios (${SEEDS} semillas)`, () => {
   const header = `| Escenario | ${bots.map(b => `${b.id} · ${b.name}`).join(' | ')} |\n|---|${bots.map(() => '---').join('|')}|`;
   const rows: string[] = [];
   for (const sc of SCENARIOS) {
-    const cells = bots.map(bot => cell(Array.from({ length: SEEDS }, (_, i) => playGame(bot, i + 1, { scenarioId: sc.id, platformId: NO_PLATFORM_ID }))));
+    const cells = bots.map(bot => cell(Array.from({ length: SEEDS }, (_, i) => playGame(bot, i + 1, { scenarioId: sc.id }))));
     rows.push(`| ${sc.name} (${sc.difficulty}) | ${cells.join(' | ')} |`);
   }
   const md = [
     '# Matriz de escenarios — datos',
     '',
-    `Generado por \`npm run playtest\` (playtest/scenarios.playtest.ts). ${SEEDS} partidas por celda, plataforma desactivada (default del juego).`,
+    `Generado por \`npm run playtest\` (playtest/scenarios.playtest.ts). ${SEEDS} partidas por celda.`,
     '',
     'Cada celda: **gana la carrera / reelecto · votos promedio en la reelección · caídas antes de tiempo** (hiperinflación o juicio político).',
     '',

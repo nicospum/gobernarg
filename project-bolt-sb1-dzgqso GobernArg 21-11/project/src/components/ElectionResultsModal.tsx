@@ -15,7 +15,7 @@ function CausalBreakdown({ result }: { result: ElectionResults }) {
   const tiles = [
     { label: 'Humor social', value: b.apro, weight: '65%', detail: 'Satisfacción de los actores con peso electoral (clase media, sectores populares, trabajadores, PyMEs…).', Icon: Users, color: 'text-sky-400' },
     { label: 'Aparato político', value: b.estructura, weight: '10%', detail: 'Oficialismo, aliados y gobernadores: su satisfacción y tu relación con ellos.', Icon: Shield, color: 'text-emerald-400' },
-    { label: 'Imagen', value: b.otros, weight: '25%', detail: 'Tu imagen: eventos, habilidades, estrategia y desgaste de gestión.', Icon: TrendingUp, color: 'text-purple-400' },
+    { label: 'Imagen', value: b.otros, weight: '25%', detail: 'Tu imagen: eventos, estrategia y desgaste de gestión.', Icon: TrendingUp, color: 'text-purple-400' },
   ];
   return (
     <>

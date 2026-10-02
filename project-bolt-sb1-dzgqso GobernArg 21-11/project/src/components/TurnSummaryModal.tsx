@@ -42,7 +42,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
       ? IMAGES.events.socialProtest
       : IMAGES.ui.shieldEmblem;
   const changes = record ? indicatorChanges(record) : [];
-  const reactions = record ? actorReactions(record, gameState.causal.platformId) : [];
+  const reactions = record ? actorReactions(record) : [];
   // El registro del motor se cierra antes de los eventos, las legislativas y
   // las decisiones que llegan después del turno. Mientras el resumen es el del
   // último turno, los números se toman del estado actual para que cierren con

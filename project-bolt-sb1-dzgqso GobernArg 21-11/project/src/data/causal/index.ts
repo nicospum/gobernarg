@@ -98,8 +98,6 @@ export interface ActorDef {
   channelSecondary: string | null;
   highConsequence: string | null;
   lowConsequence: string | null;
-  /** Clave del ícono en assets/images/icons (ver utils/actorIcons.ts). */
-  iconKey: string;
 }
 
 const SHORT_NAMES: Record<ActorId, string> = {
@@ -108,27 +106,6 @@ const SHORT_NAMES: Record<ActorId, string> = {
   estudiantes: 'Estudiantes', docentes: 'Docentes', cientificos: 'Científicos',
   org_sociales: 'Org. sociales', derechos_cultura: 'Derechos y cultura', ambiente: 'Ambientalistas',
   oficialismo: 'Oficialismo', aliados: 'Aliados', oposicion: 'Oposición', gobernadores: 'Gobernadores',
-};
-
-/** Íconos existentes del juego reasignados a los actores nuevos (no se crearon assets). */
-const ICON_KEYS: Record<ActorId, string> = {
-  industria: 'groups/group-business',
-  agro: 'groups/group-agriculture',
-  financiero: 'groups/group-financial',
-  sindicatos: 'groups/group-workers',
-  pymes: 'archetypes/archetype-business',
-  clase_media: 'groups/group-middle-class',
-  sectores_populares: 'groups/group-low-income',
-  estudiantes: 'groups/group-students',
-  docentes: 'groups/group-academics',
-  cientificos: 'categories/category-technology',
-  org_sociales: 'groups/group-cooperatives',
-  derechos_cultura: 'groups/group-ngo',
-  ambiente: 'groups/group-environmentalists',
-  oficialismo: 'archetypes/archetype-institutional',
-  aliados: 'groups/group-allies',
-  oposicion: 'groups/group-opposition',
-  gobernadores: 'categories/category-tourism',
 };
 
 export const ACTORS: Record<ActorId, ActorDef> = Object.fromEntries(
@@ -149,7 +126,6 @@ export const ACTORS: Record<ActorId, ActorDef> = Object.fromEntries(
       channelSecondary: r.channelSecondary,
       highConsequence: r.highConsequence,
       lowConsequence: r.lowConsequence,
-      iconKey: ICON_KEYS[id],
     };
     return [id, def];
   }),
@@ -193,128 +169,7 @@ export const SENSITIVITIES: Record<ActorId, Sensitivity[]> = Object.fromEntries(
   ]),
 ) as Record<ActorId, Sensitivity[]>;
 
-// ─────────────────────────────── Plataforma del oficialismo (D-07 / R-23) ───────────────────────────────
-
-export interface PlatformDef {
-  id: string;
-  name: string;
-  description: string;
-  /** Tres indicadores con signo: reemplazan a PLATAFORMA_1..3 en la matriz del oficialismo. */
-  items: { indicator: IndicatorId; s: number }[];
-}
-
-/**
- * R-23 (decisión abierta del Excel): propuesta de 3 indicadores con signo elegidos al
- * inicio. Implementación provisional: 5 plataformas predefinidas; cada arquetipo
- * sugiere una. Las magnitudes respetan las de la matriz (5, 5, 4).
- */
-export const PLATFORMS: PlatformDef[] = [
-  {
-    id: 'crecimiento_con_salarios',
-    name: 'Crecimiento con salarios',
-    description: 'El partido quiere ver actividad, poder adquisitivo y una inflación que no se escape.',
-    items: [{ indicator: 'ACTV', s: 5 }, { indicator: 'PODA', s: 5 }, { indicator: 'INFL', s: -4 }],
-  },
-  {
-    id: 'desarrollo_productivo',
-    name: 'Desarrollo productivo',
-    description: 'Inversión, actividad y menor presión tributaria sobre quien produce.',
-    items: [{ indicator: 'INVC', s: 5 }, { indicator: 'ACTV', s: 5 }, { indicator: 'PRES', s: -4 }],
-  },
-  {
-    id: 'estado_presente',
-    name: 'Estado presente',
-    description: 'Protección social, salario real y educación pública.',
-    items: [{ indicator: 'PSOC', s: 5 }, { indicator: 'PODA', s: 5 }, { indicator: 'EDUC', s: 4 }],
-  },
-  {
-    id: 'orden_y_estabilidad',
-    name: 'Orden y estabilidad',
-    description: 'Baja inflación, seguridad y cuentas públicas sólidas.',
-    items: [{ indicator: 'INFL', s: -5 }, { indicator: 'SEGU', s: 5 }, { indicator: 'SOLV', s: 4 }],
-  },
-  {
-    id: 'modernizacion',
-    name: 'Modernización',
-    description: 'Instituciones sólidas, ciencia e inserción en el mundo.',
-    items: [{ indicator: 'INST', s: 5 }, { indicator: 'CIEN', s: 5 }, { indicator: 'EXTE', s: 4 }],
-  },
-];
-
-export const DEFAULT_PLATFORM_BY_ARCHETYPE: Record<string, string> = {
-  politico: 'crecimiento_con_salarios',
-  empresario: 'desarrollo_productivo',
-  sindicalista: 'estado_presente',
-  comunicador: 'orden_y_estabilidad',
-};
-
-/**
- * Plataforma desactivada (decisión del usuario: la plataforma es opcional).
- * Sin plataforma, el oficialismo sólo mira tu aprobación: si sos popular te
- * sigue, si no, te pasa factura.
- */
-export const NO_PLATFORM_ID = 'ninguna';
-export const NO_PLATFORM: PlatformDef = {
-  id: NO_PLATFORM_ID,
-  name: 'Sin plataforma',
-  description: 'Tu partido sólo mira tu popularidad.',
-  items: [],
-};
-
-/**
- * Plataforma propia (decisión del usuario, sep-2026): no se define antes de
- * jugar. El partido adopta los (hasta) tres resultados que más empujaste con
- * tus acciones en los últimos turnos y se actualiza en cada cierre
- * (engine/causal/platform.ts). Mientras no hiciste nada, el partido sólo mira
- * tu aprobación, como sin plataforma.
- */
-export const OWN_PLATFORM_ID = 'propia';
-
-/**
- * La plataforma propia vigente se guarda en el id para que el motor la lea con
- * getPlatform como a cualquier otra: "propia:ACTV+,PODA+,INFL-". El orden es la
- * prioridad y define las magnitudes de la matriz (5, 5, 4).
- */
-export const CUSTOM_PLATFORM_PREFIX = 'propia:';
-export const CUSTOM_PLATFORM_WEIGHTS = [5, 5, 4] as const;
-
-export interface CustomPlatformItem {
-  indicator: IndicatorId;
-  dir: 1 | -1;
-}
-
-export function encodeCustomPlatform(items: CustomPlatformItem[]): string {
-  return CUSTOM_PLATFORM_PREFIX + items.map(it => `${it.indicator}${it.dir > 0 ? '+' : '-'}`).join(',');
-}
-
-export function parseCustomPlatform(id: string | null | undefined): CustomPlatformItem[] | null {
-  if (!id || !id.startsWith(CUSTOM_PLATFORM_PREFIX)) return null;
-  const items: CustomPlatformItem[] = [];
-  for (const part of id.slice(CUSTOM_PLATFORM_PREFIX.length).split(',')) {
-    const indicator = part.slice(0, -1);
-    const sign = part.slice(-1);
-    if (!isIndicatorId(indicator) || (sign !== '+' && sign !== '-')) return null;
-    if (items.some(it => it.indicator === indicator)) return null;
-    items.push({ indicator, dir: sign === '+' ? 1 : -1 });
-  }
-  return items.length > 0 && items.length <= CUSTOM_PLATFORM_WEIGHTS.length ? items : null;
-}
-
 export * from './scenarios';
-
-export function getPlatform(id: string | null | undefined): PlatformDef {
-  if (id === NO_PLATFORM_ID) return NO_PLATFORM;
-  const custom = parseCustomPlatform(id);
-  if (custom) {
-    return {
-      id: id!,
-      name: 'Plataforma propia',
-      description: 'La fuiste armando al gobernar: lo que más empujaste en los últimos turnos.',
-      items: custom.map((it, i) => ({ indicator: it.indicator, s: it.dir * CUSTOM_PLATFORM_WEIGHTS[i] })),
-    };
-  }
-  return PLATFORMS.find(p => p.id === id) ?? PLATFORMS[0];
-}
 
 // ─────────────────────────────── Parámetros (00B) ───────────────────────────────
 
@@ -412,9 +267,7 @@ const REQUIREMENTS: Record<string, Requirement[]> = {
     { when: 'FLAG(cepo)', reason: 'Sólo se puede liberar un cepo vigente.' },
     { when: 'EXTE>=45', reason: 'Primero hay que reconstruir reservas (sector externo más sólido).' },
   ],
-  prestamo_internacional: [{ when: 'not FLAG(default_deuda)', reason: 'País en default: sin acceso a organismos hasta renegociar.' }],
   prestamo_local: [
-    { when: 'not FLAG(default_deuda)', reason: 'País en default: el mercado local está cerrado.' },
     { when: 'SOLV>=25', reason: 'Con este riesgo país el mercado local está cerrado.' },
     { when: 'SAT(financiero)>=35', reason: 'El sector financiero cerró el grifo.' },
   ],

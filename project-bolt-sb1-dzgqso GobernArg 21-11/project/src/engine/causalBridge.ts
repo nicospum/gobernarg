@@ -1,7 +1,7 @@
 /**
  * Puente entre el estado del juego (GameState, pantallas existentes) y el
  * motor causal (engine/causal). Todo lo que el juego viejo tenía y el Excel no
- * menciona (arquetipos, asesores, eventos, estrategias, elecciones) se conecta
+ * menciona (arquetipos, eventos, estrategias, elecciones) se conecta
  * acá, sin meter lógica del motor en los componentes React.
  */
 import type { GameState, Mood, Archetype, MidtermStrategy, ElectionBreakdown } from '../types/game';
@@ -9,7 +9,6 @@ import {
   ACTOR_IDS,
   ACTORS,
   CAUSAL_ACTIONS_BY_ID,
-  DEFAULT_PLATFORM_BY_ARCHETYPE,
   DESIGN_SCENARIO_ID,
   getScenario,
   LEGACY_GROUP_TO_ACTOR,
@@ -18,8 +17,7 @@ import {
   isIndicatorId,
   type ActorId,
 } from '../data/causal';
-import { ADVISOR_ROLES } from '../data/advisors';
-import { ARCHETYPE_PASSIVES } from '../data/specialAbilities';
+import { ARCHETYPE_PASSIVES } from '../data/archetypes';
 import { MIDTERM_CAUSAL } from '../data/midtermStrategies';
 import type { CausalEventEffect } from '../data/events/causalEvents';
 import {
@@ -40,7 +38,7 @@ import {
   type Selection,
 } from './causal';
 
-// ─────────────────────────────── Perks (arquetipo + asesores) ───────────────────────────────
+// ─────────────────────────────── Perks (ventajas del arquetipo) ───────────────────────────────
 
 /** Subgrupo viejo → actor con el que se puede tener reuniones. */
 function meetingActorFor(legacyGroup: string): ActorId | null {
@@ -49,7 +47,7 @@ function meetingActorFor(legacyGroup: string): ActorId | null {
   return a ?? (isActorId(legacyGroup) ? legacyGroup : null);
 }
 
-export function computePerks(archetype: Archetype, advisorIds: string[]): Perks {
+export function computePerks(archetype: Archetype): Perks {
   const p = defaultPerks();
   for (const passive of ARCHETYPE_PASSIVES[archetype] ?? []) {
     if (passive.electionRetention) p.structureMult *= 1 + 2 * passive.electionRetention;
@@ -63,37 +61,13 @@ export function computePerks(archetype: Archetype, advisorIds: string[]): Perks 
     if (passive.extraLoans) p.loanDiscount += 0.1 * passive.extraLoans;
     if (passive.start?.freePolls) p.freePolls = true;
   }
-  for (const id of advisorIds) {
-    const role = ADVISOR_ROLES[id];
-    if (!role) continue;
-    for (const cat of role.categories) {
-      p.categoryEfficacy[cat] = (p.categoryEfficacy[cat] ?? 1) * role.efficacy;
-      if (role.paDiscount && !p.paDiscountCategories.includes(cat)) p.paDiscountCategories.push(cat);
-      if (role.cajaDiscount) p.categoryCajaDiscount[cat] = (p.categoryCajaDiscount[cat] ?? 0) + role.cajaDiscount;
-    }
-    for (const [actor, bonus] of Object.entries(role.negotiation)) {
-      p.negotiationBonus[actor as ActorId] = (p.negotiationBonus[actor as ActorId] ?? 0) + (bonus ?? 0);
-    }
-    for (const r of role.reveals) if (!p.reveals.includes(r)) p.reveals.push(r);
-    if (role.freePolls) p.freePolls = true;
-    if (role.eventResilience) p.eventResilience += role.eventResilience;
-    if (role.securityInstMitigation) p.securityInstMitigation += role.securityInstMitigation;
-    if (role.loanDiscount) p.loanDiscount += role.loanDiscount;
-  }
   p.eventResilience = Math.min(0.6, p.eventResilience);
   return p;
 }
 
-/** Recalcula perks cuando cambian los asesores (contratar/despedir). */
-export function refreshPerks(state: GameState): GameState {
-  const causal = structuredClone(state.causal);
-  causal.perks = computePerks(state.archetype, state.advisors.filter(a => a.isActive).map(a => a.id));
-  return { ...state, causal };
-}
-
 // ─────────────────────────────── Creación ───────────────────────────────
 
-export function newCausalForGame(archetype: Archetype, platformId?: string, seed?: number, scenarioId?: string): CausalState {
+export function newCausalForGame(archetype: Archetype, seed?: number, scenarioId?: string): CausalState {
   const scenario = getScenario(scenarioId ?? DESIGN_SCENARIO_ID);
   const relBonus: Partial<Record<ActorId, number>> = {};
   let imagen = scenario.imagen ?? 50;
@@ -106,8 +80,7 @@ export function newCausalForGame(archetype: Archetype, platformId?: string, seed
     ingresoBonus += (passive.incomeBonus ?? 0) * 0.15;
   }
   const causal = createCausalState({
-    platformId: platformId ?? DEFAULT_PLATFORM_BY_ARCHETYPE[archetype],
-    perks: computePerks(archetype, []),
+    perks: computePerks(archetype),
     seed: seed ?? Math.floor(Math.random() * 2 ** 31),
     imagen,
     relBonus,

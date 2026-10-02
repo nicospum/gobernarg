@@ -10,8 +10,6 @@ import {
   TrendingDown,
   Minus,
   MoreHorizontal,
-  ScrollText,
-  NotebookPen,
   BookOpen,
   MessageSquareHeart,
 } from 'lucide-react';
@@ -29,8 +27,6 @@ interface GameHeaderProps {
   onRestart: () => void;
   onEndTurn?: () => void;
   canEndTurn?: boolean;
-  onOpenLog?: () => void;
-  onOpenNotebook?: () => void;
   onOpenHelp?: () => void;
   onOpenFeedback?: () => void;
 }
@@ -87,12 +83,10 @@ function Stat({ label, children }: { label: string; children: React.ReactNode })
  * Menú de la partida. "Reiniciar" vive acá, lejos de "Finalizar turno", y
  * siempre pide confirmación: antes borraba el mandato con un solo clic.
  */
-function GameMenu({ governorName, turnLabel, onRestart, onOpenLog, onOpenNotebook, onOpenHelp, onOpenFeedback }: {
+function GameMenu({ governorName, turnLabel, onRestart, onOpenHelp, onOpenFeedback }: {
   governorName: string;
   turnLabel: string;
   onRestart: () => void;
-  onOpenLog?: () => void;
-  onOpenNotebook?: () => void;
   onOpenHelp?: () => void;
   onOpenFeedback?: () => void;
 }) {
@@ -140,16 +134,6 @@ function GameMenu({ governorName, turnLabel, onRestart, onOpenLog, onOpenNoteboo
       </button>
       {open && (
         <div role="menu" className="absolute right-0 top-full mt-1.5 w-60 rounded-lg border border-rule bg-surface shadow-xl p-1.5 z-50">
-          {onOpenLog && (
-            <button role="menuitem" onClick={run(onOpenLog)} className={`${item} text-ink hover:bg-sunken`}>
-              <ScrollText size={15} className="text-ink/70" /> Historial de gestión
-            </button>
-          )}
-          {onOpenNotebook && (
-            <button role="menuitem" onClick={run(onOpenNotebook)} className={`${item} text-ink hover:bg-sunken`}>
-              <NotebookPen size={15} className="text-ink/70" /> Cuaderno político
-            </button>
-          )}
           {onOpenHelp && (
             <button role="menuitem" onClick={run(onOpenHelp)} className={`${item} text-ink hover:bg-sunken`}>
               <BookOpen size={15} className="text-ink/70" /> Cómo se juega
@@ -189,8 +173,6 @@ export function GameHeader({
   onRestart,
   onEndTurn,
   canEndTurn,
-  onOpenLog,
-  onOpenNotebook,
   onOpenHelp,
   onOpenFeedback,
 }: GameHeaderProps) {
@@ -304,8 +286,6 @@ export function GameHeader({
             governorName={gameState.governorName}
             turnLabel={`turno ${inMandate} de ${MAX_TURNS}`}
             onRestart={onRestart}
-            onOpenLog={onOpenLog}
-            onOpenNotebook={onOpenNotebook}
             onOpenHelp={onOpenHelp}
             onOpenFeedback={onOpenFeedback}
           />

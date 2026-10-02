@@ -4,10 +4,8 @@ import { GameHeader } from './components/GameHeader';
 import { CharacterCreation, type CharacterDraft } from './components/CharacterCreation';
 import { GameSetup } from './components/GameSetup';
 import { ControlPanel } from './components/ControlPanel';
-import { AdvisorPanel } from './components/AdvisorPanel';
 import { TurnSummaryModal } from './components/TurnSummaryModal';
 import { WelcomeModal } from './components/WelcomeModal';
-import { SpecialAbilitiesPanel } from './components/SpecialAbilitiesPanel';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { IndicatorsPanel } from './components/IndicatorsPanel';
 import { PendingEffectsPanel } from './components/PendingEffectsPanel';
@@ -15,7 +13,6 @@ import { ActiveBenefits } from './components/ActiveBenefits';
 import { InformesPanel } from './components/InformesPanel';
 import { RightSidebar } from './components/RightSidebar';
 import { EventModal } from './components/EventModal';
-import { recordReelectionWin, recordScenarioWin } from './lib/progress';
 import { NotificationCenter } from './components/NotificationCenter';
 import { CountryPanel } from './components/CountryPanel';
 import { clearSavedGame, loadGame, saveGame } from './lib/savegame';
@@ -27,7 +24,7 @@ import { TutorialCard } from './components/Tutorial';
 import { useTutorial } from './lib/tutorial';
 import { markGameStart } from './lib/playtest';
 
-import type { AdvisorWithStatus, ElectionResults, TurnSummary, MidtermStrategy } from './types/game';
+import type { TurnSummary, MidtermStrategy } from './types/game';
 import type { ActorId } from './data/causal';
 import type { GameEvent } from './systems/events/types';
 import {
@@ -35,15 +32,12 @@ import {
   createNewGame,
   toggleActionSelection,
   interactWithActor,
-  hireAdvisors,
-  dismissAdvisor,
   processEndTurn,
   applyEventChoice,
   resolvePendingElection,
   retireFromReelection,
   markAllNotificationsRead,
   dismissNotification,
-  useSpecialAbility as activateSpecialAbility,
   triggerMidtermStrategy,
   type ActorInteraction,
 } from './engine/gameEngine';
@@ -54,9 +48,7 @@ const LegacyScreen = lazyModal(() => import('./components/LegacyScreen').then(m 
 const GameOverModal = lazyModal(() => import('./components/GameOverModal').then(m => m.GameOverModal));
 const ReelectionChoiceModal = lazyModal(() => import('./components/ReelectionChoiceModal').then(m => m.ReelectionChoiceModal));
 const ElectionResultsModal = lazyModal(() => import('./components/ElectionResultsModal').then(m => m.ElectionResultsModal));
-const GameLog = lazyModal(() => import('./components/GameLog').then(m => m.GameLog));
 const MidtermStrategyModal = lazyModal(() => import('./components/MidtermStrategyModal').then(m => m.MidtermStrategyModal));
-const ManagementNotebook = lazyModal(() => import('./components/ManagementNotebook').then(m => m.ManagementNotebook));
 const HowToPlayModal = lazyModal(() => import('./components/HowToPlayModal').then(m => m.HowToPlayModal));
 const FeedbackModal = lazyModal(() => import('./components/FeedbackModal').then(m => m.FeedbackModal));
 
@@ -65,15 +57,13 @@ function App() {
   const [gameStarted, setGameStarted] = useState(false);
   const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
   const [showWelcome, setShowWelcome] = useState(false);
-  // Inicio en dos pasos: personaje (draft) y después dificultad + plataforma.
+  // Inicio en dos pasos: personaje (draft) y después dificultad.
   const [draft, setDraft] = useState<CharacterDraft | null>(null);
   const [setupStep, setSetupStep] = useState<'character' | 'setup'>('character');
   const [showTurnSummary, setShowTurnSummary] = useState(false);
   const [turnSummary, setTurnSummary] = useState<TurnSummary | null>(null);
   const [pendingEvents, setPendingEvents] = useState<GameEvent[]>([]);
   const [showMidtermStrategy, setShowMidtermStrategy] = useState(false);
-  const [showGameLog, setShowGameLog] = useState(false);
-  const [showNotebook, setShowNotebook] = useState(false);
   const [showLegacy, setShowLegacy] = useState(false);
   // Anti doble-clic en eventos: id del último evento cuya elección se procesó.
   const lastProcessedEventRef = useRef<string | null>(null);
@@ -101,24 +91,6 @@ function App() {
     if (gameStarted) saveGame(gameState, pendingEvents);
   }, [gameStarted, gameState, pendingEvents]);
 
-  // Ganar la partida queda registrado por escenario (progreso guardado en el navegador).
-  useEffect(() => {
-    if (gameState.gameOver && gameState.victorious && gameState.causal) recordScenarioWin(gameState.causal.scenarioId);
-  }, [gameState.gameOver, gameState.victorious, gameState.causal]);
-
-  // Ganar una reelección desbloquea el siguiente escenario histórico. Se cuenta
-  // una sola vez por resultado (el objeto se conserva mientras el modal está abierto).
-  const countedElectionRef = useRef<ElectionResults | null>(null);
-  useEffect(() => {
-    const results = gameState.electionResults;
-    if (!results || results === countedElectionRef.current) return;
-    countedElectionRef.current = results;
-    if (results.kind === 'reelection' && results.victory) {
-      recordReelectionWin();
-      toast('Ganaste la reelección: desbloqueaste un escenario histórico nuevo.');
-    }
-  }, [gameState.electionResults]);
-
   // Perdiste o terminó el mandato: los eventos que quedaban ya no se responden.
   useEffect(() => {
     if (gameState.gameOver) setPendingEvents([]);
@@ -131,8 +103,6 @@ function App() {
   const handleContinue = () => {
     if (!savedGame) return;
     const { state, pendingEvents: events } = savedGame;
-    // La elección que ya estaba en pantalla no se vuelve a contar para desbloqueos.
-    countedElectionRef.current = state.electionResults;
     setGameState(state);
     setPendingEvents(events);
     setShowMidtermStrategy(!!state.pendingMidtermStrategy);
@@ -145,10 +115,10 @@ function App() {
     setSetupStep('setup');
   };
 
-  const handleGameStart = (platformId: string, scenarioId: string) => {
+  const handleGameStart = (scenarioId: string) => {
     if (!draft || !draft.governorName.trim()) return;
     const { archetype, governorName, avatar } = draft;
-    const newState = createNewGame({ archetype, governorName, avatar, platformId, scenarioId });
+    const newState = createNewGame({ archetype, governorName, avatar, scenarioId });
     markGameStart();
     setGameState(newState);
     setShowWelcome(true);
@@ -156,10 +126,6 @@ function App() {
 
   const handleActionSelect = (actionId: string) => {
     setGameState(prev => toggleActionSelection(prev, actionId));
-  };
-
-  const handleUseSpecialAbility = (abilityId: string) => {
-    setGameState(prev => activateSpecialAbility(prev, abilityId));
   };
 
   const handleSelectMidtermStrategy = (strategy: MidtermStrategy) => {
@@ -171,19 +137,11 @@ function App() {
     setGameState(prev => interactWithActor(prev, actor, kind));
   };
 
-  const handleHireAdvisor = (advisors: AdvisorWithStatus[]) => {
-    setGameState(prev => hireAdvisors(prev, advisors));
-  };
-
-  const handleDismissAdvisor = (advisor: AdvisorWithStatus) => {
-    setGameState(prev => dismissAdvisor(prev, advisor.id));
-  };
-
   // Con un modal abierto el tablero queda inerte: no se puede cerrar el turno
   // ni tocar nada de atrás (ni con el teclado).
   const modalOpen =
     showTurnSummary || pendingEvents.length > 0 || !!gameState.pendingElection || !!gameState.electionResults ||
-    showMidtermStrategy || showGameLog || showNotebook || showHelp || showFeedback || gameState.gameOver;
+    showMidtermStrategy || showHelp || showFeedback || gameState.gameOver;
   useEffect(() => {
     const board = boardRef.current;
     if (!board) return;
@@ -324,20 +282,6 @@ function App() {
                 interactionsDisabled={gameState.gameOver || gameState.pendingElection}
               />
             )}
-            {mobileTab === 'gabinete' && (
-              <>
-                <AdvisorPanel
-                  gameState={gameState}
-                  onHireAdvisor={handleHireAdvisor}
-                  onDismissAdvisor={handleDismissAdvisor}
-                />
-                <SpecialAbilitiesPanel
-                  gameState={gameState}
-                  onUseAbility={handleUseSpecialAbility}
-                  disabled={!(gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection)}
-                />
-              </>
-            )}
           </main>
           <MobileBottomBar
             gameState={gameState}
@@ -358,8 +302,6 @@ function App() {
             onRestart={handleRestart}
             onEndTurn={handleEndTurn}
             canEndTurn={!modalOpen}
-            onOpenLog={() => setShowGameLog(true)}
-            onOpenNotebook={() => setShowNotebook(true)}
             onOpenHelp={() => setShowHelp(true)}
             onOpenFeedback={() => setShowFeedback(true)}
           />
@@ -382,12 +324,6 @@ function App() {
                   canTakeAction={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
                 />
 
-                <SpecialAbilitiesPanel
-                  gameState={gameState}
-                  onUseAbility={handleUseSpecialAbility}
-                  disabled={!(gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection)}
-                />
-
                 <PendingEffectsPanel gameState={gameState} />
 
                 <InformesPanel gameState={gameState} />
@@ -408,29 +344,6 @@ function App() {
                 />
 
                 <ActiveBenefits gameState={gameState} />
-
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setShowGameLog(true)}
-                    className="flex-1 bg-surface border border-ink/8 rounded-lg p-3.5 hover:bg-ink/4 transition-all flex items-center gap-2.5 text-xs font-bold text-ink "
-                  >
-                    <span className="inline-flex w-6 h-6 items-center justify-center rounded-lg bg-blue-500/20 text-blue-400 font-mono text-xs">L</span>
-                    Historial de Gestión
-                  </button>
-                  <button
-                    onClick={() => setShowNotebook(true)}
-                    className="flex-1 bg-surface border border-ink/8 rounded-lg p-3.5 hover:bg-ink/4 transition-all flex items-center gap-2.5 text-xs font-bold text-ink "
-                  >
-                    <span className="inline-flex w-6 h-6 items-center justify-center rounded-lg bg-cyan-500/20 text-cyan-400 font-mono text-xs">C</span>
-                    Cuaderno Político
-                  </button>
-                </div>
-
-                <AdvisorPanel
-                  gameState={gameState}
-                  onHireAdvisor={handleHireAdvisor}
-                  onDismissAdvisor={handleDismissAdvisor}
-                />
               </div>
             </div>
           </main>
@@ -442,8 +355,6 @@ function App() {
         <MobileMenu
           gameState={gameState}
           onClose={() => setShowMobileMenu(false)}
-          onOpenLog={() => setShowGameLog(true)}
-          onOpenNotebook={() => setShowNotebook(true)}
           onOpenNotifications={() => setShowNotifications(true)}
           onOpenHelp={() => setShowHelp(true)}
           onOpenFeedback={() => setShowFeedback(true)}
@@ -525,17 +436,9 @@ function App() {
         />
       )}
 
-      {showGameLog && (
-        <GameLog gameState={gameState} onClose={() => setShowGameLog(false)} />
-      )}
-
       {showFeedback && <FeedbackModal gameState={gameState} onClose={() => setShowFeedback(false)} />}
 
       {showHelp && <HowToPlayModal actions={gameState.baseActions} onClose={() => setShowHelp(false)} />}
-
-      {showNotebook && (
-        <ManagementNotebook gameState={gameState} onClose={() => setShowNotebook(false)} />
-      )}
     </div>
   );
 }

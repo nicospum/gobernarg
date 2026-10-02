@@ -1,5 +1,5 @@
 import { PARAMS } from '../../data/causal';
-import { effective, flagValue } from './context';
+import { effective } from './context';
 import type { CausalState, FiscalBreakdown } from './types';
 
 export interface ActionCashFlows {
@@ -24,8 +24,6 @@ export function revenue(state: CausalState, close: number): number {
 }
 
 export function debtService(state: CausalState): number {
-  // En default (escenario Corralito) no se pagan intereses: a cambio, no hay crédito.
-  if (flagValue(state, 'default_deuda', state.turn)) return 0;
   return PARAMS.TASA_DEUDA * state.deuda;
 }
 

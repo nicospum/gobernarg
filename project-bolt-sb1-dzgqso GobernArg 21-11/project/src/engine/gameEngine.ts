@@ -1,23 +1,10 @@
-import type {
-  GameState,
-  Archetype,
-  Advisor,
-  AdvisorWithStatus,
-} from '../types/game';
-import { ARCHETYPE_ABILITIES } from '../data/specialAbilities';
+import type { GameState, Archetype } from '../types/game';
 import { STARTING_POSITION } from '../data/careerRules';
-import { ADVISOR_ROLES } from '../data/advisors';
 import { CAUSAL_ACTIONS_BY_ID, PARAMS, type ActorId } from '../data/causal';
 import { getPresidentialGoals } from '../utils/victoryConditions';
 import { applyArchetypePassives } from './archetypeEngine';
 import { meet, negotiate, poll, signAgreement, type InteractionResult } from './causal';
-import {
-  applyCausalEffects,
-  newCausalForGame,
-  paForTurn,
-  refreshPerks,
-  syncLegacy,
-} from './causalBridge';
+import { newCausalForGame, paForTurn, syncLegacy } from './causalBridge';
 export type { TurnResult } from './engineShared';
 
 export {
@@ -56,7 +43,7 @@ export { processEndTurn } from './turnProcessor';
  * motor causal se crea con semilla fija; createNewGame crea el definitivo.
  */
 export function getInitialGameState(): GameState {
-  const causal = newCausalForGame('politico', undefined, 1);
+  const causal = newCausalForGame('politico', 1);
   // Sin perks de arquetipo en el estado base: createNewGame los aplica una vez.
   causal.perks = { ...causal.perks, structureMult: 1, freeMeetingActors: [] };
 
@@ -66,17 +53,14 @@ export function getInitialGameState(): GameState {
     avatar: '',
     term: 1,
     careerHistory: [],
-    turnLog: [],
     popularity: 50,
     budget: PARAMS.CAJA_INICIAL,
     turn: 1,
     year: 1,
     actions: PARAMS.ACCIONES_POR_TURNO,
     baseActions: PARAMS.ACCIONES_POR_TURNO,
-    advisors: [],
     selectedActions: [],
     governorName: '',
-    advisorActionUsed: false,
     objectives: [],
     gameOver: false,
     victorious: false,
@@ -100,10 +84,8 @@ export function getInitialGameState(): GameState {
     radicalConciliadorAxis: 0,
     populistaTecnicoAxis: 0,
     cerradoConvocanteAxis: 0,
-    abilityCooldowns: {},
     defeatReason: null,
     causal,
-    platformId: causal.platformId,
     lastInteractionMessage: null,
   };
 
@@ -117,14 +99,13 @@ export interface NewGameOptions {
   archetype: Archetype;
   governorName: string;
   avatar?: string;
-  platformId?: string;
   seed?: number;
   scenarioId?: string;
 }
 
-export function createNewGame({ archetype, governorName, avatar = '', platformId, seed, scenarioId }: NewGameOptions): GameState {
+export function createNewGame({ archetype, governorName, avatar = '', seed, scenarioId }: NewGameOptions): GameState {
   const base = getInitialGameState();
-  const causal = newCausalForGame(archetype, platformId, seed, scenarioId);
+  const causal = newCausalForGame(archetype, seed, scenarioId);
 
   let state: GameState = {
     ...base,
@@ -136,7 +117,6 @@ export function createNewGame({ archetype, governorName, avatar = '', platformId
     governorName,
     objectives: getPresidentialGoals(),
     causal,
-    platformId: causal.platformId,
   };
 
   // Pasivas de arquetipo (perfil de ejes narrativo).
@@ -176,80 +156,6 @@ export function interactWithActor(state: GameState, actor: ActorId, kind: ActorI
   });
 }
 
-// ===========================
-// Asesores
-// ===========================
-
-/**
- * Contratar asesores: se pagan de la caja, su sueldo pasa a ser gasto
- * corriente y sus roles (eficacia, descuentos, información, negociación)
- * entran como perks del motor causal.
- */
-export function hireAdvisors(
-  gameState: GameState,
-  advisors: Advisor[]
-): GameState {
-  if (gameState.advisorActionUsed) return gameState;
-
-  // Anti duplicados: ignorar asesores ya contratados.
-  const candidates = advisors.filter(
-    a => !gameState.advisors.some(existing => existing.id === a.id)
-  );
-
-  // Máximo 2 asesores simultáneos.
-  const MAX_ADVISORS = 2;
-  const slots = Math.max(0, MAX_ADVISORS - gameState.advisors.length);
-  const toHire = candidates.slice(0, slots);
-  if (toHire.length === 0) return gameState;
-
-  const totalCost = toHire.reduce((sum, a) => sum + a.cost, 0);
-  if (gameState.causal.caja < totalCost) return gameState;
-
-  const withStatus: AdvisorWithStatus[] = toHire.map(a => ({
-    ...a,
-    isActive: true,
-    turnsInactive: 0
-  }));
-
-  const causal = structuredClone(gameState.causal);
-  causal.caja -= totalCost;
-  causal.immediateCosts += totalCost;
-  let imagen = 0;
-  for (const a of toHire) {
-    const role = ADVISOR_ROLES[a.id];
-    if (!role) continue;
-    causal.gastoCorr += role.salary;
-    imagen += role.imagenOnHire;
-  }
-  if (imagen !== 0) applyCausalEffects(causal, [{ target: 'imagen', value: imagen }], 'asesores');
-
-  const next = refreshPerks({
-    ...gameState,
-    causal,
-    advisors: [...gameState.advisors, ...withStatus],
-    advisorActionUsed: true,
-  });
-  return syncLegacy(next);
-}
-
-export function dismissAdvisor(
-  gameState: GameState,
-  advisorId: string
-): GameState {
-  if (gameState.advisorActionUsed) return gameState;
-  const advisor = gameState.advisors.find(a => a.id === advisorId);
-  if (!advisor) return gameState;
-  const causal = structuredClone(gameState.causal);
-  causal.gastoCorr = Math.max(0, causal.gastoCorr - (ADVISOR_ROLES[advisorId]?.salary ?? 0));
-  const next = refreshPerks({
-    ...gameState,
-    causal,
-    advisors: gameState.advisors.filter(a => a.id !== advisorId),
-    advisorActionUsed: true,
-  });
-  return syncLegacy(next);
-}
-
 export function markAllNotificationsRead(gameState: GameState): GameState {
   return {
     ...gameState,
@@ -262,38 +168,6 @@ export function dismissNotification(gameState: GameState, notificationId: string
     ...gameState,
     notifications: gameState.notifications.filter(n => n.id !== notificationId)
   };
-}
-
-// ============================================================
-// Habilidades especiales de arquetipo (efectos en el motor causal)
-// ============================================================
-
-export function useSpecialAbility(state: GameState, abilityId: string): GameState {
-  const abilities = ARCHETYPE_ABILITIES[state.archetype];
-  if (!abilities || abilities.length === 0) return state;
-
-  const ability = abilities.find(a => a.id === abilityId);
-  if (!ability) return state;
-
-  const cd = state.abilityCooldowns[ability.id] ?? 0;
-  if (cd > 0) return state;
-
-  const actionCost = ability.cost.actions ?? 0;
-  if (state.actions < actionCost) return state;
-  if (ability.cost.budget && state.causal.caja < ability.cost.budget) return state;
-
-  const causal = structuredClone(state.causal);
-  const effects = [...ability.effects];
-  if (ability.cost.budget) effects.push({ target: 'CAJA', value: -ability.cost.budget });
-  if (ability.cost.imagen) effects.push({ target: 'imagen', value: -ability.cost.imagen });
-  applyCausalEffects(causal, effects, `habilidad:${ability.id}`);
-
-  return syncLegacy({
-    ...state,
-    causal,
-    actions: state.actions - actionCost,
-    abilityCooldowns: { ...state.abilityCooldowns, [ability.id]: ability.cooldown },
-  });
 }
 
 /** Nombre legible de una acción del catálogo causal. */

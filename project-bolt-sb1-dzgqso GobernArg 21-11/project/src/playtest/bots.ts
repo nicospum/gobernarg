@@ -34,7 +34,6 @@ export interface Bot {
   policies(state: GameState): string[];
   eventChoice(state: GameState, event: GameEvent): string;
   midterm(state: GameState, available: MidtermStrategy[]): MidtermStrategy;
-  advisors?(state: GameState): string[];
   /** Respeta la proyección de caja al cierre (no elige lo que deja la caja en rojo). */
   fiscalGuard?: boolean;
   /** Evita acciones con aviso de uso reiterado. */
@@ -113,7 +112,6 @@ export const infraBot: Bot = {
   policies: () => ['estudio_factibilidad', 'infraestructura_vial', 'infraestructura_energetica', 'obras_hidricas', 'energia_renovable', 'construccion_hospitales', 'mantenimiento_infraestructura', 'transferencias_provincias', 'plan_viviendas'],
   eventChoice: bestChoice,
   midterm: (_s, av) => (av.includes('acelerar') ? 'acelerar' : av[0]),
-  advisors: () => ['advisor3'],
 };
 
 // ─────────────────────────── E: técnico sin reuniones ───────────────────────────
@@ -134,7 +132,6 @@ export const technocratBot: Bot = {
   policies: technocraticPolicies,
   eventChoice: bestChoice,
   midterm: (_s, av) => av[0],
-  advisors: () => ['advisor1'],
 };
 
 // ─────────────────────────── F: hipernegociador ───────────────────────────
@@ -172,7 +169,6 @@ export const negotiatorBot: Bot = {
   },
   eventChoice: bestChoice,
   midterm: (_s, av) => (av.includes('negociar') ? 'negociar' : av[0]),
-  advisors: () => ['advisor4', 'advisor2'],
 };
 
 // ─────────────────────────── G: rígido ───────────────────────────
@@ -259,7 +255,6 @@ export const adaptiveBot: Bot = {
     if (av.includes('abrirse')) return 'abrirse';
     return av[0];
   },
-  advisors: () => ['advisor1', 'advisor4'],
 };
 
 /** Rígidos "moderados": la misma ideología, sin repetir hasta el castigo ni dejar la caja en rojo. */
@@ -326,7 +321,6 @@ export const heterodoxSkilledBot: Bot = {
   },
   eventChoice: bestChoice,
   midterm: (s, av) => (av.includes('negociar') && s.causal.political.leg < 50 ? 'negociar' : av.includes('abrirse') ? 'abrirse' : av[0]),
-  advisors: () => ['advisor1', 'advisor4'],
 };
 
 /** Ortodoxo bien jugado: el espejo del anterior, con su coalición y sus herramientas. */
@@ -351,7 +345,6 @@ export const orthodoxSkilledBot: Bot = {
   },
   eventChoice: bestChoice,
   midterm: (s, av) => (av.includes('negociar') && s.causal.political.leg < 50 ? 'negociar' : av.includes('abrirse') ? 'abrirse' : av[0]),
-  advisors: () => ['advisor1', 'advisor4'],
 };
 
 export const ALL_BOTS: Bot[] = [passiveBot, printerBot, debtBot, infraBot, technocratBot, negotiatorBot, rigidHeterodoxBot, rigidHeterodoxModerateBot, heterodoxSkilledBot, rigidOrthodoxBot, rigidOrthodoxModerateBot, orthodoxSkilledBot, adaptiveBot];

@@ -1,5 +1,5 @@
 import type { GameState } from '../types/game';
-import { ARCHETYPE_PASSIVES } from '../data/specialAbilities';
+import { ARCHETYPE_PASSIVES } from '../data/archetypes';
 
 /**
  * Pasivas del arquetipo que viven en el estado del juego: corren el perfil de

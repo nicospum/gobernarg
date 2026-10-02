@@ -1,29 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import {
-  DIFFICULTY_LEVELS,
-  EFFECTS_BY_ACTION,
-  HISTORIC_SCENARIOS,
-  NO_PLATFORM_ID,
-  OWN_PLATFORM_ID,
-  SCENARIOS,
-  encodeCustomPlatform,
-  getPlatform,
-  getScenario,
-  isScenarioUnlocked,
-  parseCustomPlatform,
-} from '../data/causal';
-import { deriveOwnPlatform } from '../engine/causal/platform';
+import { DIFFICULTY_LEVELS, EFFECTS_BY_ACTION, SCENARIOS, getScenario } from '../data/causal';
 import {
   cajaCost,
   closeTurn,
   contributions,
   createCausalState,
   effective,
-  getAvailability,
   internaCostMult,
   internaEfficacy,
   lawThreshold,
-  debtService,
   type CausalState,
 } from '../engine/causal';
 import { CAUSAL_ACTIONS_BY_ID } from '../data/causal';
@@ -54,106 +39,24 @@ describe('Escenarios', () => {
     expect(s.base.INFL).toBeLessThan(30);
   });
 
-  it('corralito: default sin crédito y sin intereses durante 8 turnos', () => {
-    let s = createCausalState({ scenarioId: 'corralito' });
-    expect(debtService(s)).toBe(0);
-    const loan = getAvailability(s, 'prestamo_internacional', [], 4);
-    expect(loan.available).toBe(false);
-    expect(loan.reasons.join(' ')).toMatch(/default/i);
-    for (let i = 0; i < 8; i++) s = step(s);
-    expect(debtService(s)).toBeGreaterThan(0);
-    expect(getAvailability(s, 'prestamo_internacional', [], 4).reasons.join(' ')).not.toMatch(/default/i);
-  });
-
-  it('las crisis traen ley de emergencia (gobernabilidad extra) y rebote de actividad', () => {
-    const sc = getScenario('corralito');
-    let s = createCausalState({ scenarioId: 'corralito' });
-    expect(s.bonuses.some(b => b.target === 'GOB' && b.value === sc.emergencia!.gob)).toBe(true);
-    const actv0 = s.base.ACTV;
-    s = step(s);
-    expect(s.records[0].applied.some(a => a.effectId?.startsWith('escenario.corralito'))).toBe(true);
-    expect(s.base.ACTV).not.toBe(actv0);
-  });
-
   it('dificultad: Fácil, Normal y Argentina abren un escenario cada una desde el inicio', () => {
     expect(DIFFICULTY_LEVELS.map(l => [l.label, l.scenarioId])).toEqual([
       ['Fácil', 'pais_en_calma'],
       ['Normal', 'viento_de_cola'],
       ['Argentina', 'herencia_pesada'],
     ]);
-    for (const l of DIFFICULTY_LEVELS) expect(isScenarioUnlocked(getScenario(l.scenarioId), 0)).toBe(true);
-    expect(HISTORIC_SCENARIOS.map(s => s.id)).toEqual(['corralito', 'pais_en_llamas']);
+    // Lite: sólo los escenarios de los tres niveles, sin históricos desbloqueables.
+    expect(SCENARIOS.map(s => s.id).sort()).toEqual(DIFFICULTY_LEVELS.map(l => l.scenarioId).sort());
+    for (const l of DIFFICULTY_LEVELS) expect(getScenario(l.scenarioId).id).toBe(l.scenarioId);
   });
 
-  it('desbloqueo: cada reelección ganada abre el siguiente escenario histórico', () => {
-    const corralito = getScenario('corralito');
-    const llamas = getScenario('pais_en_llamas');
-    expect(isScenarioUnlocked(corralito, 0)).toBe(false);
-    expect(isScenarioUnlocked(corralito, 1)).toBe(true);
-    expect(isScenarioUnlocked(llamas, 1)).toBe(false);
-    expect(isScenarioUnlocked(llamas, 2)).toBe(true);
-    expect(isScenarioUnlocked(llamas, 0, true)).toBe(true);
-  });
 });
 
-describe('Plataforma opcional', () => {
-  it('sin plataforma el oficialismo sólo mira la aprobación', () => {
-    const s = createCausalState({ platformId: NO_PLATFORM_ID });
+describe('Sin plataforma del partido', () => {
+  it('el oficialismo sólo mira la aprobación', () => {
+    const s = createCausalState();
     const cs = contributions(s, 'oficialismo', 0);
     expect(cs.map(c => c.indicator)).toEqual(['APRO']);
-  });
-
-  it('con plataforma suma sus tres indicadores', () => {
-    const s = createCausalState({ platformId: 'orden_y_estabilidad' });
-    const inds = contributions(s, 'oficialismo', 0).map(c => c.indicator);
-    expect(inds).toEqual(expect.arrayContaining(['APRO', 'INFL', 'SEGU', 'SOLV']));
-  });
-});
-
-describe('Plataforma propia', () => {
-  it('se codifica en el id y el motor la lee con los pesos 5, 5, 4', () => {
-    const id = encodeCustomPlatform([
-      { indicator: 'ACTV', dir: 1 },
-      { indicator: 'INFL', dir: -1 },
-      { indicator: 'SEGU', dir: 1 },
-    ]);
-    expect(id).toBe('propia:ACTV+,INFL-,SEGU+');
-    expect(getPlatform(id).items).toEqual([
-      { indicator: 'ACTV', s: 5 },
-      { indicator: 'INFL', s: -5 },
-      { indicator: 'SEGU', s: 4 },
-    ]);
-    expect(parseCustomPlatform('propia:ACTV+,ACTV-')).toBeNull();
-    expect(parseCustomPlatform('propia:XXXX+')).toBeNull();
-  });
-
-  it('arranca sin exigencias: el partido sólo mira la aprobación', () => {
-    const s = createCausalState({ platformId: OWN_PLATFORM_ID });
-    expect(s.platformMode).toBe('propia');
-    expect(s.platformId).toBe(NO_PLATFORM_ID);
-    expect(contributions(s, 'oficialismo', 0).map(c => c.indicator)).toEqual(['APRO']);
-  });
-
-  it('adopta lo que empujás en la dirección buena y nunca pide que algo empeore', () => {
-    const id = deriveOwnPlatform([[{ actionId: 'emitir_dinero', caja: 0, scheduled: [] }]]);
-    for (const it of getPlatform(id).items) expect(it.indicator === 'INFL' && it.s > 0).toBe(false);
-  });
-
-  it('se actualiza en cada cierre con las acciones de los últimos turnos', () => {
-    let s = createCausalState({ platformId: OWN_PLATFORM_ID, scenarioId: 'pais_en_calma' });
-    s = step(s, 'control_precios');
-    const first = s.platformId;
-    expect(first.startsWith('propia:')).toBe(true);
-    expect(s.records[s.records.length - 1].notes.some((n: string) => n.startsWith('Tu partido ahora espera'))).toBe(true);
-    // Cuatro turnos sin acciones: lo viejo sale de la ventana y el partido vuelve a mirar sólo la aprobación.
-    for (let i = 0; i < 4; i++) s = step(s);
-    expect(s.platformId).toBe(NO_PLATFORM_ID);
-  });
-
-  it('una plataforma elegida de la lista no cambia sola', () => {
-    let s = createCausalState({ platformId: 'orden_y_estabilidad' });
-    s = step(s, 'control_precios');
-    expect(s.platformId).toBe('orden_y_estabilidad');
   });
 });
 

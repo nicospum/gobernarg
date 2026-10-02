@@ -3,7 +3,7 @@ import { ArrowRight, Info } from 'lucide-react';
 import { Archetype, Position } from '../types/game';
 import { IMAGES, getPositionBackground } from '../utils/imageAssets';
 import { THUMBNAIL_ARCHETYPES } from '../utils/iconThumbnails';
-import { ARCHETYPE_PASSIVES } from '../data/specialAbilities';
+import { ARCHETYPE_PASSIVES } from '../data/archetypes';
 import { STARTING_POSITION } from '../data/careerRules';
 import { InfoTooltip } from './InfoTooltip';
 import { SetupSteps } from './SetupSteps';
