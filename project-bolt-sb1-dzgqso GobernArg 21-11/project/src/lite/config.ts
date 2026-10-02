@@ -7,8 +7,9 @@ import { DIFFICULTY_LEVELS, SCENARIOS, type ScenarioDef } from '../data/causal';
 export interface LiteFeatures {
   /**
    * Escenarios históricos (Corralito y País en llamas) y su desbloqueo con
-   * reelecciones. Apagado: no aparecen en "Nueva partida", no se registra
-   * progreso de desbloqueo y los bots de playtest juegan sólo los 3 niveles.
+   * reelecciones. Apagado: no aparecen en "Nueva partida" y los bots de
+   * playtest juegan sólo los 3 niveles; las reelecciones ganadas se siguen
+   * contando sin aviso, así al reactivarlos los desbloqueos se conservan.
    */
   escenariosHistoricos: boolean;
 }

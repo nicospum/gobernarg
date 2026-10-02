@@ -3,7 +3,7 @@
  * Vive en el navegador (localStorage): si no está disponible —modo privado,
  * datos borrados— el juego funciona igual, sólo que sin desbloqueos guardados.
  */
-// Lite: clave propia (sólo se usa con LITE_FEATURES.escenariosHistoricos).
+// Lite: clave propia. Se registra aunque LITE_FEATURES.escenariosHistoricos esté apagado.
 const KEY = 'gobernarg.lite.progress.v1';
 
 export interface Progress {

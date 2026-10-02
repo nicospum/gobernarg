@@ -89,9 +89,9 @@ function App() {
 
   // Escenarios históricos (apagados en Lite, ver src/lite/config.ts): ganar la
   // partida queda registrado por escenario y cada reelección ganada desbloquea
-  // el siguiente. Con el flag apagado no se registra nada.
+  // el siguiente. Con el flag apagado se registra igual (sin aviso), así al
+  // reactivarlos los desbloqueos ya ganados se conservan.
   useEffect(() => {
-    if (!LITE_FEATURES.escenariosHistoricos) return;
     if (gameState.gameOver && gameState.victorious) recordScenarioWin(gameState.causal.scenarioId);
   }, [gameState.gameOver, gameState.victorious, gameState.causal]);
 
@@ -101,9 +101,9 @@ function App() {
     const results = gameState.electionResults;
     if (!results || results === countedElectionRef.current) return;
     countedElectionRef.current = results;
-    if (LITE_FEATURES.escenariosHistoricos && results.kind === 'reelection' && results.victory) {
+    if (results.kind === 'reelection' && results.victory) {
       recordReelectionWin();
-      toast('Ganaste la reelección: desbloqueaste un escenario histórico nuevo.');
+      if (LITE_FEATURES.escenariosHistoricos) toast('Ganaste la reelección: desbloqueaste un escenario histórico nuevo.');
     }
   }, [gameState.electionResults]);
 
