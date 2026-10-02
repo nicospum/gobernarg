@@ -17,6 +17,8 @@ import { arrows, toneOf, toneClass } from '@/lib/causalText';
 import { getActorIcon } from '../utils/actorIcons';
 import { ModalHeader } from './ModalHeader';
 import { useDialog } from '@/lib/useDialog';
+import { detailed } from '@/lite/config';
+import { topChanges } from '@/lib/simpleView';
 
 interface TurnSummaryModalProps {
   summary: TurnSummary;
@@ -64,6 +66,55 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
           closeLabel="Cerrar resumen"
         />
 
+        {!detailed() ? (
+          <div className="p-6 space-y-4">
+            <p className="text-[14px] text-ink leading-snug">
+              <b>Hiciste:</b>{' '}
+              {record && record.actions.length > 0
+                ? record.actions.map(a => `${CAUSAL_ACTIONS_BY_ID[a.actionId]?.name ?? a.actionId}${a.forced ? ' (forzada)' : a.suspended ? ' (suspendida)' : ''}`).join(', ')
+                : 'nada nuevo este trimestre.'}
+            </p>
+            {record && political && (() => {
+              const top = topChanges(record, political);
+              return (
+                <section aria-label="Lo que más se movió">
+                  <span className="sr-eyebrow block mb-2 !text-sala-muted">Lo que más se movió</span>
+                  {top.length === 0 ? (
+                    <p className="text-[13px] text-sala-muted">Un trimestre tranquilo: nada se movió mucho.</p>
+                  ) : (
+                    <ul className="divide-y divide-rule rounded-lg border border-rule">
+                      {top.map(ch => (
+                        <li key={ch.label} className="flex items-center justify-between gap-3 px-4 py-3">
+                          <span className="text-[14px] text-ink">{ch.label}</span>
+                          <span className={`flex items-center gap-2 font-bold ${toneClass(ch.tone)}`}>
+                            <span className="text-[16px] font-mono">{arrows(ch.delta)}</span>
+                            <span className="text-[12px]">{ch.delta > 0 ? 'sube' : 'baja'}</span>
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
+              );
+            })()}
+            {record && (
+              <p className="text-[14px] text-ink">
+                <b>Caja:</b> {fmtBudget(cajaFinal)}
+                <span className={cajaFinal - record.fiscal.cajaAntes >= 0 ? 'text-sala-good' : 'text-sala-bad'}>
+                  {' '}({cajaFinal - record.fiscal.cajaAntes >= 0 ? 'subió' : 'bajó'} {fmtBudget(Math.abs(cajaFinal - record.fiscal.cajaAntes))})
+                </span>
+              </p>
+            )}
+            {summary.events.length > 0 && (
+              <p className="text-[12px] text-sala-muted leading-snug">
+                <b className="text-ink">También pasó:</b> {summary.events.slice(0, 2).join(' · ')}
+              </p>
+            )}
+            <button onClick={onClose} className="sr-btn-navy w-full h-12 text-[14px]">
+              Seguir gobernando →
+            </button>
+          </div>
+        ) : (
         <div className="p-6 space-y-5">
           {/* Decisiones */}
           {record && (
@@ -206,6 +257,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
             </button>
           </div>
         </div>
+        )}
       </div>
     </div>
   );

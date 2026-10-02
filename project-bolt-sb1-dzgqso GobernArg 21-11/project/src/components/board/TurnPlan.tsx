@@ -3,6 +3,7 @@ import type { GameState } from '../../types/game';
 import { getPolicyAvailability } from '../../engine/gameEngine';
 import { projectedCloseCaja } from '@/engine/causal';
 import { fmtBudget, fmtBudgetDelta } from '@/lib/format';
+import { detailed } from '@/lite/config';
 
 interface TurnPlanProps {
   gameState: GameState;
@@ -22,6 +23,8 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
   const selected = getPolicyAvailability(gameState).filter(av => gameState.selectedActions.includes(av.action.id));
   const projection = projectedCloseCaja(c, gameState.selectedActions.map(actionId => ({ actionId })));
   const left = gameState.actions;
+  // Modo simple: lo elegido y la caja al cierre en una cifra; alertas solo críticas.
+  const simple = !detailed();
   // Avisos que antes sólo estaban en Notificaciones: un trimestre más así y la partida termina.
   const critical = [
     c.hyperStreak === 1 && 'Al borde de la hiperinflación: otro trimestre así y el gobierno cae.',
@@ -56,9 +59,11 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
             <li key={av.action.id} className="flex items-center justify-between gap-2 py-2 border-b border-rule last:border-b-0 text-[12px]">
               <span className="min-w-0 truncate font-medium text-ink">{av.action.name}</span>
               <span className="flex items-center gap-2 flex-shrink-0">
-                <span className={`font-mono ${av.caja > 0 ? 'text-sala-good' : av.caja < 0 ? 'text-sala-bad' : 'text-sala-muted'}`}>
-                  {av.caja === 0 ? 'sin costo' : fmtBudgetDelta(av.caja)}
-                </span>
+                {!simple && (
+                  <span className={`font-mono ${av.caja > 0 ? 'text-sala-good' : av.caja < 0 ? 'text-sala-bad' : 'text-sala-muted'}`}>
+                    {av.caja === 0 ? 'sin costo' : fmtBudgetDelta(av.caja)}
+                  </span>
+                )}
                 <button
                   onClick={() => onActionSelect(av.action.id)}
                   aria-label={`Quitar ${av.action.name} de la agenda`}
@@ -72,6 +77,12 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
         </ul>
       )}
 
+      {simple ? (
+        <div className="flex items-center justify-between gap-3 px-4 py-3.5" title="Estimación: no incluye efectos diferidos ni eventos.">
+          <span className="text-[12px] text-sala-muted">Caja al cierre</span>
+          <strong className={`text-[16px] font-mono ${projection.caja >= 0 ? 'text-ink' : 'text-sala-bad'}`}>{fmtBudget(projection.caja)}</strong>
+        </div>
+      ) : (
       <div
         className="grid grid-cols-2 gap-3 px-4 py-3.5"
         title="Estimación: caja actual + costo de lo elegido + recaudación − gasto corriente − intereses. No incluye efectos diferidos ni eventos."
@@ -87,10 +98,11 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
           </strong>
         </div>
       </div>
+      )}
       {projection.caja < 0 && (
         <p className="mx-4 mb-3 flex items-start gap-1.5 rounded-md bg-red-500/10 px-2.5 py-2 text-[11px] font-semibold text-sala-bad">
           <AlertTriangle size={13} className="mt-px flex-shrink-0" />
-          Alerta fiscal: la caja caerá en déficit y el Tesoro emitirá moneda en el próximo turno.
+          {simple ? 'La caja queda en rojo: el Tesoro va a emitir.' : 'Alerta fiscal: la caja caerá en déficit y el Tesoro emitirá moneda en el próximo turno.'}
         </p>
       )}
       {critical.map(text => (
