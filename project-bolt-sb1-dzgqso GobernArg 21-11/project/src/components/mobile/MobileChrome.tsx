@@ -43,7 +43,7 @@ export function MobileHeader({ gameState, onOpenMenu }: {
   const nextMilestone = Object.keys(MILESTONES).map(Number).find(t => t >= inMandate);
   const scenario = getScenario(gameState.causal?.scenarioId);
   return (
-    <header className="sticky top-0 z-40 sr-navy-bar shadow-[0_4px_18px_rgb(7_28_48/0.25)] pl-4 pr-1.5 pt-2.5 pb-3">
+    <header className="sticky top-0 z-40 sr-navy-bar shadow-[0_4px_18px_rgb(7_28_48/0.25)] pl-[max(1rem,env(safe-area-inset-left,0px))] pr-[max(0.375rem,env(safe-area-inset-right,0px))] pt-[calc(0.625rem+env(safe-area-inset-top,0px))] pb-3">
       <div className="flex items-center gap-2.5">
         {gameState.avatar ? (
           <img src={gameState.avatar} alt="" className="w-10 h-10 rounded-full object-cover ring-2 ring-sala-sky/70 flex-shrink-0" />
@@ -161,7 +161,7 @@ export function MobileBottomBar({ gameState, tab, onTab, onEndTurn, canEndTurn }
   const [showBudget, setShowBudget] = useState(false);
   const caja = gameState.causal.caja;
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 bg-surface border-t border-rule shadow-[0_-6px_18px_rgb(9_44_85/0.08)] pb-[env(safe-area-inset-bottom)]">
+    <div className="fixed inset-x-0 bottom-0 z-40 bg-surface border-t border-rule shadow-[0_-6px_18px_rgb(9_44_85/0.08)] pb-[env(safe-area-inset-bottom,0px)] pl-[env(safe-area-inset-left,0px)] pr-[env(safe-area-inset-right,0px)]">
       <div className="flex items-center gap-2.5 min-[400px]:gap-3.5 h-[68px] pl-4 pr-3">
         <div className="leading-tight">
           <div className="sr-eyebrow">Acciones</div>

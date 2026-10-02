@@ -107,7 +107,7 @@ export function NewGameScreen({ onStart, onBack, historicScenarios = LITE_FEATUR
   };
 
   return (
-    <div className="relative min-h-screen text-ink overflow-x-hidden">
+    <div className="relative min-h-screen text-ink overflow-x-hidden pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]">
       <div
         className="fixed inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700"
         style={{ backgroundImage: `url(${bg})` }}

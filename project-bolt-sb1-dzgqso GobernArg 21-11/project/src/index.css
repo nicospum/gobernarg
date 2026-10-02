@@ -274,7 +274,14 @@
     border-radius: 0 !important;
     border: 0 !important;
     overflow-y: auto;
+    /* iPhone con muesca: el contenido no queda bajo la muesca ni la barra de inicio. */
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
+}
+/* Hojas desde abajo: no pasan por debajo de la muesca cuando ocupan casi todo el alto. */
+[data-sheet] {
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 .info-sheet [class*="text-[10px]"],

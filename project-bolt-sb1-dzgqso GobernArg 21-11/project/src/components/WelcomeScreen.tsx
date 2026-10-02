@@ -20,7 +20,7 @@ function savedLabel(state: GameState): string {
 
 export function WelcomeScreen({ onStart, saved, onContinue }: WelcomeScreenProps) {
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
+    <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]">
       {/* Portada: Plaza de Mayo (aclarada para el tema claro) */}
       <img src={screenImage('bienvenida')} alt="" decoding="async" className="absolute inset-0 w-full h-full object-cover" />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(var(--paper)/0.05)_0%,rgb(var(--paper)/0.3)_55%,rgb(var(--paper)/0.85)_100%)]" />

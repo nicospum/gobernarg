@@ -252,7 +252,7 @@ function App() {
             gameState={gameState}
             onOpenMenu={() => setShowMobileMenu(true)}
           />
-          <main className="px-3 pt-3 pb-[calc(9rem+env(safe-area-inset-bottom))] space-y-3">
+          <main className="px-3 pt-3 pb-[calc(9rem+env(safe-area-inset-bottom,0px))] space-y-3">
             <MobileKpis gameState={gameState} />
             {!detailed() && <DefeatAlerts gameState={gameState} />}
             {tutorialCard}

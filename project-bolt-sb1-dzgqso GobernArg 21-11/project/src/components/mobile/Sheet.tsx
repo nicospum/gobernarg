@@ -40,8 +40,8 @@ export function Sheet({ title, onClose, children, footer, tall = false }: SheetP
             <X size={20} />
           </button>
         </div>
-        <div className="info-sheet flex-1 overflow-y-auto px-5 pt-2 pb-5">{children}</div>
-        {footer && <div className="border-t border-rule px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">{footer}</div>}
+        <div className={`info-sheet flex-1 overflow-y-auto px-5 pt-2 ${footer ? 'pb-5' : 'pb-[max(1.25rem,env(safe-area-inset-bottom,0px))]'}`}>{children}</div>
+        {footer && <div className="border-t border-rule px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom,0px))]">{footer}</div>}
       </div>
     </div>,
     document.body,
