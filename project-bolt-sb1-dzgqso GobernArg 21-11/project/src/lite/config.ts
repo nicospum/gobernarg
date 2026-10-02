@@ -18,9 +18,16 @@ export interface LiteFeatures {
    * mueve el país en palabras, colores y flechas. El motor es el mismo.
    */
   modoDetallado: boolean;
+  /**
+   * Nivel Fácil (País en calma) en "Nueva partida". Apagado: solo Normal y
+   * Argentina, con Normal elegido de entrada. Las partidas ya guardadas en
+   * Fácil se siguen cargando igual.
+   */
+  nivelFacil: boolean;
 }
 
 export const LITE_FEATURES: LiteFeatures = {
   escenariosHistoricos: false,
   modoDetallado: false,
+  nivelFacil: false,
 };

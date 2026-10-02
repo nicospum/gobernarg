@@ -83,3 +83,29 @@ describe('Registro de la partida en el legado', () => {
     expect(screen.getAllByText(/Mejorar la recaudación|recaudación/i).length).toBeGreaterThan(0);
   });
 });
+
+describe('Niveles de la Lite', () => {
+  it('ofrece Normal y Argentina, con Normal elegido; Fácil vuelve con el flag', async () => {
+    const onStart = vi.fn();
+    render(<NewGameScreen onBack={() => {}} onStart={onStart} />);
+    const levels = screen.getByRole('radiogroup', { name: 'Nivel' });
+    expect(levels.querySelectorAll('[role=radio]')).toHaveLength(2);
+    expect(screen.queryByRole('radio', { name: /Fácil/ })).toBeNull();
+    expect(screen.getByRole('radio', { name: /Normal/ }).getAttribute('aria-checked')).toBe('true');
+    fireEvent.change(screen.getByPlaceholderText('Ingresá tu nombre'), { target: { value: 'Normal' } });
+    await click(screen.getByRole('button', { name: /^Empezar$/ }));
+    expect(onStart).toHaveBeenCalledWith(expect.objectContaining({ scenarioId: 'viento_de_cola' }));
+    cleanup();
+
+    LITE_FEATURES.nivelFacil = true;
+    try {
+      render(<NewGameScreen onBack={() => {}} onStart={() => {}} />);
+      expect(screen.getByRole('radio', { name: /Fácil/ })).toBeTruthy();
+    } finally { LITE_FEATURES.nivelFacil = false; }
+  });
+
+  it('una partida guardada en Fácil se sigue cargando', () => {
+    const session = newSession({ name: 'Fácil', profile: 'politico', avatar: 'avatar:2', difficulty: 'easy', scenarioId: 'pais_en_calma' });
+    expect(deserializeSession(serializeSession(session)).state.scenarioId).toBe('pais_en_calma');
+  });
+});

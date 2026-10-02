@@ -173,10 +173,9 @@
 .b-welcome-actions { display: flex; align-items: flex-start; flex-direction: column; gap: 13px; margin-top: 30px; }
 .situation-room .b-welcome-start { display: flex; align-items: center; gap: 14px; padding: 17px 24px; font-size: 14px; border-radius: 7px; }
 .b-saved-label { font-size: 12px; color: #b8c9dc; }
-.b-welcome-stats { display: flex; gap: 28px; margin-top: 45px; border-top: 1px solid #1e2d40; padding-top: 20px; }
-.b-welcome-stats > div { display: flex; flex-direction: column; gap: 5px; }
-.b-welcome-stats strong { color: #c9a96e; font: 500 22px 'JetBrains Mono', monospace; }
-.b-welcome-stats span { color: #9cafc6; font-size: 11px; }
+.b-welcome-tagline { display: flex; flex-direction: column; gap: 6px; margin-top: 45px; border-top: 1px solid #1e2d40; padding-top: 20px; }
+.b-welcome-tagline strong { color: #c9a96e; font: 600 21px/1.35 Cinzel, Georgia, serif; }
+.b-welcome-tagline span { color: #9cafc6; font-size: 14px; font-style: italic; }
 .b-welcome-scene { position: relative; height: 510px; border: 1px solid #c9a96e44; border-radius: 12px; overflow: hidden; animation: b-dossier-in .7s ease-out; background: #101721; }
 .b-welcome-scene > img { width: 100%; height: 100%; object-fit: cover; opacity: .78; }
 .b-scene-caption { position: absolute; inset: auto 0 0; display: flex; flex-direction: column; gap: 12px; padding: 60px 30px 30px; background: linear-gradient(transparent, #06090de6); }
@@ -213,7 +212,7 @@
 .b-new-upload { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-style: dashed; color: #99c5e8; font-size: 9px; line-height: 1.2; text-align: center; padding: 4px; }
 .b-new-options { display: grid; gap: 10px; }
 .b-new-profiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.b-new-levels { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.b-new-levels { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
 .b-new-option { position: relative; display: flex; align-items: center; gap: 12px; text-align: left; padding: 12px 34px 12px 12px; border-radius: 10px; border: 1px solid #2c405b; background: #0b1017b3; transition: border-color .15s, background .15s; }
 .b-new-option:hover { border-color: #75aadb99; }
 .b-new-option[aria-checked=true] { border-color: #c9a96e; background: #75aadb16; }
@@ -276,8 +275,8 @@
   .b-welcome-main { display: flex; flex-direction: column; align-items: stretch; padding: 35px 22px; }
   .b-welcome-description { font-size: 18px; }
   .b-welcome-scene { height: 250px; }
-  .b-welcome-stats { gap: 24px; margin-top: 30px; }
-  .b-welcome-stats span { font-size: 10px; }
+  .b-welcome-tagline { margin-top: 30px; }
+  .b-welcome-tagline strong { font-size: 18px; }
   .b-welcome-footer { flex-direction: column; gap: 5px; padding: 20px 22px; }
   .situation-room .b-dialog { border-radius: 0; border-width: 0; }
   .b-dialog > div:first-child h2 { font-size: 17px; }

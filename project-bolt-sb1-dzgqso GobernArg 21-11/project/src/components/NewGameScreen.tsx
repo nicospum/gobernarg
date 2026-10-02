@@ -25,6 +25,11 @@ function unlockHint(sc: ScenarioDef): string {
 }
 
 const PROFILE_IDS = Object.keys(PROFILES) as Profile[];
+/** Niveles que se ofrecen: Fácil solo si LITE_FEATURES.nivelFacil. De entrada, Normal. */
+function offeredLevels() {
+  const levels = DIFFICULTY_LEVELS.filter(level => level.id !== 'facil' || LITE_FEATURES.nivelFacil);
+  return { levels, initial: levels.find(level => level.id === 'normal') ?? levels[0] };
+}
 
 /** Nueva partida en una sola pantalla: nombre, foto, perfil y nivel. */
 export function NewGameScreen({ onBack, onStart, historicScenarios = LITE_FEATURES.escenariosHistoricos }: Props) {
@@ -36,7 +41,8 @@ export function NewGameScreen({ onBack, onStart, historicScenarios = LITE_FEATUR
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const [profile, setProfile] = useState<Profile>('politico');
-  const [scenarioId, setScenarioId] = useState(DIFFICULTY_LEVELS[0].scenarioId);
+  const [{ levels, initial }] = useState(offeredLevels);
+  const [scenarioId, setScenarioId] = useState(initial.scenarioId);
   const [progress] = useState(() => historicScenarios ? loadProgress() : null);
   const fileInput = useRef<HTMLInputElement>(null);
 
@@ -111,7 +117,7 @@ export function NewGameScreen({ onBack, onStart, historicScenarios = LITE_FEATUR
         <section className="b-new-section" aria-labelledby="new-level">
           <h2 id="new-level" className="b-new-label">Nivel</h2>
           <div className="b-new-options b-new-levels" role="radiogroup" aria-label="Nivel">
-            {DIFFICULTY_LEVELS.map(item => {
+            {levels.map(item => {
               const scenario = getScenario(item.scenarioId);
               return <button key={item.id} type="button" role="radio" aria-checked={scenarioId === item.scenarioId} className="b-new-option" onClick={() => setScenarioId(item.scenarioId)}>
                 <span><strong className="font-display">{item.label}</strong><small>{item.tagline}</small>{scenario && <em>{scenario.name} · {scenario.era}</em>}</span>
