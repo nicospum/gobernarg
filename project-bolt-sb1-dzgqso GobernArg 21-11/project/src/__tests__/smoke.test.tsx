@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 /**
  * Prueba de humo de la interfaz (Fase 4, versión B): abre el juego completo en
- * un navegador simulado y recorre el primer minuto: portada → personaje →
- * dificultad → tablero → cerrar un turno → recargar y continuar la partida.
+ * un navegador simulado y recorre el primer minuto: portada → nueva partida
+ * (una sola pantalla) → tablero → cerrar un turno → recargar y continuar.
  */
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
@@ -36,14 +36,13 @@ async function click(el: HTMLElement) {
 
 async function startGame(name: string) {
   await click(screen.getByRole('button', { name: /Empezar/ }));
+  expect(screen.getByRole('heading', { name: 'Nueva partida' })).toBeTruthy();
   fireEvent.change(screen.getByPlaceholderText('Ingresá tu nombre'), { target: { value: name } });
-  await click(screen.getByRole('button', { name: /^Continuar$/ }));
-  await click(screen.getByRole('button', { name: /Comenzar gestión/ }));
-  await click(screen.getByRole('button', { name: /Entendido/ }));
+  await click(screen.getByRole('button', { name: /^Empezar$/ }));
 }
 
 // Dibujar el tablero completo en jsdom tarda unos segundos.
-describe('Prueba de humo de la interfaz (versión B)', { timeout: 30000 }, () => {
+describe('Prueba de humo de la interfaz (versión B Lite)', { timeout: 30000 }, () => {
   it('se puede crear un personaje, cerrar un turno y continuar la partida', async () => {
     localStorage.clear();
     renderGame();
@@ -76,5 +75,28 @@ describe('Prueba de humo de la interfaz (versión B)', { timeout: 30000 }, () =>
     await click(screen.getByRole('button', { name: /^Menú$/ }));
     await click(screen.getByRole('button', { name: /Cómo se juega/ }));
     expect(screen.getByRole('button', { name: 'Volver al juego' })).toBeTruthy();
+  });
+
+  it('la pantalla de nueva partida pide nombre, valida la foto y respeta perfil y nivel', async () => {
+    localStorage.clear();
+    renderGame();
+    await click(screen.getByRole('button', { name: /Empezar/ }));
+    await click(screen.getByRole('button', { name: /^Empezar$/ }));
+    expect(screen.getByText('Escribí un nombre para empezar.')).toBeTruthy();
+
+    // Las fotos de la grilla no muestran nombres: solo un texto accesible genérico.
+    expect(screen.getAllByRole('radio', { name: /^Avatar \d+$/ })).toHaveLength(15);
+    const file = new File(['hola'], 'notas.txt', { type: 'text/plain' });
+    await act(async () => { fireEvent.change(screen.getByLabelText('Subir mi foto', { selector: 'input' }), { target: { files: [file] } }); });
+    expect(await screen.findByText(/Elegí un archivo de imagen/)).toBeTruthy();
+
+    fireEvent.change(screen.getByPlaceholderText('Ingresá tu nombre'), { target: { value: 'Perfiles' } });
+    await click(screen.getByRole('radio', { name: /Avatar 4/ }));
+    await click(screen.getByRole('radio', { name: /Sindicalista/ }));
+    await click(screen.getByRole('radio', { name: /Argentina/ }));
+    await click(screen.getByRole('button', { name: /^Empezar$/ }));
+    expect(screen.getAllByText('Sindicalista').length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Herencia pesada/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText('5 acciones').length).toBeGreaterThan(0);
   });
 });

@@ -1,17 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Toaster, toast } from 'sonner';
-import { CharacterCreation } from './components/CharacterCreation';
-import { GameSetup, type CharacterDraft } from './components/GameSetup';
+import { NewGameScreen, type NewGameChoice } from './components/NewGameScreen';
 import { WelcomeScreen } from './components/WelcomeScreen';
-import { WelcomeModal } from './components/WelcomeModal';
 import { CausalDashboard } from './components/causal/CausalDashboard';
 import { markGameStart } from './components/causal/FeedbackForm';
 import { applyCommand } from './causal/engine';
 import { deserializeSession, newSession, SAVE_KEY, serializeSession, type GameSession } from './causal/persistence';
 import type { CommandParams, GameCommand } from './causal/types';
-import type { Difficulty, Profile } from './causal/campaignTypes';
 import { TURNS_PER_TERM } from './causal/catalog';
-import { getScenario } from './causal/scenarios';
+import { DIFFICULTY_LEVELS, getScenario } from './causal/scenarios';
 
 /** "Laura Méndez · Mandato 1, turno 5 · Herencia pesada" para el botón Continuar partida. */
 function savedLabel(session: GameSession | null): string | null {
@@ -35,10 +32,10 @@ export default function CausalApp() {
   const [loaded] = useState(readSave);
   const [session, setSession] = useState<GameSession | null>(loaded.session);
   const current = useRef(session);
-  const [screen, setScreen] = useState<'welcome' | 'character' | 'setup' | 'intro' | 'game'>('welcome');
-  // Inicio en dos pasos: personaje (draft) y después dificultad y escenario.
-  const [draft, setDraft] = useState<CharacterDraft | null>(null);
+  const [screen, setScreen] = useState<'welcome' | 'new' | 'game'>('welcome');
   const [savingError, setSavingError] = useState<string | null>(loaded.error);
+  // Cada pantalla empieza arriba (en el celular la de nueva partida es larga).
+  useEffect(() => { window.scrollTo?.({ top: 0 }); }, [screen]);
   useEffect(() => {
     if (!session) return;
     try { window.localStorage.setItem(SAVE_KEY, serializeSession(session)); setSavingError(null); }
@@ -53,19 +50,16 @@ export default function CausalApp() {
     current.current = next; setSession(next); toast.success(result.message);
     return true;
   }, []);
-  const continueToSetup = (archetype: Profile, name: string, avatar: string) => {
-    if (!name.trim()) return;
-    setDraft({ archetype, governorName: name.trim(), avatar });
-    setScreen('setup');
-  };
-  const start = (scenarioId: string, difficulty: Difficulty) => {
-    if (!draft) return;
-    const next = newSession({ name: draft.governorName, profile: draft.archetype, avatar: draft.avatar, difficulty, scenarioId });
-    current.current = next; setSession(next); setScreen('intro'); markGameStart();
+  // El nivel fija el país (escenario) y la exigencia que sugiere.
+  const start = (choice: NewGameChoice) => {
+    const level = DIFFICULTY_LEVELS.find(item => item.id === choice.level) ?? DIFFICULTY_LEVELS[0];
+    const scenario = getScenario(level.scenarioId);
+    const next = newSession({ name: choice.name, profile: choice.profile, avatar: choice.avatar, difficulty: scenario?.suggestedDifficulty ?? 'normal', scenarioId: level.scenarioId });
+    current.current = next; setSession(next); setScreen('game'); markGameStart();
   };
   const restart = () => {
     try { window.localStorage.removeItem(SAVE_KEY); } catch { /* Storage failure must not crash restart. */ }
-    current.current = null; setSession(null); setScreen('character');
+    current.current = null; setSession(null); setScreen('new');
   };
   const makeCommand = (type: GameCommand['type'], actionId?: string, params?: CommandParams): boolean => {
     if (!session) return false;
@@ -73,10 +67,8 @@ export default function CausalApp() {
   };
   return <div className={`situation-room b-screen-${screen}`}>
     <Toaster theme="dark" position="bottom-right" richColors containerAriaLabel="Avisos" />
-    {screen === 'welcome' && <><WelcomeScreen onStart={() => setScreen('character')} savedLabel={savedLabel(session)} onContinue={() => setScreen('game')} />{savingError && <p role="alert" className="fixed bottom-4 left-4 right-4 rounded-lg bg-card border border-amber-300/40 p-4 text-sm text-amber-100">{savingError} Al empezar una partida nueva se crea un guardado nuevo.</p>}</>}
-    {screen === 'character' && <CharacterCreation onComplete={continueToSetup} initial={draft} />}
-    {screen === 'setup' && draft && <GameSetup draft={draft} onBack={() => setScreen('character')} onStart={start} />}
-    {screen === 'intro' && session && <WelcomeModal governorName={session.state.name} onStart={() => setScreen('game')} />}
+    {screen === 'welcome' && <><WelcomeScreen onStart={() => setScreen('new')} savedLabel={savedLabel(session)} onContinue={() => setScreen('game')} />{savingError && <p role="alert" className="fixed bottom-4 left-4 right-4 rounded-lg bg-card border border-amber-300/40 p-4 text-sm text-amber-100">{savingError} Al empezar una partida nueva se crea un guardado nuevo.</p>}</>}
+    {screen === 'new' && <NewGameScreen onBack={() => setScreen('welcome')} onStart={start} />}
     {screen === 'game' && session && <CausalDashboard state={session.state} savingError={savingError}
       onExecute={(id, params) => makeCommand('execute', id, params)} onCommand={(type, targetId, choiceId) => commit({ id: crypto.randomUUID(), expectedTurn: session.state.turn, type, targetId, choiceId })} onRestart={restart} />}
   </div>;

@@ -1,6 +1,5 @@
 // Imágenes que usa el juego. Cada archivo de src/assets/images que no figura
 // acá (o en iconThumbnails.ts) no se publica.
-import logoPrimary from '../assets/images/logo/logo-primary.webp';
 
 import bgCasaRosadaSunset from '../assets/images/backgrounds/balcony-casa-rosada-sunset.webp';
 import bgCongressSunrise from '../assets/images/backgrounds/congress-sunrise-panorama.webp';
@@ -55,9 +54,6 @@ import iconCulture from '../assets/images/icons/categories/category-culture.webp
 import iconTechnology from '../assets/images/icons/categories/category-technology.webp';
 
 export const IMAGES = {
-  logo: {
-    primary: logoPrimary,
-  },
   backgrounds: {
     casaRosadaSunset: bgCasaRosadaSunset,
     congressSunrise: bgCongressSunrise,

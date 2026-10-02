@@ -2,7 +2,8 @@ import type { ActorId, IndicatorId } from './types';
 
 /** Perfil del presidente: cada uno tiene ventajas fijas (PROFILES). */
 export type Profile = 'politico' | 'empresario' | 'sindicalista' | 'comunicador';
-export type Difficulty = 'easy' | 'normal' | 'hard' | 'legend';
+/** Exigencia: la fija el nivel elegido (scenarios.ts, suggestedDifficulty). */
+export type Difficulty = 'easy' | 'normal' | 'hard';
 export type Strategy = 'acelerar' | 'negociar' | 'abrirse' | 'jugada_audaz';
 export interface NewsItem { id: string; turn: number; title: string; text: string; read: boolean; dismissed: boolean; importance: 'normal' | 'warning' | 'critical' }
 export interface ElectionRecord { turn: number; term: number; kind: 'legislative' | 'presidential'; votes: number; won: boolean; ownSeats: number }

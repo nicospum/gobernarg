@@ -1,17 +1,20 @@
-import type { CampaignEvent, Difficulty, Strategy } from './campaignTypes';
+import type { CampaignEvent, Difficulty, Profile, Strategy } from './campaignTypes';
 
 export const DIFFICULTIES: Record<Difficulty, { name: string; revenue: number; eventChance: number; electionPenalty: number }> = {
   easy: { name: 'Aprendiz', revenue: 1.12, eventChance: .18, electionPenalty: -3 },
   normal: { name: 'Normal', revenue: 1, eventChance: .28, electionPenalty: 0 },
   hard: { name: 'Difícil', revenue: .92, eventChance: .38, electionPenalty: 3 },
-  legend: { name: 'Leyenda', revenue: .85, eventChance: .48, electionPenalty: 5 },
 };
-export const PROFILES: Record<string, { name: string; description: string }> = {
-  politico: { name: 'Político de Raza', description: 'Reuniones gratuitas con aliados. Retiene el 5% del margen electoral restante al buscar su primera reelección.' },
-  empresario: { name: 'Empresario', description: '10% menos de desembolso en políticas económicas. Capacidad adicional de deuda: 500 U.' },
-  sindicalista: { name: 'Sindicalista', description: 'Un punto de acción adicional. Reuniones gratuitas con sindicatos y organizaciones sociales.' },
-  comunicador: { name: 'Comunicador', description: 'Reduce 30% los impactos negativos de indicadores en eventos.' },
+/** Perfiles: solo ventajas fijas. `summary` es la ventaja en una línea (pantalla de nueva partida). */
+export const PROFILES: Record<Profile, { name: string; summary: string; description: string }> = {
+  politico: { name: 'Político de Raza', summary: 'Reuniones gratis con aliados y ventaja de incumbencia en la primera reelección.', description: 'Reuniones gratuitas con aliados. Retiene el 5% del margen electoral restante al buscar su primera reelección.' },
+  empresario: { name: 'Empresario', summary: '10 % menos de costo en políticas económicas y 500 U más de tope de deuda.', description: '10% menos de desembolso en políticas económicas. Capacidad adicional de deuda: 500 U.' },
+  sindicalista: { name: 'Sindicalista', summary: '+1 acción por turno y reuniones gratis con sindicatos y organizaciones sociales.', description: 'Un punto de acción adicional. Reuniones gratuitas con sindicatos y organizaciones sociales.' },
+  comunicador: { name: 'Comunicador', summary: 'Los eventos golpean 30 % menos a los indicadores.', description: 'Reduce 30% los impactos negativos de indicadores en eventos.' },
 };
+/** Datos del perfil de una partida (el estado guarda el id como texto). */
+export const profileInfo = (id: string) => (PROFILES as Record<string, (typeof PROFILES)[Profile] | undefined>)[id];
+
 export const STRATEGIES: Record<Strategy, { name: string; description: string; efficacy: number; cost: number }> = {
   acelerar: { name: 'Acelerar', description: '+10% de eficacia y +10% de costo inicial. Desplaza el estilo hacia la radicalidad.', efficacy: .10, cost: 1.10 },
   negociar: { name: 'Negociar', description: 'Negociaciones 25% más baratas; políticas con 5% menos de eficacia.', efficacy: -.05, cost: 1 },

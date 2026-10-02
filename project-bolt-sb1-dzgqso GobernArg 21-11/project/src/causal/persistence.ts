@@ -5,6 +5,7 @@ import { CAMPAIGN_COMMANDS, enableCampaign } from './campaign';
 import { DIFFICULTIES } from './campaignCatalog';
 import type { Difficulty } from './campaignTypes';
 import { getScenario } from './scenarios';
+import { isValidAvatar } from '../lib/avatars';
 import type { CausalState, GameCommand } from './types';
 
 export const SAVE_KEY = 'gobernarg.causal.v1';
@@ -48,6 +49,7 @@ export function deserializeSession(text: string): GameSession {
   if (!isObject(value.player) || typeof value.player.name !== 'string' || !value.player.name.trim()
     || value.player.name.length > 120 || typeof value.player.profile !== 'string' || typeof value.player.avatar !== 'string'
     || !Array.isArray(value.commands) || value.commands.length > 10_000) throw new Error('La partida guardada tiene datos inválidos.');
+  if (!isValidAvatar(value.player.avatar)) throw new Error('La foto guardada no es válida.');
   if (value.player.difficulty !== undefined && !Object.prototype.hasOwnProperty.call(DIFFICULTIES, String(value.player.difficulty))) throw new Error('Dificultad inválida.');
   if (value.player.scenarioId !== undefined && !getScenario(String(value.player.scenarioId))) throw new Error('Escenario inválido.');
   if (value.campaignVersion !== 1) throw new Error('Versión de campaña no compatible.');

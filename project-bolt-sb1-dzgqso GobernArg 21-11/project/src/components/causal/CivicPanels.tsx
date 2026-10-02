@@ -1,5 +1,5 @@
 import { ACTORS, POLICIES } from '../../causal/catalog';
-import { DIFFICULTIES, PROFILES, STRATEGIES } from '../../causal/campaignCatalog';
+import { DIFFICULTIES, STRATEGIES, profileInfo } from '../../causal/campaignCatalog';
 import { electoralBreakdown } from '../../causal/campaign';
 import { isProject, policyName } from '../../causal/selectors';
 import { IMAGES } from '../../utils/imageAssets';
@@ -57,7 +57,7 @@ export function ProjectReports({ state }: { state: CausalState }) {
 }
 /** Perfil del presidente: sus ventajas son fijas durante toda la partida. */
 export function ProfileCard({ state }: { state: CausalState }) {
-  const profile = PROFILES[state.profile];
+  const profile = profileInfo(state.profile);
   if (!profile) return null;
   return <section className="b-profile-card bg-card border border-border rounded-xl p-4 flex gap-3 items-start" aria-label="Tu perfil"><img src={THUMBNAIL_ARCHETYPES[state.profile]} alt="" className="w-12 h-12 rounded-lg shrink-0" /><div><p className="b-eyebrow">Tu perfil</p><h2 className="font-display font-bold mt-1">{profile.name}</h2><p className="text-xs text-muted-foreground leading-5 mt-1">{profile.description}</p></div></section>;
 }

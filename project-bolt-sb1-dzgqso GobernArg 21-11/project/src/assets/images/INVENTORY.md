@@ -32,7 +32,6 @@ Los PNG originales se conservan en `src/assets/images/raw/` como respaldo.
 | icons/groups/group-agriculture.webp | image_053.png | 1254x1254 | 1000215 | 42164 | Icono de sector agropecuario. |
 | icons/groups/group-business.webp | image_050.png | 1254x1254 | 826616 | 17070 | Icono de empresarios / sector empresarial. |
 | icons/groups/group-workers.webp | image_046.png | 1254x1254 | 1000227 | 41822 | Icono de sindicatos / trabajadores. |
-| logo/logo-primary.webp | image_023.png | 1448x1086 | 960533 | 48028 | Logo principal en pantalla de bienvenida y splash. |
 | ui/shield-emblem-premium.webp | image_059.png | 1254x1254 | 1029764 | 60324 | Emblema de alta distinción. |
 | ui/shield-emblem.webp | image_058.png | 1254x1254 | 921728 | 39228 | Emblema para logros / insignias. |
 

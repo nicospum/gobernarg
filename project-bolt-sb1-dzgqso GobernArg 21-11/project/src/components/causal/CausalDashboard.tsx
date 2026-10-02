@@ -9,7 +9,8 @@ import { useIsMobile } from '../../lib/useMediaQuery';
 import { IMAGES } from '../../utils/imageAssets';
 import { CountryBriefing, CommandStatus, NewsWire, PresidentialMark } from './SituationRoom';
 import { policyEffectsPreview } from '../../causal/engine';
-import { PROFILES } from '../../causal/campaignCatalog';
+import { profileInfo } from '../../causal/campaignCatalog';
+import { avatarSrc } from '../../lib/avatars';
 import { PolicyPanel } from './PolicyPanel';
 import { ActorPanel } from './ActorPanel';
 import { Dialog } from './Dialog';
@@ -71,6 +72,7 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
   const closeMenu = useCallback(() => setMenu(false), []);
   const closeHelp = useCallback(() => setHelp(false), []);
   const inTerm = (state.turn - 1) % TURNS_PER_TERM + 1;
+  const avatar = avatarSrc(state.avatar);
   const forecasts = fiscalForecast(state);
   const lastReport = state.reports[state.reports.length - 1];
   const selectedIndicator = INDICATORS.find(item => item.id === indicator);
@@ -130,7 +132,7 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
     return <div className="government-game b-mobile min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-40 bg-card/95 backdrop-blur border-b border-border pl-4 pr-2 pt-2 pb-2.5">
         <div className="flex items-center gap-3">
-          <PresidentialMark compact />{state.avatar ? <img src={state.avatar} alt="" className="h-10 w-10 rounded-full object-cover border-2 border-amber-200/50" /> : <img src={IMAGES.logo.primary} alt="GobernArg" className="h-9 w-auto" />}
+          <PresidentialMark compact />{avatar && <img src={avatar} alt="" className="b-mobile-avatar h-8 w-8 shrink-0 rounded-full object-cover border border-amber-200/50" />}
           <div className="flex-1 min-w-0"><h1 className="text-sm font-semibold truncate">{state.name}</h1><p className="text-[11px] text-muted-foreground truncate">Año {Math.ceil(inTerm / 4)} · Turno {inTerm} de {TURNS_PER_TERM} · Mandato {state.term}{scenarioName ? ` · ${scenarioName}` : ''}</p></div>
           <button type="button" aria-label="Menú" className="w-11 h-11 flex items-center justify-center rounded hover:bg-white/10" onClick={() => setMenu(true)}><MoreHorizontal size={22} /></button>
         </div>
@@ -161,7 +163,7 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
   const executed = state.history.filter(execution => execution.turn === state.turn);
   return <div className="government-game b-desktop">
     <header className="b-command-header">
-      <div className="b-president"><div className="b-president-identity"><PresidentialMark />{state.avatar && <img src={state.avatar} alt={state.name} className="b-president-avatar" />}</div><div className="b-president-name"><ShieldCheck size={13} /><span>{state.name}</span><small>{PROFILES[state.profile]?.name ?? state.profile}</small></div></div>
+      <div className="b-president"><div className="b-president-identity"><PresidentialMark />{avatar && <img src={avatar} alt={state.name} className="b-president-avatar" />}</div><div className="b-president-name"><ShieldCheck size={13} /><span>{state.name}</span><small>{profileInfo(state.profile)?.name ?? state.profile}</small></div></div>
       <div className="b-turn-clock"><Clock3 size={16} /><div><strong>Año {Math.ceil(inTerm / 4)} · T{(inTerm - 1) % 4 + 1}</strong><span>Turno global {state.turn} · Mandato {state.term}</span><MandateTimeline inTerm={inTerm} wide /></div></div>
       <div className="b-agenda-resource"><Zap size={19} /><div><span>Agenda disponible</span><strong>{acciones(state.actionPoints)}</strong></div></div>
       <button type="button" aria-haspopup="dialog" className="causal-secondary b-header-menu" onClick={() => setMenu(true)}><MoreHorizontal size={17} />Menú</button>
