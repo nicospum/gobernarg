@@ -3,7 +3,7 @@ import { BookOpen, X } from 'lucide-react';
 import { ACTIONS_PER_TURN } from '../../causal/catalog';
 import { Dialog } from './Dialog';
 
-const SEEN_KEY = 'gobernarg.b.tutorial.v1';
+const SEEN_KEY = 'gobernarg.lite.tutorial.v1';
 
 function seen(): boolean {
   try { return localStorage.getItem(SEEN_KEY) === '1'; } catch { return false; }

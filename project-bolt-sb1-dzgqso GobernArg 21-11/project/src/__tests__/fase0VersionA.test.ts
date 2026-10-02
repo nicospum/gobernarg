@@ -51,7 +51,7 @@ describe('Guardado', () => {
   });
 
   it('rechaza escenarios desconocidos', () => {
-    const text = JSON.stringify({ schemaVersion: 1, modelVersion: 'causal-1', campaignVersion: 1, campaignStart: 0,
+    const text = JSON.stringify({ model: 'lite', saveVersion: 1,
       player: { name: 'X', profile: 'politico', avatar: '', scenarioId: 'inventado' }, commands: [] });
     expect(() => deserializeSession(text)).toThrow('Escenario inválido.');
   });

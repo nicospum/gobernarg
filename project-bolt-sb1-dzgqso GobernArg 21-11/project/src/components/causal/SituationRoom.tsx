@@ -7,7 +7,7 @@ import { fmtScore, fmtSigned, fmtU } from '../../causal/format';
 import type { CausalState, IndicatorId, PolicyDefinition } from '../../causal/types';
 
 export function PresidentialMark({ compact = false }: { compact?: boolean }) {
-  return <div className="b-brand"><span className="b-seal" aria-hidden="true"><Sun size={compact ? 21 : 25} strokeWidth={1.4} /><span className="b-live-dot" /></span><div><span className="b-wordmark">Gobern<span>Arg</span></span><span className="b-edition">B / Sala de situación</span></div></div>;
+  return <div className="b-brand"><span className="b-seal" aria-hidden="true"><Sun size={compact ? 21 : 25} strokeWidth={1.4} /><span className="b-live-dot" /></span><div><span className="b-wordmark">Gobern<span>Arg</span></span><span className="b-edition">B Lite / Sala de situación</span></div></div>;
 }
 
 export function NewsWire({ state }: { state: CausalState }) {

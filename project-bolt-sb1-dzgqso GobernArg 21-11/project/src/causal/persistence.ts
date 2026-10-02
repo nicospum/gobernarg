@@ -8,7 +8,15 @@ import { getScenario } from './scenarios';
 import { isValidAvatar } from '../lib/avatars';
 import type { CausalState, GameCommand } from './types';
 
-export const SAVE_KEY = 'gobernarg.causal.v1';
+/**
+ * Guardado de la versión Lite: clave propia (no pisa ni lee el de la versión
+ * completa, 'gobernarg.causal.v1') y versión de guardado. Como la partida se
+ * reconstruye repitiendo comandos, cualquier cambio de reglas que vuelva
+ * inválidos los guardados viejos debe subir SAVE_VERSION.
+ */
+export const SAVE_KEY = 'gobernarg.lite.v1';
+export const SAVE_MODEL = 'lite';
+export const SAVE_VERSION = 1;
 interface Player { name: string; profile: string; avatar: string; difficulty?: Difficulty; scenarioId?: string }
 /** El escenario es parte de la creación: la reconstrucción parte del mismo país. */
 const gameOptions = (player: Player) => ({ scenarioId: player.scenarioId });
@@ -20,7 +28,7 @@ export function newSession(player: Player): GameSession {
 }
 export function serializeSession(session: GameSession): string {
   // Replay is authoritative: saved derived indicators cannot be tampered with or go stale.
-  return JSON.stringify({ schemaVersion: 1, modelVersion: 'causal-1', campaignVersion: 1, player: session.player, commands: session.commands });
+  return JSON.stringify({ model: SAVE_MODEL, saveVersion: SAVE_VERSION, player: session.player, commands: session.commands });
 }
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -45,14 +53,14 @@ function validCommand(value: unknown): value is GameCommand {
 export function deserializeSession(text: string): GameSession {
   if (text.length > 2_000_000) throw new Error('La partida guardada supera el tamaño permitido.');
   const value: unknown = JSON.parse(text);
-  if (!isObject(value) || value.schemaVersion !== 1 || value.modelVersion !== 'causal-1') throw new Error('Esta partida pertenece a otro motor. El guardado anterior no se convierte automáticamente.');
+  if (!isObject(value) || value.model !== SAVE_MODEL) throw new Error('Esta partida pertenece a otra versión del juego. El guardado no se convierte automáticamente.');
+  if (value.saveVersion !== SAVE_VERSION) throw new Error('El guardado es de una versión anterior de GobernArg Lite y no se puede continuar.');
   if (!isObject(value.player) || typeof value.player.name !== 'string' || !value.player.name.trim()
     || value.player.name.length > 120 || typeof value.player.profile !== 'string' || typeof value.player.avatar !== 'string'
     || !Array.isArray(value.commands) || value.commands.length > 10_000) throw new Error('La partida guardada tiene datos inválidos.');
   if (!isValidAvatar(value.player.avatar)) throw new Error('La foto guardada no es válida.');
   if (value.player.difficulty !== undefined && !Object.prototype.hasOwnProperty.call(DIFFICULTIES, String(value.player.difficulty))) throw new Error('Dificultad inválida.');
   if (value.player.scenarioId !== undefined && !getScenario(String(value.player.scenarioId))) throw new Error('Escenario inválido.');
-  if (value.campaignVersion !== 1) throw new Error('Versión de campaña no compatible.');
   const player: Player = { name: value.player.name, profile: value.player.profile, avatar: value.player.avatar,
     ...(value.player.difficulty ? { difficulty: value.player.difficulty as Difficulty } : {}),
     ...(value.player.scenarioId ? { scenarioId: String(value.player.scenarioId) } : {}) };

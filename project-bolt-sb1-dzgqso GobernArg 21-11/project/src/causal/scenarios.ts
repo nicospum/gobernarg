@@ -18,7 +18,7 @@ export interface ScenarioDef {
   highlights: string[];
   /** Imagen existente (IMAGES.backgrounds / IMAGES.events). */
   image: { group: 'backgrounds' | 'events'; key: string };
-  /** Exigencia sugerida de la versión B (recaudación, eventos, elecciones). El jugador la puede cambiar. */
+  /** Exigencia del nivel (recaudación, eventos, elecciones). */
   suggestedDifficulty: Difficulty;
   indicators?: Partial<Record<IndicatorId, number>>;
   cash?: number;

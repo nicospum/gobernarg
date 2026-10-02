@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { applyCommand } from '../causal/engine';
-import { deserializeSession, newSession, serializeSession } from '../causal/persistence';
+import { SAVE_KEY, SAVE_VERSION, deserializeSession, newSession, serializeSession } from '../causal/persistence';
 import { AVATARS, avatarSrc, isValidAvatar } from '../lib/avatars';
 import { centerSquare, photoFileError } from '../lib/photo';
 import type { GameCommand } from '../causal/types';
@@ -45,5 +45,20 @@ describe('Foto del presidente (Lite)', () => {
     const text = serializeSession(newSession({ name: 'X', profile: 'politico', avatar: 'avatar:1' }));
     const broken = JSON.parse(text); broken.player.avatar = 'javascript:alert(1)';
     expect(() => deserializeSession(JSON.stringify(broken))).toThrow('La foto guardada no es válida.');
+  });
+});
+
+describe('Identidad del guardado (Lite)', () => {
+  it('usa una clave y una versión propias, distintas de la versión completa', () => {
+    expect(SAVE_KEY).toBe('gobernarg.lite.v1');
+    const saved = JSON.parse(serializeSession(newSession({ name: 'X', profile: 'politico', avatar: 'avatar:1' })));
+    expect(saved).toMatchObject({ model: 'lite', saveVersion: SAVE_VERSION });
+  });
+
+  it('no abre guardados de la versión completa ni de otra versión de Lite', () => {
+    const full = JSON.stringify({ schemaVersion: 1, modelVersion: 'causal-1', campaignVersion: 1, player: { name: 'X', profile: 'politico', avatar: '' }, commands: [] });
+    expect(() => deserializeSession(full)).toThrow(/otra versión del juego/);
+    const old = JSON.stringify({ model: 'lite', saveVersion: SAVE_VERSION + 1, player: { name: 'X', profile: 'politico', avatar: '' }, commands: [] });
+    expect(() => deserializeSession(old)).toThrow(/versión anterior/);
   });
 });

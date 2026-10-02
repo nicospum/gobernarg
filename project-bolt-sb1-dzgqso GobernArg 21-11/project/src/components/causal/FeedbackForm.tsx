@@ -14,7 +14,7 @@ import { Dialog } from './Dialog';
  * un resumen de la partida, enviados a Netlify Forms (form "playtest",
  * declarado en index.html). En local ofrece copiar las respuestas.
  */
-const START_KEY = 'gobernarg.b.playtest.inicio';
+const START_KEY = 'gobernarg.lite.playtest.inicio';
 
 export function markGameStart(): void {
   try { localStorage.setItem(START_KEY, String(Date.now())); } catch { /* sin almacenamiento, sin duración */ }
@@ -33,7 +33,7 @@ export function gameSummary(state: CausalState, isMobile: boolean): string {
   const result = state.phase === 'ended' ? (c?.outcome === 'victory' ? 'ganó' : c?.outcome === 'retired' ? 'se retiró' : `perdió${c?.outcomeReason ? ` (${c.outcomeReason})` : ''}`) : 'en curso';
   const minutes = minutesPlayed();
   return [
-    'Versión: B',
+    'Versión: B Lite',
     `Dispositivo: ${isMobile ? 'celular o tablet' : 'computadora'}`,
     `Escenario: ${getScenario(state.scenarioId)?.name ?? '—'}${c ? ` · exigencia ${DIFFICULTIES[c.difficulty].name}` : ''}`,
     `Mandato ${state.term}, turno ${inTerm} de ${TURNS_PER_TERM}`,
@@ -62,7 +62,7 @@ export function FeedbackForm({ state, onClose }: { state: CausalState; onClose: 
   const [copied, setCopied] = useState(false);
   const set = (k: string) => (v: string) => setF(prev => ({ ...prev, [k]: v }));
   const summary = gameSummary(state, isMobile);
-  const fields = () => ({ ...f, resumen: summary, version: 'B' });
+  const fields = () => ({ ...f, resumen: summary, version: 'B Lite' });
   const submit = async () => {
     setStatus('sending');
     try {
