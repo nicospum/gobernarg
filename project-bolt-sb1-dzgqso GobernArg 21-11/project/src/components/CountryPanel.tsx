@@ -57,7 +57,7 @@ function SimpleTrend({ ind }: { ind: SimpleIndicator }) {
     : <TrendingDown size={14} className={cls} aria-label="baja" />;
 }
 
-/** Modo simple: 7 renglones (6 indicadores y "Servicios del Estado") con palabra y flecha. */
+/** Modo simple: los 7 indicadores de la B Lite (Precios, Empleo, Bolsillo, Obras, Educación, Salud, Seguridad) con palabra y flecha. */
 function SimpleCountryPanel({ gameState, compact, index }: { gameState: GameState; compact: boolean; index?: string }) {
   const rows = simpleIndicators(gameState);
   return (

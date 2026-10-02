@@ -40,12 +40,15 @@ describe('modo simple', () => {
     expect(LITE_FEATURES.modoDetallado).toBe(false);
   });
 
-  it('estado del país: 7 renglones en palabras; con detalle, los 15 indicadores', () => {
+  it('estado del país: los 7 de la B en palabras; con detalle, los 15 indicadores', () => {
     render(<CountryPanel gameState={game()} />);
-    expect(screen.getByText('Servicios del Estado')).toBeTruthy();
-    expect(screen.queryByText('Ciencia e innovación')).toBeNull();
+    // Los mismos 7 que la B Lite, en el mismo orden.
+    expect(simpleIndicators(game()).map(i => i.label)).toEqual(['Precios', 'Empleo', 'Bolsillo', 'Obras', 'Educación', 'Salud', 'Seguridad']);
+    for (const name of ['Bolsillo', 'Salud', 'Seguridad']) expect(screen.getByText(name)).toBeTruthy();
+    for (const name of ['Cuentas públicas', 'Dólar y reservas', 'Conflictividad', 'Ciencia e innovación']) expect(screen.queryByText(name)).toBeNull();
     expect(screen.queryByText(/indicadores sin alerta/)).toBeNull();
-    for (const ind of simpleIndicators(game())) expect(['Bien', 'Normal', 'Alerta']).toContain(ind.word);
+    const words = ['Crítico', 'Bajo', 'Regular', 'Bueno', 'Muy bueno', 'Descontrolados', 'Muy altos', 'Altos', 'Estables', 'Muy estables'];
+    for (const ind of simpleIndicators(game())) expect(words).toContain(ind.word);
     cleanup();
     LITE_FEATURES.modoDetallado = true;
     render(<CountryPanel gameState={game()} />);

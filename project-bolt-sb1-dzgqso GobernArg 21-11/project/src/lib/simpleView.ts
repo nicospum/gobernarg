@@ -7,33 +7,43 @@ import type { GameState } from '../types/game';
 import type { TurnRecord } from '@/engine/causal';
 import { EFFECTS_BY_ACTION, INDICATORS, isIndicatorId, type IndicatorId } from '@/data/causal';
 import { effective, viewRef } from '@/engine/causal';
-import { indicatorBand, toneOf, type Tone } from './causalText';
+import { toneOf, type Tone } from './causalText';
 
-export type SimpleWord = 'Bien' | 'Normal' | 'Alerta';
-
-/** Los indicadores que se ven: 6 sueltos y "Servicios del Estado" (promedio de 4). */
+/**
+ * Los indicadores que se ven, con los mismos nombres que la B Lite. Los demás
+ * (cuentas públicas, dólar, conflictividad, inversión…) siguen en el motor.
+ */
 export const SIMPLE_INDICATORS: { key: string; label: string; ids: IndicatorId[] }[] = [
-  { key: 'INFL', label: 'Inflación', ids: ['INFL'] },
-  { key: 'ACTV', label: 'Empleo y actividad', ids: ['ACTV'] },
-  { key: 'PODA', label: 'Salario', ids: ['PODA'] },
-  // Solvencia fiscal: que suba es bueno ("riesgo país" se leería al revés).
-  { key: 'SOLV', label: 'Cuentas públicas', ids: ['SOLV'] },
-  { key: 'EXTE', label: 'Dólar y reservas', ids: ['EXTE'] },
-  { key: 'CONF', label: 'Conflictividad', ids: ['CONF'] },
-  { key: 'SERV', label: 'Servicios del Estado', ids: ['INFR', 'EDUC', 'PSOC', 'SEGU'] },
+  { key: 'INFL', label: 'Precios', ids: ['INFL'] },
+  { key: 'ACTV', label: 'Empleo', ids: ['ACTV'] },
+  { key: 'PODA', label: 'Bolsillo', ids: ['PODA'] },
+  { key: 'INFR', label: 'Obras', ids: ['INFR'] },
+  { key: 'EDUC', label: 'Educación', ids: ['EDUC'] },
+  { key: 'PSOC', label: 'Salud', ids: ['PSOC'] },
+  { key: 'SEGU', label: 'Seguridad', ids: ['SEGU'] },
 ];
+
+/** Palabras de estado de la B Lite (src/lite/present.ts de la B). */
+const WORDS = ['Crítico', 'Bajo', 'Regular', 'Bueno', 'Muy bueno'];
+const PRICE_WORDS = ['Descontrolados', 'Muy altos', 'Altos', 'Estables', 'Muy estables'];
+const BAND_TONE: Tone[] = ['bad', 'bad', 'neutral', 'good', 'good'];
+
+/** Estado en una palabra, con las bandas de la B (en Precios, subir es malo). */
+export function describeIndicator(id: IndicatorId, value: number): { word: string; tone: Tone } {
+  const score = id === 'INFL' ? 100 - value : value;
+  const level = score < 25 ? 0 : score < 40 ? 1 : score < 60 ? 2 : score < 75 ? 3 : 4;
+  return { word: (id === 'INFL' ? PRICE_WORDS : WORDS)[level], tone: BAND_TONE[level] };
+}
 
 const KEY_OF: Partial<Record<IndicatorId, { key: string; label: string }>> = {};
 for (const s of SIMPLE_INDICATORS) for (const id of s.ids) KEY_OF[id] = { key: s.key, label: s.label };
-
-const WORD: Record<Tone, SimpleWord> = { good: 'Bien', neutral: 'Normal', bad: 'Alerta' };
 
 const avg = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
 
 export interface SimpleIndicator {
   key: string;
   label: string;
-  word: SimpleWord;
+  word: string;
   tone: Tone;
   /** Cambio del último cierre; null en el primer turno. */
   delta: number | null;
@@ -41,17 +51,16 @@ export interface SimpleIndicator {
   goodWhenUp: boolean;
 }
 
-/** Estado de los indicadores visibles en palabras (Bien / Normal / Alerta). */
+/** Estado de los indicadores visibles en palabras (Bueno / Regular / Altos…). */
 export function simpleIndicators(state: GameState): SimpleIndicator[] {
   const c = state.causal;
   const ref = viewRef(c);
   const last = c.records[c.records.length - 1];
   return SIMPLE_INDICATORS.map(({ key, label, ids }) => {
     const v = avg(ids.map(id => effective(c, id, ref)));
-    // El compuesto usa las bandas genéricas (Débil / Normal / Bueno).
-    const band = indicatorBand(ids.length === 1 ? ids[0] : 'INFR', v);
+    const band = describeIndicator(ids[0], v);
     const delta = last ? avg(ids.map(id => last.indicatorsAfter[id] - last.indicatorsBefore[id])) : null;
-    return { key, label, word: WORD[band.tone], tone: band.tone, delta, goodWhenUp: INDICATORS[ids[0]].goodDirection >= 0 };
+    return { key, label, word: band.word, tone: band.tone, delta, goodWhenUp: INDICATORS[ids[0]].goodDirection >= 0 };
   });
 }
 
