@@ -7,7 +7,7 @@ import { getValueRisk, riskLabel, type Risk } from '@/lib/risk';
 import { fmtBudget, fmtBudgetDelta } from '@/lib/format';
 import { history, type SeriesKey } from '@/lib/boardView';
 import { detailed } from '@/lite/config';
-import { trendWord } from '@/lib/simpleView';
+import { kpiWord, trendWord } from '@/lib/simpleView';
 import { PARAMS } from '@/data/causal';
 
 /** Color de acento de cada métrica (variables de :root). */
@@ -63,10 +63,12 @@ function trendNote(card: IndicatorCard): string {
   return `${d > 0 ? '+' : '−'}${Math.abs(d)} ${card.unit === '%' ? 'pts' : 'puntos'} desde el último turno`;
 }
 
-function Metric({ id, label, value, note, status, statusTone, series, detail }: {
+function Metric({ id, label, value, note, status, statusTone, series, detail, valueClass }: {
   id: string;
   label: string;
   value: string;
+  /** Modo simple: palabra en vez de número (otro tamaño y color). */
+  valueClass?: string;
   note: string;
   status?: string;
   statusTone?: string;
@@ -87,7 +89,7 @@ function Metric({ id, label, value, note, status, statusTone, series, detail }: 
           <Icon size={15} />
         </div>
         <div className="flex items-center justify-between gap-2 mt-2">
-          <strong className="text-[28px] leading-none font-bold tracking-tight text-ink font-mono">{value}</strong>
+          <strong className={valueClass ?? 'text-[28px] leading-none font-bold tracking-tight text-ink font-mono'}>{value}</strong>
           {curve ? (
             <Sparkline values={series} color={accent} label={label} />
           ) : status ? (
@@ -100,19 +102,23 @@ function Metric({ id, label, value, note, status, statusTone, series, detail }: 
   );
 }
 
-/** Modo simple: voto (con la meta), aprobación, gobernabilidad y caja; sin notas largas. */
+const WORD_TONE = { good: 'text-sala-good', neutral: 'text-sala-warn', bad: 'text-sala-bad' } as const;
+
+/** Modo simple: voto (con la meta) en %, aprobación y gobernabilidad en palabras, y caja; sin notas largas. */
 function SimpleMetricsRow({ gameState, className }: { gameState: GameState; className: string }) {
   const byId = Object.fromEntries(indicatorCards(gameState).map(card => [card.id, card]));
   const c = gameState.causal;
   const lastCaja = c.records[c.records.length - 1]?.fiscal.cajaAntes;
-  const metric = (card: IndicatorCard, note: string) => {
+  const metric = (card: IndicatorCard, note: string, asWord = false) => {
     const risk = getValueRisk(card.value, card.max, card.inverseRisk);
+    const word = kpiWord(card.value);
     return (
       <Metric
         key={card.id}
         id={card.id}
         label={card.label}
-        value={`${Math.round(card.value)}${card.unit}`}
+        value={asWord ? word.word : `${Math.round(card.value)}${card.unit}`}
+        valueClass={asWord ? `text-[26px] leading-none font-bold tracking-tight ${WORD_TONE[word.tone]}` : undefined}
         note={note}
         status={riskLabel(risk)}
         statusTone={RISK_TONE[risk]}
@@ -124,8 +130,8 @@ function SimpleMetricsRow({ gameState, className }: { gameState: GameState; clas
   return (
     <section aria-label="Indicadores principales" className={`grid grid-cols-2 lg:grid-cols-4 gap-px bg-rule border-b border-rule ${className}`}>
       {metric(byId.voto, `Meta para ganar: ${PARAMS.VOTOS_PARA_GANAR}% · ${trendWord(byId.voto.trend).toLowerCase()}`)}
-      {metric(byId.aprobacion, trendWord(byId.aprobacion.trend))}
-      {metric(byId.gobernabilidad, trendWord(byId.gobernabilidad.trend))}
+      {metric(byId.aprobacion, trendWord(byId.aprobacion.trend), true)}
+      {metric(byId.gobernabilidad, trendWord(byId.gobernabilidad.trend), true)}
       <Metric
         id="caja"
         label="Caja"

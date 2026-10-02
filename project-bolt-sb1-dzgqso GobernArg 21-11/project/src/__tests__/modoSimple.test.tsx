@@ -10,7 +10,8 @@ import { createNewGame, getPolicyAvailability } from '../engine/gameEngine';
 import { CountryPanel } from '../components/CountryPanel';
 import { MetricsRow } from '../components/board/MetricsRow';
 import { ActionCard } from '../components/ActionCard';
-import { simpleEffects, simpleIndicators } from '../lib/simpleView';
+import { ActorsPanel } from '../components/ActorsPanel';
+import { kpiWord, simpleEffects, simpleIndicators } from '../lib/simpleView';
 import { POLICY_ACTIONS } from '../data/causal';
 
 const game = () => createNewGame({ archetype: 'politico', governorName: 'Ana', seed: 3, scenarioId: 'pais_en_calma' });
@@ -55,6 +56,11 @@ describe('modo simple', () => {
     render(<MetricsRow gameState={game()} />);
     expect(screen.queryByText('Conflictividad')).toBeNull();
     expect(screen.getByText(/Meta para ganar/)).toBeTruthy();
+    // Aprobación y gobernabilidad en palabras; el voto sigue en %.
+    const state = game();
+    expect(screen.getAllByText(kpiWord(state.causal.political.apro).word).length).toBeGreaterThan(0);
+    expect(screen.queryByText(`${Math.round(state.causal.political.apro)}%`)).toBeNull();
+    expect(screen.getByText(`${Math.round(state.causal.political.iv)}%`)).toBeTruthy();
     cleanup();
     LITE_FEATURES.modoDetallado = true;
     render(<MetricsRow gameState={game()} />);
@@ -68,6 +74,17 @@ describe('modo simple', () => {
     cleanup();
     card(true);
     expect(screen.getByText('Efectos previstos')).toBeTruthy();
+  });
+
+  it('actores: lista plana de los 17 sin familias; con detalle, por familias', () => {
+    const props = { onInteract: () => {}, onSelectAction: () => {}, disabled: false };
+    render(<ActorsPanel gameState={game()} {...props} />);
+    expect(screen.queryByText('Producción y finanzas')).toBeNull();
+    expect(screen.getAllByText(/Cómo le va|Disposición/).length).toBe(17);
+    cleanup();
+    LITE_FEATURES.modoDetallado = true;
+    render(<ActorsPanel gameState={game()} {...props} />);
+    expect(screen.getByText('Producción y finanzas')).toBeTruthy();
   });
 
   it('cada política muestra hasta 3 efectos, sin cifras', () => {

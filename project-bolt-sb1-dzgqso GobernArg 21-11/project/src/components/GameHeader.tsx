@@ -12,6 +12,7 @@ import { ConfirmDialog } from './ConfirmDialog';
 import { GameState } from '../types/game';
 import { fmtBudget, fmtBudgetDelta } from '@/lib/format';
 import { detailed } from '@/lite/config';
+import { kpiWord } from '@/lib/simpleView';
 import { getScenario } from '@/data/causal';
 
 interface GameHeaderProps {
@@ -231,7 +232,11 @@ export function GameHeader({
         </div>
         <div className={`hidden lg:flex flex-col gap-1 flex-none min-w-[96px] ${divider}`} title="Aprobación de gestión">
           <span className="text-[8px] font-bold tracking-[0.14em] text-sala-on-navy">APROBACIÓN</span>
-          <strong className="text-[19px] leading-none font-mono">{apro}%</strong>
+          {detailed() ? (
+            <strong className="text-[19px] leading-none font-mono">{apro}%</strong>
+          ) : (
+            <strong className="text-[17px] leading-none">{kpiWord(apro).word}</strong>
+          )}
           <div className="h-1 rounded-full bg-white/15 overflow-hidden">
             <i className="block h-full bg-sala-lime" style={{ width: `${apro}%` }} />
           </div>

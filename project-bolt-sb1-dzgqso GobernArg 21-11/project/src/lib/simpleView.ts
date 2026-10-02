@@ -114,6 +114,15 @@ export function topChanges(record: TurnRecord, political: { apro: number; iv: nu
     .slice(0, max);
 }
 
+/** Aprobación, gobernabilidad (y los componentes del voto) en una palabra, como en la B. */
+export function kpiWord(value: number): { word: string; tone: Tone } {
+  if (value < 25) return { word: 'Muy baja', tone: 'bad' };
+  if (value < 40) return { word: 'Baja', tone: 'bad' };
+  if (value < 60) return { word: 'Media', tone: 'neutral' };
+  if (value < 75) return { word: 'Alta', tone: 'good' };
+  return { word: 'Muy alta', tone: 'good' };
+}
+
 /** Tendencia en una palabra. */
 export function trendWord(delta: number | null): string {
   if (delta === null) return 'Primer turno';

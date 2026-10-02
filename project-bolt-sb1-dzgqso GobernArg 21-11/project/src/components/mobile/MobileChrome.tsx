@@ -15,6 +15,7 @@ import { BudgetDetails, TrendChip, indicatorCards } from '../IndicatorsPanel';
 import { MAX_TURNS, MILESTONES, MandateTimeline } from '../GameHeader';
 import { Sheet } from './Sheet';
 import { detailed } from '@/lite/config';
+import { kpiWord } from '@/lib/simpleView';
 
 export type MobileTab = 'acciones' | 'pais' | 'actores';
 
@@ -124,10 +125,16 @@ export function MobileKpis({ gameState }: { gameState: GameState }) {
                 <span className="sr-eyebrow truncate" style={{ color: `rgb(${accent})` }}>{SHORT_LABEL[card.id] ?? card.label}</span>
                 {detailed() && <TrendChip value={card.trend} inverse={card.inverseRisk} />}
               </div>
-              <div className="text-[24px] font-bold tracking-tight leading-none mt-1.5 text-ink font-mono">
-                {Math.round(card.value)}
-                {card.unit && <span className="text-[13px]">{card.unit}</span>}
-              </div>
+              {!detailed() && card.id !== 'voto' ? (
+                <div className={`text-[17px] font-bold tracking-tight leading-none mt-2 ${{ good: 'text-sala-good', neutral: 'text-sala-warn', bad: 'text-sala-bad' }[kpiWord(card.value).tone]}`}>
+                  {kpiWord(card.value).word}
+                </div>
+              ) : (
+                <div className="text-[24px] font-bold tracking-tight leading-none mt-1.5 text-ink font-mono">
+                  {Math.round(card.value)}
+                  {card.unit && <span className="text-[13px]">{card.unit}</span>}
+                </div>
+              )}
               <div className="relative h-[4px] mt-2 rounded-full bg-sunken">
                 <div className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${pct}%`, background: `rgb(${accent})` }} />
                 {targetPct > 0 && <div className="absolute -top-[3px] w-0.5 h-[10px] bg-sala-navy" style={{ left: `${targetPct}%` }} />}

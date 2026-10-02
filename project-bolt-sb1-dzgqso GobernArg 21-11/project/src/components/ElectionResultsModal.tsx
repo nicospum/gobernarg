@@ -5,6 +5,8 @@ import { Tooltip, TooltipContent } from './Tooltip';
 import { ModalHeader } from './ModalHeader';
 import { useDialog } from '@/lib/useDialog';
 import { fmtPct } from '@/lib/format';
+import { detailed } from '@/lite/config';
+import { kpiWord } from '@/lib/simpleView';
 
 interface ElectionResultsModalProps {
   result: ElectionResults;
@@ -27,7 +29,7 @@ function CausalBreakdown({ result }: { result: ElectionResults }) {
               <t.Icon className={`w-5 h-5 flex-shrink-0 ${t.color}`} />
               <div>
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{t.label}</p>
-                <p className="font-mono font-bold text-lg text-foreground">{t.value.toFixed(0)}</p>
+                <p className={`font-bold text-lg text-foreground ${detailed() ? 'font-mono' : ''}`}>{detailed() ? t.value.toFixed(0) : kpiWord(t.value).word}</p>
               </div>
             </div>
           </Tooltip>

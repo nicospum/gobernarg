@@ -16,6 +16,7 @@ import {
 import type { GameState } from '../types/game';
 import {
   ACTOR_FAMILIES,
+  ACTOR_IDS,
   ACTORS,
   CAUSAL_ACTIONS_BY_ID,
   PARAMS,
@@ -264,6 +265,16 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
   );
 }
 
+const RISK_RANK: Record<Risk, number> = { critico: 0, alto: 1, medio: 2, bajo: 3 };
+
+/** Orden del modo simple: por ánimo (lo que ya se ve) y después por influencia. */
+function simpleActorOrder(c: GameState['causal']): ActorId[] {
+  return [...ACTOR_IDS].sort((x, y) =>
+    RISK_RANK[MOOD_RISK[moodFor(c.actors[x].sat, c.actors[x].rel)]] - RISK_RANK[MOOD_RISK[moodFor(c.actors[y].sat, c.actors[y].rel)]] ||
+    ACTORS[y].influence - ACTORS[x].influence,
+  );
+}
+
 export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled, index }: ActorsPanelProps) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set(['produccion']));
   const c = gameState.causal;
@@ -296,6 +307,15 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled, i
         </div>
       )}
 
+      {!detailed() ? (
+        // Modo simple: lista plana, primero los más descontentos y, a igual
+        // ánimo, los de más peso. Sin familias ni desplegables.
+        <div className="mx-3 mt-3 rounded-[10px] border border-rule overflow-hidden bg-surface divide-y divide-rule">
+          {simpleActorOrder(c).map(a => (
+            <ActorCard key={a} state={gameState} actor={a} onInteract={onInteract} onSelectAction={onSelectAction} disabled={disabled} />
+          ))}
+        </div>
+      ) : (
       <div className="p-3 space-y-2">
         {ACTOR_FAMILIES.map((family) => {
           const isOpen = expanded.has(family.id);
@@ -350,7 +370,8 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled, i
           );
         })}
       </div>
-      <p className="text-[10px] text-sala-muted px-4 pb-4">
+      )}
+      <p className={`text-[10px] text-sala-muted px-4 pb-4 ${detailed() ? '' : 'pt-3'}`}>
         {freeLeft > 0
           ? (freeLeft > 1 ? `Te quedan ${freeLeft} reuniones gratis este turno.` : 'Te queda 1 reunión gratis este turno.')
           : 'Las reuniones de este turno ya cuestan 1 PA.'}
