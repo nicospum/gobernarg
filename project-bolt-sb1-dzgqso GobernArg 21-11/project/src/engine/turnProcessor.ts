@@ -1,4 +1,4 @@
-import type { GameState, TurnSummary } from '../types/game';
+import type { GameState, TurnSummary, TurnLogEntry } from '../types/game';
 import type { GameEvent } from '../systems/events/types';
 import { getAllEvents } from '../data/events';
 import { CHANNEL_GAME_EVENTS, CHANNEL_TO_EVENT } from '../data/events/causalEvents';
@@ -121,6 +121,7 @@ export function processEndTurn(gameState: GameState): TurnResult {
   let state: GameState = {
     ...gameState,
     completedActions: [...gameState.completedActions],
+    turnLog: [...gameState.turnLog],
     historicalPopularity: [...gameState.historicalPopularity],
     lastEventFiredTurns: { ...gameState.lastEventFiredTurns },
     notifications: [...gameState.notifications],
@@ -241,6 +242,22 @@ export function processEndTurn(gameState: GameState): TurnResult {
 
   const popularityChange = state.causal.political.apro - aproBefore;
   const budgetChange = state.causal.caja - cajaBefore;
+
+  // Registro del turno (oculto en Lite: no hay panel de Historial; lo usa el legado).
+  const turnLogEntry: TurnLogEntry = {
+    year: closingYear,
+    turn: closingQuarter,
+    position: gameState.position,
+    term: gameState.term,
+    actionsTaken: executedIds.map(id => CAUSAL_ACTIONS_BY_ID[id]?.name ?? id),
+    events: triggeredEvents.map(e => e.title),
+    decisions: [],
+    popularityChange,
+    budgetChange,
+    projectsCompleted: executedIds.filter(id => CAUSAL_ACTIONS_BY_ID[id]?.category === 'Infraestructura').map(id => CAUSAL_ACTIONS_BY_ID[id].name),
+    crisesFaced: triggeredEvents.filter(e => e.severity === 'high' || e.severity === 'critical').map(e => e.title),
+  };
+  state.turnLog.push(turnLogEntry);
 
   state.selectedActions = [];
   state.lastInteractionMessage = null;

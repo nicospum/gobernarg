@@ -51,6 +51,57 @@ describe('resumen del turno', () => {
   });
 });
 
+describe('creación del TurnLogEntry', () => {
+  it('registra un entry con los campos requeridos', () => {
+    const result = processEndTurn(baseState());
+    const entry = result.state.turnLog[result.state.turnLog.length - 1];
+
+    expect(entry).toBeDefined();
+    expect(entry).toHaveProperty('year');
+    expect(entry).toHaveProperty('turn');
+    expect(entry).toHaveProperty('position');
+    expect(entry).toHaveProperty('actionsTaken');
+    expect(entry).toHaveProperty('events');
+    expect(entry).toHaveProperty('popularityChange');
+    expect(entry).toHaveProperty('budgetChange');
+  });
+
+  it('registra year, turn y position del turno procesado', () => {
+    const result = processEndTurn(baseState());
+    const entry = result.state.turnLog[result.state.turnLog.length - 1];
+
+    expect(entry.year).toBe(1);
+    expect(entry.turn).toBe(1);
+    expect(entry.position).toBe('presidente');
+  });
+
+  it('registra actionsTaken y events como arrays', () => {
+    const result = processEndTurn(baseState());
+    const entry = result.state.turnLog[result.state.turnLog.length - 1];
+
+    expect(Array.isArray(entry.actionsTaken)).toBe(true);
+    expect(Array.isArray(entry.events)).toBe(true);
+  });
+
+  it('budgetChange es el movimiento real de la caja del turno (recaudación − gasto − deuda)', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.999);
+    const state = baseState();
+    const result = processEndTurn(state);
+    const entry = result.state.turnLog[result.state.turnLog.length - 1];
+    const fiscal = result.state.causal.records[result.state.causal.records.length - 1].fiscal;
+
+    expect(entry.budgetChange).toBeCloseTo(fiscal.cajaDespues - state.causal.caja, 5);
+    expect(fiscal.ingresos - fiscal.gastoCorriente - fiscal.servicioDeuda).toBeCloseTo(fiscal.resultado, 5);
+  });
+
+  it('registra el nombre de las políticas ejecutadas', () => {
+    const state = { ...baseState(), selectedActions: ['estudio_factibilidad'] };
+    const result = processEndTurn(state);
+    const entry = result.state.turnLog[result.state.turnLog.length - 1];
+    expect(entry.actionsTaken).toEqual([CAUSAL_ACTIONS_BY_ID.estudio_factibilidad.name]);
+  });
+});
+
 // ===== Regresión: los objetivos no se mutan (Punto 9) =====
 
 describe('objectives — anti mutación', () => {

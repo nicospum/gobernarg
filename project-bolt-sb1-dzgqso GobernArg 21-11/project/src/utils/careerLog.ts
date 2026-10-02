@@ -1,7 +1,7 @@
 import { GameState, DefeatReason } from '../types/game';
 
 export function generateLegacyText(gameState: GameState): string {
-  const { governorName, careerHistory } = gameState;
+  const { governorName, careerHistory, turnLog } = gameState;
   const name = governorName || 'El gobernante';
 
   if (careerHistory.length === 0) {
@@ -33,6 +33,23 @@ export function generateLegacyText(gameState: GameState): string {
     }
   }
 
+  // Obras y crisis
+  const totalProjects = turnLog.reduce((sum, log) => sum + log.projectsCompleted.length, 0);
+  const totalCrises = turnLog.reduce((sum, log) => sum + log.crisesFaced.length, 0);
+  const uniqueProjects = Array.from(new Set(turnLog.flatMap(log => log.projectsCompleted)));
+
+  if (totalProjects > 0) {
+    paragraphs.push(
+      `A lo largo de su gestión impulsó ${totalProjects} obra${totalProjects === 1 ? '' : 's'}, entre las que destacan: ${uniqueProjects.slice(0, 3).join(', ')}${uniqueProjects.length > 3 ? ' y otras' : ''}.`
+    );
+  }
+
+  if (totalCrises > 0) {
+    paragraphs.push(
+      `Su mandato no estuvo exento de desafíos: enfrentó ${totalCrises} crisis significativa${totalCrises === 1 ? '' : 's'} que pusieron a prueba su capacidad de liderazgo.`
+    );
+  }
+
   // Victoria o derrota final
   const lastMilestone = careerHistory[careerHistory.length - 1];
   if (gameState.gameOver && !gameState.victorious) {
@@ -62,13 +79,15 @@ export function generateLegacyText(gameState: GameState): string {
 }
 
 export function generateLegacyStats(gameState: GameState): { label: string; value: string }[] {
-  const { careerHistory, popularity } = gameState;
+  const { careerHistory, turnLog, popularity } = gameState;
 
   // FIX: un mandato completo es año 4 → 4 años. Antes `+ (year - 1)` daba 3
   // años para un mandato cumplido (off-by-one).
   const yearsInPower = Math.max(0, (careerHistory.length - 1) * 4 + gameState.year);
   const mandatesWon = careerHistory.filter(m => m.result === 'victory').length;
   const mandatesLost = careerHistory.filter(m => m.result === 'defeat').length;
+  const totalProjects = turnLog.reduce((sum, log) => sum + log.projectsCompleted.length, 0);
+  const totalCrises = turnLog.reduce((sum, log) => sum + log.crisesFaced.length, 0);
   // FIX: derivar los cargos de los milestones de careerHistory, no de
   // termsByPosition (que solo incrementa al GANAR una elección). Un presidente
   // que pierde la reelección del mandato 1 mostraba "Ninguno" tras 4 años de
@@ -82,8 +101,20 @@ export function generateLegacyStats(gameState: GameState): { label: string; valu
     { label: 'Cargos ocupados', value: positionsHeld || 'Ninguno' },
     { label: 'Mandatos ganados', value: `${mandatesWon}` },
     { label: 'Mandatos perdidos', value: `${mandatesLost}` },
+    { label: 'Obras completadas', value: `${totalProjects}` },
+    { label: 'Crisis superadas', value: `${totalCrises}` },
     { label: 'Aprobación final', value: `${Math.round(popularity)}%` }
   ];
+}
+
+export function getRecentCrises(gameState: GameState, limit = 5): string[] {
+  const crises = gameState.turnLog.flatMap(log => log.crisesFaced);
+  return Array.from(new Set(crises)).slice(0, limit);
+}
+
+export function getRecentProjects(gameState: GameState, limit = 5): string[] {
+  const projects = gameState.turnLog.flatMap(log => log.projectsCompleted);
+  return Array.from(new Set(projects)).slice(0, limit);
 }
 
 function capitalize(str: string): string {

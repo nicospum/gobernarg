@@ -53,6 +53,7 @@ export function getInitialGameState(): GameState {
     avatar: '',
     term: 1,
     careerHistory: [],
+    turnLog: [],
     popularity: 50,
     budget: PARAMS.CAJA_INICIAL,
     turn: 1,

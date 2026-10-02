@@ -99,6 +99,20 @@ export interface CareerMilestone {
   votesPercentage: number;
 }
 
+export interface TurnLogEntry {
+  year: number;
+  turn: number;
+  position: Position;
+  term: number;
+  actionsTaken: string[];
+  events: string[];
+  decisions: string[];
+  popularityChange: number;
+  budgetChange: number;
+  projectsCompleted: string[];
+  crisesFaced: string[];
+}
+
 // =====================
 // Resumen de turno
 // =====================
@@ -198,6 +212,8 @@ export interface GameState {
   avatar: string;
   term: number;
   careerHistory: CareerMilestone[];
+  /** Registro de turnos: no se muestra durante la partida; alimenta la pantalla de legado. */
+  turnLog: TurnLogEntry[];
   popularity: number;
   budget: number;
   turn: number;

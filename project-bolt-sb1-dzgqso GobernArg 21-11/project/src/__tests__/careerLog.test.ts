@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { generateLegacyStats } from '../utils/careerLog';
+import { generateLegacyStats, generateLegacyText, getRecentCrises, getRecentProjects } from '../utils/careerLog';
+import { processEndTurn } from '../engine/turnProcessor';
 import { getInitialGameState } from '../engine/gameEngine';
 import type { CareerMilestone, GameState } from '../types/game';
 
@@ -65,5 +66,25 @@ describe('generateLegacyStats — años en el poder', () => {
     });
 
     expect(statValue(generateLegacyStats(state), 'Años en el poder')).toBe('2');
+  });
+});
+
+describe('legado alimentado por el registro de turnos (oculto en Lite)', () => {
+  it('cada turno se graba y el legado cuenta obras y crisis', () => {
+    let state = stateWith({ careerHistory: [milestone()], selectedActions: ['estudio_factibilidad'] });
+    state = processEndTurn(state).state;
+    expect(state.turnLog).toHaveLength(1);
+    expect(state.turnLog[0].projectsCompleted.length).toBeGreaterThan(0);
+
+    const logged = stateWith({
+      careerHistory: [milestone()],
+      turnLog: [{ ...state.turnLog[0], crisesFaced: ['Paro general'] }],
+    });
+    const stats = generateLegacyStats(logged);
+    expect(statValue(stats, 'Obras completadas')).toBe(String(state.turnLog[0].projectsCompleted.length));
+    expect(statValue(stats, 'Crisis superadas')).toBe('1');
+    expect(getRecentCrises(logged)).toEqual(['Paro general']);
+    expect(getRecentProjects(logged)).toEqual(state.turnLog[0].projectsCompleted);
+    expect(generateLegacyText(logged)).toMatch(/crisis significativa/);
   });
 });
