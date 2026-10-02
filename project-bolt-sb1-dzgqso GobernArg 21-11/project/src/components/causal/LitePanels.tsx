@@ -1,11 +1,11 @@
 import type { CSSProperties } from 'react';
-import { Activity, AlertTriangle, ArrowDown, ArrowRight, ArrowUp, CalendarClock, Landmark, Wallet } from 'lucide-react';
+import { AlertTriangle, ArrowDown, ArrowRight, ArrowUp, CalendarClock, Landmark, Wallet } from 'lucide-react';
 import { policyEffectsPreview } from '../../causal/engine';
 import { AGREEMENT_LABELS } from '../../causal/interactions';
 import { actorName, totalArrears, totalDebt } from '../../causal/selectors';
-import { fmtMoney, fmtMoneyDelta } from '../../causal/format';
+import { fmtMoney, fmtMoneyDelta, fmtPct } from '../../causal/format';
 import type { CausalState, IndicatorId, PolicyDefinition, TurnReport } from '../../causal/types';
-import { defeatWarnings, describeIndicator, effectArrows, effectIsGood, governabilityWord, inTurns, SHORT_NAMES, TONE_CLASS, trend, VISIBLE_INDICATORS } from '../../lite/present';
+import { defeatWarnings, describeIndicator, goodness, effectArrows, effectIsGood, governabilityWord, inTurns, SHORT_NAMES, TONE_CLASS, trend, VISIBLE_INDICATORS } from '../../lite/present';
 
 /**
  * Paneles de la Lite (LITE_FEATURES.modoDetallado = false): lo mínimo para
@@ -16,28 +16,6 @@ export function TrendIcon({ id, delta, size = 13 }: { id: IndicatorId; delta: nu
   const t = trend(id, delta);
   const Icon = t.direction === 'up' ? ArrowUp : t.direction === 'down' ? ArrowDown : ArrowRight;
   return <Icon size={size} aria-label={t.label} className={t.good === null ? 'text-slate-400' : t.good ? 'text-emerald-300' : 'text-rose-300'} />;
-}
-
-/** El país en 8 palabras: Precios, Empleo, Bolsillo, Obras, Educación, Salud, Protección y Seguridad. */
-export function LiteBriefing({ state, preview }: { state: CausalState; preview: PolicyDefinition | null }) {
-  const effects = preview ? policyEffectsPreview(state, preview) : [];
-  return <section className="b-briefing b-panel b-lite-briefing" aria-label="El país">
-    <div className="b-panel-heading"><Activity size={16} /><h2>El país</h2></div>
-    {preview && <p className="b-preview-legend" role="status">Si ejecutás {preview.name}:</p>}
-    <div className="b-lite-indicators">{VISIBLE_INDICATORS.map(({ id, label }) => {
-      const value = state.indicators[id];
-      const { word, tone } = describeIndicator(id, value);
-      const total = effects.filter(effect => effect.target === id).reduce((sum, effect) => sum + effect.capturedMagnitude, 0);
-      const arrows = effectArrows(total);
-      const impact = arrows ? effectIsGood(id, total) ? 'b-impact-beneficial' : 'b-impact-adverse' : '';
-      return <div key={id} data-indicator={id} className={`b-indicator b-lite-indicator ${TONE_CLASS[tone]} ${impact}`}>
-        <span className="b-indicator-top"><span>{label}</span><TrendIcon id={id} delta={value - state.previousIndicators[id]} /></span>
-        <strong className="b-lite-word">{word}</strong>
-        <span className="b-meter" aria-hidden="true"><span style={{ width: `${id === 'inflacion' ? 100 - value : value}%` }} /></span>
-        {arrows && <span className={`b-lite-arrows ${effectIsGood(id, total) ? 'text-emerald-300' : 'text-rose-300'}`} aria-label={`${label}: ${effectIsGood(id, total) ? 'mejora' : 'empeora'}`}>{arrows}</span>}
-      </div>;
-    })}</div>
-  </section>;
 }
 
 /** Tesoro mínimo: caja y deuda. */
@@ -106,4 +84,29 @@ export function LiteDefeatAlerts({ state }: { state: CausalState }) {
   const warnings = defeatWarnings(state);
   if (!warnings.length) return null;
   return <div className="space-y-2" aria-label="Peligro para tu gobierno">{warnings.map(warning => <p key={warning.id} role="alert" className={`b-lite-alert ${warning.critical ? 'b-lite-alert-critical' : ''}`}><AlertTriangle size={17} className="shrink-0" /><span>{warning.text}</span></p>)}</div>;
+}
+
+/**
+ * Franja de arriba del modo simple: voto, caja y los 7 índices del país en
+ * chips (palabra, color y flecha). Al pasar sobre una política, ▲/▼.
+ */
+export function LiteStatusStrip({ state, preview }: { state: CausalState; preview: PolicyDefinition | null }) {
+  const c = state.campaign;
+  const effects = preview ? policyEffectsPreview(state, preview) : [];
+  return <section className="b-lite-strip" aria-label="El país">
+    {c && <div className={`b-lite-chip b-lite-chip-vote ${c.votes < 45 ? 'b-tone-bad' : 'b-tone-good'}`}><span>Voto</span><strong>{fmtPct(c.votes, 0)}</strong><span className="b-kpi-goal" aria-hidden="true"><span style={{ width: `${Math.max(0, Math.min(100, c.votes))}%`, background: 'var(--tone)' }} /><i /></span><small>meta 45 %</small></div>}
+    <div className={`b-lite-chip b-lite-chip-cash ${totalArrears(state) > 0 ? 'b-tone-critical' : 'b-tone-good'}`}><span>Caja</span><strong>{fmtMoney(state.cash)}</strong><small>{totalArrears(state) > 0 ? `Debés ${fmtMoney(totalArrears(state))}` : 'Tesoro'}</small></div>
+    {VISIBLE_INDICATORS.map(({ id, label }) => {
+      const value = state.indicators[id];
+      const { word, tone } = describeIndicator(id, value);
+      const total = effects.filter(effect => effect.target === id).reduce((sum, effect) => sum + effect.capturedMagnitude, 0);
+      const arrows = effectArrows(total);
+      const impact = arrows ? effectIsGood(id, total) ? 'b-impact-beneficial' : 'b-impact-adverse' : '';
+      return <div key={id} data-indicator={id} className={`b-lite-chip ${TONE_CLASS[tone]} ${impact}`}>
+        <span className="flex items-center justify-between gap-1">{label}<TrendIcon id={id} delta={value - state.previousIndicators[id]} size={12} /></span>
+        <strong>{word}</strong>
+        {arrows ? <small className={effectIsGood(id, total) ? 'text-emerald-300' : 'text-rose-300'} aria-label={`${label}: ${effectIsGood(id, total) ? 'mejora' : 'empeora'}`}>{arrows}</small> : <span className="b-meter" aria-hidden="true"><span style={{ width: `${goodness(id, value)}%`, background: 'var(--tone)' }} /></span>}
+      </div>;
+    })}
+  </section>;
 }

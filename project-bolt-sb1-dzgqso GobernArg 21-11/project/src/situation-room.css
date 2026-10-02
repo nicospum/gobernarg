@@ -295,12 +295,7 @@
 .b-tone-neutral { --tone: #9cc3e6; }
 .b-tone-good { --tone: #34d399; }
 .b-tone-great { --tone: #6ee7b7; }
-.b-lite-indicators { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; padding: 10px; }
-.b-lite-indicator { margin-top: 0; cursor: default; }
-.b-lite-indicator .b-indicator-top { align-items: center; color: #a1b2c7; }
 .b-lite-word { display: block; color: var(--tone, #e2e8f0); font: 600 13px/1.3 Inter, system-ui, sans-serif; margin: 3px 0 7px; }
-.b-lite-indicator .b-meter > span { background: var(--tone, #75aadb); }
-.b-lite-arrows { display: block; margin-top: 6px; font-size: 10px; letter-spacing: 1px; }
 .b-lite-inline { color: var(--tone, inherit); font-weight: 600; }
 .b-lite-money { border: 1px solid #1e2d40; background: #0b1119bf; border-radius: 9px; padding: 12px; }
 .b-lite-money > span { display: block; color: #a1b2c7; font-size: 11px; }
@@ -312,14 +307,12 @@
 .b-kpi-word { font-size: .78em; letter-spacing: .01em; }
 /* Lite: la fila de métricas tiene 4 tarjetas (sin "Aprobación material"). */
 .b-command-status.b-command-status-lite { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-/* Con 7 índices, el último ocupa la fila entera. */
-.b-lite-indicators > :last-child:nth-child(odd) { grid-column: 1 / -1; }
 /* Lite: aviso de derrota en camino. */
 .b-lite-alert { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 10px; border: 1px solid #fbbf2466; background: #fbbf2414; color: #fde68a; font-size: 14px; line-height: 1.45; }
 .b-lite-alert-critical { border-color: #f8717188; background: #f8717120; color: #fecaca; font-weight: 600; box-shadow: inset 3px 0 #f87171; }
-/* Lite, escritorio: El país angosto; Decisiones y Actores con el mismo ancho. */
+/* Lite, escritorio: sin columna izquierda; Decisiones y Actores mitad y mitad. */
 .b-command-status.b-command-status-lite { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.b-cockpit.b-cockpit-lite { grid-template-columns: minmax(220px, 250px) minmax(0, 1fr) minmax(0, 1fr); }
+.b-cockpit.b-cockpit-lite { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 .b-cockpit-lite .b-policy-panel > .b-policy-grid { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
 .b-cockpit-lite .b-actors-panel > .b-actor-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; max-height: none; overflow: visible; padding: 0 10px 10px; }
 .b-cockpit-lite .b-actor-list > .b-actor-card { margin: 0; border-top-width: 1px; padding: 12px; }
@@ -329,3 +322,17 @@
 .b-kpi-goal { position: relative; display: block; height: 5px; margin-top: 7px; max-width: 520px; border-radius: 4px; background: #ffffff10; }
 .b-kpi-goal > span { display: block; height: 100%; border-radius: inherit; background: var(--metric-color); }
 .b-kpi-goal > i { position: absolute; left: 45%; top: -3px; width: 2px; height: 11px; background: #c9a96e; }
+
+/* Lite: franja de arriba con voto, caja y los 7 índices del país. */
+.b-lite-strip { display: flex; gap: 8px; padding: 10px 16px; flex-shrink: 0; border-bottom: 1px solid #1e2d40; overflow-x: auto; scrollbar-width: thin; }
+.b-lite-chip { flex: 1 0 112px; min-width: 112px; display: flex; flex-direction: column; gap: 3px; padding: 8px 10px; border: 1px solid #1e2d40; border-left: 3px solid var(--tone, #75aadb); border-radius: 8px; background: #0b1017; }
+.b-lite-chip > span:first-child { color: #a1b2c7; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.b-lite-chip > strong { color: var(--tone, #e2e8f0); font: 600 14px/1.25 Inter, system-ui, sans-serif; white-space: nowrap; }
+.b-lite-chip > small { color: #9cafc6; font-size: 10px; letter-spacing: 1px; }
+.b-lite-chip .b-meter { flex: none; height: 3px; margin-top: 4px; }
+.b-lite-chip-vote, .b-lite-chip-cash { flex-basis: 150px; min-width: 140px; }
+.b-lite-chip-vote > strong, .b-lite-chip-cash > strong { font: 700 18px/1.2 'JetBrains Mono', monospace; }
+.b-lite-chip-vote .b-kpi-goal { margin-top: 2px; }
+.b-mobile .b-lite-strip { margin: 0 -12px; padding: 0 12px 2px; border-bottom: 0; }
+.b-mobile .b-lite-chip { flex: 0 0 auto; min-width: 104px; }
+.b-mobile .b-lite-chip-vote, .b-mobile .b-lite-chip-cash { min-width: 120px; }

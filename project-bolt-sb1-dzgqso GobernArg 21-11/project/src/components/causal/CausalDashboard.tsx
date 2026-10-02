@@ -19,7 +19,7 @@ import { AxesPanel, ObjectivesPanel, PoliticalSidebar, PoliticalStatus, ProfileC
 import { CampaignFlow } from './CampaignFlow';
 import { HowToPlay, TutorialCard, useTutorial } from './Tutorial';
 import { FeedbackForm } from './FeedbackForm';
-import { LiteBriefing, LiteCommitments, LiteDefeatAlerts, LiteGovernability, LiteReport, LiteTreasury } from './LitePanels';
+import { LiteCommitments, LiteDefeatAlerts, LiteGovernability, LiteReport, LiteStatusStrip, LiteTreasury } from './LitePanels';
 import { LITE_FEATURES } from '../../lite/config';
 import { governabilityWord } from '../../lite/present';
 import { campaignBlock } from '../../causal/campaign';
@@ -103,6 +103,7 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
   const tutorialCard = showTutorial && <TutorialCard onDismiss={tutorial.dismiss} onOpenGuide={() => setHelp(true)} />;
 
   const menuItems: [string, typeof BookOpen, () => void, boolean?][] = [
+    ...(!detailed && lastReport ? [['Ver el último cierre', FileSignature, () => setReview(lastReport)] as [string, typeof BookOpen, () => void]] : []),
     ['Cómo se juega', BookOpen, () => setHelp(true)],
     ['Contanos cómo te fue', MessageSquareHeart, () => setFeedback(true)],
     ['Reiniciar partida…', RefreshCw, () => setRestart(true), true],
@@ -110,9 +111,10 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
 
   const hero = <section className="b-mission"><img src={IMAGES.backgrounds.casaRosadaSunset} alt="Casa Rosada al atardecer" /><div><p className="b-eyebrow">República Argentina / Presidencia</p><h2 className="font-display">Mandato {state.term} · Sala de situación</h2><p>{scenarioNameForHero(state)} · Decisiones, acuerdos y consecuencias.</p></div></section>;
   const savingAlert = savingError && <p role="alert" className="text-sm border border-amber-400/30 bg-amber-400/10 p-3 rounded text-amber-100">{savingError}</p>;
-  const country = <>{detailed ? <CountryBriefing state={state} preview={preview} onIndicator={setIndicator} /> : <LiteBriefing state={state} preview={preview} />}
+  const arrearsAlert = totalArrears(state) > 0 && <p role="alert" className="rounded-lg border border-red-300/30 bg-red-300/10 text-red-100 p-3 text-xs">{state.crisisTurns >= 2 ? 'Crisis fiscal' : 'Obligaciones pendientes'}: {fmtMoney(totalArrears(state))}. Se restringe el gasto discrecional.</p>;
+  const country = <><CountryBriefing state={state} preview={preview} onIndicator={setIndicator} />
     {lastReport && <div className="b-last-report bg-card border border-border rounded-lg p-3"><p className="text-xs text-muted-foreground">Turno {lastReport.turn} cerrado{detailed ? ` · Caja ${fmtMoney(lastReport.fiscal.closingCash)}` : ''}</p><button type="button" className="causal-secondary mt-2" onClick={() => setReview(lastReport)}>Ver cierre</button></div>}
-    {totalArrears(state) > 0 && <p role="alert" className="rounded-lg border border-red-300/30 bg-red-300/10 text-red-100 p-3 text-xs">{state.crisisTurns >= 2 ? 'Crisis fiscal' : 'Obligaciones pendientes'}: {fmtMoney(totalArrears(state))}. Se restringe el gasto discrecional.</p>}
+    {arrearsAlert}
   </>;
   const futureEffects = <section className="bg-card border border-border rounded-xl p-4"><h2 className="font-display font-bold flex items-center gap-2"><CalendarClock size={17} className="text-blue-300" /> Efectos y compromisos futuros</h2>
     {state.effects.length === 0 ? <p className="text-xs text-muted-foreground mt-3">Las políticas que ejecutes dejarán aquí sus efectos programados y gastos recurrentes.</p> : <div className="max-h-80 overflow-y-auto mt-3 space-y-2">{state.effects.map(effect => <div key={effect.id} className="flex justify-between gap-3 border-b border-border py-2 text-xs"><div><p className="text-sm">{policyName(effect.actionId)}</p><p className="text-muted-foreground mt-1">{effect.kind === 'indicator' ? indicatorName(effect.target) : effect.target === 'expense_recurring' ? 'Gasto recurrente' : 'Recaudación recurrente'} · {effect.operation === 'offset' ? 'beneficio temporal' : effect.operation === 'per_turn' ? 'variación por turno' : effect.operation === 'pulse' ? 'cambio de nivel' : 'flujo fiscal'}</p></div><div className="text-right shrink-0"><strong className="font-mono">{effect.kind === 'ledger' ? `${effect.magnitude > 0 ? '+' : ''}${fmtMoney(effect.magnitude)}` : fmtSigned(effect.magnitude)}</strong><p className="text-muted-foreground mt-1">T{effect.startTurn}{effect.endExclusive === null ? ' en adelante' : effect.endExclusive - 1 > effect.startTurn ? `–T${effect.endExclusive - 1}` : ''}</p></div></div>)}</div>}
@@ -147,7 +149,7 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
         <div className="pr-2"><MandateTimeline inTerm={inTerm} wide /><div className="flex justify-between text-[10px] text-muted-foreground mt-1"><span>Mandato</span>{nextMilestone && <span className="text-amber-200 font-semibold">{MILESTONES[nextMilestone]}{nextMilestone > inTerm ? ` en ${nextMilestone - inTerm} ${nextMilestone - inTerm === 1 ? 'turno' : 'turnos'}` : ' este turno'}</span>}<span>Fin T{TURNS_PER_TERM}</span></div></div>
       </header>
       <main className="px-3 pt-3 pb-[calc(9rem+env(safe-area-inset-bottom))] space-y-4">
-        {detailed && <NewsWire state={state} />}<PoliticalStatus state={state} compact />
+        {detailed ? <><NewsWire state={state} /><PoliticalStatus state={state} compact /></> : <LiteStatusStrip state={state} preview={null} />}
         {!detailed && <LiteDefeatAlerts state={state} />}
         {tutorialCard}
         {savingAlert}
@@ -157,7 +159,7 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
           {tab === 'actores' && <><PoliticalSidebar state={state} onCommand={onCommand} />{governability}{socialComponent}<ActorPanel state={state} onExecute={onExecute} previewTargets={previewTargets} /><AxesPanel state={state} /></>}
         </> : <>
           {tab === 'acciones' && <PolicyPanel state={state} onExecute={onExecute} onPreview={setPreview} />}
-          {tab === 'pais' && <>{country}<LiteTreasury state={state} /><LiteCommitments state={state} /><ProfileCard state={state} /></>}
+          {tab === 'pais' && <>{arrearsAlert}<LiteTreasury state={state} /><LiteCommitments state={state} /><ProfileCard state={state} /></>}
           {tab === 'actores' && <><PoliticalSidebar state={state} onCommand={onCommand} view="electoral" /><LiteGovernability state={state} /><ActorPanel state={state} onExecute={onExecute} previewTargets={previewTargets} /></>}
         </>}
       </main>
@@ -184,20 +186,20 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
       <button type="button" aria-haspopup="dialog" className="causal-secondary b-header-menu" onClick={() => setMenu(true)}><MoreHorizontal size={17} />Menú</button>
       <button type="button" aria-label="Cerrar turno" data-no-restore-focus className="causal-primary b-close-turn" disabled={!canClose} onClick={e => closeTurn(e.currentTarget)}><FileSignature size={18} /><span><small>Despacho oficial</small>Cerrar turno</span><ArrowRight size={17} /></button>
     </header>
-    {detailed && <NewsWire state={state} />}<CommandStatus state={state} />
+    {detailed ? <><NewsWire state={state} /><CommandStatus state={state} /></> : <LiteStatusStrip state={state} preview={preview} />}
     <main className={`b-cockpit ${detailed ? '' : 'b-cockpit-lite'}`} aria-label="Sala de situación presidencial">
-      <aside className="b-country-column b-scroll-region" aria-label="Briefing nacional">{country}<ProfileCard state={state} /></aside>
+      {detailed && <aside className="b-country-column b-scroll-region" aria-label="Briefing nacional">{country}<ProfileCard state={state} /></aside>}
       <section className="b-decisions-column">
         <nav className="b-desk-tabs" aria-label="Secciones del despacho">{([['decisiones', 'Decisiones', LayoutGrid], ['finanzas', 'Tesoro', Wallet], ['agenda', 'Gestión', NotebookPen]] as const).filter(([id]) => detailed || id !== 'agenda').map(([id, label, Icon]) => <button type="button" key={id} aria-current={deskTab === id ? 'page' : undefined} onClick={() => { setDeskTab(id); setPreview(null); }}><Icon size={15} />{label}</button>)}<span>{scenarioName ?? 'País inicial'}</span></nav>
         <div className="b-desk-content b-scroll-region" key={deskTab}>
-          {!detailed && <LiteDefeatAlerts state={state} />}{tutorialCard}{savingAlert}
+          {!detailed && <><LiteDefeatAlerts state={state} />{arrearsAlert}</>}{tutorialCard}{savingAlert}
           {deskTab === 'decisiones' && <><div className="b-congress-brief"><Landmark size={17} /><p><strong>Congreso de la Nación</strong><span>{detailed ? `${state.campaign?.seats.oficialismo ?? 40} bancas propias · ${state.campaign?.seats.aliados ?? 15} aliadas · El apoyo se consulta para cada ley.` : <><b className={`b-lite-inline ${governabilityWord(state).tone}`}>{governabilityWord(state).word}</b> · Las leyes necesitan mayoría.</>}</span></p></div><PolicyPanel state={state} onExecute={onExecute} onPreview={setPreview} /></>}
           {deskTab === 'finanzas' && (detailed ? <>{cashAndDebt}{futureEffects}{governability}</> : <><LiteTreasury state={state} /><LiteCommitments state={state} /><LiteGovernability state={state} /></>)}
           {detailed && deskTab === 'agenda' && <>{hero}<PoliticalSidebar state={state} onCommand={onCommand} view="updates" /><ObjectivesPanel state={state} /><ProjectReports state={state} /><AxesPanel state={state} /></>}
         </div>
         {detailed && <section className="b-execution-ledger" aria-label="Decisiones ejecutadas este turno"><div><FileSignature size={15} /><strong>Expediente del trimestre</strong><span className="font-mono">T{state.turn}</span></div><p>{executed.length ? executed.map(execution => <span className="b-execution-tag" key={execution.id}>{policyName(execution.actionId)}</span>) : 'Sin decisiones ejecutadas este trimestre.'}</p></section>}
       </section>
-      <aside className="b-power-column b-scroll-region" aria-label="Actores y situación electoral"><PoliticalSidebar state={state} onCommand={onCommand} view="electoral" /><ActorPanel state={state} onExecute={onExecute} previewTargets={previewTargets} />{detailed && socialComponent}</aside>
+      <aside className="b-power-column b-scroll-region" aria-label="Actores y situación electoral"><PoliticalSidebar state={state} onCommand={onCommand} view="electoral" /><ActorPanel state={state} onExecute={onExecute} previewTargets={previewTargets} />{detailed ? socialComponent : <ProfileCard state={state} />}</aside>
     </main>
     {overlays}
   </div>;
