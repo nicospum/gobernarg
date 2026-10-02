@@ -7,6 +7,7 @@ import type { CausalState, CommandParams, IndicatorId, TurnReport, PolicyDefinit
 import { fmtNum, fmtScore, fmtSigned, fmtU } from '../../causal/format';
 import { useIsMobile } from '../../lib/useMediaQuery';
 import { IMAGES } from '../../utils/imageAssets';
+import { screenImage } from '../../utils/liteImages';
 import { CountryBriefing, CommandStatus, NewsWire, PresidentialMark } from './SituationRoom';
 import { policyEffectsPreview } from '../../causal/engine';
 import { profileInfo } from '../../causal/campaignCatalog';
@@ -26,6 +27,8 @@ interface Props {
   onExecute: (id: string, params?: CommandParams) => boolean;
   onCommand: CampaignDispatch; onRestart: () => void;
 }
+/** Banda del diálogo de cierre de turno (si ya está la imagen). */
+const closingArt = screenImage('cierre-turno');
 /** Hitos del mandato (turno dentro del mandato): legislativas y elección presidencial. */
 const MILESTONES: Record<number, string> = { 8: 'Legislativas', 16: 'Elección presidencial' };
 const acciones = (n: number) => `${n} ${n === 1 ? 'acción' : 'acciones'}`;
@@ -119,7 +122,7 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
   const overlays = <>
     <CampaignFlow state={state} onCommand={onCommand} onRestart={onRestart} onFeedback={() => setFeedback(true)} />
     {selectedIndicator && <Dialog title={selectedIndicator.name} onClose={closeIndicator}><p className="text-sm leading-6">{selectedIndicator.description}</p><div className="grid grid-cols-2 gap-3 text-sm"><p className="bg-background/50 p-3 rounded">Alto: {selectedIndicator.high}</p><p className="bg-background/50 p-3 rounded">Bajo: {selectedIndicator.low}</p></div>{lastReport?.indicators.filter(trace => trace.id === indicator).map(trace => <div key={trace.id}><h3 className="text-sm font-semibold mb-3">Último cierre: {fmtScore(trace.before)} → {fmtScore(trace.after)}</h3>{trace.contributions.map((contribution, index) => <p key={`${contribution.sourceId}:${index}`} className="flex justify-between gap-3 text-sm py-2 border-b border-border"><span>{contribution.label}</span><span className="font-mono shrink-0">{fmtSigned(contribution.amount)}</span></p>)}</div>)}</Dialog>}
-    {review && !campaignOpen && <Dialog title={`Cierre del turno ${review.turn}`} onClose={closeReview}><ReportContent report={review} /><button type="button" className="causal-primary w-full" onClick={closeReview}>Seguir gobernando</button></Dialog>}
+    {review && !campaignOpen && <Dialog title={`Cierre del turno ${review.turn}`} onClose={closeReview}>{closingArt && <img src={closingArt} alt="" className="w-full h-32 sm:h-40 object-cover rounded-xl" />}<ReportContent report={review} /><button type="button" className="causal-primary w-full" onClick={closeReview}>Seguir gobernando</button></Dialog>}
     {menu && <Dialog title="Menú" onClose={closeMenu}><div className="flex flex-col">{menuItems.map(([label, Icon, action, danger]) => <button key={label} type="button" className={`flex items-center gap-3 min-h-[52px] px-2 rounded text-left hover:bg-white/10 ${danger ? 'text-red-300 border-t border-border mt-2 pt-2' : ''}`} onClick={() => { setMenu(false); action(); }}><Icon size={18} /> {label}</button>)}</div></Dialog>}
     {help && <HowToPlay onClose={closeHelp} />}
     {feedback && <FeedbackForm state={state} onClose={closeFeedback} />}

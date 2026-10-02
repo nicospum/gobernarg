@@ -1,5 +1,5 @@
 import { IMAGES } from '../../utils/imageAssets';
-import { THUMBNAIL_GROUPS } from '../../utils/iconThumbnails';
+import { actorImage, policyImage } from '../../utils/liteImages';
 import type { ActorId } from '../../causal/types';
 
 export const CATEGORY_VISUALS: Record<string, { image: string; color: string }> = {
@@ -11,10 +11,7 @@ export const CATEGORY_VISUALS: Record<string, { image: string; color: string }> 
   Seguridad: { image: IMAGES.icons.categories.security, color: '#86a9ff' },
   Cultura: { image: IMAGES.icons.categories.culture, color: '#efd274' },
 };
-const actorKeys: Record<ActorId, string> = {
-  industria: 'empresarios', agro: 'sector-agricola', financiero: 'sector-financiero', sindicatos: 'sindicatos',
-  pymes: 'empresarios', clase_media: 'clase-media', cooperativas: 'cooperativas', estudiantes: 'estudiantiles',
-  docentes: 'academicos', cientificos: 'academicos', organizaciones: 'sectores-populares', ddhh: 'ongs',
-  ambientalistas: 'ambientalistas', cultura: 'artistas', oficialismo: 'aliados', aliados: 'aliados', oposicion: 'opositores', gobernadores: 'aliados',
-};
-export const actorPortrait = (id: ActorId) => THUMBNAIL_GROUPS[actorKeys[id]] || IMAGES.ui.shieldEmblem;
+/** Retrato del actor (b-lite/actores/<id>.webp). Sin archivo, no se muestra imagen. */
+export const actorPortrait = (id: ActorId): string | undefined => actorImage(id);
+/** Ilustración de la política (b-lite/politicas/<id>.webp), si ya existe. */
+export const policyArt = (id: string): string | undefined => policyImage(id);

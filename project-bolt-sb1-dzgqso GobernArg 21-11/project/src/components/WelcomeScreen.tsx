@@ -1,5 +1,6 @@
 import { ArrowRight, Play, RotateCcw } from 'lucide-react';
 import { IMAGES } from '../utils/imageAssets';
+import { screenImage } from '../utils/liteImages';
 import { ACTORS, INDICATORS, POLICIES } from '../causal/catalog';
 import { PresidentialMark } from './causal/SituationRoom';
 
@@ -17,7 +18,7 @@ export function WelcomeScreen({ onStart, savedLabel, onContinue }: WelcomeScreen
         <div className="b-welcome-actions">{savedLabel && onContinue ? <><button onClick={onContinue} className="causal-primary b-welcome-start"><Play size={17} />Continuar partida<ArrowRight size={18} /></button><p className="b-saved-label">{savedLabel}</p><button onClick={() => onStart(false)} className="causal-secondary"><RotateCcw size={14} />Empezar una nueva</button></> : <button onClick={() => onStart(false)} className="causal-primary b-welcome-start"><Play size={17} />Empezar<ArrowRight size={18} /></button>}</div>
         <div className="b-welcome-stats">{[[INDICATORS.length, 'Indicadores'], [ACTORS.length, 'Actores de poder'], [POLICIES.filter(p => p.role === 'policy').length, 'Políticas públicas']].map(([value, label]) => <div key={label}><strong>{value}</strong><span>{label}</span></div>)}</div>
       </div>
-      <div className="b-welcome-scene"><img src={IMAGES.backgrounds.casaRosadaSunset} alt="Casa Rosada al atardecer" /><div className="b-scene-caption"><span className="b-eyebrow">Casa Rosada / Buenos Aires</span><strong>El país espera tus decisiones.</strong><span>Hasta dos mandatos de dieciséis trimestres.</span></div><span className="b-scene-stamp">GobernArg · B Lite</span></div>
+      <div className="b-welcome-scene"><img src={screenImage('bienvenida-hero') ?? IMAGES.backgrounds.casaRosadaSunset} alt="Casa Rosada desde Plaza de Mayo" /><div className="b-scene-caption"><span className="b-eyebrow">Casa Rosada / Buenos Aires</span><strong>El país espera tus decisiones.</strong><span>Hasta dos mandatos de dieciséis trimestres.</span></div><span className="b-scene-stamp">GobernArg · B Lite</span></div>
     </main><footer className="b-welcome-footer"><span>Decisiones · Acuerdos · Consecuencias</span><span>Tu gestión se guarda automáticamente en este navegador.</span></footer>
   </div>;
 }

@@ -8,6 +8,12 @@ import type { ActorId, AgreementTemplate, CausalState, CommandParams, IndicatorI
 import { Dialog } from './Dialog';
 import { actorPortrait } from './visuals';
 
+/** Miniatura de la lista: el retrato o, si todavía no hay, un recuadro vacío del mismo tamaño. */
+function ActorThumb({ id }: { id: ActorId }) {
+  const src = actorPortrait(id);
+  return src ? <img src={src} alt="" loading="lazy" decoding="async" className="w-10 h-10 rounded-lg object-cover bg-white/10 shrink-0" /> : <span aria-hidden="true" className="w-10 h-10 rounded-lg bg-white/10 shrink-0" />;
+}
+
 interface Props { state: CausalState; onExecute: (id: string, params?: CommandParams) => boolean; previewTargets?: IndicatorId[] }
 export function ActorPanel({ state, onExecute, previewTargets = [] }: Props) {
   const [selected, setSelected] = useState<ActorId | null>(null);
@@ -20,7 +26,7 @@ export function ActorPanel({ state, onExecute, previewTargets = [] }: Props) {
         const status = state.actors[actor.id];
         const relevant = actor.sensitivities.some(item => previewTargets.includes(item.indicatorId));
         return <button type="button" key={actor.id} onClick={() => setSelected(actor.id)} className={`b-actor-card ${relevant ? 'b-actor-relevant' : ''} w-full text-left p-3 px-4 hover:bg-white/5 transition-colors`}>
-          <div className="flex items-center gap-3"><img src={actorPortrait(actor.id)} alt="" className="w-10 h-10 rounded-lg object-cover bg-white/10" /><span className="text-sm font-medium flex-1">{actor.name}</span><ChevronRight size={13} className="text-muted-foreground shrink-0" /></div>
+          <div className="flex items-center gap-3"><ActorThumb id={actor.id} /><span className="text-sm font-medium flex-1">{actor.name}</span><ChevronRight size={13} className="text-muted-foreground shrink-0" /></div>
           <p className="b-actor-channel">{actor.channel.name}</p><div className="b-actor-metrics flex gap-3 mt-2 text-[11px]"><span className={status.satisfaction < 35 ? 'text-amber-200' : 'text-muted-foreground'}>Satisfacción <strong className="text-foreground">{status.satisfaction.toFixed(0)}</strong><span className="b-meter"><span style={{ width: `${status.satisfaction}%`, background: status.satisfaction < 35 ? '#fbbf24' : '#34d399' }} /></span></span><span className="text-muted-foreground">Relación <strong className="text-foreground">{status.relationship.toFixed(0)}</strong><span className="b-meter"><span style={{ width: `${status.relationship}%` }} /></span></span>
             {status.conflict && <span className="text-red-300">Conflicto</span>}{status.cooperation && <span className="text-emerald-300">Cooperación</span>}</div><p className="b-actor-footnote">{relevant ? 'La política toca indicadores que este actor valora.' : hasRecentMeeting(state, actor.id) ? 'Prioridades reveladas · Abrir negociación' : 'Sin reunión vigente · Abrir audiencia'}</p>
         </button>;
@@ -46,8 +52,9 @@ function ActorDetails({ actorId, state, onExecute, onClose }: Props & { actorId:
   const agreements = state.agreements.filter(item => item.actorId === actorId);
   const signing = policyAvailability(state, 'firmar_acuerdo', { actorId, offerId: offer?.id });
   const report = state.reports[state.reports.length - 1]?.actors.find(item => item.id === actorId);
+  const portrait = actorPortrait(actor.id);
   return <Dialog title={actor.name} onClose={onClose}>
-    <img src={actorPortrait(actor.id)} alt={actor.name} className="w-20 h-20 rounded-xl object-cover border border-border" />
+    {portrait && <img src={portrait} alt={actor.name} className="w-40 h-40 rounded-xl object-cover border border-border" />}
     <div className="grid grid-cols-2 gap-3"><div className="rounded-lg bg-background/50 border border-border p-4"><span className="text-xs text-muted-foreground">Satisfacción</span><div className="font-display text-3xl mt-1">{status.satisfaction.toFixed(1)}<span className="text-sm text-muted-foreground"> /100</span></div><p className="text-xs text-muted-foreground mt-2">Cómo evalúa los resultados que le importan.</p></div><div className="rounded-lg bg-background/50 border border-border p-4"><span className="text-xs text-muted-foreground">Relación / confianza</span><div className="font-display text-3xl mt-1">{status.relationship.toFixed(0)}<span className="text-sm text-muted-foreground"> /100</span></div><p className="text-xs text-muted-foreground mt-2">Cambia al cumplir o incumplir compromisos.</p></div></div>
     <div className="text-sm"><p><strong className="font-medium">Poder:</strong> {actor.channel.name}.</p><p className="text-xs text-muted-foreground mt-2">Presión {actor.influence}/10 · Peso electoral {actor.electoralWeight}/10 · Dificultad de relación {actor.interactionDifficulty}/10</p>{actor.electoralWeight === 0 && <p className="text-xs text-muted-foreground mt-2">Participa en gobernabilidad. Su satisfacción no se suma como votos al gobierno.</p>}</div>
     {status.conflict && <p className="text-sm bg-red-400/10 text-red-200 p-3 rounded">Su canal de presión está activo. Los efectos se aplican con un turno de demora.</p>}

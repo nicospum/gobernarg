@@ -5,7 +5,7 @@ import { policyAvailability, policyEffectsPreview } from '../../causal/engine';
 import { indicatorName, isProject } from '../../causal/selectors';
 import type { CausalState, CommandParams, PolicyDefinition } from '../../causal/types';
 import { Dialog } from './Dialog';
-import { CATEGORY_VISUALS } from './visuals';
+import { CATEGORY_VISUALS, policyArt } from './visuals';
 
 interface Props { state: CausalState; onExecute: (id: string, params?: CommandParams) => boolean; onPreview?: (policy: PolicyDefinition | null) => void }
 const number = (n: number) => n.toLocaleString('es-AR', { maximumFractionDigits: 1 });
@@ -31,9 +31,11 @@ export function PolicyPanel({ state, onExecute, onPreview }: Props) {
         const effects = policyEffectsPreview(state, policy).slice(0, 3);
         const executed = state.history.some(execution => execution.turn === state.turn && execution.actionId === policy.id);
         const visual = CATEGORY_VISUALS[policy.category];
+        const art = policyArt(policy.id);
         const adverse = policy.effects.some(effect => effect.kind === 'indicator' && (effect.target === 'inflacion' ? effect.magnitude > 0 : effect.magnitude < 0));
         const relevant = policy.effects.some(effect => effect.kind === 'indicator' && (effect.target === 'inflacion' ? effect.magnitude < 0 && state.indicators.inflacion > 60 : effect.magnitude > 0 && state.indicators[effect.target] < 45));
         return <button type="button" key={policy.id} data-policy={policy.id} onMouseEnter={() => onPreview?.(policy)} onMouseLeave={() => onPreview?.(null)} onFocus={() => onPreview?.(policy)} onBlur={() => onPreview?.(null)} onClick={() => { onPreview?.(null); setSelected(policy); }} style={{ borderLeftColor: visual?.color }} className={`b-policy-card ${executed ? 'b-policy-executed' : ''} text-left rounded-lg border border-l-4 border-border bg-background/40 p-4 hover:border-primary focus-visible:outline focus-visible:outline-primary transition-colors`}>
+          {art && <img src={art} alt="" loading="lazy" decoding="async" className="b-policy-art w-full h-24 object-cover rounded-md mb-3" />}
           <div className="flex items-center gap-2 mb-3"><img src={visual?.image} alt="" className="w-7 h-7 object-contain rounded bg-white/10" /><span className="text-[10px] uppercase font-semibold tracking-wide" style={{ color: visual?.color }}>{policy.category}</span>{relevant && availability.allowed && <span className="ml-auto text-[10px] text-amber-200">★ Prioritaria</span>}</div>
           <div className="flex items-start justify-between gap-2"><h3 className="font-display font-semibold text-sm leading-5">{policy.name}</h3>{!availability.allowed && <LockKeyhole className="shrink-0 text-muted-foreground" size={14} aria-label="Requiere condiciones" />}</div>
           <p className="text-xs text-muted-foreground mt-2 leading-5">{policy.description}</p>
@@ -56,7 +58,9 @@ function PolicyDetails({ state, policy, onExecute, onClose }: Props & { policy: 
   const effects = policyEffectsPreview(state, policy, params);
   const financial = policy.effects.filter(effect => effect.kind === 'ledger' && effect.start > 0);
   const loan = policy.effects.find(effect => effect.kind === 'loan' && effect.operation === 'originate');
+  const art = policyArt(policy.id);
   return <Dialog title={policy.name} onClose={onClose}>
+    {art && <img src={art} alt="" className="w-full h-40 object-cover rounded-xl" />}
     <p className="text-sm text-muted-foreground leading-6">{policy.description} {policy.strategy}</p>
     {policy.id === 'estudio_factibilidad' && <label className="block text-sm">Obra a estudiar<select value={projectId} onChange={event => setProjectId(event.target.value)} className="causal-select mt-2" aria-label="Obra a estudiar">{POLICIES.filter(item => isProject(item.id)).map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select><span className="block text-xs text-muted-foreground mt-2">Se habilita el turno siguiente, dura 6 turnos y se consume al iniciar esta obra.</span></label>}
     {policy.id === 'reestructurar_deuda' && <label className="block text-sm">Contrato a reperfilar<select value={loanId} onChange={event => setLoanId(event.target.value)} className="causal-select mt-2">{state.loans.filter(item => item.outstanding > 0).map(item => <option key={item.id} value={item.id}>{item.type === 'external' ? 'Externo' : 'Local'} · {number(item.outstanding)} U · vence T{item.dueTurn}</option>)}</select></label>}

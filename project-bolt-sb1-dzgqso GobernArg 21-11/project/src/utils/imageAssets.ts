@@ -1,5 +1,5 @@
 // Imágenes que usa el juego. Cada archivo de src/assets/images que no figura
-// acá (o en iconThumbnails.ts) no se publica.
+// acá (o en iconThumbnails.ts o liteImages.ts) no se publica.
 
 import bgCasaRosadaSunset from '../assets/images/backgrounds/balcony-casa-rosada-sunset.webp';
 import bgCongressSunrise from '../assets/images/backgrounds/congress-sunrise-panorama.webp';
@@ -42,7 +42,6 @@ import eventPrisonRiot from '../assets/images/events/event-prison-riot.webp';
 import eventDrugWave from '../assets/images/events/event-drug-wave.webp';
 import eventPoliceViolence from '../assets/images/events/event-police-violence-scandal.webp';
 
-import uiShieldEmblem from '../assets/images/ui/shield-emblem.webp';
 import uiShieldEmblemPremium from '../assets/images/ui/shield-emblem-premium.webp';
 
 import iconEconomy from '../assets/images/icons/categories/category-economy.webp';
@@ -99,7 +98,6 @@ export const IMAGES = {
     policeViolenceScandal: eventPoliceViolence,
   },
   ui: {
-    shieldEmblem: uiShieldEmblem,
     shieldEmblemPremium: uiShieldEmblemPremium,
   },
   icons: {

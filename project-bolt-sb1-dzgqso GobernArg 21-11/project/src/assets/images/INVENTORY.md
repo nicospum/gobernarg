@@ -29,10 +29,8 @@ Los PNG originales se conservan en `src/assets/images/raw/` como respaldo.
 | icons/categories/category-infrastructure-bridge.webp | image_047.png | 1254x1254 | 933204 | 32598 | Icono de categoría Infraestructura. |
 | icons/categories/category-security.webp | image_044.png | 1254x1254 | 853240 | 28800 | Icono de categoría Seguridad. |
 | icons/categories/category-social.webp | image_004.png | 1254x1254 | 1045887 | 50658 | Icono de categoría Social. |
-| icons/groups/group-agriculture.webp | image_053.png | 1254x1254 | 1000215 | 42164 | Icono de sector agropecuario. |
-| icons/groups/group-business.webp | image_050.png | 1254x1254 | 826616 | 17070 | Icono de empresarios / sector empresarial. |
-| icons/groups/group-workers.webp | image_046.png | 1254x1254 | 1000227 | 41822 | Icono de sindicatos / trabajadores. |
 | ui/shield-emblem-premium.webp | image_059.png | 1254x1254 | 1029764 | 60324 | Emblema de alta distinción. |
-| ui/shield-emblem.webp | image_058.png | 1254x1254 | 921728 | 39228 | Emblema para logros / insignias. |
 
 Total: 59 imágenes
+
+Las imágenes propias de la B Lite están en `b-lite/` y se conectan por nombre de archivo desde `src/utils/liteImages.ts` (listado y prompts: `docs/imagenes-b-lite.md` en la raíz del repositorio).
