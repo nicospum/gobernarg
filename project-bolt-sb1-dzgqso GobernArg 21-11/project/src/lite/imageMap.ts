@@ -79,6 +79,16 @@ export const ACTION_IMAGE: Record<string, string> = {
   mantenimiento_infraestructura: 'mantenimiento_urbano',
   // Plantación de monte nativo: la parte de bosques de la ley ambiental.
   proteccion_ambiental: 'reforestacion',
+  // Cuarta tanda (Educación, Exterior y Seguridad).
+  financiamiento_ciencia: 'carrera_cientifica',
+  // Del laboratorio a la fábrica: software, robótica, biotecnología.
+  economia_conocimiento: 'desarrollar_tecnologia',
+  fomento_cultural: 'programa_cultural',
+  turismo_y_patrimonio: 'patrimonio_historico',
+  lucha_narcotrafico: 'lucha_narcotrafico',
+  prevencion_comunitaria: 'policia_proximidad',
+  // Patrullaje a pie y en móvil: más efectivos en la calle.
+  seguridad_ciudadana: 'seguridad_ciudadana',
 };
 
 /**
