@@ -5,7 +5,7 @@
  * respaldo.
  */
 import type { ActorId } from '@/data/causal';
-import { ACTION_IMAGE, ACTOR_IMAGE, SCREEN_IMAGE } from '@/lite/imageMap';
+import { ACTION_IMAGE, ACTION_PHOTO, ACTOR_IMAGE, SCREEN_IMAGE } from '@/lite/imageMap';
 
 const files = import.meta.glob<string>('../assets/images/a-lite/**/*.webp', { eager: true, query: '?url', import: 'default' });
 
@@ -18,5 +18,6 @@ for (const [path, url] of Object.entries(files)) {
 const image = (folder: string, name: string | undefined) => (name ? byFolder[folder]?.[name] : undefined);
 
 export const actorPortrait = (actor: ActorId) => image('actores', ACTOR_IMAGE[actor]);
-export const actionImage = (actionId: string) => image('politicas', ACTION_IMAGE[actionId]);
+export const actionImage = (actionId: string) =>
+  image('fotos', ACTION_PHOTO[actionId]) ?? image('politicas', ACTION_IMAGE[actionId]);
 export const screenImage = (key: keyof typeof SCREEN_IMAGE) => image('pantallas', SCREEN_IMAGE[key]);

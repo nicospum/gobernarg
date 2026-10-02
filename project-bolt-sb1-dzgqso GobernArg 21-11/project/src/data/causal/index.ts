@@ -14,6 +14,7 @@ import { MEETING_ROWS } from './generated/meetings';
 import { EXCEL_PARAMS } from './generated/params';
 import { AUDIT_ROWS } from './generated/audit';
 import type { ActionRow, EffectRow, MeetingRow } from './types';
+import { ACTION_TEXT_OVERRIDES } from '../../lite/actionOverrides';
 
 // ─────────────────────────────── Indicadores ───────────────────────────────
 
@@ -316,8 +317,9 @@ function toActionDef(r: ActionRow): CausalActionDef {
   const isSystem = (SYSTEM_ACTION_IDS as readonly string[]).includes(r.id);
   return {
     id: r.id,
-    name: r.name ?? r.id,
-    description: r.description ?? '',
+    // Textos de la Lite (src/lite/actionOverrides.ts): solo nombre y descripción.
+    name: ACTION_TEXT_OVERRIDES[r.id]?.name ?? r.name ?? r.id,
+    description: ACTION_TEXT_OVERRIDES[r.id]?.description ?? r.description ?? '',
     strategic: r.strategic ?? '',
     category: (r.uiCategory ?? 'Política y relaciones') as UiCategory,
     paCost: isSystem && r.id === 'reunion' ? 1 : r.paCost ?? 1,

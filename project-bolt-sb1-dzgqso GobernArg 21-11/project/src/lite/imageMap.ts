@@ -47,15 +47,12 @@ export const ACTION_IMAGE: Record<string, string> = {
   prestamo_internacional: 'prestamo_internacional',
   prestamo_local: 'prestamo_local',
   control_precios: 'control_precios',
-  reduccion_gasto: 'reduccion_gasto',
   mejorar_recaudacion: 'mejorar_recaudacion',
   credito_pyme: 'credito_pyme',
   aumento_salarial: 'aumento_salarial',
-  incentivos_exportacion: 'incentivos_exportacion',
   tratado_comercio: 'tratado_comercio',
   promocion_industrial: 'subsidios_industriales',
   reforma_tributaria: 'reforma_impositiva',
-  reduccion_impuestos: 'alivio_tributario',
   regimen_grandes_inversiones: 'atraccion_inversiones',
   politica_monetaria_contractiva: 'estabilizacion_monetaria',
   // Segunda tanda (Social, Educación, Instituciones).
@@ -82,6 +79,21 @@ export const ACTION_IMAGE: Record<string, string> = {
   mantenimiento_infraestructura: 'mantenimiento_urbano',
   // Plantación de monte nativo: la parte de bosques de la ley ambiental.
   proteccion_ambiental: 'reforestacion',
+};
+
+/**
+ * Fotos diurnas, con carteles reales a propósito ("toque de realismo" para
+ * mostrar la Lite): fotos/<nombre>.webp, recortadas con
+ * scripts/recortar-fotos-lite.sh y sin aclarar. Tienen prioridad sobre
+ * ACTION_IMAGE. Los nombres que se ven salen de src/lite/actionOverrides.ts.
+ */
+export const ACTION_PHOTO: Record<string, string> = {
+  privatizacion: 'aerolineas_en_venta',
+  reforma_laboral: 'libreta_trabajo',
+  reduccion_gasto: 'anses_jubilados',
+  reduccion_impuestos: 'afip_simple',
+  desarrollo_energetico_minero: 'vaca_muerta',
+  incentivos_exportacion: 'argentina_al_mundo',
 };
 
 /** Pantallas (pantallas/<nombre>.webp). */
