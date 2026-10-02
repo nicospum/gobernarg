@@ -5,7 +5,7 @@
  */
 import type { GameState } from '../types/game';
 import type { TurnRecord } from '@/engine/causal';
-import { EFFECTS_BY_ACTION, INDICATORS, isIndicatorId, type IndicatorId } from '@/data/causal';
+import { EFFECTS_BY_ACTION, INDICATORS, PARAMS, isIndicatorId, type IndicatorId } from '@/data/causal';
 import { effective, viewRef } from '@/engine/causal';
 import { toneOf, type Tone } from './causalText';
 
@@ -137,4 +137,36 @@ export function trendWord(delta: number | null): string {
   if (delta === null) return 'Primer turno';
   if (Math.abs(delta) < 0.5) return 'Estable';
   return delta > 0 ? 'Subió' : 'Bajó';
+}
+
+export interface DefeatWarning {
+  id: 'hyperinflation' | 'impeachment';
+  /** Rojo: el próximo cierre puede terminar el gobierno. */
+  critical: boolean;
+  text: string;
+}
+
+/**
+ * Derrotas en camino, en palabras (modo simple, como en la B). El motor cuenta
+ * los cierres seguidos con la inflación en hiper o la gobernabilidad en
+ * crisis (dos seguidos hacen perder). Con la cuenta en marcha el aviso es
+ * rojo; cerca del umbral, antes de que empiece, es suave. Solo lee el estado.
+ */
+export function defeatWarnings(state: GameState): DefeatWarning[] {
+  const c = state.causal;
+  if (state.gameOver) return [];
+  const infl = effective(c, 'INFL', viewRef(c));
+  const gob = c.political.gob;
+  const out: DefeatWarning[] = [];
+  if (c.hyperStreak >= 1) {
+    out.push({ id: 'hyperinflation', critical: true, text: 'Los precios están fuera de control: si sigue así, el gobierno cae en el próximo cierre.' });
+  } else if (infl >= PARAMS.HIPER_UMBRAL - 12) {
+    out.push({ id: 'hyperinflation', critical: false, text: 'Los precios se están desbocando. Si empeora, podés perder la presidencia.' });
+  }
+  if (c.govCrisisStreak >= 1) {
+    out.push({ id: 'impeachment', critical: true, text: 'Tu gobierno perdió el control: si no lo recuperás, en el próximo cierre avanza el juicio político.' });
+  } else if (gob < PARAMS.GOB_CRISIS_UMBRAL + 10) {
+    out.push({ id: 'impeachment', critical: false, text: 'Cada vez te cuesta más gobernar: Congreso, actores y calle te dan poco margen. Si empeora, podés perder la presidencia.' });
+  }
+  return out;
 }

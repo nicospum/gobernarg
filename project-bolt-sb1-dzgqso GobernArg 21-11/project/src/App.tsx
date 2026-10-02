@@ -12,6 +12,7 @@ import { CivicBanner } from './components/board/CivicBanner';
 import { TurnPlan } from './components/board/TurnPlan';
 import { ElectoralPanel } from './components/board/ElectoralPanel';
 import { StatusFooter } from './components/board/StatusFooter';
+import { DefeatAlerts } from './components/board/StatusStrip';
 import { EventModal } from './components/EventModal';
 import { CountryPanel } from './components/CountryPanel';
 import { clearSavedGame, loadGame, saveGame } from './lib/savegame';
@@ -234,6 +235,7 @@ function App() {
   }
 
   const currentEvent = pendingEvents[0] || null;
+  const simple = !detailed();
   const showTutorialCard = !tutorial.dismissed && gameState.term === 1 && gameState.year === 1 && gameState.turn === 1;
   const tutorialCard = showTutorialCard && (
     <TutorialCard actions={gameState.baseActions} onDismiss={tutorial.dismiss} onOpenGuide={() => setShowHelp(true)} />
@@ -251,6 +253,7 @@ function App() {
           />
           <main className="px-3 pt-3 pb-[calc(9rem+env(safe-area-inset-bottom))] space-y-3">
             <MobileKpis gameState={gameState} />
+            {!detailed() && <DefeatAlerts gameState={gameState} />}
             {tutorialCard}
             {mobileTab === 'acciones' && (
               <>
@@ -270,7 +273,8 @@ function App() {
             {mobileTab === 'pais' && <CountryPanel gameState={gameState} compact />}
             {mobileTab === 'actores' && (
               <>
-                <ElectoralPanel gameState={gameState} />
+                {/* Modo simple: lo esencial del voto ya está en la franja de arriba. */}
+                {detailed() && <ElectoralPanel gameState={gameState} />}
                 <ActorsPanel
                   gameState={gameState}
                   onInteract={handleActorInteraction}
@@ -292,7 +296,7 @@ function App() {
           />
         </>
       ) : (
-        <>
+        <div className={simple ? 'xl:h-dvh xl:flex xl:flex-col xl:overflow-hidden' : undefined}>
           <GameHeader
             gameState={gameState}
             availableActions={gameState.actions}
@@ -305,6 +309,46 @@ function App() {
           <CommandStrip gameState={gameState} />
           <MetricsRow gameState={gameState} />
 
+          {simple ? (
+            // Modo simple (como en la B): sin columna izquierda; Acciones y la
+            // columna de Este turno + Actores mitad y mitad. En pantallas anchas
+            // el tablero ocupa el alto de la ventana y cada columna tiene su scroll.
+            <main className="w-full max-w-[1540px] mx-auto px-4 lg:px-7 pt-4 pb-11 xl:pb-4 xl:flex-1 xl:min-h-0 xl:flex xl:flex-col">
+              <DefeatAlerts gameState={gameState} className="mb-4 xl:flex-none" />
+              <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 items-start xl:items-stretch xl:grid-rows-[minmax(0,1fr)] xl:flex-1 xl:min-h-0">
+                <div className="flex flex-col gap-4 min-w-0 xl:min-h-0 xl:overflow-y-auto xl:pr-1 [scrollbar-gutter:stable] [&>*]:shrink-0" data-columna="acciones">
+                  {tutorialCard}
+                  <CivicBanner />
+                  <ControlPanel
+                    gameState={gameState}
+                    onActionSelect={handleActionSelect}
+                    canTakeAction={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
+                    index="01"
+                  />
+                </div>
+                <aside className="flex flex-col gap-4 min-w-0 xl:min-h-0" aria-label="Turno y actores">
+                  <div className="xl:flex-none">
+                    <TurnPlan
+                      gameState={gameState}
+                      onActionSelect={handleActionSelect}
+                      onEndTurn={handleEndTurn}
+                      canEndTurn={!modalOpen}
+                      index="02"
+                    />
+                  </div>
+                  <div className="min-w-0 xl:flex-1 xl:min-h-0 xl:overflow-y-auto xl:pr-1 [scrollbar-gutter:stable]">
+                    <ActorsPanel
+                      gameState={gameState}
+                      onInteract={handleActorInteraction}
+                      onSelectAction={handleActionSelect}
+                      disabled={gameState.gameOver || gameState.pendingElection}
+                      index="03"
+                    />
+                  </div>
+                </aside>
+              </div>
+            </main>
+          ) : (
           <main className="max-w-[1540px] mx-auto px-4 lg:px-7 pt-[18px] pb-11">
             {tutorialCard && <div className="mb-4">{tutorialCard}</div>}
 
@@ -344,8 +388,9 @@ function App() {
               </aside>
             </div>
           </main>
+          )}
           <StatusFooter gameState={gameState} />
-        </>
+        </div>
       )}
       </div>
 

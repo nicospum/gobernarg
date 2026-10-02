@@ -230,7 +230,8 @@ export function GameHeader({
             <small className="text-[9px] text-sala-on-navy">al asumir</small>
           )}
         </div>
-        <div className={`hidden lg:flex flex-col gap-1 flex-none min-w-[96px] ${divider}`} title="Aprobación de gestión">
+        {/* Modo simple: la aprobación no se muestra (sigue en el motor). */}
+        <div className={`hidden ${detailed() ? 'lg:flex' : ''} flex-col gap-1 flex-none min-w-[96px] ${divider}`} title="Aprobación de gestión">
           <span className="text-[8px] font-bold tracking-[0.14em] text-sala-on-navy">APROBACIÓN</span>
           {detailed() ? (
             <strong className="text-[19px] leading-none font-mono">{apro}%</strong>

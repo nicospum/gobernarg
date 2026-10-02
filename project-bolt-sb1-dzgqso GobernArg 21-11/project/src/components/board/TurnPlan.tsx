@@ -43,7 +43,9 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
         </span>
       </div>
 
-      {selected.length === 0 ? (
+      {selected.length === 0 && simple ? (
+        <p className="px-4 py-3.5 border-b border-rule text-[12px] text-sala-muted">Elegí acciones en la mesa de decisiones para armar tu turno.</p>
+      ) : selected.length === 0 ? (
         <div className="text-center px-6 py-6 border-b border-rule">
           <div className="mx-auto mb-2.5 w-10 h-10 rounded-full border border-sala-blue/40 bg-sunken grid place-items-center text-sala-blue">
             <Crosshair size={19} />
@@ -105,7 +107,8 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
           {simple ? 'La caja queda en rojo: el Tesoro va a emitir.' : 'Alerta fiscal: la caja caerá en déficit y el Tesoro emitirá moneda en el próximo turno.'}
         </p>
       )}
-      {critical.map(text => (
+      {/* Modo simple: estos avisos van arriba del tablero (DefeatAlerts). */}
+      {!simple && critical.map(text => (
         <p key={text} role="alert" className="mx-4 mb-3 flex items-start gap-1.5 rounded-md bg-red-500/10 px-2.5 py-2 text-[11px] font-semibold text-sala-bad">
           <AlertTriangle size={13} className="mt-px flex-shrink-0" />
           {text}

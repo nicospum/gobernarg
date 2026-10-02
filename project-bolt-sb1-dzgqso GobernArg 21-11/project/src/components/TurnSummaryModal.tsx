@@ -19,6 +19,7 @@ import { ModalHeader } from './ModalHeader';
 import { useDialog } from '@/lib/useDialog';
 import { detailed } from '@/lite/config';
 import { topChanges } from '@/lib/simpleView';
+import { DefeatAlerts } from './board/StatusStrip';
 
 interface TurnSummaryModalProps {
   summary: TurnSummary;
@@ -97,6 +98,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
                 </section>
               );
             })()}
+            <DefeatAlerts gameState={gameState} />
             {record && (
               <p className="text-[14px] text-ink">
                 <b>Caja:</b> {fmtBudget(cajaFinal)}

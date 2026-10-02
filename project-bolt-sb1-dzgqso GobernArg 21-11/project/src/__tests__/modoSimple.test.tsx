@@ -11,7 +11,7 @@ import { CountryPanel } from '../components/CountryPanel';
 import { MetricsRow } from '../components/board/MetricsRow';
 import { ActionCard } from '../components/ActionCard';
 import { ActorsPanel } from '../components/ActorsPanel';
-import { kpiWord, simpleEffects, simpleIndicators } from '../lib/simpleView';
+import { simpleEffects, simpleIndicators } from '../lib/simpleView';
 import { POLICY_ACTIONS } from '../data/causal';
 
 const game = () => createNewGame({ archetype: 'politico', governorName: 'Ana', seed: 3, scenarioId: 'pais_en_calma' });
@@ -55,19 +55,19 @@ describe('modo simple', () => {
     expect(screen.getByText('Ciencia e innovación')).toBeTruthy();
   });
 
-  it('métricas: 4 sin conflictividad; con detalle, las 5', () => {
+  it('franja de arriba: voto en % y caja, más los 7 del país; sin aprobación ni gobernabilidad', () => {
     render(<MetricsRow gameState={game()} />);
-    expect(screen.queryByText('Conflictividad')).toBeNull();
-    expect(screen.getByText(/Meta para ganar/)).toBeTruthy();
-    // Aprobación y gobernabilidad en palabras; el voto sigue en %.
     const state = game();
-    expect(screen.getAllByText(kpiWord(state.causal.political.apro).word).length).toBeGreaterThan(0);
-    expect(screen.queryByText(`${Math.round(state.causal.political.apro)}%`)).toBeNull();
     expect(screen.getByText(`${Math.round(state.causal.political.iv)}%`)).toBeTruthy();
+    expect(screen.getByText(/meta 45%/)).toBeTruthy();
+    expect(screen.getByText('Caja')).toBeTruthy();
+    for (const name of ['Precios', 'Empleo', 'Bolsillo', 'Obras', 'Educación', 'Salud', 'Seguridad']) expect(screen.getByText(name)).toBeTruthy();
+    for (const name of ['Aprobación', 'Gobernabilidad', 'Conflictividad']) expect(screen.queryByText(name)).toBeNull();
     cleanup();
     LITE_FEATURES.modoDetallado = true;
     render(<MetricsRow gameState={game()} />);
     expect(screen.getByText('Conflictividad')).toBeTruthy();
+    expect(screen.getByText('Aprobación')).toBeTruthy();
   });
 
   it('tarjeta: efectos con flechas y sin números; con detalle, la de antes', () => {

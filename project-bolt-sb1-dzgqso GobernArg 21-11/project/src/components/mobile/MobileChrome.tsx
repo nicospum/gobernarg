@@ -16,6 +16,7 @@ import { MAX_TURNS, MILESTONES, MandateTimeline } from '../GameHeader';
 import { Sheet } from './Sheet';
 import { detailed } from '@/lite/config';
 import { kpiWord } from '@/lib/simpleView';
+import { StatusStrip } from '../board/StatusStrip';
 
 export type MobileTab = 'acciones' | 'pais' | 'actores';
 
@@ -93,6 +94,8 @@ const KPI_ACCENT: Record<string, string> = {
 
 /** Las 4 métricas políticas en tarjetas 2×2; tocarlas abre su explicación. */
 export function MobileKpis({ gameState }: { gameState: GameState }) {
+  // Modo simple: la franja de voto, caja y país, deslizable de costado.
+  if (!detailed()) return <StatusStrip gameState={gameState} mobile />;
   const all = indicatorCards(gameState);
   // Modo simple: voto, aprobación y gobernabilidad (la caja está en la barra de abajo).
   const cards = detailed() ? all : (['voto', 'aprobacion', 'gobernabilidad'] as const).map(id => all.find(c => c.id === id)!);

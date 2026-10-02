@@ -7,8 +7,7 @@ import { getValueRisk, riskLabel, type Risk } from '@/lib/risk';
 import { fmtBudget, fmtBudgetDelta } from '@/lib/format';
 import { history, type SeriesKey } from '@/lib/boardView';
 import { detailed } from '@/lite/config';
-import { kpiWord, trendWord } from '@/lib/simpleView';
-import { PARAMS } from '@/data/causal';
+import { StatusStrip } from './StatusStrip';
 
 /** Color de acento de cada métrica (variables de :root). */
 const ACCENT: Record<string, string> = {
@@ -102,51 +101,10 @@ function Metric({ id, label, value, note, status, statusTone, series, detail, va
   );
 }
 
-const WORD_TONE = { good: 'text-sala-good', neutral: 'text-sala-warn', bad: 'text-sala-bad' } as const;
-
-/** Modo simple: voto (con la meta) en %, aprobación y gobernabilidad en palabras, y caja; sin notas largas. */
-function SimpleMetricsRow({ gameState, className }: { gameState: GameState; className: string }) {
-  const byId = Object.fromEntries(indicatorCards(gameState).map(card => [card.id, card]));
-  const c = gameState.causal;
-  const lastCaja = c.records[c.records.length - 1]?.fiscal.cajaAntes;
-  const metric = (card: IndicatorCard, note: string, asWord = false) => {
-    const word = kpiWord(card.value);
-    return (
-      <Metric
-        key={card.id}
-        id={card.id}
-        label={card.label}
-        value={asWord ? word.word : `${Math.round(card.value)}${card.unit}`}
-        valueClass={asWord ? `text-[26px] leading-none font-bold tracking-tight ${WORD_TONE[word.tone]}` : undefined}
-        note={note}
-        // Sin la etiqueta de riesgo del primer turno: la palabra ya dice el nivel.
-        series={history(gameState, SERIES[card.id])}
-        detail={<div className="text-[11px] text-ink/80 max-w-[240px]">{card.tooltipDetail}</div>}
-      />
-    );
-  };
-  return (
-    <section aria-label="Indicadores principales" className={`grid grid-cols-2 lg:grid-cols-4 gap-px bg-rule border-b border-rule ${className}`}>
-      {metric(byId.voto, `Meta para ganar: ${PARAMS.VOTOS_PARA_GANAR}% · ${trendWord(byId.voto.trend).toLowerCase()}`)}
-      {metric(byId.aprobacion, trendWord(byId.aprobacion.trend), true)}
-      {metric(byId.gobernabilidad, trendWord(byId.gobernabilidad.trend), true)}
-      <Metric
-        id="caja"
-        label="Caja"
-        value={fmtBudget(c.caja)}
-        note={c.caja >= 0 ? 'Con fondos' : 'En rojo: el Tesoro emite'}
-        status={c.caja >= 0 ? 'Con fondos' : 'En rojo'}
-        statusTone={c.caja >= 0 ? 'text-sala-good' : 'text-sala-bad'}
-        series={history(gameState, 'caja')}
-        detail={<div className="text-[11px] text-ink/80 max-w-[240px]">La plata disponible del Tesoro. {lastCaja === undefined ? '' : trendWord(c.caja - lastCaja) + ' en el último turno.'}</div>}
-      />
-    </section>
-  );
-}
-
 /** Fila de las 5 métricas principales (aprobación, gobernabilidad, conflictividad, voto y caja). */
 export function MetricsRow({ gameState, className = '' }: { gameState: GameState; className?: string }) {
-  if (!detailed()) return <SimpleMetricsRow gameState={gameState} className={className} />;
+  // Modo simple: franja con voto, caja y los 7 indicadores del país (como en la B).
+  if (!detailed()) return <StatusStrip gameState={gameState} />;
   const cards = indicatorCards(gameState);
   const c = gameState.causal;
   const last = c.records[c.records.length - 1];
