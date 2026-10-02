@@ -106,13 +106,14 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
       {/* Encabezado */}
       <div className="flex items-start gap-2 mb-1.5">
         {icon ? (
-          <img src={icon} alt="" loading="lazy" decoding="async" className="w-10 h-10 rounded-full object-cover flex-shrink-0 bg-sunken ring-1 ring-rule" />
+          <img src={icon} alt="" loading="lazy" decoding="async" className={`${simple ? 'w-12 h-12' : 'w-10 h-10'} rounded-full object-cover flex-shrink-0 bg-sunken ring-1 ring-rule`} />
         ) : (
           <div className="w-10 h-10 rounded-full bg-sunken flex-shrink-0" />
         )}
         <div className="min-w-0 flex-1">
-          <div className="flex items-center justify-between gap-2">
-            <div className="font-bold text-[12px] text-ink leading-tight truncate" title={def.description}>
+          {/* Modo simple: el ánimo va debajo del nombre, así el nombre entra entero. */}
+          <div className={simple ? 'flex flex-col gap-0.5' : 'flex items-center justify-between gap-2'}>
+            <div className={`font-bold text-[12px] text-ink leading-tight ${simple ? '' : 'truncate'}`} title={def.description}>
               {def.name}
             </div>
             <span className={`text-[9px] uppercase tracking-[0.1em] font-bold ${riskColor(MOOD_RISK[mood])}`}>{mood}</span>
@@ -310,10 +311,15 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled, i
       {!detailed() ? (
         // Modo simple: lista plana, primero los más descontentos y, a igual
         // ánimo, los de más peso. Sin familias ni desplegables.
-        <div className="mx-3 mt-3 rounded-[10px] border border-rule overflow-hidden bg-surface divide-y divide-rule">
+        // En pantallas anchas, dos por fila.
+        <div className="mx-3 mt-3 rounded-[10px] border border-rule overflow-hidden grid grid-cols-1 xl:grid-cols-2 gap-px bg-rule">
           {simpleActorOrder(c).map(a => (
-            <ActorCard key={a} state={gameState} actor={a} onInteract={onInteract} onSelectAction={onSelectAction} disabled={disabled} />
+            <div key={a} className="bg-surface">
+              <ActorCard state={gameState} actor={a} onInteract={onInteract} onSelectAction={onSelectAction} disabled={disabled} />
+            </div>
           ))}
+          {/* Con un número impar, la última celda de la fila queda en blanco y no gris. */}
+          {ACTOR_IDS.length % 2 === 1 && <div className="hidden xl:block bg-surface" aria-hidden="true" />}
         </div>
       ) : (
       <div className="p-3 space-y-2">

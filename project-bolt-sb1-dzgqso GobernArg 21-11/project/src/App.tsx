@@ -16,7 +16,7 @@ import { EventModal } from './components/EventModal';
 import { CountryPanel } from './components/CountryPanel';
 import { clearSavedGame, loadGame, saveGame } from './lib/savegame';
 import { recordReelectionWin, recordScenarioWin } from './lib/progress';
-import { LITE_FEATURES } from './lite/config';
+import { LITE_FEATURES, detailed } from './lite/config';
 import { lazyModal } from './lib/lazyModal';
 import { useIsMobile } from './lib/useMediaQuery';
 import { MobileBottomBar, MobileHeader, MobileKpis, MobileMenu, type MobileTab } from './components/mobile/MobileChrome';
@@ -308,7 +308,8 @@ function App() {
           <main className="max-w-[1540px] mx-auto px-4 lg:px-7 pt-[18px] pb-11">
             {tutorialCard && <div className="mb-4">{tutorialCard}</div>}
 
-            <div className="grid gap-4 grid-cols-1 lg:grid-cols-[250px_minmax(0,1fr)] xl:grid-cols-[270px_minmax(0,1fr)_332px] items-start">
+            {/* Modo simple: acciones y actores con el mismo ancho; la izquierda, la más angosta. */}
+            <div className={`grid gap-4 grid-cols-1 lg:grid-cols-[250px_minmax(0,1fr)] ${detailed() ? 'xl:grid-cols-[270px_minmax(0,1fr)_332px]' : 'xl:grid-cols-[260px_minmax(0,1fr)_minmax(0,1fr)]'} items-start`}>
               <aside className="flex flex-col gap-4 min-w-0" aria-label="Estado del país y terreno político">
                 <CountryPanel gameState={gameState} index="01" />
                 <ElectoralPanel gameState={gameState} index="02" />

@@ -90,6 +90,19 @@ function ChipInline({ chip }: { chip: EffectChip }) {
   );
 }
 
+/**
+ * Modo simple en pantallas anchas: la columna de acciones mide lo mismo que
+ * la de actores, así que la tarjeta pasa a dos columnas: arriba la imagen y
+ * el texto; abajo "Qué mueve" a la izquierda y costo y botón a la derecha.
+ */
+const SIMPLE_XL = {
+  card: 'xl:grid-cols-[minmax(0,1fr)_128px] xl:items-start',
+  info: 'xl:col-span-2',
+  effects: 'xl:row-span-2 xl:border-l-0 xl:border-t xl:pt-3 xl:pl-0',
+  impact: 'xl:pt-3',
+  action: 'xl:col-start-2',
+};
+
 /** Modo simple: hasta 3 efectos con flecha y "ahora / más adelante", sin números. */
 function SimpleEffectList({ actionId }: { actionId: string }) {
   const list = simpleEffects(actionId);
@@ -197,7 +210,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
           onSelect();
         }
       }}
-      className={`group relative grid grid-cols-1 md:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)_96px] xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)_96px_104px] gap-3 md:gap-3.5 md:items-center rounded-[10px] border bg-surface pl-5 pr-3.5 py-4 transition-all duration-150 ${
+      className={`group relative grid grid-cols-1 md:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)_96px] ${simple ? SIMPLE_XL.card : 'xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)_96px_104px]'} gap-3 md:gap-3.5 md:items-center rounded-[10px] border bg-surface pl-5 pr-3.5 py-4 transition-all duration-150 ${
         isSelected
           ? 'border-sala-blue/60 bg-[rgb(250_253_255)] shadow-[0_7px_22px_rgb(36_107_206/0.1)] outline outline-2 outline-sala-cyan/30'
           : blocked
@@ -208,7 +221,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
       <span className="absolute left-0 top-3 bottom-3 w-1 rounded-r" style={{ background: `rgb(${accent})` }} aria-hidden="true" />
 
       {/* Información (con la ilustración: banda arriba en el celular, miniatura al lado en pantallas anchas) */}
-      <div className="min-w-0">
+      <div className={`min-w-0 ${simple ? SIMPLE_XL.info : ''}`}>
         <div className={illustration ? 'md:flex md:items-start md:gap-3.5' : ''}>
         {illustrationImg('block w-full h-[84px] rounded-md mb-3 md:mb-0 md:w-[96px] md:h-[72px] md:flex-none')}
         <div className="min-w-0 md:flex-1">
@@ -276,7 +289,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
       </div>
 
       {/* Efectos previstos */}
-      <div className="md:border-l border-t md:border-t-0 border-rule pt-3 md:pt-0 md:pl-3.5 min-w-0">
+      <div className={`md:border-l border-t md:border-t-0 border-rule pt-3 md:pt-0 md:pl-3.5 min-w-0 ${simple ? SIMPLE_XL.effects : ''}`}>
         <span className="sr-eyebrow block mb-1.5">{simple ? 'Qué mueve' : 'Efectos previstos'}</span>
         {simple ? (
           <SimpleEffectList actionId={action.id} />
@@ -297,7 +310,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
       </div>
 
       {/* Impacto fiscal */}
-      <div className="flex flex-wrap md:flex-nowrap md:flex-col items-center md:items-start gap-x-3 gap-y-1.5">
+      <div className={`flex flex-wrap md:flex-nowrap md:flex-col items-center md:items-start gap-x-3 gap-y-1.5 ${simple ? SIMPLE_XL.impact : ''}`}>
         <span className="sr-eyebrow">{simple ? 'Costo' : 'Impacto fiscal'}</span>
         <strong className={`text-[15px] font-mono ${caja > 0 ? 'text-sala-good' : caja === 0 ? 'text-sala-muted' : blockReason === 'No alcanza la caja.' ? 'text-sala-bad' : 'text-ink'}`}>
           {costLabel}
@@ -312,7 +325,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
       </div>
 
       {/* Acción */}
-      <div className="flex md:col-span-3 xl:col-span-1 items-center gap-2 xl:flex-col xl:items-stretch">
+      <div className={`flex md:col-span-3 xl:col-span-1 items-center gap-2 xl:flex-col xl:items-stretch ${simple ? SIMPLE_XL.action : ''}`}>
         {touch && (
           <button
             type="button"

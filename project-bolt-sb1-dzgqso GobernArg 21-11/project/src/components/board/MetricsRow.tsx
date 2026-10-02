@@ -110,7 +110,6 @@ function SimpleMetricsRow({ gameState, className }: { gameState: GameState; clas
   const c = gameState.causal;
   const lastCaja = c.records[c.records.length - 1]?.fiscal.cajaAntes;
   const metric = (card: IndicatorCard, note: string, asWord = false) => {
-    const risk = getValueRisk(card.value, card.max, card.inverseRisk);
     const word = kpiWord(card.value);
     return (
       <Metric
@@ -120,8 +119,7 @@ function SimpleMetricsRow({ gameState, className }: { gameState: GameState; clas
         value={asWord ? word.word : `${Math.round(card.value)}${card.unit}`}
         valueClass={asWord ? `text-[26px] leading-none font-bold tracking-tight ${WORD_TONE[word.tone]}` : undefined}
         note={note}
-        status={riskLabel(risk)}
-        statusTone={RISK_TONE[risk]}
+        // Sin la etiqueta de riesgo del primer turno: la palabra ya dice el nivel.
         series={history(gameState, SERIES[card.id])}
         detail={<div className="text-[11px] text-ink/80 max-w-[240px]">{card.tooltipDetail}</div>}
       />
