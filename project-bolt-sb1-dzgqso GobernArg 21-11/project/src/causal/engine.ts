@@ -1,5 +1,6 @@
 import { ACTORS, ACTIONS_PER_TURN, BALANCE, INDICATORS, POLICIES, TURNS_PER_TERM } from './catalog';
 import { activeAt, closeFinances, fiscalForecast } from './finance';
+import { fmtMoney } from './format';
 import { CAMPAIGN_COMMANDS, campaignActionPoints, campaignBlock, campaignPolicyExecuted, refreshPolitics, runCampaignCommand, settleCampaignClose } from './campaign';
 import { STRATEGIES } from './campaignCatalog';
 import { makeOffer, meetActor, offerReasons, resolveAgreements, signOffer, updateActorChannels } from './interactions';
@@ -86,7 +87,7 @@ export function policyAvailability(state: CausalState, actionId: string, params:
   const actionCost = policy.actionCost + (culturalSurcharge ? 1 : 0);
   if (state.phase !== 'governing') reasons.push('Primero resolvé el cierre del mandato.');
   if (state.actionPoints < actionCost) reasons.push(`Necesitás ${actionCost} punto${actionCost === 1 ? '' : 's'} de acción.`);
-  if (state.cash + 1e-8 < cashCost) reasons.push(`Necesitás ${cashCost} U de caja.`);
+  if (state.cash + 1e-8 < cashCost) reasons.push(`Necesitás ${fmtMoney(cashCost)} de caja.`);
   const allowedInCrisis = ['emitir_dinero', 'reunirse', 'negociar', 'firmar_acuerdo', 'reestructurar_deuda'];
   if (totalArrears(state) > 0 && !allowedInCrisis.includes(policy.id)) reasons.push('Hay obligaciones impagas: resolvé la financiación o renegociá la deuda.');
   const same = state.history.filter(item => contextKey(item.actionId, item.params) === contextKey(actionId, params));
@@ -129,7 +130,7 @@ export function policyAvailability(state: CausalState, actionId: string, params:
       case 'debt': {
         const principal = policy.effects.find(effect => effect.kind === 'loan' && effect.operation === 'originate')?.magnitude ?? 0;
         { const maximum = requirement.maximum + (state.campaign && state.profile === 'empresario' ? 500 : 0);
-          if (totalDebt(state) + principal > maximum) reasons.push(`La deuda posterior superaría ${maximum} U.`); }
+          if (totalDebt(state) + principal > maximum) reasons.push(`La deuda posterior superaría ${fmtMoney(maximum)}.`); }
         break;
       }
       case 'loan': {
@@ -292,7 +293,7 @@ function closeTurn(state: CausalState): void {
   if (state.waterCrisisTurns >= 2) state.waterCrisis = true;
   if (state.indicators.ambiente >= 40) state.waterCrisis = false;
   if (state.waterCrisis) messages.push('Crisis hídrica: fondos extraordinarios reducen 10% el costo inicial del plan hídrico.');
-  if (fiscal.arrears > 0) messages.push(`${state.crisisTurns >= 2 ? 'Crisis fiscal' : 'Advertencia fiscal'}: ${fiscal.arrears.toFixed(1)} U pendientes de pago. La deuda y los atrasos no se borran.`);
+  if (fiscal.arrears > 0) messages.push(`${state.crisisTurns >= 2 ? 'Crisis fiscal' : 'Advertencia fiscal'}: ${fmtMoney(fiscal.arrears)} pendientes de pago. La deuda y los atrasos no se borran.`);
   settleCampaignClose(state);
   state.reports.push({ turn: state.turn, term: state.term, executions: state.history.filter(item => item.turn === state.turn), fiscal,
     indicators, actors, socialComponent: state.socialComponent, messages });

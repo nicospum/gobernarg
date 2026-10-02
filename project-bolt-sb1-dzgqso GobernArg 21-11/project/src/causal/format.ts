@@ -1,7 +1,8 @@
 /**
  * Números para el jugador en formato argentino (glosario, traído de la
  * versión A): punto de miles, coma decimal y signo menos tipográfico. La caja
- * de esta versión se mide en unidades de juego ("U").
+ * se muestra como en la A Lite, en millones de pesos ("$2.000 M"): el motor
+ * sigue contando unidades de juego y 1 unidad = $1 M (solo cambia el formato).
  */
 const MINUS = '−';
 const NBSP = ' ';
@@ -15,8 +16,16 @@ export function fmtNum(n: number, decimals = 1): string {
   return (n < 0 && Number(fixed) !== 0 ? MINUS : '') + body;
 }
 
-/** Monto de caja: 1300 → "1.300 U". */
-export const fmtU = (n: number, decimals = 1) => `${fmtNum(n, decimals)}${NBSP}U`;
+/** Monto de caja en millones, sin decimales: 1300 → "$1.300 M"; -27,4 → "−$27 M". */
+export function fmtMoney(n: number): string {
+  const rounded = Math.round(n);
+  return `${rounded < 0 ? MINUS : ''}$${fmtNum(Math.abs(rounded), 0)}${NBSP}M`;
+}
+
+/** Variación de caja con signo: "+$250 M", "−$50 M", "$0 M". */
+export function fmtMoneyDelta(n: number): string {
+  return Math.round(n) > 0 ? `+${fmtMoney(n)}` : fmtMoney(n);
+}
 
 /** Porcentaje con un decimal: 38.12 → "38,1 %". */
 export const fmtPct = (n: number, decimals = 1) => `${fmtNum(n, decimals)}${NBSP}%`;

@@ -3,7 +3,7 @@ import { Activity, HeartHandshake, Pause, Play, Radio, ShieldCheck, Sun, Vote, W
 import { INDICATORS } from '../../causal/catalog';
 import { policyEffectsPreview } from '../../causal/engine';
 import { fiscalForecast } from '../../causal/finance';
-import { fmtScore, fmtSigned, fmtU } from '../../causal/format';
+import { fmtScore, fmtSigned, fmtMoney } from '../../causal/format';
 import type { CausalState, IndicatorId, PolicyDefinition } from '../../causal/types';
 
 export function PresidentialMark({ compact = false }: { compact?: boolean }) {
@@ -36,7 +36,7 @@ export function CommandStatus({ state }: { state: CausalState }) {
   ];
   const forecast = fiscalForecast(state)[0];
   return <section className="b-command-status" aria-label="Estado político y fiscal">{items.map(({ label, value, detail, icon: Icon, color, unit }) => <article className="b-kpi" key={label} style={{ '--metric-color': color } as CSSProperties}><div><p className="b-kpi-label"><Icon size={13} />{label}</p><strong className="b-kpi-value"><span key={value} className="b-value-update">{fmtScore(value)}</span><small>{unit}</small></strong><p className="b-kpi-detail">{detail}</p></div><Ring value={value} /></article>)}
-    <article className="b-kpi b-kpi-cash" style={{ '--metric-color': '#34d399' } as CSSProperties}><div><p className="b-kpi-label"><Wallet size={13} />Caja del Tesoro</p><strong className="b-kpi-value"><span key={state.cash} className="b-value-update">{fmtU(state.cash, 0)}</span></strong><p className="b-kpi-detail">Prevista T{forecast?.turn}: {forecast ? fmtU(forecast.cash, 0) : '—'}</p></div></article>
+    <article className="b-kpi b-kpi-cash" style={{ '--metric-color': '#34d399' } as CSSProperties}><div><p className="b-kpi-label"><Wallet size={13} />Caja del Tesoro</p><strong className="b-kpi-value"><span key={state.cash} className="b-value-update">{fmtMoney(state.cash)}</span></strong><p className="b-kpi-detail">Prevista T{forecast?.turn}: {forecast ? fmtMoney(forecast.cash) : '—'}</p></div></article>
   </section>;
 }
 

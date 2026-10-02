@@ -70,7 +70,7 @@ export const SCENARIOS: ScenarioDef[] = [
     era: 'Los traspasos de 2015, 2019 y 2023',
     difficulty: 'Difícil',
     description: 'El país que recibís arrastra inflación alta, pocos dólares y deuda. Exige ordenar sin romper.',
-    highlights: ['Inflación alta', 'Deuda de 1.500 U: la mitad vence en el turno 12', 'Caja justa: cada gasto se nota'],
+    highlights: ['Inflación alta', 'Deuda de $1.500 M: la mitad vence en el turno 12', 'Caja justa: cada gasto se nota'],
     image: { group: 'backgrounds', key: 'presidentialOffice' },
     suggestedDifficulty: 'hard',
     indicators: { inflacion: 58, actividad: 46, ingreso_real: 40, credito: 40, fiscal: 46, externo: 36, proteccion: 42, seguridad: 42, ciencia: 38, derechos: 52 },

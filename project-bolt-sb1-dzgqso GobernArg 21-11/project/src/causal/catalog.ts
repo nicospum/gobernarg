@@ -1251,7 +1251,7 @@ export const POLICIES: PolicyDefinition[] = [
   {
     "id": "prestamo_internacional",
     "name": "Préstamo externo a ocho turnos",
-    "description": "Obtiene 800 U con interés de 24 U por turno y amortización final.",
+    "description": "Obtiene $800 M con interés de $24 M por turno y amortización final.",
     "category": "Economía",
     "strategy": "Más caja y vencimiento explícito. No crea margen fiscal.",
     "actionCost": 1,
@@ -1301,7 +1301,7 @@ export const POLICIES: PolicyDefinition[] = [
   {
     "id": "prestamo_local",
     "name": "Préstamo local a seis turnos",
-    "description": "Obtiene 500 U. Interés 20 U por turno; principal al sexto.",
+    "description": "Obtiene $500 M. Interés de $20 M por turno; principal al sexto.",
     "category": "Economía",
     "strategy": "Menor plazo y desplazamiento temporal de crédito privado.",
     "actionCost": 1,

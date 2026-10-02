@@ -5,7 +5,7 @@ import { TURNS_PER_TERM } from '../../causal/catalog';
 import { DIFFICULTIES } from '../../causal/campaignCatalog';
 import { getScenario } from '../../causal/scenarios';
 import { policyName, totalDebt } from '../../causal/selectors';
-import { fmtPct, fmtU } from '../../causal/format';
+import { fmtPct, fmtMoney } from '../../causal/format';
 import { useIsMobile } from '../../lib/useMediaQuery';
 import { Dialog } from './Dialog';
 
@@ -39,7 +39,7 @@ export function gameSummary(state: CausalState, isMobile: boolean): string {
     `Mandato ${state.term}, turno ${inTerm} de ${TURNS_PER_TERM}`,
     `Resultado: ${result}`,
     c ? `Proyección de voto ${fmtPct(c.votes)} · Aprobación ${fmtPct(c.approval)} · Estabilidad ${Math.round(c.stability)} · Legitimidad ${Math.round(c.legitimacy)}` : null,
-    `Caja ${fmtU(state.cash, 0)} · Deuda ${fmtU(totalDebt(state), 0)}`,
+    `Caja ${fmtMoney(state.cash)} · Deuda ${fmtMoney(totalDebt(state))}`,
     `Políticas más usadas: ${top || 'ninguna'}`,
     minutes ? `Minutos desde que empezó la partida: ${minutes}` : null,
   ].filter(Boolean).join('\n');

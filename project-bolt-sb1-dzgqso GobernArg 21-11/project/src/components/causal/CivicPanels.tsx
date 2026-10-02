@@ -5,7 +5,7 @@ import { isProject, policyName } from '../../causal/selectors';
 import { IMAGES } from '../../utils/imageAssets';
 import { THUMBNAIL_ARCHETYPES } from '../../utils/iconThumbnails';
 import type { CausalState, GameCommand } from '../../causal/types';
-import { fmtPct, fmtScore } from '../../causal/format';
+import { fmtMoney, fmtPct, fmtScore } from '../../causal/format';
 
 export type CampaignDispatch = (type: GameCommand['type'], targetId?: string, choiceId?: string) => boolean;
 export interface CampaignProps { state: CausalState; onCommand: CampaignDispatch }
@@ -43,7 +43,7 @@ export function PoliticalStatus({ state, compact = false }: { state: CausalState
 export function ObjectivesPanel({ state }: { state: CausalState }) {
   const c = state.campaign;
   if (!c) return null;
-  return <section className="bg-card border border-border rounded-xl p-4"><h2 className="font-display text-lg font-bold">Objetivos de gobierno</h2><div className="grid md:grid-cols-3 gap-3 mt-3">{c.objectives.map(o => <div className="border border-border rounded-lg p-3" key={o.id}><p className={`text-sm font-semibold ${o.completed ? 'text-emerald-300' : ''}`}>{o.completed ? '✓ ' : ''}{o.title}</p><p className="text-xs text-muted-foreground leading-5 my-2">{o.description}</p><div className="bg-white/10 rounded h-1.5"><div className="bg-amber-300 h-full rounded" style={{ width: `${o.progress}%` }} /></div><p className="text-[10px] mt-2 text-muted-foreground">{o.progress.toFixed(0)}% · Aporte al cumplir: {o.reward} U</p></div>)}</div></section>;
+  return <section className="bg-card border border-border rounded-xl p-4"><h2 className="font-display text-lg font-bold">Objetivos de gobierno</h2><div className="grid md:grid-cols-3 gap-3 mt-3">{c.objectives.map(o => <div className="border border-border rounded-lg p-3" key={o.id}><p className={`text-sm font-semibold ${o.completed ? 'text-emerald-300' : ''}`}>{o.completed ? '✓ ' : ''}{o.title}</p><p className="text-xs text-muted-foreground leading-5 my-2">{o.description}</p><div className="bg-white/10 rounded h-1.5"><div className="bg-amber-300 h-full rounded" style={{ width: `${o.progress}%` }} /></div><p className="text-[10px] mt-2 text-muted-foreground">{o.progress.toFixed(0)}% · Aporte al cumplir: {fmtMoney(o.reward)}</p></div>)}</div></section>;
 }
 export function ProjectReports({ state }: { state: CausalState }) {
   const projects = state.history.filter(h => isProject(h.actionId));

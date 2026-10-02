@@ -1,6 +1,7 @@
 import { ACTIONS_PER_TURN, ACTORS, POLICIES } from './catalog';
 import { CAMPAIGN_EVENTS, DIFFICULTIES, STRATEGIES } from './campaignCatalog';
 import { clamp, isProject, totalArrears } from './selectors';
+import { fmtMoney } from './format';
 import type { CampaignDelta, Difficulty, Strategy } from './campaignTypes';
 import type { CausalState, GameCommand, IndicatorId, PolicyDefinition } from './types';
 
@@ -104,7 +105,7 @@ function progressObjectives(state: CausalState) {
       const id = `objective:${objective.id}`;
       state.effects.push({ id, executionId: id, effectId: id, actionId: objective.title, kind: 'ledger', target: 'revenue_once', operation: 'flow',
         magnitude: objective.reward, startTurn: state.turn + 1, endExclusive: state.turn + 2, lastAppliedTurn: null });
-      addNews(state, `Objetivo cumplido: ${objective.title}`, `Aporte extraordinario de ${objective.reward} U programado para el siguiente cierre.`);
+      addNews(state, `Objetivo cumplido: ${objective.title}`, `Aporte extraordinario de ${fmtMoney(objective.reward)} programado para el siguiente cierre.`);
     }
   });
 }
@@ -122,7 +123,7 @@ function checkDefeat(state: CausalState) {
   c.hyperinflationTurns = state.indicators.inflacion >= 95 && state.indicators.ingreso_real < 20 ? c.hyperinflationTurns + 1 : 0;
   const cases: [number, number, string][] = [
     [c.lowApprovalTurns, 2, 'Pérdida de apoyo: aprobación material menor a 25 durante dos cierres.'],
-    [c.insolvencyTurns, 3, 'Insolvencia: más de 600 U de atrasos durante tres cierres.'],
+    [c.insolvencyTurns, 3, 'Insolvencia: más de $600 M de atrasos durante tres cierres.'],
     [c.impeachmentTurns, 2, 'Juicio político: legitimidad menor a 20 y garantías menores a 25 durante dos cierres.'],
     [c.coupTurns, 3, 'Ruptura institucional: estabilidad menor a 15 y relación con el oficialismo menor a 25 durante tres cierres.'],
     [c.hyperinflationTurns, 2, 'Colapso inflacionario: inflación de 95 o más e ingreso real menor a 20 durante dos cierres.'],
@@ -243,7 +244,7 @@ export function runCampaignCommand(state: CausalState, cmd: GameCommand): string
     const event = CAMPAIGN_EVENTS.find(e => e.id === cmd.targetId)!;
     const choice = event.choices.find(o => o.id === cmd.choiceId);
     if (!choice) return 'Respuesta desconocida.';
-    if (state.cash < choice.cost) return `Necesitás ${choice.cost} U.`;
+    if (state.cash < choice.cost) return `Necesitás ${fmtMoney(choice.cost)}.`;
     recordExpense(state, cmd, `Evento: ${event.title} — ${choice.label}`, choice.cost);
     scheduleDelta(state, choice.effect, cmd.id, `Evento: ${event.title}`, state.turn);
     c.eventHistory.push({ id: event.id, turn: state.turn, choiceId: choice.id }); c.pendingEvent = null;
