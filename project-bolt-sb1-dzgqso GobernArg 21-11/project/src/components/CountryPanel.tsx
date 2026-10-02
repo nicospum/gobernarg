@@ -6,6 +6,8 @@ import { effective, viewRef } from '@/engine/causal';
 import { indicatorBand, inflationMonthly, type Tone } from '@/lib/causalText';
 import { countryAlerts } from '@/lib/boardView';
 import { InfoTooltip } from './InfoTooltip';
+import { detailed } from '@/lite/config';
+import { simpleIndicators, type SimpleIndicator } from '@/lib/simpleView';
 
 /**
  * Estado del país (15 indicadores del motor) agrupado en las 4 categorías
@@ -44,12 +46,54 @@ function ScoreRing({ ok, total }: { ok: number; total: number }) {
   );
 }
 
+const WORD_TEXT: Record<Tone, string> = { good: 'text-sala-good', bad: 'text-sala-bad', neutral: 'text-sala-warn' };
+
+function SimpleTrend({ ind }: { ind: SimpleIndicator }) {
+  if (ind.delta === null || Math.abs(ind.delta) < 0.4) return <Minus size={13} className="text-sala-dim" aria-label="estable" />;
+  const good = ind.delta > 0 === ind.goodWhenUp;
+  const cls = good ? 'text-sala-good' : 'text-sala-bad';
+  return ind.delta > 0
+    ? <TrendingUp size={14} className={cls} aria-label="sube" />
+    : <TrendingDown size={14} className={cls} aria-label="baja" />;
+}
+
+/** Modo simple: 7 renglones (6 indicadores y "Servicios del Estado") con palabra y flecha. */
+function SimpleCountryPanel({ gameState, compact, index }: { gameState: GameState; compact: boolean; index?: string }) {
+  const rows = simpleIndicators(gameState);
+  return (
+    <section id={compact ? undefined : 'panel-pais'} className="sr-panel scroll-mt-24" aria-label="Estado del país">
+      <div className="sr-panel-head">
+        <div>
+          <span className="sr-label">{index ? `${index} / ` : ''}Briefing</span>
+          <h2 className="sr-panel-title">Estado del país</h2>
+        </div>
+      </div>
+      <ul className="px-4 py-2">
+        {rows.map(ind => (
+          <li key={ind.key} className={`flex items-center justify-between gap-2 border-b border-rule last:border-b-0 ${compact ? 'min-h-[46px]' : 'min-h-[38px]'}`}>
+            <span className={`${compact ? 'text-[15px]' : 'text-[13px]'} text-ink`}>{ind.label}</span>
+            <span className="flex items-center gap-2 flex-shrink-0">
+              <b className={`${compact ? 'text-[14px]' : 'text-[12px]'} ${WORD_TEXT[ind.tone]}`}>{ind.word}</b>
+              <SimpleTrend ind={ind} />
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 /**
  * En la computadora es el "briefing" de la columna izquierda. En el celular
  * (`compact`) cada categoría es un grupo que se abre y se cierra, con un
  * resumen de cuántos indicadores están en rojo.
  */
 export function CountryPanel({ gameState, compact = false, index }: { gameState: GameState; compact?: boolean; index?: string }) {
+  if (!detailed()) return <SimpleCountryPanel gameState={gameState} compact={compact} index={index} />;
+  return <DetailedCountryPanel gameState={gameState} compact={compact} index={index} />;
+}
+
+function DetailedCountryPanel({ gameState, compact, index }: { gameState: GameState; compact: boolean; index?: string }) {
   const [openMacro, setOpenMacro] = useState<MacroCategory | null>('Economía');
   const c = gameState.causal;
   const ref = viewRef(c);

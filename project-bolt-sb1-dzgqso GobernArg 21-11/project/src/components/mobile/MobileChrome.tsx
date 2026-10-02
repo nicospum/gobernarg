@@ -14,6 +14,7 @@ import { InfoTooltip } from '../InfoTooltip';
 import { BudgetDetails, TrendChip, indicatorCards } from '../IndicatorsPanel';
 import { MAX_TURNS, MILESTONES, MandateTimeline } from '../GameHeader';
 import { Sheet } from './Sheet';
+import { detailed } from '@/lite/config';
 
 export type MobileTab = 'acciones' | 'pais' | 'actores';
 
@@ -91,9 +92,11 @@ const KPI_ACCENT: Record<string, string> = {
 
 /** Las 4 métricas políticas en tarjetas 2×2; tocarlas abre su explicación. */
 export function MobileKpis({ gameState }: { gameState: GameState }) {
-  const cards = indicatorCards(gameState);
+  const all = indicatorCards(gameState);
+  // Modo simple: voto, aprobación y gobernabilidad (la caja está en la barra de abajo).
+  const cards = detailed() ? all : (['voto', 'aprobacion', 'gobernabilidad'] as const).map(id => all.find(c => c.id === id)!);
   return (
-    <section aria-label="Indicadores principales" className="grid grid-cols-2 gap-px rounded-xl overflow-hidden border border-rule bg-rule">
+    <section aria-label="Indicadores principales" className={`grid ${detailed() ? 'grid-cols-2' : 'grid-cols-3'} gap-px rounded-xl overflow-hidden border border-rule bg-rule`}>
       {cards.map(card => {
         const risk = getValueRisk(card.value, card.max, card.inverseRisk);
         const pct = Math.min(100, Math.max(0, (card.value / card.max) * 100));
@@ -119,7 +122,7 @@ export function MobileKpis({ gameState }: { gameState: GameState }) {
             <button className="text-left bg-surface px-3.5 pt-2.5 pb-3 min-w-0 border-t-[3px]" style={{ borderTopColor: `rgb(${accent})` }}>
               <div className="flex items-center justify-between gap-1">
                 <span className="sr-eyebrow truncate" style={{ color: `rgb(${accent})` }}>{SHORT_LABEL[card.id] ?? card.label}</span>
-                <TrendChip value={card.trend} inverse={card.inverseRisk} />
+                {detailed() && <TrendChip value={card.trend} inverse={card.inverseRisk} />}
               </div>
               <div className="text-[24px] font-bold tracking-tight leading-none mt-1.5 text-ink font-mono">
                 {Math.round(card.value)}
