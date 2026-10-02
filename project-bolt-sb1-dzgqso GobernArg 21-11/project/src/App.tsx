@@ -8,7 +8,7 @@ import { WelcomeScreen } from './components/WelcomeScreen';
 import { ActorsPanel } from './components/ActorsPanel';
 import { CommandStrip } from './components/board/CommandStrip';
 import { MetricsRow } from './components/board/MetricsRow';
-import { CivicBanner } from './components/board/CivicBanner';
+import { CivicBand, CivicBanner } from './components/board/CivicBanner';
 import { TurnPlan } from './components/board/TurnPlan';
 import { ElectoralPanel } from './components/board/ElectoralPanel';
 import { StatusFooter } from './components/board/StatusFooter';
@@ -306,6 +306,8 @@ function App() {
             onOpenHelp={() => setShowHelp(true)}
             onOpenFeedback={() => setShowFeedback(true)}
           />
+          {/* Modo simple: la banda cívica va arriba, a todo el ancho, antes de la franja. */}
+          {simple && <CivicBand />}
           <CommandStrip gameState={gameState} />
           <MetricsRow gameState={gameState} />
 
@@ -318,7 +320,6 @@ function App() {
               <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 items-start xl:items-stretch xl:grid-rows-[minmax(0,1fr)] xl:flex-1 xl:min-h-0">
                 <div className="flex flex-col gap-4 min-w-0 xl:min-h-0 xl:overflow-y-auto xl:pr-1 [scrollbar-gutter:stable] [&>*]:shrink-0" data-columna="acciones">
                   {tutorialCard}
-                  <CivicBanner />
                   <ControlPanel
                     gameState={gameState}
                     onActionSelect={handleActionSelect}

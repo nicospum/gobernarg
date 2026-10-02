@@ -13,6 +13,7 @@ import {
   legForLaws,
   lawThreshold,
 } from '@/engine/causal';
+import { detailed } from '@/lite/config';
 
 interface ControlPanelProps {
   gameState: GameState;
@@ -150,7 +151,8 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction, index, 
             {inCategory.length === 0 ? 'No hay acciones en esta categoría.' : 'Todas las acciones de esta categoría están bloqueadas por ahora.'}
           </div>
         ) : (
-          <div className="flex flex-col gap-2.5">
+          // Modo simple en pantallas anchas: dos tarjetas por fila.
+          <div className={detailed() ? 'flex flex-col gap-2.5' : 'grid grid-cols-1 xl:grid-cols-2 gap-2.5'}>
             {filtered.map((av) => (
               <ActionCard
                 key={av.action.id}

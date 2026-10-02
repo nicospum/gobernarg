@@ -96,11 +96,13 @@ function ChipInline({ chip }: { chip: EffectChip }) {
  * el texto; abajo "Qué mueve" a la izquierda y costo y botón a la derecha.
  */
 const SIMPLE_XL = {
-  card: 'xl:grid-cols-[minmax(0,1fr)_128px] xl:items-start',
-  info: 'xl:col-span-2',
-  effects: 'xl:row-span-2 xl:border-l-0 xl:border-t xl:pt-3 xl:pl-0',
-  impact: 'xl:pt-3',
-  action: 'xl:col-start-2',
+  card: 'xl:grid-cols-1 xl:items-start xl:content-start xl:gap-2.5',
+  info: '',
+  infoRow: 'xl:block',
+  image: 'xl:w-full xl:h-[120px] xl:mb-3',
+  effects: 'xl:border-l-0 xl:border-t xl:pt-2.5 xl:pl-0',
+  impact: 'xl:flex-row xl:flex-wrap xl:items-center xl:gap-x-3 xl:pt-1',
+  action: '',
 };
 
 /** Modo simple: hasta 3 efectos con flecha y "ahora / más adelante", sin números. */
@@ -222,8 +224,8 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
 
       {/* Información (con la ilustración: banda arriba en el celular, miniatura al lado en pantallas anchas) */}
       <div className={`min-w-0 ${simple ? SIMPLE_XL.info : ''}`}>
-        <div className={illustration ? 'md:flex md:items-start md:gap-3.5' : ''}>
-        {illustrationImg('block w-full h-[84px] rounded-md mb-3 md:mb-0 md:w-[96px] md:h-[72px] md:flex-none')}
+        <div className={illustration ? `md:flex md:items-start md:gap-3.5 ${simple ? SIMPLE_XL.infoRow : ''}` : ''}>
+        {illustrationImg(`block w-full h-[84px] rounded-md mb-3 md:mb-0 md:w-[96px] md:h-[72px] md:flex-none ${simple ? SIMPLE_XL.image : ''}`)}
         <div className="min-w-0 md:flex-1">
         <div className="flex items-center gap-x-2 gap-y-1 flex-wrap">
           <span className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.11em] ${style.color}`}>

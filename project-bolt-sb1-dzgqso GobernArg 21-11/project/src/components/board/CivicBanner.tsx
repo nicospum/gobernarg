@@ -1,6 +1,32 @@
 import { Flag } from 'lucide-react';
 import civic from '../../assets/images/banners/argentina-civic.webp';
 
+/**
+ * Banda cívica a todo el ancho y baja, arriba de la franja de indicadores
+ * (modo simple en escritorio).
+ */
+export function CivicBand() {
+  return (
+    <div className="relative h-[96px] overflow-hidden bg-sala-navy flex-none">
+      <img
+        src={civic}
+        alt="Arquitectura cívica argentina: el Congreso y la Casa Rosada"
+        className="absolute inset-0 w-full h-full object-cover object-[center_40%] [filter:saturate(1.15)_contrast(1.05)]"
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgb(var(--navy)/0.9)_0%,rgb(var(--navy-2)/0.45)_50%,rgb(var(--navy)/0.15)_100%)]" />
+      <div className="relative h-full max-w-[1540px] mx-auto px-4 lg:px-7 flex items-center justify-between gap-4 text-white">
+        <div className="flex flex-col gap-1.5">
+          <span className="sr-label !text-sala-sky">República Argentina · Mesa de decisiones</span>
+          <strong className="text-[22px] leading-tight font-bold tracking-tight">Decidir también es construir país.</strong>
+        </div>
+        <div className="flex items-center gap-1.5 rounded-md border border-white/60 px-2.5 py-1.5 text-[10px] font-extrabold tracking-[0.1em]">
+          <Flag size={15} /> ARG
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /** Banner cívico de la mesa de decisiones (decorativo). */
 export function CivicBanner() {
   return (
