@@ -1,11 +1,11 @@
 import type { CSSProperties } from 'react';
-import { Activity, ArrowDown, ArrowRight, ArrowUp, CalendarClock, Landmark, Wallet } from 'lucide-react';
+import { Activity, AlertTriangle, ArrowDown, ArrowRight, ArrowUp, CalendarClock, Landmark, Wallet } from 'lucide-react';
 import { policyEffectsPreview } from '../../causal/engine';
 import { AGREEMENT_LABELS } from '../../causal/interactions';
 import { actorName, totalArrears, totalDebt } from '../../causal/selectors';
 import { fmtMoney, fmtMoneyDelta } from '../../causal/format';
 import type { CausalState, IndicatorId, PolicyDefinition, TurnReport } from '../../causal/types';
-import { describeIndicator, effectArrows, effectIsGood, governabilityWord, inTurns, SHORT_NAMES, TONE_CLASS, trend, VISIBLE_INDICATORS } from '../../lite/present';
+import { defeatWarnings, describeIndicator, effectArrows, effectIsGood, governabilityWord, inTurns, SHORT_NAMES, TONE_CLASS, trend, VISIBLE_INDICATORS } from '../../lite/present';
 
 /**
  * Paneles de la Lite (LITE_FEATURES.modoDetallado = false): lo mínimo para
@@ -99,4 +99,11 @@ export function LiteReport({ report }: { report: TurnReport }) {
     <p className="b-lite-cash"><Wallet size={15} /> Caja: <strong>{fmtMoney(report.fiscal.closingCash)}</strong> <span className={cashDelta >= 0 ? 'text-emerald-300' : 'text-rose-300'}>({fmtMoneyDelta(cashDelta)} en el trimestre)</span></p>
     {report.messages.slice(0, 3).map((message, index) => <p key={index} className="text-sm rounded bg-blue-400/5 border border-border p-3">{message}</p>)}
   </>;
+}
+
+/** Avisos de derrota en camino (modo simple): nadie pierde sin aviso. */
+export function LiteDefeatAlerts({ state }: { state: CausalState }) {
+  const warnings = defeatWarnings(state);
+  if (!warnings.length) return null;
+  return <div className="space-y-2" aria-label="Peligro para tu gobierno">{warnings.map(warning => <p key={warning.id} role="alert" className={`b-lite-alert ${warning.critical ? 'b-lite-alert-critical' : ''}`}><AlertTriangle size={17} className="shrink-0" /><span>{warning.text}</span></p>)}</div>;
 }

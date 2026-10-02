@@ -19,7 +19,7 @@ import { AxesPanel, ObjectivesPanel, PoliticalSidebar, PoliticalStatus, ProfileC
 import { CampaignFlow } from './CampaignFlow';
 import { HowToPlay, TutorialCard, useTutorial } from './Tutorial';
 import { FeedbackForm } from './FeedbackForm';
-import { LiteBriefing, LiteCommitments, LiteGovernability, LiteReport, LiteTreasury } from './LitePanels';
+import { LiteBriefing, LiteCommitments, LiteDefeatAlerts, LiteGovernability, LiteReport, LiteTreasury } from './LitePanels';
 import { LITE_FEATURES } from '../../lite/config';
 import { governabilityWord } from '../../lite/present';
 import { campaignBlock } from '../../causal/campaign';
@@ -127,7 +127,7 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
   const overlays = <>
     <CampaignFlow state={state} onCommand={onCommand} onRestart={onRestart} onFeedback={() => setFeedback(true)} />
     {selectedIndicator && <Dialog title={selectedIndicator.name} onClose={closeIndicator}><p className="text-sm leading-6">{selectedIndicator.description}</p><div className="grid grid-cols-2 gap-3 text-sm"><p className="bg-background/50 p-3 rounded">Alto: {selectedIndicator.high}</p><p className="bg-background/50 p-3 rounded">Bajo: {selectedIndicator.low}</p></div>{lastReport?.indicators.filter(trace => trace.id === indicator).map(trace => <div key={trace.id}><h3 className="text-sm font-semibold mb-3">Último cierre: {fmtScore(trace.before)} → {fmtScore(trace.after)}</h3>{trace.contributions.map((contribution, index) => <p key={`${contribution.sourceId}:${index}`} className="flex justify-between gap-3 text-sm py-2 border-b border-border"><span>{contribution.label}</span><span className="font-mono shrink-0">{fmtSigned(contribution.amount)}</span></p>)}</div>)}</Dialog>}
-    {review && !campaignOpen && <Dialog title={`Cierre del turno ${review.turn}`} onClose={closeReview}>{closingArt && <img src={closingArt} alt="" className="w-full h-32 sm:h-40 object-cover rounded-xl" />}{detailed ? <ReportContent report={review} /> : <LiteReport report={review} />}<button type="button" className="causal-primary w-full" onClick={closeReview}>Seguir gobernando</button></Dialog>}
+    {review && !campaignOpen && <Dialog title={`Cierre del turno ${review.turn}`} onClose={closeReview}>{closingArt && <img src={closingArt} alt="" className="w-full h-32 sm:h-40 object-cover rounded-xl" />}{detailed ? <ReportContent report={review} /> : <><LiteDefeatAlerts state={state} /><LiteReport report={review} /></>}<button type="button" className="causal-primary w-full" onClick={closeReview}>Seguir gobernando</button></Dialog>}
     {menu && <Dialog title="Menú" onClose={closeMenu}><div className="flex flex-col">{menuItems.map(([label, Icon, action, danger]) => <button key={label} type="button" className={`flex items-center gap-3 min-h-[52px] px-2 rounded text-left hover:bg-white/10 ${danger ? 'text-red-300 border-t border-border mt-2 pt-2' : ''}`} onClick={() => { setMenu(false); action(); }}><Icon size={18} /> {label}</button>)}</div></Dialog>}
     {help && <HowToPlay onClose={closeHelp} />}
     {feedback && <FeedbackForm state={state} onClose={closeFeedback} />}
@@ -148,6 +148,7 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
       </header>
       <main className="px-3 pt-3 pb-[calc(9rem+env(safe-area-inset-bottom))] space-y-4">
         {detailed && <NewsWire state={state} />}<PoliticalStatus state={state} compact />
+        {!detailed && <LiteDefeatAlerts state={state} />}
         {tutorialCard}
         {savingAlert}
         {detailed ? <>
@@ -189,7 +190,7 @@ export function CausalDashboard({ state, onExecute, onCommand, onRestart, saving
       <section className="b-decisions-column">
         <nav className="b-desk-tabs" aria-label="Secciones del despacho">{([['decisiones', 'Decisiones', LayoutGrid], ['finanzas', 'Tesoro', Wallet], ['agenda', 'Gestión', NotebookPen]] as const).filter(([id]) => detailed || id !== 'agenda').map(([id, label, Icon]) => <button type="button" key={id} aria-current={deskTab === id ? 'page' : undefined} onClick={() => { setDeskTab(id); setPreview(null); }}><Icon size={15} />{label}</button>)}<span>{scenarioName ?? 'País inicial'}</span></nav>
         <div className="b-desk-content b-scroll-region" key={deskTab}>
-          {tutorialCard}{savingAlert}
+          {!detailed && <LiteDefeatAlerts state={state} />}{tutorialCard}{savingAlert}
           {deskTab === 'decisiones' && <><div className="b-congress-brief"><Landmark size={17} /><p><strong>Congreso de la Nación</strong><span>{detailed ? `${state.campaign?.seats.oficialismo ?? 40} bancas propias · ${state.campaign?.seats.aliados ?? 15} aliadas · El apoyo se consulta para cada ley.` : <><b className={`b-lite-inline ${governabilityWord(state).tone}`}>{governabilityWord(state).word}</b> · Las leyes necesitan mayoría.</>}</span></p></div><PolicyPanel state={state} onExecute={onExecute} onPreview={setPreview} /></>}
           {deskTab === 'finanzas' && (detailed ? <>{cashAndDebt}{futureEffects}{governability}</> : <><LiteTreasury state={state} /><LiteCommitments state={state} /><LiteGovernability state={state} /></>)}
           {detailed && deskTab === 'agenda' && <>{hero}<PoliticalSidebar state={state} onCommand={onCommand} view="updates" /><ObjectivesPanel state={state} /><ProjectReports state={state} /><AxesPanel state={state} /></>}

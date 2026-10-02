@@ -97,3 +97,26 @@ export function governabilityWord(state: CausalState): { word: string; tone: str
   if (best >= 40) return { word: 'Te faltan pocos votos', tone: TONE_CLASS.bad };
   return { word: 'Congreso en contra', tone: TONE_CLASS.critical };
 }
+
+/**
+ * Derrotas en camino, en palabras (modo simple): el motor lleva un contador por
+ * cada causa de derrota (campaign.checkDefeat). Con el contador en marcha se
+ * avisa cuántos cierres quedan; cerca del umbral, que puede pasar.
+ */
+export interface DefeatWarning { id: string; critical: boolean; text: string }
+export function defeatWarnings(state: CausalState): DefeatWarning[] {
+  const c = state.campaign;
+  if (!c || state.phase === 'ended') return [];
+  const arrears = state.arrears.reduce((sum, item) => sum + item.amount, 0);
+  const cases: [string, number, number, boolean, string][] = [
+    // id, contador, cierres que hacen perder, ¿cerca del umbral?, qué pasa
+    ['approval', c.lowApprovalTurns, 2, c.approval < 30, 'La gente está muy enojada con tu gobierno'],
+    ['insolvency', c.insolvencyTurns, 3, arrears > 0, 'No te alcanza la plata para pagar lo que debés'],
+    ['impeachment', c.impeachmentTurns, 2, c.legitimacy < 25 && state.indicators.derechos < 30, 'Se derrumba la confianza en las instituciones y te amenaza un juicio político'],
+    ['coup', c.coupTurns, 3, c.stability < 20 && state.actors.oficialismo.relationship < 30, 'Tu gobierno pierde el control: hay conflictos por todos lados y tu propio partido se aleja'],
+    ['hyperinflation', c.hyperinflationTurns, 2, state.indicators.inflacion >= 90 && state.indicators.ingreso_real < 25, 'Los precios están fuera de control y la plata no alcanza para nada'],
+  ];
+  return cases.filter(([, count, , near]) => count > 0 || near).map(([id, count, limit, , what]) => count > 0
+    ? { id, critical: true, text: `${what}: si sigue así, perdés ${inTurns(limit - count)}.` }
+    : { id, critical: false, text: `${what}. Si empeora, podés perder la presidencia.` });
+}
