@@ -9,7 +9,8 @@ import {
   ListChecks,
 } from 'lucide-react';
 import { GameState, TurnSummary } from '../types/game';
-import { screenImage } from '@/lib/liteImages';
+import { actionImage, screenImage } from '@/lib/liteImages';
+import type { TurnRecord } from '@/engine/causal';
 import { fmtBudgetDelta, fmtBudget } from '@/lib/format';
 import { CAUSAL_ACTIONS_BY_ID, INDICATORS } from '@/data/causal';
 import { actorReactions, indicatorChanges } from '@/lib/turnExplain';
@@ -23,6 +24,7 @@ import { DefeatAlerts } from './board/StatusStrip';
 import { PendingPolicies } from './board/PendingPolicies';
 import { calendarFor, periodCaption } from '@/lib/calendar';
 import { KnownDeadlines } from './board/KnownDeadlines';
+import { ManagementActivityOutcome } from './ManagementActivityNotice';
 
 interface TurnSummaryModalProps {
   summary: TurnSummary;
@@ -36,6 +38,33 @@ function Delta({ value, suffix = '' }: { value: number; suffix?: string }) {
     <span className={`font-mono font-bold ${r > 0 ? 'text-emerald-400' : r < 0 ? 'text-red-400' : 'text-muted-foreground'}`}>
       {r > 0 ? '+' : ''}{r}{suffix}
     </span>
+  );
+}
+
+/** Fotos de decisiones realmente ejecutadas; no de las opciones del catálogo. */
+function PolicyImages({ record }: { record: TurnRecord | null }) {
+  const ids = [...new Set(record?.actions
+    .filter(action => !action.suspended && !action.forced)
+    .map(action => action.actionId) ?? [])];
+  const images = ids.flatMap(id => {
+    const src = actionImage(id);
+    return src ? [{ id, src, name: CAUSAL_ACTIONS_BY_ID[id]?.name ?? id }] : [];
+  });
+  if (images.length === 0) return null;
+  return (
+    <section aria-label="Imágenes de las medidas ejecutadas">
+      <h3 className="sr-eyebrow block mb-2 !text-sala-muted">Medidas del cierre</h3>
+      <ul className="grid grid-cols-1 sm:grid-cols-2 items-start gap-2">
+        {images.map(image => (
+          <li key={image.id}>
+            <figure className="flex items-center gap-3 rounded-lg bg-sunken/60 p-2">
+              <img src={image.src} alt="" loading="lazy" decoding="async" className="w-24 h-16 shrink-0 rounded-md object-cover" />
+              <figcaption className="min-w-0 text-[12px] leading-snug font-medium text-ink">{image.name}</figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 
@@ -79,6 +108,8 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
                 ? record.actions.map(a => `${CAUSAL_ACTIONS_BY_ID[a.actionId]?.name ?? a.actionId}${a.forced ? ' (forzada)' : a.suspended ? ' (suspendida)' : ''}`).join(', ')
                 : `nada nuevo este ${periodLabel}.`}
             </p>
+            <ManagementActivityOutcome record={record} simple={!detailed()} />
+            <PolicyImages record={record} />
             {record && political && (() => {
               const top = topChanges(record, political);
               return (
@@ -144,6 +175,9 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
               )}
             </section>
           )}
+
+          <ManagementActivityOutcome record={record} simple={!detailed()} />
+          <PolicyImages record={record} />
 
           {/* País */}
           {changes.length > 0 && (

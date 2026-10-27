@@ -14,7 +14,6 @@ import { Sheet } from './mobile/Sheet';
 import { Tooltip, TooltipContent } from './Tooltip';
 import { fmtBudget } from '@/lib/format';
 import { UI_CATEGORY_STYLES } from '@/data/categoryStyles';
-import { actionImage } from '@/lib/liteImages';
 import { detailed } from '@/lite/config';
 import { actionFiscalCommitments } from '@/lib/actionCommitments';
 import { calendarText, type CalendarId } from '@/lib/calendar';
@@ -75,14 +74,11 @@ function ChipInline({ chip }: { chip: EffectChip }) {
 
 /**
  * Modo simple desde 1024 px: la columna de acciones es angosta (y desde 1280
- * van dos tarjetas por fila), así que la tarjeta se apila: imagen, texto,
+ * van dos tarjetas por fila), así que la tarjeta se apila: descripción,
  * "Qué mueve", y costo, riesgo y botón abajo.
  */
 const SIMPLE_XL = {
   card: 'lg:grid-cols-1 lg:items-start lg:content-start lg:gap-2.5',
-  info: '',
-  infoRow: 'lg:block',
-  image: 'lg:w-full lg:h-[120px] lg:mb-3',
   effects: 'lg:border-l-0 lg:border-t lg:pt-2.5 lg:pl-0',
   impact: 'lg:flex-row lg:flex-wrap lg:items-center lg:gap-x-3 lg:pt-1',
   action: 'lg:col-span-1 lg:flex-row lg:items-center',
@@ -122,8 +118,6 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
   const playerNote = calendarText(ACTION_PLAYER_NOTES[action.id] ?? action.strategic ?? '', calendar);
   const riskText = calendarText(ACTION_RISK_TEXT[action.id] ?? action.risksText ?? '', calendar);
   const [showDetail, setShowDetail] = useState(false);
-  // Ilustración de la política (src/lite/imageMap.ts); no todas tienen.
-  const illustration = actionImage(action.id);
   // Modo simple (LITE_FEATURES.modoDetallado = false): sin números ni plazos.
   const simple = !detailed();
   const favorLine = (winners.length > 0 || losers.length > 0) && (
@@ -133,8 +127,6 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
       {losers.length > 0 && <><b className="text-sala-bad">Perjudica:</b> {losers.slice(0, 2).map(a => ACTORS[a].shortName).join(', ')}</>}
     </p>
   );
-  const illustrationImg = (cls: string) =>
-    illustration ? <img src={illustration} alt="" loading="lazy" decoding="async" className={`object-cover bg-sunken ${cls}`} /> : null;
 
   const details = (
     <div className="flex flex-col gap-1.5 max-w-[280px]">
@@ -200,11 +192,8 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
     >
       <span className="absolute left-0 top-3 bottom-3 w-1 rounded-r" style={{ background: `rgb(${accent})` }} aria-hidden="true" />
 
-      {/* Información (con la ilustración: banda arriba en el celular, miniatura al lado en pantallas anchas) */}
-      <div className={`min-w-0 ${simple ? SIMPLE_XL.info : ''}`}>
-        <div className={illustration ? `md:flex md:items-start md:gap-3.5 ${simple ? SIMPLE_XL.infoRow : ''}` : ''}>
-        {illustrationImg(`block w-full h-[84px] rounded-md mb-3 md:mb-0 md:w-[96px] md:h-[72px] md:flex-none ${simple ? SIMPLE_XL.image : ''}`)}
-        <div className="min-w-0 md:flex-1">
+      {/* Información: los iconos de categoría identifican la política al elegirla. */}
+      <div className="min-w-0">
         <div className="flex items-center gap-x-2 gap-y-1 flex-wrap">
           <span className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.11em] ${style.color}`}>
             <img src={style.imageSrc} alt="" className="w-3.5 h-3.5 object-contain" />
@@ -241,8 +230,6 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
         </div>
         <h3 className="text-[16px] font-bold text-ink leading-snug mt-2">{action.name}</h3>
         <p className="text-[12px] text-sala-muted leading-snug mt-1">{calendarText(action.description, calendar)}</p>
-        </div>
-        </div>
         {COALITION_ACTIONS[action.id] && (
           <p className="mt-2 text-[11px] text-sala-warn leading-snug bg-amber-500/10 px-2 py-1 rounded">
             Abre una interna en tu partido (+{COALITION_ACTIONS[action.id]}): tus políticas rinden menos y cuestan más.
@@ -352,7 +339,6 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
               </button>
             }
           >
-            {illustrationImg('w-full aspect-[2/1] rounded-lg mb-3')}
             <p className="text-[14px] text-ink/80 mb-3">{calendarText(action.description, calendar)}</p>
             {details}
           </Sheet>
