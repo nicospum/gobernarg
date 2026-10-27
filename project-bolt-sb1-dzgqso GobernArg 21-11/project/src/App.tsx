@@ -18,6 +18,7 @@ import { CountryPanel } from './components/CountryPanel';
 import { clearSavedGame, loadGame, saveGame, rehydrate, type SavedGame } from './lib/savegame';
 import { SaveControls } from './components/SaveControls';
 import { periodCaption } from './lib/calendar';
+import { isNewScenarioAvailable } from './lib/editionAccess';
 import { recordReelectionWin, recordScenarioWin } from './lib/progress';
 import { LITE_FEATURES, detailed } from './lite/config';
 import { lazyModal } from './lib/lazyModal';
@@ -132,7 +133,7 @@ function App() {
 
   // Nueva partida en una sola pantalla: se arranca directo en el tablero.
   const handleGameStart = ({ archetype, governorName, avatar, scenarioId }: NewGameChoice) => {
-    if (!governorName.trim()) return;
+    if (!governorName.trim() || !isNewScenarioAvailable(scenarioId)) return;
     const newState = createNewGame({ archetype, governorName, avatar, scenarioId });
     markGameStart();
     setGameState(newState);

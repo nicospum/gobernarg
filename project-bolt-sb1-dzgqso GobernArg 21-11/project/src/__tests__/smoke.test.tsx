@@ -52,8 +52,9 @@ describe('Prueba de humo de la interfaz', { timeout: 30000 }, () => {
     await click(screen.getByRole('radio', { name: 'Avatar 3' }));
     expect(screen.getByRole('radio', { name: 'Avatar 3' }).getAttribute('aria-checked')).toBe('true');
     await click(screen.getByRole('radio', { name: /^Sindicalista/ }));
-    // Light recupera Fácil; Normal sigue elegido de entrada.
-    expect(screen.getAllByRole('radio', { name: /^(Fácil|Normal|Argentina)/ })).toHaveLength(3);
+    // La entrada pública ofrece dos niveles, con Normal elegido de entrada.
+    expect(screen.getAllByRole('radio', { name: /^(Normal|Argentina)/ })).toHaveLength(2);
+    expect(screen.queryByRole('radio', { name: /^Fácil/ })).toBeNull();
     expect(screen.getByRole('radio', { name: /^Normal/ }).getAttribute('aria-checked')).toBe('true');
     await click(screen.getByRole('radio', { name: /^Argentina/ }));
     await click(screen.getByRole('button', { name: /^Empezar$/ }));

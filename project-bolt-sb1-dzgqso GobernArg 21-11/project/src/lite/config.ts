@@ -20,9 +20,9 @@ export interface LiteFeatures {
    */
   modoDetallado: boolean;
   /**
-   * Nivel Fácil ("País en calma"). Apagado: "Nueva partida" ofrece Normal y
-   * Argentina, y los bots de playtest juegan esos dos. Las partidas guardadas
-   * en Fácil siguen cargando (el escenario sigue en los datos).
+   * Catálogo interno de Fácil ("País en calma") para herramientas y simulaciones.
+   * No habilita nuevas partidas públicas: editionAccess ofrece sólo Normal y
+   * Argentina. Las partidas guardadas en Fácil siguen cargando.
    */
   nivelFacil: boolean;
 }
@@ -32,14 +32,14 @@ export const LITE_FEATURES: LiteFeatures = {
   escenariosHistoricos: false,
   // Para ver todos los números como antes: true.
   modoDetallado: false,
-  // Entrada amable; Normal sigue siendo el nivel elegido de entrada.
+  // Catálogo interno para herramientas; la entrada pública usa lib/editionAccess.
   nivelFacil: true,
 };
 
 /** ¿Se muestra la pantalla con todos los datos? (ver `modoDetallado`). */
 export const detailed = () => LITE_FEATURES.modoDetallado;
 
-/** Niveles que ofrece "Nueva partida" (Fácil solo con `nivelFacil`). */
+/** Catálogo para herramientas y simulaciones; la entrada pública usa editionAccess. */
 export function playableLevels(features: Pick<LiteFeatures, 'nivelFacil'> = LITE_FEATURES): DifficultyLevel[] {
   return DIFFICULTY_LEVELS.filter(l => features.nivelFacil || l.id !== 'facil');
 }

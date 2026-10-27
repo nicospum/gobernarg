@@ -6,7 +6,8 @@ import { THUMBNAIL_ARCHETYPES } from '../utils/iconThumbnails';
 import { ARCHETYPE_CARDS } from '../data/archetypes';
 import { getScenario, type ScenarioDef } from '../data/causal';
 import { photoToDataUrl, validatePhotoFile } from '@/lib/avatarPhoto';
-import { DEFAULT_LEVEL_SCENARIO_ID, LITE_FEATURES, playableLevels } from '@/lite/config';
+import { LITE_FEATURES } from '@/lite/config';
+import { DEFAULT_NEW_GAME_SCENARIO_ID, NEW_GAME_DIFFICULTY_LEVELS, isNewScenarioAvailable } from '@/lib/editionAccess';
 import { HistoricScenarios } from './HistoricScenarios';
 
 export interface NewGameChoice {
@@ -73,8 +74,8 @@ export function NewGameScreen({ onStart, onBack, historicScenarios = LITE_FEATUR
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const [archetype, setArchetype] = useState<Archetype>('politico');
-  const [scenarioId, setScenarioId] = useState<string>(DEFAULT_LEVEL_SCENARIO_ID);
-  const levels = playableLevels();
+  const [scenarioId, setScenarioId] = useState<string>(DEFAULT_NEW_GAME_SCENARIO_ID);
+  const levels = NEW_GAME_DIFFICULTY_LEVELS;
   const fileRef = useRef<HTMLInputElement>(null);
 
   const name = governorName.trim();
@@ -102,7 +103,7 @@ export function NewGameScreen({ onStart, onBack, historicScenarios = LITE_FEATUR
   };
 
   const handleStart = () => {
-    if (!name) return;
+    if (!name || processing || !isNewScenarioAvailable(scenarioId)) return;
     onStart({ governorName: name, avatar, archetype, scenarioId });
   };
 
@@ -152,6 +153,7 @@ export function NewGameScreen({ onStart, onBack, historicScenarios = LITE_FEATUR
               {uploaded && (
                 <button
                   role="radio"
+                  disabled={processing}
                   aria-checked={avatar === uploaded}
                   aria-label="Tu foto"
                   onClick={() => setAvatar(uploaded)}
@@ -165,6 +167,7 @@ export function NewGameScreen({ onStart, onBack, historicScenarios = LITE_FEATUR
                 <button
                   key={src}
                   role="radio"
+                  disabled={processing}
                   aria-checked={avatar === src}
                   aria-label={`Avatar ${i + 1}`}
                   onClick={() => setAvatar(src)}
@@ -179,14 +182,15 @@ export function NewGameScreen({ onStart, onBack, historicScenarios = LITE_FEATUR
               <input
                 ref={fileRef}
                 type="file"
+                disabled={processing}
                 accept="image/*"
-                className="sr-only"
+                className="sr-only peer"
                 id="avatar-upload"
                 onChange={e => handleFile(e.target.files?.[0])}
               />
               <label
                 htmlFor="avatar-upload"
-                className={`sr-btn-ghost h-11 px-4 text-sm cursor-pointer ${processing ? 'opacity-60 pointer-events-none' : ''}`}
+                className={`sr-btn-ghost h-11 px-4 text-sm cursor-pointer peer-focus-visible:ring-2 peer-focus-visible:ring-sala-cyan/60 peer-focus-visible:ring-offset-2 ${processing ? 'opacity-60 pointer-events-none' : ''}`}
               >
                 <Camera size={16} />
                 {processing ? 'Procesando…' : uploaded ? 'Cambiar mi foto' : 'Subir mi foto'}
@@ -244,7 +248,7 @@ export function NewGameScreen({ onStart, onBack, historicScenarios = LITE_FEATUR
 
           <button
             onClick={handleStart}
-            disabled={!name}
+            disabled={!name || processing}
             className="sr-btn-lime w-full h-14 px-6 text-[14px]"
           >
             <Play className="w-5 h-5" />
