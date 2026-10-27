@@ -201,7 +201,17 @@ export function processEndTurn(gameState: GameState): TurnResult {
   // 7. Fin de mandato: reelección (1er mandato) o elección de sucesión (2º).
   const periodsPerYear = calendarFor(state).periodsPerYear;
   const isEndOfTerm = state.year === 4 && state.turn === periodsPerYear;
-  if (isEndOfTerm) {
+  // Una crisis consumada en este cierre tiene prioridad incluso sobre la sucesión.
+  const defeat = checkCausalDefeat(state);
+  if (defeat) {
+    state.gameOver = true;
+    state.victorious = false;
+    state.defeatReason = defeat;
+    state.pendingElection = false;
+    state.pendingMidtermStrategy = false;
+    state.availableMidtermStrategies = [];
+  }
+  if (isEndOfTerm && !state.gameOver) {
     if (state.term < MAX_TERMS) state.pendingElection = true;
     else state = finalizePresidentialCareer(state);
   }
@@ -226,17 +236,6 @@ export function processEndTurn(gameState: GameState): TurnResult {
 
   // 10. Espejo, derrotas, advertencias, metas e historial.
   state = syncLegacy(state);
-  if (!state.gameOver) {
-    const defeat = checkCausalDefeat(state);
-    if (defeat) {
-      state.gameOver = true;
-      state.victorious = false;
-      state.defeatReason = defeat;
-      state.pendingElection = false;
-      state.pendingMidtermStrategy = false;
-      state.availableMidtermStrategies = [];
-    }
-  }
   state = addWarningNotifications(state);
 
   const previouslyCompleted = new Set(state.objectives.filter(o => o.completed).map(o => o.id));

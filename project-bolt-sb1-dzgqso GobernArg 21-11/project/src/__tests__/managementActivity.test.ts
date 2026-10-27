@@ -173,6 +173,22 @@ describe('Integración de caída y persistencia', () => {
     expect(processEndTurn(s).state.causal).toEqual(s.causal);
   });
 
+  it('la segunda crisis al cerrar T24 tiene prioridad sobre una sucesión con IV ganadora', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(.999);
+    const s = game();
+    s.term = 2; s.year = 4; s.turn = 3; s.actions = 3;
+    s.causal.turn = 24; s.causal.mandateStart = 13; s.causal.govCrisisStreak = 1;
+    s.causal.managementActivity = { pressure: 5.75, mandateStart: 13, observedTurns: 11, perfectUse: false, bonusGranted: false };
+    s.causal.base.CONF = 100; s.causal.political.imagen = 95;
+    for (const actor of ACTOR_IDS) { s.causal.actors[actor].sat = 90; if (s.causal.actors[actor].rel !== null) s.causal.actors[actor].rel = 90; }
+    const result = processEndTurn(s).state;
+    expect(result.causal.govCrisisStreak).toBe(2);
+    expect(result.causal.political.iv).toBeGreaterThan(45);
+    expect(result).toMatchObject({ gameOver: true, victorious: false, defeatReason: 'impeachment', pendingElection: false, pendingMidtermStrategy: false, electionResults: null, year: 4, turn: 3 });
+    expect(result.causal.turn).toBe(25);
+    expect(parseSavedGame(encodeSavedGame(result))?.state).toEqual(result);
+  });
+
   it('los históricos no registran ni aplican la nueva regla', () => {
     const s = createNewGame({ scenarioId: 'corralito', archetype: 'politico', governorName: 'Histórico', seed: 1 });
     const result = processEndTurn(s).state;
