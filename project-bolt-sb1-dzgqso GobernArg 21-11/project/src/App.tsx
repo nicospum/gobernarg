@@ -15,7 +15,9 @@ import { StatusFooter } from './components/board/StatusFooter';
 import { DefeatAlerts } from './components/board/StatusStrip';
 import { EventModal } from './components/EventModal';
 import { CountryPanel } from './components/CountryPanel';
-import { clearSavedGame, loadGame, saveGame } from './lib/savegame';
+import { clearSavedGame, loadGame, saveGame, rehydrate, type SavedGame } from './lib/savegame';
+import { SaveControls } from './components/SaveControls';
+import { periodCaption } from './lib/calendar';
 import { recordReelectionWin, recordScenarioWin } from './lib/progress';
 import { LITE_FEATURES, detailed } from './lite/config';
 import { lazyModal } from './lib/lazyModal';
@@ -79,10 +81,12 @@ function App() {
   const [showHelp, setShowHelp] = useState(false);
   // Playtest (Fase 3): "Contanos cómo te fue".
   const [showFeedback, setShowFeedback] = useState(false);
+  const [saveFailed, setSaveFailed] = useState(false);
+  const [restoreOpen, setRestoreOpen] = useState(false);
 
   // Guardado automático: cada cambio de la partida (y los eventos sin responder).
   useEffect(() => {
-    if (gameStarted) saveGame(gameState, pendingEvents);
+    if (gameStarted) setSaveFailed(!saveGame(gameState, pendingEvents));
   }, [gameStarted, gameState, pendingEvents]);
 
   // Escenarios históricos (apagados en Lite, ver src/lite/config.ts): ganar la
@@ -153,7 +157,7 @@ function App() {
   // ni tocar nada de atrás (ni con el teclado).
   const modalOpen =
     showTurnSummary || pendingEvents.length > 0 || !!gameState.pendingElection || !!gameState.electionResults ||
-    showMidtermStrategy || showHelp || showFeedback || gameState.gameOver;
+    showMidtermStrategy || showHelp || showFeedback || restoreOpen || gameState.gameOver;
   useEffect(() => {
     const board = boardRef.current;
     if (!board) return;
@@ -169,7 +173,7 @@ function App() {
     setGameState(result.state);
 
     // En el celular el aviso tapaba el título del resumen, que ya dice año y trimestre.
-    if (!isMobile) toast(`Turno finalizado — Año ${result.summary.year}, Trimestre ${result.summary.quarter}`);
+    if (!isMobile) toast(`Turno finalizado — ${periodCaption(gameState, result.summary.year, result.summary.quarter)}`);
 
     // Si hay estrategia pendiente, mostrar modal
     if (result.state.pendingMidtermStrategy) {
@@ -227,19 +231,47 @@ function App() {
     setShowLegacy(false);
   };
 
+  const handleRestore = (saved: SavedGame) => {
+    saved = { ...saved, state: rehydrate(saved.state) };
+    countedElectionRef.current = saved.state.electionResults;
+    lastProcessedEventRef.current = null;
+    setSavedGame(saved);
+    setGameState(saved.state);
+    setPendingEvents(saved.pendingEvents);
+    setShowMidtermStrategy(!!saved.state.pendingMidtermStrategy);
+    setShowWelcomeScreen(false);
+    setGameStarted(true);
+    setShowTurnSummary(false);
+    setTurnSummary(null);
+    setShowLegacy(false);
+    setShowHelp(false);
+    setShowFeedback(false);
+    setShowMobileMenu(false);
+    setMobileTab('acciones');
+    window.scrollTo({ top: 0 });
+  };
+  const saveControls = <SaveControls
+    state={gameStarted ? gameState : savedGame?.state}
+    pendingEvents={gameStarted ? pendingEvents : savedGame?.pendingEvents ?? []}
+    failed={gameStarted && saveFailed}
+    onRetry={() => setSaveFailed(!saveGame(gameState, pendingEvents))}
+    onRestore={handleRestore}
+    onImportOpenChange={setRestoreOpen}
+  />;
+
   if (showWelcomeScreen) {
-    return <WelcomeScreen onStart={handleStart} saved={savedGame?.state} onContinue={handleContinue} />;
+    return <><WelcomeScreen onStart={handleStart} saved={savedGame?.state} onContinue={handleContinue} /><div className="relative bg-paper">{saveControls}</div></>;
   }
 
   if (!gameStarted) {
-    return <NewGameScreen onStart={handleGameStart} onBack={() => setShowWelcomeScreen(true)} />;
+    return <><NewGameScreen onStart={handleGameStart} onBack={() => setShowWelcomeScreen(true)} /><div className="relative bg-paper">{saveControls}</div></>;
   }
 
   const currentEvent = pendingEvents[0] || null;
   const simple = !detailed();
   const showTutorialCard = !tutorial.dismissed && gameState.term === 1 && gameState.year === 1 && gameState.turn === 1;
   const tutorialCard = showTutorialCard && (
-    <TutorialCard actions={gameState.baseActions} onDismiss={tutorial.dismiss} onOpenGuide={() => setShowHelp(true)} />
+    <TutorialCard gameState={gameState} actions={gameState.baseActions} onDismiss={tutorial.dismiss} onOpenGuide={() => setShowHelp(true)} />
   );
 
   return (
@@ -284,6 +316,7 @@ function App() {
                 />
               </>
             )}
+            {saveControls}
           </main>
           <MobileBottomBar
             gameState={gameState}
@@ -392,6 +425,7 @@ function App() {
             </div>
           </main>
           )}
+          <div className="xl:flex-none">{saveControls}</div>
           <StatusFooter gameState={gameState} />
         </div>
       )}
@@ -473,9 +507,10 @@ function App() {
 
       {showFeedback && <FeedbackModal gameState={gameState} onClose={() => setShowFeedback(false)} />}
 
-      {showHelp && <HowToPlayModal actions={gameState.baseActions} onClose={() => setShowHelp(false)} />}
+      {showHelp && <HowToPlayModal gameState={gameState} actions={gameState.baseActions} onClose={() => setShowHelp(false)} />}
     </div>
   );
 }
 
 export default App;
+
