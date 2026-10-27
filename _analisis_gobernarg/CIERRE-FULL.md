@@ -45,3 +45,9 @@ El cambio de proyección puede modificar decisiones de bots que la consultan, pa
 La QA de navegador y la relación SHA/despliegue se registran en el informe integrado del cierre. Este documento no declara publicación ni sustituye esa comprobación. Las partidas Full conservan su esquema y clave existentes; no se cambió persistencia.
 
 Se aplicó la checklist React: estado local mínimo para ayuda, sin efectos de sincronización nuevos, hooks en orden estable, controles de selección separados de ayuda, triggers enfocables, semántica de estado y TypeScript sin `any` añadido.
+
+## Verificación visual final
+
+La QA integrada completó una partida real de 32 turnos desde la interfaz, con dos legislativas, reelección, eventos y victoria final; también comprobó selección/cancelación por teclado, ayuda, reunión, recarga, persistencia y primera secuencia móvil sin errores de consola.
+
+El tema Despacho invierte las escalas numéricas de Tailwind. Para evitar que una clase aparentemente oscura termine siendo pálida, las superficies revisadas usan texto semántico explícito (`positive`, `negative`, `caution`, `info-ink`) sin modificar fondos ni etiquetas blancas. Una nueva comprobación en Chromium tomó 36 muestras de colores calculados de KPI, tarjetas, Congreso, proyección y resumen: contraste mínimo observado 6,28:1 sobre sus fondos, sin errores. Capturas y `computed.json` se guardaron en la carpeta de evidencia `qa/Full-contrast` del informe integrado.

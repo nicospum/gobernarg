@@ -41,7 +41,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
           <span className={`inline-flex items-center gap-1 uppercase tracking-wide ${style.color}`}>
             <img src={style.imageSrc} alt="" className="w-3.5 h-3.5 object-contain" />{style.label}
           </span>
-          {action.ley && <span className="inline-flex items-center gap-1 text-violet-800"><Scale size={12} />{needsDnu ? 'Ley por DNU' : 'Ley'}</span>}
+          {action.ley && <span className="inline-flex items-center gap-1 text-info-ink"><Scale size={12} />{needsDnu ? 'Ley por DNU' : 'Ley'}</span>}
           {action.tags.map(tag => <span key={tag} className="text-ink/70">· {TAG_LABEL[tag] ?? tag}</span>)}
         </div>
         {requestedBy.length > 0 && <span className="inline-flex items-center gap-1 text-[11px] text-gold-ink font-semibold"><Star size={12} />Pedida</span>}
@@ -53,15 +53,15 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
       </div>
 
       <div className="flex items-center gap-x-3 gap-y-1 flex-wrap text-[13px] font-mono">
-        <span className={`font-semibold ${caja > 0 ? 'text-emerald-800' : 'text-ink'}`}>{costLabel}</span>
+        <span className={`font-semibold ${caja > 0 ? 'text-positive' : 'text-ink'}`}>{costLabel}</span>
         <span className="inline-flex items-center gap-1 text-ink/80"><Flag size={12} />{pa} {pa === 1 ? 'acción' : 'acciones'}</span>
         {action.cooldown > 1 && <span className="inline-flex items-center gap-1 text-ink/75"><Clock size={12} />Cada {action.cooldown} turnos</span>}
       </div>
 
       {playerNote && <p className="text-[13px] leading-relaxed text-ink/85 border-l-2 border-gold/40 pl-3">{playerNote}</p>}
-      {opensInterna && <p className="text-[12px] leading-relaxed text-amber-900 bg-amber-500/10 p-2 rounded">Abre una interna en tu partido: las políticas cuestan más y rinden menos mientras dure.</p>}
-      {repetitionWarning && <p className="flex items-start gap-1.5 text-[12px] text-amber-900 leading-relaxed"><AlertTriangle size={14} className="mt-0.5 shrink-0" />{repetitionWarning}</p>}
-      {blocked && <div className="text-[13px] text-red-800 leading-relaxed" role="status">
+      {opensInterna && <p className="text-[12px] leading-relaxed text-caution bg-amber-500/10 p-2 rounded">Abre una interna en tu partido: las políticas cuestan más y rinden menos mientras dure.</p>}
+      {repetitionWarning && <p className="flex items-start gap-1.5 text-[12px] text-caution leading-relaxed"><AlertTriangle size={14} className="mt-0.5 shrink-0" />{repetitionWarning}</p>}
+      {blocked && <div className="text-[13px] text-negative leading-relaxed" role="status">
         <p className="flex items-center gap-1 font-semibold"><Lock size={13} />No disponible</p>
         {blockReasons.map(reason => <p key={reason}>{reason}</p>)}
       </div>}

@@ -67,7 +67,14 @@ export default {
   ],
   theme: {
     extend: {
-      textColor: textFamilies,
+      // Texto semántico sobre papel: no pasa por las escalas invertidas heredadas.
+      textColor: {
+        ...textFamilies,
+        positive: defaultColors.emerald[800],
+        negative: defaultColors.red[800],
+        caution: defaultColors.amber[800],
+        'info-ink': '#1F5F99',
+      },
       colors: {
         ...despachoFamilies,
         paper: token("paper"),

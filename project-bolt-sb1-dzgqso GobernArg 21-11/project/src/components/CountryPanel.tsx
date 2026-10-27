@@ -20,7 +20,7 @@ function Trend({ delta, id }: { delta: number | null; id: IndicatorId }) {
   if (delta === null || Math.abs(delta) < 0.4) return <Minus size={10} className="text-muted-foreground" />;
   const dir = INDICATORS[id].goodDirection;
   const good = dir === 0 ? null : Math.sign(delta) === dir;
-  const cls = good === null ? 'text-sky-300' : good ? 'text-emerald-800' : 'text-red-800';
+  const cls = good === null ? 'text-sky-300' : good ? 'text-positive' : 'text-negative';
   return delta > 0 ? <TrendingUp size={11} className={cls} /> : <TrendingDown size={11} className={cls} />;
 }
 
@@ -55,7 +55,7 @@ export function CountryPanel({ gameState, compact = false }: { gameState: GameSt
             <div className="text-[10px] text-ink/70">
               Alto: {def.high} | Bajo: {def.low}
             </div>
-            {partial && <div className="text-[10px] text-amber-900">Dato estimado: sólo se conoce tendencia.</div>}
+            {partial && <div className="text-[10px] text-caution">Dato estimado: sólo se conoce tendencia.</div>}
           </div>
         }
       >
@@ -83,7 +83,7 @@ export function CountryPanel({ gameState, compact = false }: { gameState: GameSt
   const expectations = (
     <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-ink/6">
       <span className={`${compact ? 'text-[14px]' : 'text-[11px]'} text-ink/70`}>Expectativas inflación</span>
-      <span className={`${compact ? 'text-[13px]' : 'text-[10px]'} font-bold ${c.desanclaje > 20 ? 'text-red-800' : c.desanclaje > 10 ? 'text-amber-900' : 'text-emerald-800'}`}>
+      <span className={`${compact ? 'text-[13px]' : 'text-[10px]'} font-bold ${c.desanclaje > 20 ? 'text-negative' : c.desanclaje > 10 ? 'text-caution' : 'text-positive'}`}>
         {c.desanclaje > 20 ? 'Despegadas' : c.desanclaje > 10 ? 'Inquietas' : 'Ancladas'}
       </span>
     </div>
@@ -105,7 +105,7 @@ export function CountryPanel({ gameState, compact = false }: { gameState: GameSt
               >
                 <span className="flex-1 min-w-0">
                   <span className="block text-[15px] font-semibold text-ink">{macro}</span>
-                  <span className={`block text-[12px] ${bad > 0 ? 'text-red-800' : 'text-ink/70'}`}>
+                  <span className={`block text-[12px] ${bad > 0 ? 'text-negative' : 'text-ink/70'}`}>
                     {ids.length} {ids.length === 1 ? 'indicador' : 'indicadores'} · {bad > 0 ? `${bad} en rojo` : 'sin alertas'}
                   </span>
                 </span>

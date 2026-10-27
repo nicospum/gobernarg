@@ -34,8 +34,8 @@ export function PendingEffectsPanel({ gameState }: PendingEffectsPanelProps) {
               <div className="flex items-start justify-between gap-2 mb-1.5">
                 <div className="font-display font-semibold text-base text-ink leading-tight">{item.title}</div>
                 <div className="flex items-center gap-1.5 flex-shrink-0 bg-ink/4 px-2 py-0.5 rounded border border-ink/8">
-                  <Clock size={11} className={urgent ? 'text-amber-900' : 'text-ink/70'} />
-                  <span className={`text-[10px] font-mono font-bold ${urgent ? 'text-amber-900' : 'text-ink/70'}`}>
+                  <Clock size={11} className={urgent ? 'text-caution' : 'text-ink/70'} />
+                  <span className={`text-[10px] font-mono font-bold ${urgent ? 'text-caution' : 'text-ink/70'}`}>
                     {urgent ? 'PRÓXIMO TURNO' : `en ${item.inTurns}t`}
                   </span>
                 </div>

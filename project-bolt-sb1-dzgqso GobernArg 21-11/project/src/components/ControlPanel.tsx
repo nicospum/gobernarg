@@ -78,8 +78,8 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
 
       {/* Alerta de Congreso */}
       <div className={`mx-5 px-3.5 py-2 rounded-md text-[12px] flex items-start gap-2.5 ${hasMajority ? 'bg-emerald-500/10' : 'bg-amber-500/10'}`}>
-        <Scale size={14} className={hasMajority ? 'text-emerald-800 flex-shrink-0 mt-0.5' : 'text-amber-900 flex-shrink-0 mt-0.5'} />
-        <p className={hasMajority ? 'text-emerald-800 leading-relaxed' : 'text-amber-900 leading-relaxed'}>
+        <Scale size={14} className={hasMajority ? 'text-positive flex-shrink-0 mt-0.5' : 'text-caution flex-shrink-0 mt-0.5'} />
+        <p className={hasMajority ? 'text-positive leading-relaxed' : 'text-caution leading-relaxed'}>
           {hasMajority
             ? `Congreso favorable: mayorías para votar leyes (${leg}% de apoyo parlamentario; requiere ${threshold}%).`
             : `Congreso fragmentado (${leg}% de apoyo; requiere ${threshold}%). Las leyes complejas pueden enviarse por DNU con mayor costo político.`}
@@ -90,7 +90,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
       {/* Interna del oficialismo */}
       {interna >= 10 && (
         <div
-          className={`mx-5 mt-2 px-3.5 py-2 rounded-md text-[12px] flex items-start gap-2 ${interna >= 50 ? 'bg-red-500/10 text-red-800' : 'bg-amber-500/10 text-amber-900'}`}
+          className={`mx-5 mt-2 px-3.5 py-2 rounded-md text-[12px] flex items-start gap-2 ${interna >= 50 ? 'bg-red-500/10 text-negative' : 'bg-amber-500/10 text-caution'}`}
           title="Sube cuando ampliás la coalición y cuando tu aprobación es baja; baja cuando sos popular."
         >
           <Users size={13} className="mt-0.5 flex-shrink-0" />
@@ -190,13 +190,13 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
         </span>
         <span className="text-ink/70 font-mono text-[12px]" aria-label="Estimación fiscal de la selección">
           Caja estimada:{' '}
-          <span className={`font-bold ${projection.caja >= 0 ? 'text-emerald-800' : 'text-red-800'}`}>{fmtBudget(projection.caja)}</span>
+          <span className={`font-bold ${projection.caja >= 0 ? 'text-positive' : 'text-negative'}`}>{fmtBudget(projection.caja)}</span>
           {' · '}Resultado fiscal por turno:{' '}
-          <span className={`font-bold ${projection.structural >= 0 ? 'text-emerald-800' : 'text-red-800'}`}>{fmtBudgetDelta(projection.structural)}</span>
+          <span className={`font-bold ${projection.structural >= 0 ? 'text-positive' : 'text-negative'}`}>{fmtBudgetDelta(projection.structural)}</span>
         </span>
         <p className="w-full text-[12px] text-ink/75 leading-relaxed">Estimación con lo elegido, la recaudación, el gasto fijo y los intereses. No incluye todos los efectos diferidos ni los eventos.</p>
         {projection.caja < 0 && (
-          <span className="w-full text-[11px] text-red-800 font-semibold">
+          <span className="w-full text-[11px] text-negative font-semibold">
             ⚠ La estimación deja caja negativa. Si el turno cierra así, el Tesoro emitirá para cubrirla en el siguiente.
           </span>
         )}

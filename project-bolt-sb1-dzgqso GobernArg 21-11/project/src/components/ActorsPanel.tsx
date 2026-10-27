@@ -143,7 +143,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
             <span className={`font-mono font-bold ${toneClass(band.tone)}`}>
               {Math.round(st.sat)}
               {Math.abs(satDelta) >= 0.5 && (
-                <span className={`ml-1 text-[9px] ${satDelta > 0 ? 'text-emerald-800' : 'text-red-800'}`}>
+                <span className={`ml-1 text-[9px] ${satDelta > 0 ? 'text-positive' : 'text-negative'}`}>
                   {satDelta > 0 ? '▲' : '▼'}{Math.abs(satDelta).toFixed(0)}
                 </span>
               )}
@@ -187,13 +187,13 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
       {/* Demanda */}
       {demandRevealed && demandDef && (
         <div className="mb-1.5 px-2 py-1.5 rounded border border-amber-400/25 bg-amber-400/5">
-          <div className="text-[10px] text-amber-900/90 leading-snug">
+          <div className="text-[10px] text-caution/90 leading-snug">
             Piden: <span className="font-semibold">{demandDef.name}</span>
           </div>
           <button
             onClick={() => onSelectAction(demand!.actionId)}
             disabled={disabled || demandSelected || !demandAv?.available}
-            className="mt-1 w-full inline-flex items-center justify-center gap-1 text-[10px] font-semibold text-amber-900 border border-amber-400/30 hover:bg-amber-400/10 rounded py-0.5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="mt-1 w-full inline-flex items-center justify-center gap-1 text-[10px] font-semibold text-caution border border-amber-400/30 hover:bg-amber-400/10 rounded py-0.5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             title={demandAv && !demandAv.available ? demandAv.reasons[0] : 'Agregar al turno: si la ejecutás, valoran que los escuchaste'}
           >
             {demandSelected ? <><Check size={10} /> En el turno</> : <><Plus size={10} /> Agregar al turno</>}
@@ -215,7 +215,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
           Aceptan acordar: vos te comprometés a <span className="font-semibold">{demandDef.name}</span> en {PARAMS.PLAZO_ACUERDO} turnos;
           ellos ofrecen: {agreementOffer(actor).toLowerCase()}. Incumplir rompe la relación.
           {demandAv && !demandAv.available && (
-            <div className="mt-1 text-red-800">Ojo: hoy no podrías ejecutarla ({demandAv.reasons[0]})</div>
+            <div className="mt-1 text-negative">Ojo: hoy no podrías ejecutarla ({demandAv.reasons[0]})</div>
           )}
         </div>
       )}
@@ -329,7 +329,7 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }:
                     <div className="font-display font-semibold text-sm text-ink truncate">{family.name}</div>
                     <div className="flex items-center gap-2 text-[9px] font-mono">
                       <span className={riskColor(worst)}>tensión {TENSION_LABEL[worst]}</span>
-                      {demands > 0 && <span className="text-amber-900 font-bold">{demands} demanda{demands > 1 ? 's' : ''}</span>}
+                      {demands > 0 && <span className="text-caution font-bold">{demands} demanda{demands > 1 ? 's' : ''}</span>}
                     </div>
                   </div>
                 </div>

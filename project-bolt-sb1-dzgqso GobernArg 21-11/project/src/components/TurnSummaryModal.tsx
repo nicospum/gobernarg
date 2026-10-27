@@ -28,7 +28,7 @@ interface TurnSummaryModalProps {
 function Delta({ value, suffix = '' }: { value: number; suffix?: string }) {
   const r = Math.round(value * 10) / 10;
   return (
-    <span className={`font-mono font-bold ${r > 0 ? 'text-emerald-800' : r < 0 ? 'text-red-800' : 'text-muted-foreground'}`}>
+    <span className={`font-mono font-bold ${r > 0 ? 'text-positive' : r < 0 ? 'text-negative' : 'text-muted-foreground'}`}>
       {r > 0 ? '+' : ''}{r}{suffix}
     </span>
   );
@@ -90,7 +90,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {record.actions.map((a, i) => (
-                    <span key={i} className={`text-[11px] px-2.5 py-1 rounded-md border font-semibold ${a.suspended ? 'border-red-500/30 text-red-800 line-through bg-red-500/10' : a.forced ? 'border-amber-500/30 text-amber-900 bg-amber-500/10' : 'border-blue-500/30 text-ink bg-blue-500/10'}`}>
+                    <span key={i} className={`text-[11px] px-2.5 py-1 rounded-md border font-semibold ${a.suspended ? 'border-red-500/30 text-negative line-through bg-red-500/10' : a.forced ? 'border-amber-500/30 text-caution bg-amber-500/10' : 'border-blue-500/30 text-ink bg-blue-500/10'}`}>
                       {CAUSAL_ACTIONS_BY_ID[a.actionId]?.name ?? a.actionId}{a.forced ? ' (forzada)' : ''}
                     </span>
                   ))}
@@ -142,7 +142,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
                         <span className="text-ink font-medium">{r.name}</span>
                         {r.reason && <span className="text-ink/70 text-[10px]">— {r.reason}</span>}
                       </div>
-                      <span className={`font-mono font-bold ${r.delta > 0 ? 'text-emerald-800' : 'text-red-800'}`}>{arrows(r.delta)}</span>
+                      <span className={`font-mono font-bold ${r.delta > 0 ? 'text-positive' : 'text-negative'}`}>{arrows(r.delta)}</span>
                     </li>
                   );
                 })}
@@ -165,15 +165,15 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
               </div>
               <div className="rounded-lg border border-ink/8 bg-surface p-3.5">
                 <p className="flex items-center gap-1.5 font-bold text-[10px] text-ink/70 uppercase tracking-widest mb-2">
-                  <Wallet className="w-3.5 h-3.5 text-emerald-800" /> RESULTADO DE CUENTAS
+                  <Wallet className="w-3.5 h-3.5 text-positive" /> RESULTADO DE CUENTAS
                 </p>
                 <div className="text-[12px] space-y-1.5 font-medium">
-                  <div className="flex justify-between text-ink/80"><span>Resultado fiscal</span><span className={`font-mono font-bold ${record.fiscal.resultado >= 0 ? 'text-emerald-800' : 'text-red-800'}`}>{fmtBudgetDelta(record.fiscal.resultado)}</span></div>
+                  <div className="flex justify-between text-ink/80"><span>Resultado fiscal</span><span className={`font-mono font-bold ${record.fiscal.resultado >= 0 ? 'text-positive' : 'text-negative'}`}>{fmtBudgetDelta(record.fiscal.resultado)}</span></div>
                   {record.fiscal.financiamiento !== 0 && (
-                    <div className="flex justify-between text-ink/80"><span>Financiamiento</span><span className="font-mono text-amber-900 font-bold">{fmtBudgetDelta(record.fiscal.financiamiento)}</span></div>
+                    <div className="flex justify-between text-ink/80"><span>Financiamiento</span><span className="font-mono text-caution font-bold">{fmtBudgetDelta(record.fiscal.financiamiento)}</span></div>
                   )}
                   {otherCash !== 0 && (
-                    <div className="flex justify-between text-ink/80"><span>Eventos y otras decisiones</span><span className={`font-mono font-bold ${otherCash >= 0 ? 'text-emerald-800' : 'text-red-800'}`}>{fmtBudgetDelta(otherCash)}</span></div>
+                    <div className="flex justify-between text-ink/80"><span>Eventos y otras decisiones</span><span className={`font-mono font-bold ${otherCash >= 0 ? 'text-positive' : 'text-negative'}`}>{fmtBudgetDelta(otherCash)}</span></div>
                   )}
                   <div className="flex justify-between text-ink/80"><span>Caja final</span><span className="font-mono font-bold text-ink">{fmtBudget(cajaFinal)}</span></div>
                 </div>
@@ -213,11 +213,11 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
 
           {summary.inflationEvent.triggered && (
             <div className="rounded-xl border border-red-500/40 bg-red-500/15 p-4 shadow-lg">
-              <div className="flex items-center gap-2 text-red-800">
+              <div className="flex items-center gap-2 text-negative">
                 <AlertTriangle className="w-5 h-5" />
                 <p className="font-display font-semibold text-base  ">La inflación se está acelerando</p>
               </div>
-              <p className="text-[12px] text-red-800/80 mt-1 leading-relaxed">
+              <p className="text-[12px] text-negative/80 mt-1 leading-relaxed">
                 La espiral de precios reduce el poder adquisitivo de los sectores populares y tensiona la recaudación del Tesoro.
               </p>
             </div>

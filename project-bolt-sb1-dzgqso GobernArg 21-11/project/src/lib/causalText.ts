@@ -165,15 +165,15 @@ export function relationBand(rel: number): string {
 }
 
 export function toneClass(tone: Tone): string {
-  return tone === 'good' ? 'text-emerald-800' : tone === 'bad' ? 'text-red-800' : 'text-amber-900';
+  return tone === 'good' ? 'text-positive' : tone === 'bad' ? 'text-negative' : 'text-caution';
 }
 
 export function toneChipClass(tone: Tone): string {
   return tone === 'good'
-    ? 'text-emerald-800 border-emerald-400/25 bg-emerald-400/8'
+    ? 'text-positive border-emerald-400/25 bg-emerald-400/8'
     : tone === 'bad'
-      ? 'text-red-800 border-red-400/25 bg-red-400/8'
-      : 'text-sky-800 border-sky-400/25 bg-sky-400/8';
+      ? 'text-negative border-red-400/25 bg-red-400/8'
+      : 'text-info-ink border-sky-400/25 bg-sky-400/8';
 }
 
 // ─────────────────────────────── Preocupaciones de actores ───────────────────────────────

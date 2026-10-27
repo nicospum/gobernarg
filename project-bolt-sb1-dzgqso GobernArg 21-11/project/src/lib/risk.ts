@@ -27,25 +27,25 @@ export function riskLabel(risk: Risk): string {
 
 const RISK_MAP: Record<Risk, { text: string; bg: string; border: string; fill: string }> = {
   bajo: {
-    text: "text-emerald-800",
+    text: "text-positive",
     bg: "bg-emerald-400",
     border: "border-emerald-400/30",
     fill: "fill-emerald-400",
   },
   medio: {
-    text: "text-amber-900",
+    text: "text-caution",
     bg: "bg-amber-400",
     border: "border-amber-400/30",
     fill: "fill-amber-400",
   },
   alto: {
-    text: "text-orange-800",
+    text: "text-caution",
     bg: "bg-orange-400",
     border: "border-orange-400/30",
     fill: "fill-orange-400",
   },
   critico: {
-    text: "text-red-800",
+    text: "text-negative",
     bg: "bg-red-400",
     border: "border-red-400/30",
     fill: "fill-red-400",
