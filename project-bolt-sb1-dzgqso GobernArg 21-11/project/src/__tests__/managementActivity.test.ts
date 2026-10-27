@@ -13,8 +13,8 @@ describe('Uso de PA reales y presión de gestión', () => {
   it('tolera un PA libre, acumula mucho menos por dos/tres libres y no castiga capacidad cero', () => {
     const state = fresh();
     expect(previewManagementActivity(state, { available: 4, remaining: 1 }, 12).record).toMatchObject({ pressureAfter: 0, imagenDelta: 0, governabilityPenalty: 0 });
-    expect(previewManagementActivity(state, { available: 4, remaining: 2 }, 12).record).toMatchObject({ pressureAfter: 0.1, imagenDelta: -0.05 });
-    expect(previewManagementActivity(state, { available: 4, remaining: 3 }, 12).record).toMatchObject({ pressureAfter: 0.25, imagenDelta: -0.125 });
+    expect(previewManagementActivity(state, { available: 4, remaining: 2 }, 12).record).toMatchObject({ pressureAfter: 0.025, imagenDelta: -0.0125 });
+    expect(previewManagementActivity(state, { available: 4, remaining: 3 }, 12).record).toMatchObject({ pressureAfter: 0.05, imagenDelta: -0.025 });
     expect(previewManagementActivity(state, { available: 3, remaining: 3 }, 12).record).toMatchObject({ pressureAfter: 1, imagenDelta: -0.5, used: 0 });
     expect(previewManagementActivity(state, { available: 0, remaining: 0 }, 12).record).toMatchObject({ pressureAfter: 0, imagenDelta: 0, bonusAwarded: false });
   });
@@ -36,11 +36,27 @@ describe('Uso de PA reales y presión de gestión', () => {
   });
 
   it('un mandato completo dejando dos o tres PA libres tiene presión pequeña, sin escalada de inacción total', () => {
-    for (const [remaining, expected] of [[2,1.2],[3,3]]) {
+    for (const [remaining, expected] of [[2,0.3],[3,0.6]]) {
       const s = fresh();
       for (let t = 1; t <= 12; t++) { s.turn = t; s.managementActivity = previewManagementActivity(s, { available: 4, remaining }, 12).activity; }
       expect(s.managementActivity?.pressure).toBe(expected);
       expect(managementGovernabilityPenalty(s.managementActivity!.pressure)).toBeLessThanOrEqual(0.75);
+    }
+  });
+
+  it.each([12,16])('dos mandatos de %i cierres con uso parcial conservan un desgaste muy pequeño', turns => {
+    for (const [remaining, weight] of [[2,0.025],[3,0.05]]) {
+      const s = fresh(); let imageLoss = 0;
+      for (let t = 1; t <= 2 * turns; t++) {
+        s.turn = t; s.mandateStart = t > turns ? turns + 1 : 1;
+        const preview = previewManagementActivity(s, { available: 4, remaining }, turns);
+        s.managementActivity = preview.activity; imageLoss += preview.record.imagenDelta;
+        expect(preview.record.bonusAwarded).toBe(false);
+      }
+      expect(s.managementActivity?.pressure).toBeCloseTo(2 * turns * weight, 9);
+      expect(managementGovernabilityPenalty(s.managementActivity!.pressure)).toBeCloseTo(0.25 * 2 * turns * weight, 9);
+      expect(imageLoss).toBeCloseTo(-0.5 * 2 * turns * weight, 9);
+      expect(managementGovernabilityPenalty(s.managementActivity!.pressure)).toBeLessThanOrEqual(0.4);
     }
   });
 
@@ -72,7 +88,7 @@ describe('Uso de PA reales y presión de gestión', () => {
     s = interactWithActor(s, 'financiero', 'negociar');
     expect(s.actions).toBe(2);
     const result = processEndTurn(s);
-    expect(result.state.causal.records[0].managementActivity).toMatchObject({ available: 4, used: 2, unused: 2, pressureAfter: 0.1 });
+    expect(result.state.causal.records[0].managementActivity).toMatchObject({ available: 4, used: 2, unused: 2, pressureAfter: 0.025 });
   });
 
   it('seleccionar y cancelar devuelve los PA; la emisión forzada no disimula la inacción', () => {

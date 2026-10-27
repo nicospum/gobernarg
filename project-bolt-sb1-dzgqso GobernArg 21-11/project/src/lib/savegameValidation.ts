@@ -36,7 +36,7 @@ export function safeJsonTree(value: unknown, depth = 0, budget = { left: 1000000
   return obj(value) && Object.entries(value).every(([key, v]) => !['__proto__', 'prototype', 'constructor'].includes(key) && safeJsonTree(v, depth + 1, budget));
 }
 
-const activity = (x: unknown) => obj(x) && number(x.pressure) && x.pressure >= 0 && x.pressure <= 32
+const activity = (x: unknown) => obj(x) && (x.version === undefined || x.version === 2) && number(x.pressure) && x.pressure >= 0 && x.pressure <= 32
   && integer(x.mandateStart) && x.mandateStart > 0 && integer(x.observedTurns) && x.observedTurns <= 16
   && typeof x.perfectUse === 'boolean' && typeof x.bonusGranted === 'boolean';
 const activityRecord = (x: unknown) => fields(x, ['available','used','unused','pressureBefore','pressureAfter','governabilityPenalty','imagenDelta']) && obj(x)

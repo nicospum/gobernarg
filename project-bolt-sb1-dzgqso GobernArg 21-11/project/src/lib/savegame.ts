@@ -1,6 +1,9 @@
 import type { GameState } from '../types/game';
 import type { GameEvent } from '../systems/events/types';
 import { resumeNotificationSeq } from '../engine/engineShared';
+import { PARAMS } from '../data/causal';
+import { migrateManagementActivity } from '../engine/causal/managementActivity';
+import { recomputePolitical } from '../engine/causal/political';
 import { LEGACY_CALENDAR_ID, calendarFor } from './calendar';
 import { safeJsonTree, validGameState, validPendingEvents } from './savegameValidation';
 
@@ -54,8 +57,26 @@ export function saveGame(state: GameState, pendingEvents: GameEvent[] = []): boo
 }
 /** Sólo al aplicar un estado ya validado se reanuda la secuencia de notificaciones. */
 export function rehydrate(state: GameState): GameState {
-  resumeNotificationSeq(state.notifications ?? []);
-  return state;
+  const causal = migrateManagementActivity(state.causal);
+  let hydrated = causal === state.causal ? state : { ...state, causal };
+  if ((causal.managementActivity?.pressure ?? 0) < (state.causal.managementActivity?.pressure ?? 0)) {
+    // La nueva presión alivia sólo la gobernabilidad actual: no reescribe
+    // imagen, votos, historia ni resultados que ya ocurrieron.
+    const recalculated = { ...causal, political: { ...causal.political } };
+    recomputePolitical(recalculated, Math.max(0, causal.turn - 1));
+    const gob = recalculated.political.gob;
+    hydrated = {
+      ...hydrated,
+      stability: Math.round(gob * 10) / 10,
+      causal: {
+        ...causal,
+        political: { ...causal.political, gob },
+        govCrisisStreak: !state.gameOver && gob >= PARAMS.GOB_CRISIS_UMBRAL ? 0 : causal.govCrisisStreak,
+      },
+    };
+  }
+  resumeNotificationSeq(hydrated.notifications ?? []);
+  return hydrated;
 }
 export function loadGame(): SavedGame | null {
   try {

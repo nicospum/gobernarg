@@ -215,6 +215,8 @@ export interface TurnActionRecord {
 
 /** Historial de uso real de PA observado desde la incorporación de la regla. */
 export interface ManagementActivity {
+  /** Ausencia = pesos anteriores; 2 = desgaste parcial suave ya migrado. */
+  version?: 2;
   pressure: number;
   mandateStart: number;
   observedTurns: number;
