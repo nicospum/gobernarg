@@ -74,7 +74,7 @@ export function createCausalState(opts: CreateOptions = {}): CausalState {
     turn: 1,
     mandateStart: 1,
     ...(scenario.reelectionsToUnlock === 0 ? { managementActivity: {
-      pressure: 0, mandateStart: 1, observedTurns: 0, perfectUse: true, bonusGranted: false,
+      version: 2, pressure: 0, mandateStart: 1, observedTurns: 0, perfectUse: true, bonusGranted: false,
     } } : {}),
     base,
     expect: { ...base, APRO: 50 },

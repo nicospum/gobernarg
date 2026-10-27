@@ -1,9 +1,12 @@
+import { PARAMS } from '../data/causal';
 import type { GameState } from '../types/game';
 import type { GameEvent } from '../systems/events/types';
 import { interestGroups } from '../data/interestGroups';
 import { ADVISOR_ROLES, ADVISOR_SALARY_VERSION, LEGACY_ADVISOR_SALARIES } from '../data/advisors';
 import { validFullState, validPendingEvent, safeJsonTree } from './savegameValidation';
 import { resumeNotificationSeq } from '../engine/engineShared';
+import { migrateManagementActivity } from '../engine/causal/managementActivity';
+import { recomputePolitical } from '../engine/causal/political';
 
 /** Se conserva la clave de Full; el sobre v2 identifica la edición. */
 export const SAVE_KEY = 'gobernarg.partida.v1';
@@ -14,9 +17,21 @@ function storage(): Storage | null {
   try { return typeof window !== 'undefined' ? window.localStorage : null; } catch { return null; }
 }
 
-/** Migra sólo el gasto de nómina anterior; conserva deuda, programas y progreso. */
+/** Migra nómina y presión parcial anteriores; conserva deuda, programas y progreso. */
 export function rehydrate(input: GameState): GameState {
   let state = input;
+  let causal = migrateManagementActivity(state.causal);
+  if (causal !== state.causal) {
+    if (causal.managementActivity!.pressure < state.causal.managementActivity!.pressure) {
+      // Proyecta GOB sin modificar votos, imagen, premios ni resultados históricos.
+      const projection = { ...causal, political: { ...causal.political } };
+      recomputePolitical(projection, Math.max(0, causal.turn - 1));
+      causal = { ...causal, political: { ...causal.political, gob: projection.political.gob },
+        govCrisisStreak: !state.gameOver && projection.political.gob >= PARAMS.GOB_CRISIS_UMBRAL ? 0 : causal.govCrisisStreak };
+      state = { ...state, stability: Math.round(causal.political.gob * 10) / 10 };
+    }
+    state = { ...state, causal };
+  }
   if (state.advisorSalaryVersion !== ADVISOR_SALARY_VERSION) {
     const difference = (state.advisors ?? []).filter(advisor => advisor.isActive).reduce((sum, advisor) => sum + (ADVISOR_ROLES[advisor.id]?.salary ?? 0) - (LEGACY_ADVISOR_SALARIES[advisor.id] ?? 0), 0);
     state = { ...state, advisorSalaryVersion: ADVISOR_SALARY_VERSION, causal: { ...state.causal, gastoCorr: Math.max(0, state.causal.gastoCorr + difference) } };

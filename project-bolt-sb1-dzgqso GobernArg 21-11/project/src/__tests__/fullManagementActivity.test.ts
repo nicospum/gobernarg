@@ -17,7 +17,7 @@ const budget = (remaining: number, available = 4) => ({ available, remaining });
 
 describe('Actividad: acumulación gradual y recuperación', () => {
   it.each([
-    [0, 0, 0], [1, 0, 0], [2, 0.1, -0.05], [3, 0.25, -0.125], [4, 1, -0.5],
+    [0, 0, 0], [1, 0, 0], [2, 0.025, -0.0125], [3, 0.05, -0.025], [4, 1, -0.5],
   ])('con %i PA sin usar registra presión %f e imagen %f', (remaining, pressure, imagenDelta) => {
     const state = createCausalState();
     const before = structuredClone(state);
@@ -40,7 +40,7 @@ describe('Actividad: acumulación gradual y recuperación', () => {
       }
       return state.managementActivity!.pressure;
     });
-    expect(pressures).toEqual([0.4, 1, 4]);
+    expect(pressures).toEqual([0.1, 0.2, 4]);
     expect(managementGovernabilityPenalty(4)).toBe(16.75);
     expect(managementGovernabilityPenalty(100)).toBe(100);
   });
@@ -87,7 +87,7 @@ describe('Premio sólo con un mandato completo de uso perfecto comprobado', () =
     const state = createCausalState();
     state.managementActivity = { pressure: 4, mandateStart: 1, observedTurns: 16, perfectUse: false, bonusGranted: true };
     state.turn = 17; state.mandateStart = 17;
-    expect(previewManagementActivity(state, budget(0)).activity).toEqual({ pressure: 3, mandateStart: 17, observedTurns: 1, perfectUse: true, bonusGranted: false });
+    expect(previewManagementActivity(state, budget(0)).activity).toEqual({ version: 2, pressure: 3, mandateStart: 17, observedTurns: 1, perfectUse: true, bonusGranted: false });
   });
 });
 
@@ -130,7 +130,7 @@ describe('Integración con el cierre y con recursos reales', () => {
     expect(state.selectedActions).toHaveLength(0);
     expect(state.actions).toBe(2);
     const result = processEndTurn(state).state;
-    expect(result.causal.records.slice(-1)[0]?.managementActivity).toMatchObject({ available: 4, used: 2, unused: 2, pressureAfter: 0.1 });
+    expect(result.causal.records.slice(-1)[0]?.managementActivity).toMatchObject({ available: 4, used: 2, unused: 2, pressureAfter: 0.025 });
     expect(result.actions).toBe(result.baseActions);
   });
   it('seleccionar y cancelar devuelve PA; encuestas y asesores no inventan consumo de PA', () => {

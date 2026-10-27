@@ -41,7 +41,8 @@ function scheduled(value: unknown): boolean {
     && ['floor','cumulativeCap'].every(key => optional(value[key],number));
 }
 function managementActivity(value: unknown): boolean {
-  return object(value) && number(value.pressure) && value.pressure >= 0 && value.pressure <= 32
+  return object(value) && optional(value.version, version => version === 2)
+    && number(value.pressure) && value.pressure >= 0 && value.pressure <= 32
     && integer(value.mandateStart) && value.mandateStart >= 1
     && integer(value.observedTurns) && value.observedTurns <= 16
     && bool(value.perfectUse) && bool(value.bonusGranted);

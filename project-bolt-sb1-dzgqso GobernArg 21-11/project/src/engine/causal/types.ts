@@ -214,6 +214,8 @@ export interface TurnActionRecord {
 
 /** Historial observado de uso de PA; ausente en partidas anteriores a esta regla. */
 export interface ManagementActivity {
+  /** Versión de los pesos; ausente en guardados con desgaste parcial anterior. */
+  version?: 2;
   pressure: number;
   mandateStart: number;
   observedTurns: number;
