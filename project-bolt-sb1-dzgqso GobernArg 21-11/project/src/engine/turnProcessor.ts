@@ -209,9 +209,24 @@ export function processEndTurn(gameState: GameState): TurnResult {
     state = addNotification(state, { type: 'warning', category: 'economy', title: 'Aviso', message: note, importance: 'high' });
   }
 
-  // 7. Fin de mandato: elección presidencial (o de sucesión en el 2º mandato).
+  // 7. Resolver crisis terminales antes de elecciones, sucesión o avance del calendario.
+  if (!state.gameOver) {
+    const defeat = checkCausalDefeat(state);
+    if (defeat) {
+      state.gameOver = true;
+      state.victorious = false;
+      state.defeatReason = defeat;
+      // La caída del gobierno tiene prioridad sobre estrategias o elecciones simultáneas.
+      state.pendingElection = false;
+      state.pendingElectionOptions = [];
+      state.pendingMidtermStrategy = false;
+      state.availableMidtermStrategies = [];
+    }
+  }
+
+  // Fin de mandato: elección presidencial (o de sucesión en el 2º mandato).
   const isEndOfTerm = state.year === 4 && state.turn === 4;
-  if (isEndOfTerm) {
+  if (isEndOfTerm && !state.gameOver) {
     state.pendingElection = true;
     state.pendingElectionOptions = getAvailableElectionOptions(state);
     if (state.position === 'presidente' && state.pendingElectionOptions.length === 0) {
@@ -242,21 +257,8 @@ export function processEndTurn(gameState: GameState): TurnResult {
     state.causal = { ...state.causal, paPenaltyNextTurn: 0 };
   }
 
-  // 10. Espejo, derrotas, advertencias, metas e historial.
+  // 10. Espejo, advertencias, metas e historial.
   state = syncLegacy(state);
-  if (!state.gameOver) {
-    const defeat = checkCausalDefeat(state);
-    if (defeat) {
-      state.gameOver = true;
-      state.victorious = false;
-      state.defeatReason = defeat;
-      // La caída del gobierno tiene prioridad sobre estrategias o elecciones simultáneas.
-      state.pendingElection = false;
-      state.pendingElectionOptions = [];
-      state.pendingMidtermStrategy = false;
-      state.availableMidtermStrategies = [];
-    }
-  }
   state = addWarningNotifications(state);
 
   const previouslyCompleted = new Set(state.objectives.filter(o => o.completed).map(o => o.id));

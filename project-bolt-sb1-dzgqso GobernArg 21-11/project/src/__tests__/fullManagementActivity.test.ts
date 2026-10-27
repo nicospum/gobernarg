@@ -175,6 +175,34 @@ describe('Integración con el cierre y con recursos reales', () => {
     expect(result.pendingElection).toBe(false);
     expect(result.pendingElectionOptions).toEqual([]);
   });
+  it.each([true, false])('el cierre32 prioriza crisis terminal=%s antes de resolver sucesión', terminalCrisis => {
+    let state = game();
+    state.term = 2; state.year = 4; state.turn = 4;
+    state.causal.turn = 32; state.causal.mandateStart = 17;
+    state.causal.govCrisisStreak = 1;
+    state.causal.managementActivity = { pressure: terminalCrisis ? 10 : 0, mandateStart: 17, observedTurns: 15, perfectUse: false, bonusGranted: false };
+    state.causal.political.imagen = 90;
+    for (const actor of Object.values(state.causal.actors)) { actor.sat = 90; if (actor.rel !== null) actor.rel = 90; }
+    state.causal.perks.freeMeetingsPerTurn = 0; state.causal.perks.freeMeetingActors = [];
+    // El uso completo del último trimestre sólo recupera un punto de presión.
+    for (const actor of ['industria', 'agro', 'pymes', 'sindicatos'] as const) state = interactWithActor(state, actor, 'reunion');
+    expect(state.actions).toBe(0);
+    const result = processEndTurn(state).state;
+    expect(result.gameOver).toBe(true);
+    expect(result.causal.political.iv).toBeGreaterThan(45);
+    expect(result.victorious).toBe(!terminalCrisis);
+    expect(result.defeatReason).toBe(terminalCrisis ? 'impeachment' : null);
+    expect(result.pendingElection).toBe(false);
+    expect(result.pendingMidtermStrategy).toBe(false);
+    expect(result.year).toBe(4);
+    expect(result.turn).toBe(4);
+    expect(parseSavedGame(encodeSavedGame(result))).not.toBeNull();
+    if (terminalCrisis) {
+      expect(result.causal.govCrisisStreak).toBe(2);
+      expect(result.causal.managementActivity?.pressure).toBe(9);
+      expect(result.electionResults).toBeNull();
+    } else expect(result.electionResults?.kind).toBe('succession');
+  });
   it('una estrategia pendiente bloquea el cierre sin acumular actividad dos veces', () => {
     const state = game(); state.pendingMidtermStrategy = true;
     const result = processEndTurn(state).state;

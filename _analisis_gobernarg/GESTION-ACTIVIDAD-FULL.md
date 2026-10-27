@@ -33,6 +33,8 @@ Los campos `causal.managementActivity` y `record.managementActivity` son opciona
 
 Regresiones nuevas: umbrales y recuperación; cero uso con capacidad3; premio final, único y de mandato completo; guardado antiguo; suspensión y emisión forzada; habilidades/reuniones pagas; cancelación, encuestas y asesores; persistencia del descuento al recalcular; históricos sin regla; caída antes del fin de Fácil; prioridad de crisis en legislativas; importación de datos corruptos. El fixture de calendario de `fase2` realiza ahora reuniones pagas para aislar su objetivo y no caer por inactividad.
 
-Verificación técnica: 35 archivos y 394 pruebas PASS; typecheck y build PASS; lint sin errores y con siete advertencias de Fast Refresh ya existentes. Playtest y control de ideología se ejecutan una vez sin modificar bots, escenarios ni benchmark. Logs y artefactos: `_cierre2026/checks/actividad/Full` en el workspace administrativo.
+Verificación técnica: 35 archivos y 396 pruebas PASS; typecheck y build PASS; lint sin errores y con siete advertencias de Fast Refresh ya existentes. Playtest y control de ideología se ejecutan una vez sin modificar bots, escenarios ni benchmark. Logs y artefactos: `_cierre2026/checks/actividad/Full` en el workspace administrativo.
 
 QA de integración del responsable: navegador Full Fácil sin acciones cae en T7; presión1/2/3 leve y4 fuerte; recarga mantiene presión3; sin errores de JavaScript ni desbordamiento.
+
+Revisión puntual del último cierre: se reprodujo una sucesión victoriosa en T32 pese a la segunda crisis de gobernabilidad. La derrota causal se resuelve ahora antes de decidir elección/sucesión y de avanzar el calendario civil. La regresión usa los cuatro PA reales del último trimestre, mantiene IV superior a 45, comprueba juicio político sin resultado electoral, fecha del 4º trimestre del 4º año y guardado válido. El caso sin crisis conserva la sucesión ganada. No cambian fórmulas ni escenarios.
