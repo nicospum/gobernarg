@@ -23,7 +23,7 @@ describe('Decisiones y ayuda accesible', () => {
     const onSelect = vi.fn();
     const av = getAvailability(createCausalState(), 'emitir_dinero', [], 3);
     render(<ActionCard availability={av} requestedBy={[]} onSelect={onSelect} isSelected={false} disabled={false} />);
-    const help = screen.getByRole('button', { name: `Ayuda sobre ${av.action.name}` });
+    const help = screen.getByRole('button', { name: `Información sobre ${av.action.name}` });
     help.focus();
     fireEvent.click(help);
     expect(screen.getByRole('dialog', { name: av.action.name })).toBeTruthy();

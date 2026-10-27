@@ -8,7 +8,7 @@ export const availableAdvisors: Advisor[] = [
     specialty: 'Economista',
     bonusActions: 0, // Motor causal: el aporte del asesor es su rol (ADVISOR_ROLES), no PA extra.
     influence: 8,
-    cost: 300,
+    cost: 100,
     description: 'Experto en política monetaria y desarrollo económico',
     popularityEffect: -5,
     unlockRequirement: null,
@@ -31,7 +31,7 @@ export const availableAdvisors: Advisor[] = [
     specialty: 'Comunicación Social',
     bonusActions: 0, // Motor causal: el aporte del asesor es su rol (ADVISOR_ROLES), no PA extra.
     influence: 9,
-    cost: 250,
+    cost: 50,
     description: 'Especialista en manejo de medios y opinión pública',
     popularityEffect: 10,
     unlockRequirement: null,
@@ -54,7 +54,7 @@ export const availableAdvisors: Advisor[] = [
     specialty: 'Infraestructura',
     bonusActions: 0, // Motor causal: el aporte del asesor es su rol (ADVISOR_ROLES), no PA extra.
     influence: 7,
-    cost: 400,
+    cost: 100,
     description: 'Experto en desarrollo urbano y obras públicas',
     popularityEffect: 5,
     unlockRequirement: null,
@@ -77,7 +77,7 @@ export const availableAdvisors: Advisor[] = [
     specialty: 'Políticas Sociales',
     bonusActions: 0, // Motor causal: el aporte del asesor es su rol (ADVISOR_ROLES), no PA extra.
     influence: 8,
-    cost: 200,
+    cost: 50,
     description: 'Especialista en programas de desarrollo social',
     popularityEffect: 15,
     unlockRequirement: null,
@@ -100,7 +100,7 @@ export const availableAdvisors: Advisor[] = [
     specialty: 'Relaciones Internacionales',
     bonusActions: 0, // Motor causal: el aporte del asesor es su rol (ADVISOR_ROLES), no PA extra.
     influence: 9,
-    cost: 500,
+    cost: 100,
     description: 'Diplomático con amplia experiencia internacional',
     popularityEffect: 8,
     unlockRequirement: {
@@ -126,7 +126,7 @@ export const availableAdvisors: Advisor[] = [
     specialty: 'Seguridad Pública',
     bonusActions: 0, // Motor causal: el aporte del asesor es su rol (ADVISOR_ROLES), no PA extra.
     influence: 7,
-    cost: 350,
+    cost: 50,
     description: 'Experta en políticas de seguridad y prevención',
     popularityEffect: 12,
     unlockRequirement: null,
@@ -149,7 +149,7 @@ export const availableAdvisors: Advisor[] = [
     specialty: 'Educación',
     bonusActions: 0, // Motor causal: el aporte del asesor es su rol (ADVISOR_ROLES), no PA extra.
     influence: 8,
-    cost: 300,
+    cost: 50,
     description: 'Especialista en reforma educativa',
     popularityEffect: 10,
     unlockRequirement: {
@@ -175,8 +175,8 @@ export const availableAdvisors: Advisor[] = [
     specialty: 'Broker de Salud',
     bonusActions: 0, // Motor causal: el aporte del asesor es su rol (ADVISOR_ROLES), no PA extra.
     influence: 8,
-    cost: 350,
-    description: 'Broker de salud: te arma un hospital llave en mano y te garantiza resultados en salud. Cálido y de trato fácil, se lleva bien con empresarios y líderes religiosos, y con su calidez mejora la relación con todos los sectores.',
+    cost: 100,
+    description: 'Especialista en gestión de salud: mejora programas y hospitales, abarata su ejecución y facilita las negociaciones con empresas y organizaciones sociales.',
     popularityEffect: 8,
     unlockRequirement: null,
     level: 4,
@@ -232,11 +232,11 @@ export const ADVISOR_ROLES: Record<string, AdvisorRole> = {
     negotiation: { financiero: 0.1, industria: 0.1 },
     reveals: ['desanclaje', 'repeticion'],
     imagenOnHire: -2,
-    salary: 40,
+    salary: 20,
     perks: [
       'Economía y moneda e impuestos: +20% de eficacia',
       'Reformas económicas grandes cuestan 1 PA',
-      'Advierte cuándo repetir una medida sale caro y cómo están las expectativas de inflación',
+      'Permite consultar las expectativas de inflación',
       'Mejor negociación con el sector financiero y la industria',
     ],
   },
@@ -249,7 +249,7 @@ export const ADVISOR_ROLES: Record<string, AdvisorRole> = {
     freePolls: true,
     eventResilience: 0.2,
     imagenOnHire: 3,
-    salary: 30,
+    salary: 10,
     perks: [
       'Encuestas gratis: siempre sabés cómo están la clase media y los sectores populares',
       'Amortigua el golpe de los escándalos sobre tu imagen (−20%)',
@@ -264,7 +264,7 @@ export const ADVISOR_ROLES: Record<string, AdvisorRole> = {
     negotiation: { gobernadores: 0.1 },
     reveals: [],
     imagenOnHire: 1,
-    salary: 50,
+    salary: 20,
     perks: [
       'Obras: +20% de eficacia y −10% de costo',
       'Obras grandes cuestan 1 PA',
@@ -278,7 +278,7 @@ export const ADVISOR_ROLES: Record<string, AdvisorRole> = {
     negotiation: { org_sociales: 0.1, sindicatos: 0.1 },
     reveals: [],
     imagenOnHire: 3,
-    salary: 30,
+    salary: 10,
     perks: [
       'Social y salud: +20% de eficacia',
       'Programas sociales grandes cuestan 1 PA',
@@ -293,7 +293,7 @@ export const ADVISOR_ROLES: Record<string, AdvisorRole> = {
     negotiation: { financiero: 0.1, agro: 0.1 },
     reveals: [],
     imagenOnHire: 2,
-    salary: 60,
+    salary: 20,
     perks: [
       'Exterior y producción: +15% de eficacia',
       'Tratados y regímenes de inversión cuestan 1 PA',
@@ -309,7 +309,7 @@ export const ADVISOR_ROLES: Record<string, AdvisorRole> = {
     negotiation: {},
     reveals: [],
     imagenOnHire: 2,
-    salary: 40,
+    salary: 10,
     perks: [
       'Seguridad y justicia: +25% de eficacia',
       'Operativos grandes cuestan 1 PA',
@@ -323,7 +323,7 @@ export const ADVISOR_ROLES: Record<string, AdvisorRole> = {
     negotiation: { docentes: 0.15, estudiantes: 0.1, cientificos: 0.1 },
     reveals: [],
     imagenOnHire: 2,
-    salary: 40,
+    salary: 10,
     perks: [
       'Educación, ciencia y cultura: +20% de eficacia',
       'Reformas educativas y leyes de conocimiento cuestan 1 PA',
@@ -345,7 +345,7 @@ export const ADVISOR_ROLES: Record<string, AdvisorRole> = {
     },
     reveals: [],
     imagenOnHire: 2,
-    salary: 45,
+    salary: 20,
     perks: [
       'Social y salud: +20% de eficacia y −15% de costo',
       'Hospitales y programas grandes de salud cuestan 1 PA',
@@ -354,4 +354,11 @@ export const ADVISOR_ROLES: Record<string, AdvisorRole> = {
       'Su calidez suma con todos: +5% al negociar con cualquier actor',
     ],
   },
+};
+
+/** Versión del esquema de sueldos; permite migrar partidas anteriores sin gasto fantasma. */
+export const ADVISOR_SALARY_VERSION = 2;
+export const LEGACY_ADVISOR_SALARIES: Record<string, number> = {
+  advisor1: 40, advisor2: 30, advisor3: 50, advisor4: 30,
+  advisor5: 60, advisor6: 40, advisor7: 40, advisor8: 45,
 };

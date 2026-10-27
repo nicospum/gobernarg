@@ -11,7 +11,7 @@ import { interestGroups } from '../data/interestGroups';
 import { GROUP_ANTAGONISTS } from '../data/groupAntagonists';
 import { ARCHETYPE_ABILITIES } from '../data/specialAbilities';
 import { STARTING_POSITION } from '../data/careerRules';
-import { ADVISOR_ROLES } from '../data/advisors';
+import { ADVISOR_ROLES, ADVISOR_SALARY_VERSION } from '../data/advisors';
 import { CAUSAL_ACTIONS_BY_ID, PARAMS, type ActorId } from '../data/causal';
 import { calculateInteractionCost, calculateSupportGain, getInteractionCommitment } from '../utils/interactionCosts';
 import { getPresidentialGoals } from '../utils/victoryConditions';
@@ -100,6 +100,7 @@ export function getInitialGameState(): GameState {
     actions: PARAMS.ACCIONES_POR_TURNO,
     baseActions: PARAMS.ACCIONES_POR_TURNO,
     advisors: [],
+    advisorSalaryVersion: ADVISOR_SALARY_VERSION,
     selectedActions: [],
     moneyPrintingCount: 0,
     governorName: '',

@@ -39,6 +39,7 @@ export function ReelectionChoiceModal({ gameState, onSelect, onRetire }: Reelect
         </div>
 
         <div className="p-6 space-y-3">
+          <p className="text-[13px] text-ink/75">Si ganás, empieza un segundo y último mandato de 16 trimestres. El país, la deuda y los programas continúan; al final se define la sucesión de tu espacio.</p>
           {options.length === 0 ? (
             <div className="text-center text-muted-foreground py-8 text-sm">
               No hay opciones disponibles. Tu carrera política llegó a su fin.

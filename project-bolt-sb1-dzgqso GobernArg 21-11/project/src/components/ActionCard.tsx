@@ -16,6 +16,7 @@ interface ActionCardProps {
   disabled: boolean;
   disabledReason?: string;
   loanDiscount?: number;
+  showStrategicNote?: boolean;
 }
 
 const TAG_LABEL: Record<string, string> = {
@@ -23,7 +24,7 @@ const TAG_LABEL: Record<string, string> = {
 };
 
 /** La tarjeta explica el intercambio; el seguimiento usa efectos reales del turno. */
-export function ActionCard({ availability, requestedBy, onSelect, isSelected, disabled, disabledReason = 'No te quedan acciones este turno.', loanDiscount = 0 }: ActionCardProps) {
+export function ActionCard({ availability, requestedBy, onSelect, isSelected, disabled, disabledReason = 'No te quedan acciones este turno.', loanDiscount = 0, showStrategicNote = false }: ActionCardProps) {
   const { action, pa, caja, reasons, available, needsDnu, repetitionWarning } = availability;
   const style = UI_CATEGORY_STYLES[action.category];
   const blocked = !isSelected && (!available || disabled);
@@ -36,7 +37,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
   const commitments = actionFiscalCommitments(action.id, { loanDiscount });
 
   return (
-    <article aria-labelledby={headingId} className={`flex flex-col gap-3 rounded-lg border p-4 transition-colors ${
+    <article aria-labelledby={headingId} className={`flex flex-col gap-2 rounded-lg border p-3 transition-colors ${
       isSelected ? 'border-ink bg-gold/10 ring-1 ring-ink' : 'border-rule bg-surface'
     }`}>
       <div className="flex items-start justify-between gap-2">
@@ -65,7 +66,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
         {commitments.map(item => <li key={item.key} className={item.conditional ? 'text-caution' : ''}>{item.text}</li>)}
       </ul>}
 
-      {playerNote && <p className="text-[13px] leading-relaxed text-ink/85 border-l-2 border-gold/40 pl-3">{playerNote}</p>}
+      {showStrategicNote && playerNote && <p className="text-[13px] leading-relaxed text-ink/85 border-l-2 border-gold/40 pl-3">{playerNote}</p>}
       {opensInterna && <p className="text-[12px] leading-relaxed text-caution bg-amber-500/10 p-2 rounded">Abre una interna en tu partido: las políticas cuestan más y rinden menos mientras dure.</p>}
       {repetitionWarning && <p className="flex items-start gap-1.5 text-[12px] text-caution leading-relaxed"><AlertTriangle size={14} className="mt-0.5 shrink-0" />{repetitionWarning}</p>}
       {blocked && <div className="text-[13px] text-negative leading-relaxed" role="status">
@@ -76,13 +77,14 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
       <div className="flex items-center gap-2 pt-3 mt-auto border-t border-rule">
         <InfoTooltip title={action.name} clickToOpen content={
           <div className="space-y-2 text-[13px] leading-relaxed">
+            {playerNote && <p>{playerNote}</p>}
             {riskText && <p><strong>A tener en cuenta:</strong> {riskText}</p>}
             {needsDnu && <p>Necesita un decreto porque no alcanza el apoyo legislativo. El DNU debe estar en el mismo turno.</p>}
             {requestedBy.length > 0 && <p><strong>Pedido conocido:</strong> {requestedBy.map(actor => ACTORS[actor].shortName).join(', ')}.</p>}
             <p>Agregarla prepara el turno. Podés quitarla antes de finalizarlo. Después, consultá los cambios en el resumen y el seguimiento en País, Actores y el Cuaderno.</p>
           </div>
         }>
-          <button type="button" aria-label={`Ayuda sobre ${action.name}`} className="min-h-11 min-w-11 px-3 inline-flex items-center justify-center gap-1.5 rounded-md border border-rule text-[12px] text-ink hover:bg-sunken"><Info size={16} />Ayuda</button>
+          <button type="button" aria-label={`Información sobre ${action.name}`} className="min-h-11 min-w-11 px-3 inline-flex items-center justify-center gap-1.5 rounded-md border border-rule text-[12px] text-ink hover:bg-sunken"><Info size={16} /></button>
         </InfoTooltip>
         <button type="button" onClick={onSelect} disabled={blocked} aria-pressed={isSelected} aria-label={`${isSelected ? 'Quitar del turno' : 'Agregar al turno'}: ${action.name}`} className={`flex-1 min-h-11 px-3 inline-flex items-center justify-center gap-1.5 rounded-md text-[13px] font-semibold transition-colors ${isSelected ? 'bg-ink text-paper' : 'bg-ink/5 text-ink hover:bg-ink/10'} disabled:opacity-50 disabled:cursor-not-allowed`}>
           {isSelected ? <><Check size={15} />Quitar del turno</> : <>Agregar al turno<ArrowRight size={15} /></>}

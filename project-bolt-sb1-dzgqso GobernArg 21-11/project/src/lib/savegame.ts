@@ -1,86 +1,71 @@
 import type { GameState } from '../types/game';
 import type { GameEvent } from '../systems/events/types';
 import { interestGroups } from '../data/interestGroups';
+import { ADVISOR_ROLES, ADVISOR_SALARY_VERSION, LEGACY_ADVISOR_SALARIES } from '../data/advisors';
+import { validFullState, validPendingEvent, safeJsonTree } from './savegameValidation';
 import { resumeNotificationSeq } from '../engine/engineShared';
 
-/**
- * Guardado automático de la partida en el navegador. Se guarda el estado
- * completo (es JSON puro) más los eventos que quedaron sin responder, así
- * recargar la página o cerrar la pestaña no borra el mandato.
- */
+/** Se conserva la clave de Full; el sobre v2 identifica la edición. */
 export const SAVE_KEY = 'gobernarg.partida.v1';
-const SAVE_VERSION = 1;
-
-export interface SavedGame {
-  v: number;
-  savedAt: string;
-  state: GameState;
-  pendingEvents: GameEvent[];
-}
+export const BACKUP_KEY = `${SAVE_KEY}.backup`;
+export interface SavedGame { v: number; edition: 'Full'; savedAt: string; state: GameState; pendingEvents: GameEvent[]; recoveredFromBackup?: boolean }
 
 function storage(): Storage | null {
-  try {
-    return typeof window !== 'undefined' ? window.localStorage : null;
-  } catch {
-    return null;
+  try { return typeof window !== 'undefined' ? window.localStorage : null; } catch { return null; }
+}
+
+/** Migra sólo el gasto de nómina anterior; conserva deuda, programas y progreso. */
+export function rehydrate(input: GameState): GameState {
+  let state = input;
+  if (state.advisorSalaryVersion !== ADVISOR_SALARY_VERSION) {
+    const difference = (state.advisors ?? []).filter(advisor => advisor.isActive).reduce((sum, advisor) => sum + (ADVISOR_ROLES[advisor.id]?.salary ?? 0) - (LEGACY_ADVISOR_SALARIES[advisor.id] ?? 0), 0);
+    state = { ...state, advisorSalaryVersion: ADVISOR_SALARY_VERSION, causal: { ...state.causal, gastoCorr: Math.max(0, state.causal.gastoCorr + difference) } };
   }
+  resumeNotificationSeq(state.notifications ?? []);
+  if (!state.interestGroups) return state;
+  const icons = new Map(interestGroups.flatMap(group => group.subgroups.map(sub => [sub.id, sub.icon] as const)));
+  return { ...state, interestGroups: state.interestGroups.map(group => ({ ...group, subgroups: group.subgroups.map(sub => ({ ...sub, icon: icons.get(sub.id) ?? sub.icon })) })) };
+}
+
+export function encodeSavedGame(state: GameState, pendingEvents: GameEvent[] = []): string {
+  return JSON.stringify({ v: 2, edition: 'Full', savedAt: new Date().toISOString(), state, pendingEvents });
+}
+
+/** Valida antes de continuar/importar y admite sobres v1 de Full sin borrar datos. */
+export function parseSavedGame(raw: string): SavedGame | null {
+  try {
+    if (raw.length > 4_000_000) return null;
+    const data = JSON.parse(raw) as Partial<SavedGame>;
+    if (!safeJsonTree(data)) return null;
+    if (!data || (data.v !== 1 && data.v !== 2) || (data.v === 2 && data.edition !== 'Full') || (data.edition !== undefined && data.edition !== 'Full')) return null;
+    const state = data.state;
+    if (!validFullState(state)) return null;
+    if (data.pendingEvents !== undefined && (!Array.isArray(data.pendingEvents) || !data.pendingEvents.every(validPendingEvent))) return null;
+    return { v: 2, edition: 'Full', savedAt: typeof data.savedAt === 'string' ? data.savedAt : '', state, pendingEvents: data.pendingEvents ?? [] };
+  } catch { return null; }
 }
 
 export function saveGame(state: GameState, pendingEvents: GameEvent[] = []): boolean {
-  const s = storage();
-  if (!s) return false;
-  const data: SavedGame = { v: SAVE_VERSION, savedAt: new Date().toISOString(), state, pendingEvents };
+  const target = storage(); if (!target) return false;
   try {
-    s.setItem(SAVE_KEY, JSON.stringify(data));
+    const previous = target.getItem(SAVE_KEY);
+    target.setItem(SAVE_KEY, encodeSavedGame(state, pendingEvents));
+    // La copia anterior es auxiliar: una cuota llena no invalida un guardado principal exitoso.
+    if (previous && parseSavedGame(previous)) { try { target.setItem(BACKUP_KEY, previous); } catch { /* Conserva el principal. */ } }
     return true;
-  } catch {
-    return false;
-  }
+  } catch { return false; }
 }
 
-/**
- * Lo único del estado que no es JSON son los íconos de los subgrupos de
- * interés (componentes de React): al cargar se toman de los datos del juego.
- */
-export function rehydrate(state: GameState): GameState {
-  resumeNotificationSeq(state.notifications ?? []);
-  if (!state.interestGroups) return state;
-  const icons = new Map(interestGroups.flatMap(g => g.subgroups.map(s => [s.id, s.icon] as const)));
-  return {
-    ...state,
-    interestGroups: state.interestGroups.map(group => ({
-      ...group,
-      subgroups: group.subgroups.map(sub => ({ ...sub, icon: icons.get(sub.id) ?? sub.icon })),
-    })),
-  };
-}
-
-/** La partida guardada, o null si no hay o no se puede leer. */
 export function loadGame(): SavedGame | null {
-  const s = storage();
-  if (!s) return null;
+  const target = storage(); if (!target) return null;
   try {
-    const raw = s.getItem(SAVE_KEY);
-    if (!raw) return null;
-    const data = JSON.parse(raw) as Partial<SavedGame>;
-    const st = data?.state;
-    if (data?.v !== SAVE_VERSION || !st || typeof st !== 'object') return null;
-    if (!st.causal || typeof st.governorName !== 'string' || typeof st.year !== 'number') return null;
-    return {
-      v: SAVE_VERSION,
-      savedAt: typeof data.savedAt === 'string' ? data.savedAt : '',
-      state: rehydrate(st),
-      pendingEvents: Array.isArray(data.pendingEvents) ? data.pendingEvents : [],
-    };
-  } catch {
-    return null;
-  }
+    const current = target.getItem(SAVE_KEY); const parsed = current ? parseSavedGame(current) : null;
+    if (parsed) return { ...parsed, state: rehydrate(parsed.state) };
+    const previous = target.getItem(BACKUP_KEY); const backup = previous ? parseSavedGame(previous) : null;
+    return backup ? { ...backup, state: rehydrate(backup.state), recoveredFromBackup: true } : null;
+  } catch { return null; }
 }
 
 export function clearSavedGame(): void {
-  try {
-    storage()?.removeItem(SAVE_KEY);
-  } catch {
-    // Sin acceso al almacenamiento no hay nada que borrar.
-  }
+  try { const target = storage(); target?.removeItem(SAVE_KEY); target?.removeItem(BACKUP_KEY); } catch { /* No elimina progreso ni otras ediciones. */ }
 }

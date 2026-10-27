@@ -18,7 +18,9 @@ import { EventModal } from './components/EventModal';
 import { recordReelectionWin, recordScenarioWin } from './lib/progress';
 import { NotificationCenter } from './components/NotificationCenter';
 import { CountryPanel } from './components/CountryPanel';
-import { clearSavedGame, loadGame, saveGame } from './lib/savegame';
+import { clearSavedGame, loadGame, saveGame, encodeSavedGame, parseSavedGame, rehydrate, type SavedGame } from './lib/savegame';
+import { ConfirmDialog } from './components/ConfirmDialog';
+import { isNewScenarioAvailable } from './lib/editionAccess';
 import { lazyModal } from './lib/lazyModal';
 import { useIsMobile } from './lib/useMediaQuery';
 import { MobileBottomBar, MobileHeader, MobileKpis, MobileMenu, type MobileTab } from './components/mobile/MobileChrome';
@@ -84,6 +86,9 @@ function App() {
   }, [gameState]);
   // Partida guardada en el navegador (se lee una vez, al abrir el juego).
   const [savedGame, setSavedGame] = useState(() => loadGame());
+  const [saveFailed, setSaveFailed] = useState(false);
+  const [pendingImport, setPendingImport] = useState<SavedGame | null>(null);
+  const [backupError, setBackupError] = useState('');
   const boardRef = useRef<HTMLDivElement>(null);
   // Celular: tablero en pestañas, con menú y notificaciones en hojas.
   const isMobile = useIsMobile();
@@ -98,7 +103,7 @@ function App() {
 
   // Guardado automático: cada cambio de la partida (y los eventos sin responder).
   useEffect(() => {
-    if (gameStarted) saveGame(gameState, pendingEvents);
+    if (gameStarted) setSaveFailed(!saveGame(gameState, pendingEvents));
   }, [gameStarted, gameState, pendingEvents]);
 
   // Ganar la partida queda registrado por escenario (progreso guardado en el navegador).
@@ -115,7 +120,7 @@ function App() {
     countedElectionRef.current = results;
     if (results.kind === 'reelection' && results.victory) {
       recordReelectionWin();
-      toast('Ganaste la reelección: desbloqueaste un escenario histórico nuevo.');
+      toast('Ganaste la reelección: empieza tu segundo y último mandato, de 16 trimestres.');
     }
   }, [gameState.electionResults]);
 
@@ -128,9 +133,10 @@ function App() {
     setShowWelcomeScreen(false);
   };
 
-  const handleContinue = () => {
-    if (!savedGame) return;
-    const { state, pendingEvents: events } = savedGame;
+  const restoreGame = (entry: SavedGame) => {
+    const state = rehydrate(entry.state);
+    const events = entry.pendingEvents;
+    setSavedGame({ ...entry, state });
     // La elección que ya estaba en pantalla no se vuelve a contar para desbloqueos.
     countedElectionRef.current = state.electionResults;
     setGameState(state);
@@ -140,13 +146,28 @@ function App() {
     setGameStarted(true);
   };
 
+  const handleContinue = () => { if (savedGame) restoreGame(savedGame); };
+  const handleImportBackup = async (file: File) => {
+    setBackupError('');
+    try {
+      if (file.size > 4_000_000) { setBackupError('El respaldo es demasiado grande.'); return; }
+      const entry = parseSavedGame(await file.text());
+      if (!entry) { setBackupError('Este archivo no es un respaldo válido de GobernArg Full.'); return; }
+      setPendingImport(entry);
+    } catch { setBackupError('No se pudo leer el respaldo. Probá nuevamente.'); }
+  };
+  const downloadBackup = () => {
+    const url = URL.createObjectURL(new Blob([encodeSavedGame(gameState, pendingEvents)], { type: 'application/json' }));
+    const link = document.createElement('a'); link.href = url; link.download = `gobernarg-full-turno-${gameState.causal.turn}.json`; link.click(); URL.revokeObjectURL(url);
+  };
+
   const handleCharacterContinue = (next: CharacterDraft) => {
     setDraft(next);
     setSetupStep('setup');
   };
 
   const handleGameStart = (platformId: string, scenarioId: string) => {
-    if (!draft || !draft.governorName.trim()) return;
+    if (!draft || !draft.governorName.trim() || !isNewScenarioAvailable(scenarioId)) return;
     const { position, archetype, governorName, avatar } = draft;
     const newState = createNewGame(position, archetype, governorName, false, avatar, 'normal', platformId, undefined, scenarioId);
     markGameStart();
@@ -259,7 +280,9 @@ function App() {
   };
 
   if (showWelcomeScreen) {
-    return <WelcomeScreen onStart={handleStart} saved={savedGame?.state} onContinue={handleContinue} />;
+    return <><WelcomeScreen onStart={handleStart} saved={savedGame?.state} onContinue={handleContinue} onImportBackup={handleImportBackup} backupError={backupError} recovered={savedGame?.recoveredFromBackup} />
+      {pendingImport && <ConfirmDialog title="¿Restaurar este respaldo?" message="Se convertirá en tu partida actual de Full y reemplazará el guardado al continuar. El progreso entre partidas se conserva." confirmLabel="Restaurar y continuar" onCancel={() => setPendingImport(null)} onConfirm={() => { restoreGame(pendingImport); setPendingImport(null); }} />}
+    </>;
   }
 
   if (!gameStarted) {
@@ -291,6 +314,7 @@ function App() {
     <div className="min-h-screen bg-paper text-ink">
       <Toaster containerAriaLabel="Avisos" position={isMobile ? "top-center" : "bottom-right"} toastOptions={{ style: { background: "rgb(20 33 61)", color: "rgb(251 248 242)", border: "none" } }} />
       <div ref={boardRef}>
+      {saveFailed && <div role="alert" className="max-w-[1680px] mx-auto px-4 py-2 bg-amber-500/10 text-caution text-[13px] flex flex-wrap items-center gap-3"><span>No se pudo guardar esta partida. El avance actual sigue abierto.</span><button type="button" className="underline min-h-9" onClick={() => setSaveFailed(!saveGame(gameState, pendingEvents))}>Reintentar guardado</button><button type="button" className="underline min-h-9" onClick={downloadBackup}>Descargar respaldo</button></div>}
       {isMobile ? (
         <>
           <MobileHeader
@@ -305,6 +329,7 @@ function App() {
               <ControlPanel
                 gameState={gameState}
                 onActionSelect={handleActionSelect}
+                onOpenNotebook={() => setShowNotebook(true)}
                 canTakeAction={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
               />
             )}
@@ -379,6 +404,7 @@ function App() {
                 <ControlPanel
                   gameState={gameState}
                   onActionSelect={handleActionSelect}
+                onOpenNotebook={() => setShowNotebook(true)}
                   canTakeAction={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
                 />
 

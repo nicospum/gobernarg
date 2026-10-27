@@ -33,8 +33,8 @@ function useSteps(actions: number) {
     {
       title: 'Mirá antes de decidir',
       text: touch
-        ? 'Leé el objetivo, el costo y el intercambio de cada acción. Tocá Ayuda para aclarar un riesgo o requisito; tocá los indicadores para conocer el país.'
-        : 'Leé el objetivo, el costo y el intercambio de cada acción. Ayuda aclara riesgos y requisitos con mouse o teclado. País y Actores aportan el contexto.',
+        ? 'Leé el objetivo, el costo y el intercambio de cada acción. Tocá el ícono de información para aclarar un riesgo o requisito; tocá los indicadores para conocer el país.'
+        : 'Leé el objetivo, el costo y el intercambio de cada acción. El ícono de información aclara riesgos y requisitos con mouse o teclado. País y Actores aportan el contexto.',
     },
     {
       title: 'Cuidá a los actores',

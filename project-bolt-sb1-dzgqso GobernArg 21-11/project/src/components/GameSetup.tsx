@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { ArrowLeft, Lock, Play, Sparkles, Trophy } from 'lucide-react';
 import { IMAGES } from '../utils/imageAssets';
 import {
@@ -15,7 +15,8 @@ import {
   type ScenarioDef,
   type ScenarioDifficulty,
 } from '../data/causal';
-import { loadProgress, setUnlockAll } from '@/lib/progress';
+import { loadProgress } from '@/lib/progress';
+import { isNewScenarioAvailable } from '@/lib/editionAccess';
 import { SetupSteps } from './SetupSteps';
 import type { CharacterDraft } from './CharacterCreation';
 
@@ -32,17 +33,13 @@ const DIFFICULTY_CLS: Record<ScenarioDifficulty, string> = {
   'Muy difícil': 'bg-red-400/20 text-red-200 border-red-300/40',
 };
 
-const DENIED_MESSAGE = 'Para desbloquear los escenarios tenés que ganar una reelección.';
+
 
 function scenarioImage(sc: ScenarioDef): string | undefined {
   return (IMAGES[sc.image.group] as Record<string, string>)[sc.image.key];
 }
 
-function unlockHint(sc: ScenarioDef): string {
-  return sc.reelectionsToUnlock === 1
-    ? 'Ganá tu primera reelección para desbloquearlo.'
-    : `Ganá ${sc.reelectionsToUnlock} reelecciones para desbloquearlo.`;
-}
+function unlockHint(_sc: ScenarioDef): string { return 'No disponible por ahora. Tu progreso se conserva.'; }
 
 function selectableCls(selected: boolean): string {
   return selected
@@ -51,35 +48,16 @@ function selectableCls(selected: boolean): string {
 }
 
 export function GameSetup({ draft, onBack, onStart }: GameSetupProps) {
-  const [progress, setProgress] = useState(loadProgress);
+  const [progress] = useState(loadProgress);
   const [scenarioId, setScenarioId] = useState<string>(DEFAULT_SCENARIO_ID);
   // Plataforma del partido: opcional y apagada por defecto. El juego no la necesita.
   const [platformOn, setPlatformOn] = useState(false);
   const [platformId, setPlatformId] = useState<string>(DEFAULT_PLATFORM_BY_ARCHETYPE[draft.archetype] ?? PLATFORMS[0].id);
-  // Intento de desbloquear todo sin haber ganado: la perilla se pone roja y avisa.
-  const [denied, setDenied] = useState(false);
-  const [shakeKey, setShakeKey] = useState(0);
-  const deniedTimer = useRef<number | undefined>(undefined);
-
-  useEffect(() => () => window.clearTimeout(deniedTimer.current), []);
-
   const reelections = progress.reelectionsWon;
   const bg = scenarioImage(getScenario(scenarioId)) ?? IMAGES.backgrounds.presidentialOffice;
 
-  const handleUnlockAll = () => {
-    if (progress.unlockAll) {
-      setProgress(setUnlockAll(false));
-      const current = getScenario(scenarioId);
-      if (!isScenarioUnlocked(current, reelections, false)) setScenarioId(DEFAULT_SCENARIO_ID);
-      return;
-    }
-    setDenied(true);
-    setShakeKey(k => k + 1);
-    window.clearTimeout(deniedTimer.current);
-    deniedTimer.current = window.setTimeout(() => setDenied(false), 3000);
-  };
 
-  const handleStart = () => onStart(platformOn ? platformId : NO_PLATFORM_ID, scenarioId);
+  const handleStart = () => { if (isNewScenarioAvailable(scenarioId)) onStart(platformOn ? platformId : NO_PLATFORM_ID, scenarioId); };
 
   return (
     <div className="relative min-h-screen text-ink overflow-hidden">
@@ -144,10 +122,10 @@ export function GameSetup({ draft, onBack, onStart }: GameSetupProps) {
               {reelections === 1 ? '1 reelección ganada' : `${reelections} reelecciones ganadas`}
             </span>
           </div>
-          <p className="text-ink/70 text-sm mb-4">Momentos difíciles de la historia argentina. Se desbloquean ganando reelecciones.</p>
+          <p className="text-ink/70 text-sm mb-4">No disponibles en esta edición por ahora. Las reelecciones y los logros anteriores se conservan.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
             {HISTORIC_SCENARIOS.map(sc => {
-              const unlocked = isScenarioUnlocked(sc, reelections, progress.unlockAll);
+              const unlocked = isNewScenarioAvailable(sc.id) && isScenarioUnlocked(sc, reelections, progress.unlockAll);
               const img = scenarioImage(sc);
               return (
                 <button
@@ -155,6 +133,7 @@ export function GameSetup({ draft, onBack, onStart }: GameSetupProps) {
                   role="radio"
                   aria-checked={scenarioId === sc.id}
                   aria-disabled={!unlocked}
+                  disabled={!unlocked}
                   onClick={() => unlocked && setScenarioId(sc.id)}
                   className={`relative text-left rounded-xl border-2 overflow-hidden transition-all flex ${
                     unlocked ? selectableCls(scenarioId === sc.id) : 'bg-ink/5 border-ink/10 cursor-not-allowed'
@@ -185,35 +164,6 @@ export function GameSetup({ draft, onBack, onStart }: GameSetupProps) {
                 </button>
               );
             })}
-          </div>
-
-          <div className="relative flex items-center gap-3 mb-10 w-fit">
-            <button
-              key={shakeKey}
-              role="switch"
-              aria-checked={progress.unlockAll}
-              aria-describedby={denied ? 'unlock-denied' : undefined}
-              onClick={handleUnlockAll}
-              className={`flex items-center gap-2 text-sm ${denied ? 'animate-denied' : ''}`}
-            >
-              <span
-                className={`relative inline-block w-10 h-5 rounded-full transition-colors ${
-                  denied ? 'bg-red-500/80 ring-2 ring-red-400/60' : progress.unlockAll ? 'bg-accent' : 'bg-ink/25'
-                }`}
-              >
-                <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-surface transition-all ${progress.unlockAll ? 'left-5' : 'left-0.5'}`} />
-              </span>
-              <span className={denied ? 'text-red-200' : 'text-ink/80'}>Desbloquear todos los escenarios</span>
-            </button>
-            {denied && (
-              <div
-                id="unlock-denied"
-                role="status"
-                className="absolute left-0 top-full mt-2 z-20 flex items-center gap-1.5 whitespace-nowrap rounded-md border border-red-400/40 bg-red-950/90 px-2.5 py-1.5 text-xs text-red-100 shadow-lg"
-              >
-                <Lock size={12} className="shrink-0" /> {DENIED_MESSAGE}
-              </div>
-            )}
           </div>
 
           {/* Plataforma del partido: opcional, apagada por defecto */}

@@ -8,6 +8,9 @@ interface WelcomeScreenProps {
   /** Partida guardada en el navegador, si hay una para retomar. */
   saved?: GameState | null;
   onContinue?: () => void;
+  onImportBackup?: (file: File) => void;
+  backupError?: string;
+  recovered?: boolean;
 }
 
 function savedLabel(state: GameState): string {
@@ -17,7 +20,7 @@ function savedLabel(state: GameState): string {
   return parts.join(' · ');
 }
 
-export function WelcomeScreen({ onStart, saved, onContinue }: WelcomeScreenProps) {
+export function WelcomeScreen({ onStart, saved, onContinue, onImportBackup, backupError, recovered }: WelcomeScreenProps) {
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
       {/* Fondo institucional */}
@@ -42,6 +45,7 @@ export function WelcomeScreen({ onStart, saved, onContinue }: WelcomeScreenProps
           negociás con grupos de interés y buscás la legitimidad para gobernar.
         </p>
 
+        {recovered && <p role="status" className="text-[13px] text-caution mb-3">Se recuperó la copia automática anterior del guardado.</p>}
         {saved && onContinue ? (
           <div className="flex flex-col items-center gap-3">
             <button
@@ -69,6 +73,8 @@ export function WelcomeScreen({ onStart, saved, onContinue }: WelcomeScreenProps
             Empezar
           </button>
         )}
+        {onImportBackup && <label className="block mt-5 text-[13px] text-ink/75">Restaurar respaldo Full<input type="file" accept=".json,application/json" aria-label="Restaurar respaldo Full" className="block max-w-full mx-auto mt-2 text-[12px]" onChange={event => { const file = event.currentTarget.files?.[0]; if (file) onImportBackup(file); event.currentTarget.value = ''; }} /></label>}
+        {backupError && <p role="alert" className="text-[13px] text-negative mt-3">{backupError}</p>}
       </div>
     </div>
   );

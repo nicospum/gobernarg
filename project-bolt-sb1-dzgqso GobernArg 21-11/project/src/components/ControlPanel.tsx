@@ -20,13 +20,16 @@ interface ControlPanelProps {
   gameState: GameState;
   onActionSelect: (actionId: string) => void;
   canTakeAction: boolean;
+  onOpenNotebook?: () => void;
 }
 
 type TabValue = 'todas' | UiCategory;
 
-export function ControlPanel({ gameState, onActionSelect, canTakeAction }: ControlPanelProps) {
+export function ControlPanel({ gameState, onActionSelect, canTakeAction, onOpenNotebook }: ControlPanelProps) {
   const [selectedCategory, setSelectedCategory] = useState<TabValue>('todas');
   const [showBlocked, setShowBlocked] = useState(false);
+  const [preparations, setPreparations] = useState(false);
+  const chooseCategory = (category: TabValue) => { setSelectedCategory(category); setPreparations(false); };
   const availability = getPolicyAvailability(gameState);
   const causal = gameState.causal;
 
@@ -43,7 +46,8 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
   }, [causal]);
 
   const inCategory = availability
-    .filter(av => selectedCategory === 'todas' || av.action.category === selectedCategory);
+    .filter(av => selectedCategory === 'todas' || av.action.category === selectedCategory)
+    .filter(av => !preparations || ['estudio_factibilidad', 'agenda_internacional', 'mejorar_recaudacion', 'fortalecimiento_justicia'].includes(av.action.id));
   const blockedCount = inCategory.filter(av => av.blocked).length;
   const filtered = inCategory
     .filter(av => showBlocked || !av.blocked)
@@ -63,6 +67,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
   const honeymoon = causal.turn - causal.mandateStart + 1 <= PARAMS.LUNA_MIEL;
   const hasMajority = leg >= threshold;
   const interna = causal.political.interna;
+  const due = causal.agreements.filter(agreement => agreement.status === 'active' && agreement.deadline <= causal.turn + 1);
 
   return (
     <div className="flex flex-col rounded-lg border border-rule bg-surface overflow-hidden">
@@ -107,7 +112,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
       <div className="relative mx-5 mt-4 mb-3">
       <div className="flex items-center gap-1 pb-2 border-b border-rule overflow-x-auto scrollbar-none pr-8">
         <button
-          onClick={() => setSelectedCategory('todas')}
+          onClick={() => chooseCategory('todas')}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all whitespace-nowrap ${
             selectedCategory === 'todas'
               ? 'bg-ink text-paper'
@@ -123,7 +128,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
           return (
             <button
               key={category}
-              onClick={() => setSelectedCategory(category)}
+              onClick={() => chooseCategory(category)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all whitespace-nowrap ${
                 isActive
                   ? 'bg-ink text-paper'
@@ -158,6 +163,12 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
         </div>
       )}
 
+      <div className="mx-5 mb-3 flex flex-wrap items-center gap-3 text-[12px] text-ink/75">
+        <button type="button" aria-pressed={preparations} onClick={() => { setPreparations(value => !value); setSelectedCategory('todas'); setShowBlocked(true); }} className="min-h-9 border border-rule rounded px-3 hover:bg-sunken">{preparations ? 'Volver a todas' : 'Ver preparativos'}</button>
+        {due.length > 0 && <button type="button" onClick={onOpenNotebook} className="min-h-9 text-caution underline underline-offset-2">{due.length} compromiso{due.length > 1 ? 's' : ''} vence{due.length > 1 ? 'n' : ''} entre este trimestre y el próximo · Ver cuaderno</button>}
+      </div>
+      {preparations && <p className="mx-5 mb-3 text-[12px] text-ink/70">Estas medidas habilitan herramientas existentes. Su efecto puede requerir cerrar el turno antes de usarlas.</p>}
+
       {/* Grid de tarjetas */}
       <div className="flex-1 overflow-y-auto px-5 pb-5 max-h-[min(760px,calc(100vh-190px))]">
         {filtered.length === 0 ? (
@@ -165,8 +176,9 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
             {inCategory.length === 0 ? 'No hay acciones en esta categoría.' : 'Todas las acciones de esta categoría están bloqueadas por ahora.'}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3">
+          <div className="columns-1 md:columns-2 2xl:columns-3 gap-3">
             {filtered.map((av) => (
+              <div key={av.action.id} className="break-inside-avoid mb-3">
               <ActionCard
                 key={av.action.id}
                 availability={av}
@@ -176,7 +188,9 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
                 disabled={!canTakeAction && !gameState.selectedActions.includes(av.action.id)}
                 disabledReason={gameState.gameOver ? 'La partida terminó.' : gameState.pendingElection ? 'Primero resolvé la elección pendiente.' : undefined}
                 loanDiscount={causal.perks.loanDiscount}
+                showStrategicNote={causal.turn <= 3}
               />
+              </div>
             ))}
           </div>
         )}
@@ -196,6 +210,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
           <span className={`font-bold ${projection.structural >= 0 ? 'text-positive' : 'text-negative'}`}>{fmtBudgetDelta(projection.structural)}</span>
         </span>
         <p className="w-full text-[12px] text-ink/75 leading-relaxed">Estimación con lo elegido, la recaudación, el gasto fijo y los intereses. No incluye todos los efectos diferidos ni los eventos.</p>
+        {projection.caja >= 0 && (projection.structural < 0 || projection.caja < 100) && <p className="w-full text-[12px] text-caution">Margen fiscal ajustado: revisá gastos fijos y compromisos antes de sumar más.</p>}
         {projection.caja < 0 && (
           <span className="w-full text-[11px] text-negative font-semibold">
             ⚠ La estimación deja caja negativa. Si el turno cierra así, el Tesoro emitirá para cubrirla en el siguiente.

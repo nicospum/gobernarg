@@ -17,11 +17,11 @@ function stateWith(overrides: Partial<GameState> = {}): GameState {
 describe('hireAdvisors', () => {
   it('descuenta el costo total y activa los asesores', () => {
     const state = stateWith({ budget: 1000, advisors: [], advisorActionUsed: false });
-    const advisor = availableAdvisors[0]; // cost 300
+    const advisor = availableAdvisors[0]; // contratación Full: 100 M
 
     const result = hireAdvisors(state, [advisor]);
 
-    expect(result.budget).toBe(700);
+    expect(result.budget).toBe(900);
     expect(result.advisorActionUsed).toBe(true);
     expect(result.advisors).toHaveLength(1);
     expect(result.advisors[0].id).toBe(advisor.id);
@@ -46,8 +46,8 @@ describe('hireAdvisors', () => {
   });
 
   it('rechaza sin presupuesto suficiente devolviendo la misma referencia', () => {
-    const state = stateWith({ budget: 299, advisorActionUsed: false });
-    const result = hireAdvisors(state, [availableAdvisors[0]]); // cost 300
+    const state = stateWith({ budget: 99, advisorActionUsed: false });
+    const result = hireAdvisors(state, [availableAdvisors[0]]); // contratación Full: 100 M
 
     expect(result).toBe(state);
   });

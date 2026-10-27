@@ -1,200 +1,46 @@
 import { useState } from 'react';
-import { X, Star, TrendingUp, TrendingDown, Minus, DollarSign, Award } from 'lucide-react';
-import { Advisor, AdvisorWithStatus, GameState } from '../types/game';
-import { availableAdvisors } from '../data/advisors';
+import { X, Check } from 'lucide-react';
+import type { Advisor, AdvisorWithStatus, GameState } from '../types/game';
+import { availableAdvisors, ADVISOR_ROLES } from '../data/advisors';
 import { getAdvisorPortrait } from '../utils/imageAssets';
-import { ADVISOR_ROLES } from '../data/advisors';
-import { fmtBudget } from '@/lib/format';
+import { fmtBudget, fmtSigned } from '@/lib/format';
 import { useDialog } from '@/lib/useDialog';
 
-interface AdvisorSelectionModalProps {
-  onClose: () => void;
-  onHire: (selectedAdvisors: AdvisorWithStatus[]) => void;
-  maxSelections: number;
-  gameState: GameState;
-}
-
-function getPopularityIndicator(popularityChange: number) {
-  // FIX (Punto 15): antes siempre devolvía TrendingUp verde, aunque el efecto
-  // del asesor fuera negativo o neutro. Ahora ícono y color reflejan el signo;
-  // la cantidad de íconos (1-3 por magnitud) se mantiene.
-  const count = popularityChange >= 20 ? 3 : popularityChange >= 15 ? 2 : 1;
-  if (popularityChange < 0) {
-    return Array(count).fill(<TrendingDown className="w-4 h-4 text-red-400" />);
-  }
-  if (popularityChange === 0) {
-    return Array(count).fill(<Minus className="w-4 h-4 text-muted-foreground" />);
-  }
-  return Array(count).fill(<TrendingUp className="w-4 h-4 text-emerald-400" />);
-}
-
-function getBudgetIndicator(cost: number) {
-  const fullSymbols = Math.floor(cost / 100);
-  const hasHalf = (cost % 100) > 0;
-  
-  const symbols = [];
-  
-  for (let i = 0; i < fullSymbols; i++) {
-    symbols.push(<DollarSign key={`full-${i}`} className="w-4 h-4" />);
-  }
-  
-  if (hasHalf) {
-    symbols.push(
-      <DollarSign key="half" className="w-4 h-4 opacity-50" />
-    );
-  }
-  
-  return symbols;
-}
+interface AdvisorSelectionModalProps { onClose: () => void; onHire: (advisors: AdvisorWithStatus[]) => void; maxSelections: number; gameState: GameState }
 
 export function AdvisorSelectionModal({ onClose, onHire, maxSelections, gameState }: AdvisorSelectionModalProps) {
   const dialogRef = useDialog<HTMLDivElement>(onClose);
-  const [selectedAdvisors, setSelectedAdvisors] = useState<Advisor[]>([]);
-
-  const handleAdvisorSelect = (advisor: Advisor) => {
-    if (selectedAdvisors.find(a => a.id === advisor.id)) {
-      setSelectedAdvisors(prev => prev.filter(a => a.id !== advisor.id));
-    } else if (selectedAdvisors.length < maxSelections) {
-      setSelectedAdvisors(prev => [...prev, advisor]);
-    }
-  };
-
-  const handleHire = () => {
-    if (selectedAdvisors.length === 0) return;
-
-    const advisorsWithStatus: AdvisorWithStatus[] = selectedAdvisors.map(advisor => ({
-      ...advisor,
-      isActive: true,
-      turnsInactive: 0
-    }));
-
-    onHire(advisorsWithStatus);
-  };
-
-  const totalCost = selectedAdvisors.reduce((sum, advisor) => sum + advisor.cost, 0);
-  const canAfford = gameState.causal.caja >= totalCost;
-
-  const isAdvisorAvailable = (advisor: Advisor) => {
-    if (!advisor.unlockRequirement) return true;
-    if (advisor.unlockRequirement.type === 'popularity') {
-      // Se desbloquea con la aprobación de gestión (APRO).
-      return gameState.causal.political.apro >= advisor.unlockRequirement.value;
-    }
-    return true;
-  };
-
-  const availableForHire = availableAdvisors.filter(isAdvisorAvailable);
-
-  return (
-    <div ref={dialogRef} className="outline-none fixed inset-0 bg-ink/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-card border border-border rounded-xl w-full max-w-4xl max-h-[85vh] overflow-hidden shadow-2xl">
-        <div className="px-5 py-4 border-b border-border flex justify-between items-center">
-          <h2 className="font-display text-xl font-semibold   text-foreground">Contratar Asesores</h2>
-          <button onClick={onClose} aria-label="Cerrar" className="p-1 text-muted-foreground hover:text-foreground rounded transition-colors">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="p-4 overflow-y-auto max-h-[60vh]">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {availableForHire.map((advisor) => {
-              const isSelected = selectedAdvisors.some(a => a.id === advisor.id);
-              const popularityIndicators = getPopularityIndicator((ADVISOR_ROLES[advisor.id]?.imagenOnHire ?? 0) * 5);
-              const budgetIndicators = getBudgetIndicator(advisor.cost);
-              
-              return (
-                <button
-                  key={advisor.id}
-                  onClick={() => handleAdvisorSelect(advisor)}
-                  disabled={!isSelected && selectedAdvisors.length >= maxSelections}
-                  className={`flex flex-col justify-start p-4 border rounded-lg text-left transition-all ${
-                    isSelected
-                      ? 'border-primary bg-primary/10'
-                      : selectedAdvisors.length >= maxSelections
-                      ? 'border-border bg-card opacity-50 cursor-not-allowed'
-                      : 'border-border bg-card hover:border-primary/40 hover:bg-ink/3'
-                  }`}
-                >
-                  <div className="flex justify-between items-start gap-3">
-                    <div className="flex gap-3">
-                      <img
-                        src={getAdvisorPortrait(advisor.specialty, advisor.id)}
-                        alt={advisor.name}
-                        className="w-[70px] h-[70px] rounded-lg object-cover bg-gray-100 flex-shrink-0"
-                      />
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="font-semibold">{advisor.name}</h3>
-                          <div className="flex items-center gap-1">
-                            <Award className="w-4 h-4 text-yellow-500" />
-                            <span className="text-sm font-medium">Nivel {advisor.level}</span>
-                          </div>
-                        </div>
-                        <p className="text-sm text-foreground/70">{advisor.specialty}</p>
-                        <p className="text-sm text-muted-foreground mt-1">{advisor.description}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1 text-yellow-500 flex-shrink-0">
-                      <Star className="w-4 h-4 fill-current" />
-                      <span className="text-sm">{advisor.influence}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-2 space-y-2">
-                    <div className="flex gap-4 text-sm">
-                      <span className="text-muted-foreground">Sueldo {fmtBudget(ADVISOR_ROLES[advisor.id]?.salary ?? 0)}/turno</span>
-                      {/* Punto 15: el color lo llevan los íconos (signo del
-                          efecto), no el contenedor — antes todo se veía verde. */}
-                      <div className="flex items-center gap-1">
-                        <span>Imagen</span>
-                        {popularityIndicators.map((indicator, index) => (
-                          <span key={index}>{indicator}</span>
-                        ))}
-                      </div>
-                      <div className="flex items-center gap-1 text-red-400">
-                        <span>Costo</span>
-                        {budgetIndicators.map((indicator, index) => (
-                          <span key={index}>{indicator}</span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="text-sm">
-                      <p className="font-medium">Qué aporta:</p>
-                      <ul className="list-disc pl-5 space-y-1 text-[12px] text-foreground/80">
-                        {(ADVISOR_ROLES[advisor.id]?.perks ?? []).map(perk => (
-                          <li key={perk}>{perk}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="px-5 py-4 border-t border-border">
-          <div className="flex justify-between items-center">
-            <div className="text-sm">
-              <p className="text-foreground">Asesores seleccionados: {selectedAdvisors.length}/{maxSelections}</p>
-              <div className={`flex items-center gap-1 ${canAfford ? 'text-muted-foreground' : 'text-red-400'}`}>
-                <span>Costo total: {fmtBudget(totalCost)}</span>
-                {!canAfford && (
-                  <span className="text-xs">(No alcanza la caja)</span>
-                )}
-              </div>
-            </div>
-            <button
-              onClick={handleHire}
-              disabled={selectedAdvisors.length === 0 || !canAfford}
-              className="bg-primary hover:bg-primary/90 disabled:bg-ink/5 disabled:text-muted-foreground disabled:cursor-not-allowed text-primary-foreground px-6 py-2 rounded font-display font-semibold   text-sm transition-colors"
-            >
-              Contratar Seleccionados
-            </button>
-          </div>
-        </div>
+  const [selected, setSelected] = useState<Advisor[]>([]);
+  const total = selected.reduce((sum, advisor) => sum + advisor.cost, 0);
+  const payroll = selected.reduce((sum, advisor) => sum + (ADVISOR_ROLES[advisor.id]?.salary ?? 0), 0);
+  const canAfford = gameState.causal.caja >= total;
+  const offers = availableAdvisors.filter(advisor => !gameState.advisors.some(hired => hired.id === advisor.id)
+    && (!advisor.unlockRequirement || advisor.unlockRequirement.type !== 'popularity' || gameState.causal.political.apro >= advisor.unlockRequirement.value));
+  const toggle = (advisor: Advisor) => setSelected(current => current.some(item => item.id === advisor.id)
+    ? current.filter(item => item.id !== advisor.id) : current.length < maxSelections ? [...current, advisor] : current);
+  return <div ref={dialogRef} aria-labelledby="advisor-hire-title" className="outline-none fixed inset-0 bg-ink/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="bg-surface border border-rule rounded-xl w-full max-w-4xl max-h-[90dvh] flex flex-col shadow-2xl">
+      <header className="px-5 py-4 border-b border-rule flex items-center justify-between gap-3">
+        <div><h2 id="advisor-hire-title" className="font-display text-xl font-semibold">Contratar asesores</h2><p className="text-[12px] text-ink/70">Elegí hasta {maxSelections}. Contratación por única vez; sueldo en cada trimestre.</p></div>
+        <button type="button" onClick={onClose} aria-label="Cerrar" className="min-w-11 min-h-11 flex items-center justify-center rounded hover:bg-sunken"><X size={20} /></button>
+      </header>
+      <div className="p-4 overflow-y-auto grid grid-cols-1 md:grid-cols-2 items-start gap-3">
+        {offers.map(advisor => {
+          const role = ADVISOR_ROLES[advisor.id];
+          const chosen = selected.some(item => item.id === advisor.id);
+          return <button type="button" key={advisor.id} aria-pressed={chosen} onClick={() => toggle(advisor)} disabled={!chosen && selected.length >= maxSelections}
+            className={`rounded-lg border p-3 text-left transition-colors disabled:opacity-50 ${chosen ? 'border-ink bg-gold/10' : 'border-rule bg-surface hover:bg-sunken/40'}`}>
+            <span className="flex gap-3 items-start"><img src={getAdvisorPortrait(advisor.specialty, advisor.id)} alt="" className="w-14 h-14 rounded-lg object-cover shrink-0" /><span className="min-w-0"><span className="block font-display text-[17px] font-semibold">{advisor.name}{chosen && <Check size={14} className="inline ml-1" />}</span><span className="block text-[12px] text-ink/70">{advisor.specialty}</span></span></span>
+            <span className="block mt-3 text-[13px] font-semibold text-ink">Contratación {fmtBudget(advisor.cost)} · Sueldo {fmtBudget(role?.salary ?? 0)}/trimestre</span>
+            <span className="block mt-1 text-[12px] text-ink/70">Imagen al contratar: {fmtSigned(role?.imagenOnHire ?? 0)}</span>
+            <span className="block mt-2 text-[12px] text-ink/85 leading-relaxed">{role?.perks.join(' · ')}</span>
+          </button>;
+        })}
       </div>
+      <footer className="px-5 py-4 border-t border-rule flex flex-wrap justify-between items-center gap-3">
+        <div className="text-[13px]"><p>{selected.length}/{maxSelections} elegidos · Contratación {fmtBudget(total)}</p><p className="text-ink/70">Sueldo adicional {fmtBudget(payroll)}/trimestre</p>{!canAfford && <p className="text-negative">No alcanza la caja para contratar.</p>}</div>
+        <button type="button" disabled={!selected.length || !canAfford} onClick={() => onHire(selected.map(advisor => ({ ...advisor, isActive: true, turnsInactive: 0 })))} className="min-h-11 px-5 rounded bg-ink text-paper font-semibold text-[13px] disabled:opacity-40">Contratar seleccionados</button>
+      </footer>
     </div>
-  );
+  </div>;
 }

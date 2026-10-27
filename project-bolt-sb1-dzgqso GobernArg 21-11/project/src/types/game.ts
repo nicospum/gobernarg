@@ -486,6 +486,7 @@ export interface GameState {
   actions: number;
   baseActions: number;
   advisors: AdvisorWithStatus[];
+  advisorSalaryVersion?: number;
   selectedActions: string[];
   moneyPrintingCount: number;
   governorName: string;
