@@ -15,12 +15,19 @@ import { countExecutions, effective, effectiveAll, flagValue } from './context';
 import { applyAgenda, newAccumulator, scheduleActionEffects } from './effects';
 import { closeFiscal, type ActionCashFlows } from './fiscal';
 import { recomputePolitical, updateImagen } from './political';
+import { previewManagementActivity, type ManagementActivityBudget } from './managementActivity';
 import { changeRel, processRelations } from './relations';
 import { COALITION_ACTIONS, expandCoalition, updateInterna } from './interna';
 import { OWN_PLATFORM_WINDOW, deriveOwnPlatform } from './platform';
 import { Rng } from './rng';
 import { applyStructuralRules } from './rules';
 import type { CausalState, PoliticalState, TurnActionRecord, TurnRecord } from './types';
+
+export interface CloseOptions {
+  /** La capa de juego conoce el PA real consumido por habilidades e interacciones. */
+  activityBudget?: ManagementActivityBudget;
+  mandateTurns?: number;
+}
 
 export interface CloseResult {
   state: CausalState;
@@ -63,7 +70,7 @@ function suspensionReason(state: CausalState, sel: Selection, rng: Rng, c: numbe
  * Cierre de turno — secuencia T.2 a T.10 del Excel (00_README "LÓGICA DEL TURNO").
  * Función pura: devuelve un estado nuevo y el TurnRecord que explica el turno.
  */
-export function closeTurn(input: CausalState, selections: Selection[]): CloseResult {
+export function closeTurn(input: CausalState, selections: Selection[], options: CloseOptions = {}): CloseResult {
   const state: CausalState = structuredClone(input);
   const c = state.turn;
   const rng = new Rng(state.rng);
@@ -146,6 +153,16 @@ export function closeTurn(input: CausalState, selections: Selection[]): CloseRes
 
   // T.10 — político, expectativas, contadores de derrota.
   updateImagen(state, c);
+  let managementActivity: TurnRecord['managementActivity'];
+  if (options.activityBudget) {
+    const preview = previewManagementActivity(state, {
+      ...options.activityBudget,
+      allSelectionsExecuted: options.activityBudget.allSelectionsExecuted !== false && actions.every(action => !action.suspended),
+    }, options.mandateTurns);
+    state.managementActivity = preview.activity;
+    managementActivity = preview.record;
+    state.political.imagen = Math.max(0, Math.min(100, state.political.imagen + preview.record.imagenDelta));
+  }
   recomputePolitical(state, c);
   for (const id of INDICATOR_IDS) {
     const v = effective(state, id, c);
@@ -187,6 +204,7 @@ export function closeTurn(input: CausalState, selections: Selection[]): CloseRes
     events: channelEvents,
     notes,
     internaReasons: interna.reasons,
+    ...(managementActivity ? { managementActivity } : {}),
   };
   state.records = [...state.records, record].slice(-40);
 

@@ -18,6 +18,7 @@ export * from './rules';
 export * from './fiscal';
 export * from './channels';
 export * from './political';
+export * from './managementActivity';
 export * from './relations';
 export * from './state';
 export * from './actions';

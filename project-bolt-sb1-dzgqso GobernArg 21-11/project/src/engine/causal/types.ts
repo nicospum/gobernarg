@@ -212,6 +212,27 @@ export interface TurnActionRecord {
   forced?: boolean;
 }
 
+/** Historial observado de uso de PA; ausente en partidas anteriores a esta regla. */
+export interface ManagementActivity {
+  pressure: number;
+  mandateStart: number;
+  observedTurns: number;
+  perfectUse: boolean;
+  bonusGranted: boolean;
+}
+
+export interface ManagementActivityRecord {
+  available: number;
+  used: number;
+  unused: number;
+  pressureBefore: number;
+  pressureAfter: number;
+  governabilityPenalty: number;
+  /** Desgaste de imagen más el eventual premio de fin de mandato. */
+  imagenDelta: number;
+  bonusAwarded: boolean;
+}
+
 export interface TurnRecord {
   turn: number;
   actions: TurnActionRecord[];
@@ -231,6 +252,7 @@ export interface TurnRecord {
   notes: string[];
   /** Motivos del cambio de la interna del oficialismo en este cierre. */
   internaReasons?: string[];
+  managementActivity?: ManagementActivityRecord;
 }
 
 export interface CausalState {
@@ -238,6 +260,7 @@ export interface CausalState {
   turn: number;
   /** Turno absoluto en que empezó el mandato actual (1, 17…): luna de miel por mandato. */
   mandateStart: number;
+  managementActivity?: ManagementActivity;
   base: Record<IndicatorId, number>;
   expect: Record<string, number>;
   bonuses: Bonus[];

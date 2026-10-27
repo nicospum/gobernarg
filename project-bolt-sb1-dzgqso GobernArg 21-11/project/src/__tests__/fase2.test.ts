@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { GameState } from '../types/game';
-import { createNewGame, processEndTurn, retireFromReelection, triggerMidtermStrategy } from '../engine/gameEngine';
+import { createNewGame, interactWithActor, processEndTurn, retireFromReelection, triggerMidtermStrategy } from '../engine/gameEngine';
 import { nextRandom } from '../engine/causal';
 import { getEnabledPendingEvents } from '../data/events/pendingEvents';
 import { CHANNEL_GAME_EVENTS, EVENT_CAUSAL } from '../data/events/causalEvents';
@@ -23,7 +23,13 @@ describe('Legislativas: resultado y estrategia en el mismo turno', () => {
   it('el turno de la elección ya pide la estrategia para la segunda mitad', () => {
     vi.spyOn(Math, 'random').mockImplementation(seeded(5));
     let state: GameState = newGame(5);
-    for (let i = 0; i < 12 && !state.legislativeResults && !state.gameOver; i++) state = processEndTurn(state).state;
+    // Este caso prueba el calendario: una gestión activa evita la nueva caída por inacción.
+    state.causal.perks.freeMeetingsPerTurn = 0;
+    state.causal.perks.freeMeetingActors = [];
+    for (let i = 0; i < 12 && !state.legislativeResults && !state.gameOver; i++) {
+      for (const actor of ['industria', 'pymes', 'agro'] as const) state = interactWithActor(state, actor, 'reunion');
+      state = processEndTurn(state).state;
+    }
     expect(state.legislativeResults).not.toBeNull();
     expect(state.pendingMidtermStrategy).toBe(true);
     expect(state.availableMidtermStrategies).toContain('negociar');

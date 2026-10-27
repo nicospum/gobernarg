@@ -6,7 +6,7 @@ import type {
 import type { GameEvent } from '../systems/events/types';
 import { getAllEvents } from '../data/events';
 import { CHANNEL_GAME_EVENTS, CHANNEL_TO_EVENT } from '../data/events/causalEvents';
-import { ACTORS, CAUSAL_ACTIONS_BY_ID } from '../data/causal';
+import { ACTORS, CAUSAL_ACTIONS_BY_ID, getScenario } from '../data/causal';
 import { getAvailableElectionOptions } from '../utils/electionSystem';
 import { updateObjectives, checkCausalDefeat } from '../utils/victoryConditions';
 import { addNotification, type TurnResult } from './engineShared';
@@ -161,7 +161,11 @@ export function processEndTurn(gameState: GameState): TurnResult {
 
   // 1. Cierre del turno en el motor causal (T.2–T.10).
   const selections = selectionsFor(state);
-  const { state: causal, record, channelEvents } = closeTurn(state.causal, selections);
+  const activityEnabled = getScenario(state.causal.scenarioId).reelectionsToUnlock === 0;
+  const { state: causal, record, channelEvents } = closeTurn(state.causal, selections, activityEnabled ? {
+    activityBudget: { available: state.baseActions, remaining: state.actions },
+    mandateTurns: 16,
+  } : {});
   state.causal = causal;
   const executedIds = record.actions.filter(a => !a.suspended).map(a => a.actionId);
   for (const id of executedIds) {
@@ -246,6 +250,11 @@ export function processEndTurn(gameState: GameState): TurnResult {
       state.gameOver = true;
       state.victorious = false;
       state.defeatReason = defeat;
+      // La caída del gobierno tiene prioridad sobre estrategias o elecciones simultáneas.
+      state.pendingElection = false;
+      state.pendingElectionOptions = [];
+      state.pendingMidtermStrategy = false;
+      state.availableMidtermStrategies = [];
     }
   }
   state = addWarningNotifications(state);

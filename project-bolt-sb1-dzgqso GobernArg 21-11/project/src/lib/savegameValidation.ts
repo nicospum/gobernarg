@@ -40,6 +40,19 @@ function scheduled(value: unknown): boolean {
     && optional(value.actor,actorId) && optional(value.applyCondition,string) && optional(value.whileCondition,bool)
     && ['floor','cumulativeCap'].every(key => optional(value[key],number));
 }
+function managementActivity(value: unknown): boolean {
+  return object(value) && number(value.pressure) && value.pressure >= 0 && value.pressure <= 32
+    && integer(value.mandateStart) && value.mandateStart >= 1
+    && integer(value.observedTurns) && value.observedTurns <= 16
+    && bool(value.perfectUse) && bool(value.bonusGranted);
+}
+function managementActivityRecord(value: unknown): boolean {
+  return object(value) && ['available','used','unused'].every(key => integer(value[key]))
+    && (value.used as number) + (value.unused as number) === value.available
+    && ['pressureBefore','pressureAfter'].every(key => number(value[key]) && (value[key] as number) >= 0 && (value[key] as number) <= 32)
+    && number(value.governabilityPenalty) && value.governabilityPenalty >= 0 && value.governabilityPenalty <= 100
+    && number(value.imagenDelta) && value.imagenDelta >= -0.5 && value.imagenDelta <= 2 && bool(value.bonusAwarded);
+}
 function record(value: unknown): boolean {
   if (!object(value)) return false;
   return number(value.turn) && indicators(value.indicatorsBefore) && indicators(value.indicatorsAfter) && actorMap(value.actorsBefore,actorSnapshot) && actorMap(value.actorsAfter,actorSnapshot)
@@ -49,7 +62,7 @@ function record(value: unknown): boolean {
     && list(value.applied,item => object(item) && texts(item,['source','target','explanation']) && number(item.delta) && modes(item.mode))
     && list(value.rules,item => object(item) && texts(item,['ruleId','target']) && number(item.delta))
     && ['channelsApplied','channelsScheduled'].every(key => list(value[key], item => object(item) && actorId(item.actor) && texts(item,['label','target']) && number(item.value)))
-    && ['relationEvents','events','notes'].every(key => strings(value[key])) && optional(value.internaReasons,strings);
+    && ['relationEvents','events','notes'].every(key => strings(value[key])) && optional(value.internaReasons,strings) && optional(value.managementActivity,managementActivityRecord);
 }
 function causal(value: unknown): boolean {
   if (!object(value)) return false;
@@ -66,7 +79,7 @@ function causal(value: unknown): boolean {
     && list(value.saliency,item => object(item) && actorId(item.actor) && string(item.indicator) && numbers(item,['mult','end']) && string(item.source))
     && list(value.modifiers,item => object(item) && texts(item,['id','label']) && numbers(item,['start','end']) && ['efficacy','confPerTurn','imagenPerTurn','umbralLey'].every(key => optional(item[key],number)) && optional(item.relPerTurn,numberMap))
     && list(value.agreements,item => object(item) && texts(item,['id','commitmentActionId','offer']) && actorId(item.actor) && numbers(item,['signedTurn','deadline']) && ['active','fulfilled','broken'].includes(String(item.status)))
-    && perks(value.perks);
+    && perks(value.perks) && optional(value.managementActivity,managementActivity);
 }
 function perks(value: unknown): boolean {
   return object(value) && numbers(value,['freeMeetingsPerTurn','eventResilience','structureMult','securityInstMitigation','loanDiscount']) && bool(value.freePolls)
