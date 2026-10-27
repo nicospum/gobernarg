@@ -1,7 +1,8 @@
+import { ACTOR_IDS } from '../data/causal';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { calendarFor, calendarText, equivalentTurns, mandateTurn, periodCaption } from '../lib/calendar';
-import { createNewGame, processEndTurn, resolvePendingElection, triggerMidtermStrategy } from '../engine/gameEngine';
-import { closeTurn, countExecutions, createCausalState, getAvailability, isPreElection, meet } from '../engine/causal';
+import { createNewGame, interactWithActor, processEndTurn, resolvePendingElection, triggerMidtermStrategy } from '../engine/gameEngine';
+import { canMeet, closeTurn, countExecutions, createCausalState, getAvailability, isPreElection, meet } from '../engine/causal';
 import { actionFiscalCommitments } from '../lib/actionCommitments';
 import { calendarEventsFor } from '../data/calendar';
 import { adaptiveBot } from '../playtest/bots';
@@ -81,6 +82,10 @@ describe('Calendario Light persistido', () => {
     let state = createNewGame({ archetype: 'politico', governorName: 'Ana', scenarioId: 'pais_en_calma', seed: 1 });
     for (let n = 1; n <= 12; n++) {
       if (state.pendingMidtermStrategy) state = triggerMidtermStrategy(state, 'negociar');
+      for (const actor of ACTOR_IDS) {
+        if (state.baseActions - state.actions >= 3) break;
+        if (canMeet(state.causal, actor, state.actions) === null) state = interactWithActor(state, actor, 'reunion');
+      }
       state = processEndTurn(state).state;
       if (n === 6) expect(state.pendingMidtermStrategy).toBe(true);
       if (n < 12) expect(state.pendingElection).toBe(false);

@@ -213,7 +213,28 @@ export interface TurnActionRecord {
   forced?: boolean;
 }
 
+/** Historial de uso real de PA observado desde la incorporación de la regla. */
+export interface ManagementActivity {
+  pressure: number;
+  mandateStart: number;
+  observedTurns: number;
+  perfectUse: boolean;
+  bonusGranted: boolean;
+}
+
+export interface ManagementActivityRecord {
+  available: number;
+  used: number;
+  unused: number;
+  pressureBefore: number;
+  pressureAfter: number;
+  governabilityPenalty: number;
+  imagenDelta: number;
+  bonusAwarded: boolean;
+}
+
 export interface TurnRecord {
+  managementActivity?: ManagementActivityRecord;
   turn: number;
   actions: TurnActionRecord[];
   applied: AppliedEffectRecord[];
@@ -237,6 +258,8 @@ export interface TurnRecord {
 export interface CausalState {
   /** Ausencia en guardados anteriores significa legacy-16; nunca se remapea su agenda. */
   calendar?: CalendarId;
+  /** Ausencia = presión neutral; nunca se infiere el uso de PA de cierres antiguos. */
+  managementActivity?: ManagementActivity;
   /** Turno absoluto de la fase de decisión actual (el próximo cierre). */
   turn: number;
   /** Turno absoluto en que empezó el mandato actual (1, 13 en Light nuevo; 1, 17 en legacy): luna de miel por mandato. */

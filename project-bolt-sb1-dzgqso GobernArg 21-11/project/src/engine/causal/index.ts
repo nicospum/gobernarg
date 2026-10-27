@@ -25,3 +25,4 @@ export * from './interactions';
 export * from './turn';
 export * from './rng';
 export * from './interna';
+export * from './managementActivity';

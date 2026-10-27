@@ -1,6 +1,7 @@
+import { ACTOR_IDS } from '../data/causal';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { createNewGame, processEndTurn, resolvePendingElection, triggerMidtermStrategy } from '../engine/gameEngine';
-import { closeTurn } from '../engine/causal';
+import { createNewGame, interactWithActor, processEndTurn, resolvePendingElection, triggerMidtermStrategy } from '../engine/gameEngine';
+import { canMeet, closeTurn } from '../engine/causal';
 import { getAllEvents } from '../data/events';
 import { encodeSavedGame, loadGame, parseSavedGame, SAVE_KEY, saveGame } from '../lib/savegame';
 
@@ -27,6 +28,10 @@ describe('Guardados de ambos calendarios sin pérdida', () => {
         if (state.pendingElection) state = resolvePendingElection(state);
         if (state.gameOver) break;
         latestPeriod = Math.max(latestPeriod, state.turn);
+        for (const actor of ACTOR_IDS) {
+          if (state.baseActions - state.actions >= 3) break;
+          if (canMeet(state.causal, actor, state.actions) === null) state = interactWithActor(state, actor, 'reunion');
+        }
         const result = processEndTurn(state);
         state = result.state;
         expect(parseSavedGame(encodeSavedGame(state, result.triggeredEvents))?.state).toEqual(state);

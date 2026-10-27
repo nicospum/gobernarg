@@ -36,12 +36,22 @@ export function safeJsonTree(value: unknown, depth = 0, budget = { left: 1000000
   return obj(value) && Object.entries(value).every(([key, v]) => !['__proto__', 'prototype', 'constructor'].includes(key) && safeJsonTree(v, depth + 1, budget));
 }
 
+const activity = (x: unknown) => obj(x) && number(x.pressure) && x.pressure >= 0 && x.pressure <= 32
+  && integer(x.mandateStart) && x.mandateStart > 0 && integer(x.observedTurns) && x.observedTurns <= 16
+  && typeof x.perfectUse === 'boolean' && typeof x.bonusGranted === 'boolean';
+const activityRecord = (x: unknown) => fields(x, ['available','used','unused','pressureBefore','pressureAfter','governabilityPenalty','imagenDelta']) && obj(x)
+  && number(x.available) && x.available >= 0 && number(x.used) && x.used >= 0 && x.used <= x.available
+  && number(x.unused) && x.unused >= 0 && Math.abs(x.used + x.unused - x.available) < 1e-8
+  && number(x.pressureBefore) && x.pressureBefore >= 0 && x.pressureBefore <= 32 && number(x.pressureAfter) && x.pressureAfter >= 0 && x.pressureAfter <= 32
+  && number(x.governabilityPenalty) && x.governabilityPenalty >= 0 && x.governabilityPenalty <= 100
+  && number(x.imagenDelta) && x.imagenDelta >= -0.5 && x.imagenDelta <= 2 && typeof x.bonusAwarded === 'boolean';
+
 const indicatorMap = (x: unknown) => obj(x) && INDICATOR_IDS.every(id => number(x[id]));
 const political = (x: unknown) => fields(x, ['leg','legAdj','gob','apro','estr','otros','iv','imagen','umbralLey','interna','coalicion']);
 const actorSnapshot = (x: unknown) => obj(x) && ACTOR_IDS.every(id => obj(x[id]) && number(x[id].sat) && (x[id].rel === null || number(x[id].rel)));
 const applied = (x: unknown) => obj(x) && optionalString(x.actionId) && optionalString(x.effectId) && optionalNumber(x.originTurn) && string(x.source) && string(x.target) && number(x.delta) && string(x.explanation) && ['DELTA','BONUS','SET'].includes(String(x.mode));
 const channel = (x: unknown) => obj(x) && actor(x.actor) && optionalString(x.eventId) && string(x.label) && string(x.target) && number(x.value);
-const record = (x: unknown) => obj(x) && integer(x.turn)
+const record = (x: unknown) => obj(x) && integer(x.turn) && (x.managementActivity === undefined || activityRecord(x.managementActivity))
   && list(x.actions, a => obj(a) && string(a.actionId) && optionalString(a.suspended) && optionalBoolean(a.forced) && (a.actor === undefined || actor(a.actor)) && number(a.caja) && strings(a.scheduled))
   && list(x.applied, applied) && list(x.rules, r => obj(r) && string(r.ruleId) && string(r.target) && number(r.delta))
   && list(x.channelsApplied, channel) && list(x.channelsScheduled, channel)
@@ -55,9 +65,16 @@ export function validGameState(value: unknown): value is GameState {
   const s = value; const c = value.causal;
   if (!['light-12','legacy-16'].includes(String(c.calendar)) || !SCENARIOS.some(sc => sc.id === c.scenarioId)) return false;
   if (SCENARIOS.some(sc => sc.id === c.scenarioId && sc.reelectionsToUnlock > 0) && c.calendar !== 'legacy-16') return false;
+  if (c.managementActivity !== undefined && !activity(c.managementActivity)) return false;
   const cal = calendarFor(c as { calendar: 'light-12' | 'legacy-16' });
   if (!integer(s.year) || s.year < 1 || s.year > 4 || !integer(s.turn) || s.turn < 1 || s.turn > cal.periodsPerYear || !integer(s.term) || s.term < 1 || s.term > 2) return false;
   if (!integer(c.turn) || c.turn < 1 || c.turn > cal.totalTurns + 1 || c.mandateStart !== (s.term - 1) * cal.turnsPerMandate + 1) return false;
+  if (obj(c.managementActivity)) {
+    const a = c.managementActivity;
+    if (!number(a.pressure) || a.pressure > cal.totalTurns || a.pressure > c.turn - 1 || !integer(a.observedTurns) || a.observedTurns > cal.turnsPerMandate
+      || !integer(a.mandateStart) || ![1, cal.turnsPerMandate + 1].includes(a.mandateStart) || a.mandateStart > c.mandateStart
+      || a.observedTurns > c.turn - a.mandateStart) return false;
+  }
   const civil = (s.term - 1) * cal.turnsPerMandate + (s.year - 1) * cal.periodsPerYear + s.turn;
   if (c.turn !== civil && !((s.pendingElection || s.gameOver) && c.turn === civil + 1)) return false;
   if (s.position !== 'presidente' || !['politico','empresario','sindicalista','comunicador'].includes(String(s.archetype)) || !string(s.governorName) || !string(s.avatar)) return false;

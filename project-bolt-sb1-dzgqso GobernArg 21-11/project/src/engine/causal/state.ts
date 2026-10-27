@@ -72,6 +72,7 @@ export function createCausalState(opts: CreateOptions = {}): CausalState {
     turn: 1,
     mandateStart: 1,
     calendar: scenario.reelectionsToUnlock > 0 ? LEGACY_CALENDAR_ID : opts.calendar ?? LEGACY_CALENDAR_ID,
+    ...(scenario.reelectionsToUnlock === 0 ? { managementActivity: { pressure: 0, mandateStart: 1, observedTurns: 0, perfectUse: true, bonusGranted: false } } : {}),
     base,
     expect: { ...base, APRO: 50 },
     bonuses: [],

@@ -3,6 +3,7 @@ import { operativeSat } from './actors';
 import { channelStatus } from './channels';
 import { bonusSum, clamp, effective } from './context';
 import { internaGobPenalty } from './interna';
+import { managementGovernabilityPenalty } from './managementActivity';
 import type { CausalState } from './types';
 
 /**
@@ -96,11 +97,12 @@ export function recomputePolitical(state: CausalState, close: number): void {
   p.otros = p.imagen;
   p.iv = computeIv(p.apro, p.estr, p.otros);
   const legEff = clamp(p.leg + bonusSum(state, 'LEG', close));
-  p.gob = clamp(
+  const baseGob = clamp(
     0.3 * legNorm(legEff)
     + 0.4 * computeCooperation(state, close)
     + 0.3 * (100 - effective(state, 'CONF', close))
     + bonusSum(state, 'GOB', close)
     - internaGobPenalty(state),
   );
+  p.gob = clamp(baseGob - managementGovernabilityPenalty(state.managementActivity?.pressure ?? 0));
 }

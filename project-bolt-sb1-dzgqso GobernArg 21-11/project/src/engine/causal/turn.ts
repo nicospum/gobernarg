@@ -16,6 +16,7 @@ import { recomputePolitical, updateImagen } from './political';
 import { changeRel, processRelations } from './relations';
 import { COALITION_ACTIONS, expandCoalition, updateInterna } from './interna';
 import { Rng } from './rng';
+import { previewManagementActivity, type ManagementActivityBudget } from './managementActivity';
 import { applyStructuralRules } from './rules';
 import type { CausalState, PoliticalState, TurnActionRecord, TurnRecord } from './types';
 
@@ -60,7 +61,12 @@ function suspensionReason(state: CausalState, sel: Selection, rng: Rng, c: numbe
  * Cierre de turno — secuencia T.2 a T.10 del Excel (00_README "LÓGICA DEL TURNO").
  * Función pura: devuelve un estado nuevo y el TurnRecord que explica el turno.
  */
-export function closeTurn(input: CausalState, selections: Selection[]): CloseResult {
+export interface CloseOptions {
+  activityBudget?: ManagementActivityBudget;
+  mandateTurns?: number;
+}
+
+export function closeTurn(input: CausalState, selections: Selection[], options: CloseOptions = {}): CloseResult {
   const state: CausalState = structuredClone(input);
   const c = state.turn;
   const rng = new Rng(state.rng);
@@ -142,7 +148,15 @@ export function closeTurn(input: CausalState, selections: Selection[]): CloseRes
   const interna = updateInterna(state);
 
   // T.10 — político, expectativas, contadores de derrota.
+  const management = options.activityBudget ? previewManagementActivity(state, {
+    ...options.activityBudget,
+    allSelectionsExecuted: options.activityBudget.allSelectionsExecuted !== false && actions.every(a => !a.suspended),
+  }, options.mandateTurns) : undefined;
+  if (management) state.managementActivity = management.activity;
   updateImagen(state, c);
+  if (management) {
+    state.political.imagen = Math.max(0, Math.min(100, state.political.imagen + management.record.imagenDelta));
+  }
   recomputePolitical(state, c);
   for (const id of INDICATOR_IDS) {
     const v = effective(state, id, c);
@@ -171,6 +185,7 @@ export function closeTurn(input: CausalState, selections: Selection[]): CloseRes
     events: channelEvents,
     notes,
     internaReasons: interna.reasons,
+    ...(management ? { managementActivity: management.record } : {}),
   };
   state.records = [...state.records, record].slice(-40);
 

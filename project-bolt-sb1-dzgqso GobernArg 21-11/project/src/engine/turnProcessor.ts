@@ -3,7 +3,7 @@ import type { GameState, TurnSummary, TurnLogEntry } from '../types/game';
 import type { GameEvent } from '../systems/events/types';
 import { getAllEvents } from '../data/events';
 import { CHANNEL_GAME_EVENTS, CHANNEL_TO_EVENT } from '../data/events/causalEvents';
-import { ACTORS, CAUSAL_ACTIONS_BY_ID } from '../data/causal';
+import { ACTORS, CAUSAL_ACTIONS_BY_ID, getScenario } from '../data/causal';
 import { updateObjectives, checkCausalDefeat } from '../utils/victoryConditions';
 import { MAX_TERMS } from '../data/careerRules';
 import { addNotification, type TurnResult } from './engineShared';
@@ -128,13 +128,13 @@ export function processEndTurn(gameState: GameState): TurnResult {
     notifications: [...gameState.notifications],
   };
   // Bloquear avance si hay estrategia post-legislativa pendiente.
-  if (state.pendingMidtermStrategy) {
+  if (state.gameOver || state.pendingMidtermStrategy) {
     return {
       state,
       summary: {
         year: state.year,
         quarter: state.turn,
-        events: ['Definición de estrategia post-legislativa pendiente.'],
+        events: [state.gameOver ? 'La partida ya terminó.' : 'Definición de estrategia post-legislativa pendiente.'],
         popularityChange: 0,
         budgetChange: 0,
         inflationEvent: { triggered: false, count: 0 },
@@ -151,7 +151,11 @@ export function processEndTurn(gameState: GameState): TurnResult {
 
   // 1. Cierre del turno en el motor causal (T.2–T.10).
   const selections = selectionsFor(state);
-  const { state: causal, record, channelEvents } = closeTurn(state.causal, selections);
+  const trackActivity = getScenario(state.causal.scenarioId).reelectionsToUnlock === 0;
+  const { state: causal, record, channelEvents } = closeTurn(state.causal, selections, trackActivity ? {
+    activityBudget: { available: state.baseActions, remaining: state.actions },
+    mandateTurns: calendarFor(state).turnsPerMandate,
+  } : undefined);
   state.causal = causal;
   const executedIds = record.actions.filter(a => !a.suspended).map(a => a.actionId);
   for (const id of executedIds) {
@@ -228,6 +232,9 @@ export function processEndTurn(gameState: GameState): TurnResult {
       state.gameOver = true;
       state.victorious = false;
       state.defeatReason = defeat;
+      state.pendingElection = false;
+      state.pendingMidtermStrategy = false;
+      state.availableMidtermStrategies = [];
     }
   }
   state = addWarningNotifications(state);

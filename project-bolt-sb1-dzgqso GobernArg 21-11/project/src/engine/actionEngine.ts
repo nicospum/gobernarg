@@ -18,6 +18,7 @@ export function getPolicyAvailability(gameState: GameState): Availability[] {
  * cerrar el turno (pero la selección no puede superarla).
  */
 export function toggleActionSelection(gameState: GameState, actionId: string): GameState {
+  if (gameState.gameOver) return gameState;
   const def = CAUSAL_ACTIONS_BY_ID[actionId];
   if (!def || def.isSystem) return gameState;
   const selections = currentSelections(gameState);
