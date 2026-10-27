@@ -155,6 +155,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction, index, 
           <div className={detailed() ? 'flex flex-col gap-2.5' : 'grid grid-cols-1 xl:grid-cols-2 gap-2.5'}>
             {filtered.map((av) => (
               <ActionCard
+                loanDiscount={causal.perks.loanDiscount}
                 key={av.action.id}
                 availability={av}
                 requestedBy={requestedBy[av.action.id] ?? []}

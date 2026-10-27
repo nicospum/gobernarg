@@ -16,6 +16,7 @@ import { fmtBudget } from '@/lib/format';
 import { UI_CATEGORY_STYLES } from '@/data/categoryStyles';
 import { actionImage } from '@/lib/liteImages';
 import { detailed } from '@/lite/config';
+import { actionFiscalCommitments } from '@/lib/actionCommitments';
 import { simpleEffects } from '@/lib/simpleView';
 import { ACTORS, SENSITIVITIES, type ActorId } from '@/data/causal';
 import { ACTION_PLAYER_NOTES, ACTION_RISK_TEXT } from '@/data/causal/playerTexts';
@@ -36,6 +37,8 @@ interface ActionCardProps {
   isSelected: boolean;
   /** No se puede agregar más (sin PA, elección pendiente…) aunque la acción esté disponible. */
   disabled: boolean;
+  /** Descuento vigente del perfil sobre la deuda de préstamos. */
+  loanDiscount?: number;
 }
 
 const TAG_LABEL: Record<string, string> = {
@@ -102,7 +105,7 @@ function SimpleEffectList({ actionId }: { actionId: string }) {
   );
 }
 
-export function ActionCard({ availability, requestedBy, onSelect, isSelected, disabled }: ActionCardProps) {
+export function ActionCard({ availability, requestedBy, onSelect, isSelected, disabled, loanDiscount = 0 }: ActionCardProps) {
   const { action, pa, caja, reasons, available, needsDnu, repetitionWarning } = availability;
   const style = UI_CATEGORY_STYLES[action.category];
   const blocked = !isSelected && (!available || disabled);
@@ -112,6 +115,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
   const { winners, losers } = affectedActors(action.id, SENSITIVITIES as Record<ActorId, { target: string; s: number }[]>);
   const costLabel = caja < 0 ? `−${fmtBudget(Math.abs(caja))}` : caja > 0 ? `+${fmtBudget(caja)}` : 'Sin costo';
   const requested = requestedBy.length > 0;
+  const commitments = actionFiscalCommitments(action.id, { loanDiscount });
   // Nota para el jugador (glosario): la nota de diseño usaba siglas del motor.
   const playerNote = ACTION_PLAYER_NOTES[action.id] ?? action.strategic;
   const riskText = ACTION_RISK_TEXT[action.id] ?? action.risksText;
@@ -162,6 +166,12 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
         <div className="text-[10px] text-ink/70">
           {winners.length > 0 && <div><span className="text-sala-good font-semibold">Favorece:</span> {winners.map(a => ACTORS[a].shortName).join(', ')}</div>}
           {losers.length > 0 && <div><span className="text-sala-bad font-semibold">Perjudica:</span> {losers.map(a => ACTORS[a].shortName).join(', ')}</div>}
+        </div>
+      )}
+      {commitments.length > 0 && (
+        <div className="text-[11px] text-ink/85">
+          <b>Compromisos fiscales conocidos</b>
+          <ul className="mt-1 space-y-1">{commitments.map(item => <li key={item.key}>{item.text}</li>)}</ul>
         </div>
       )}
       {riskText && <div className="text-[10px] text-sala-warn">Riesgo: {riskText}</div>}
@@ -289,14 +299,18 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
 
       {/* Impacto fiscal */}
       <div className={`flex flex-wrap md:flex-nowrap md:flex-col items-center md:items-start gap-x-3 gap-y-1.5 ${simple ? SIMPLE_XL.impact : ''}`}>
-        <span className="sr-eyebrow">{simple ? 'Costo' : 'Impacto fiscal'}</span>
+        <span className="sr-eyebrow">{simple ? 'Costo inicial' : 'Impacto fiscal inicial'}</span>
         <strong className={`text-[15px] font-mono ${caja > 0 ? 'text-sala-good' : caja === 0 ? 'text-sala-muted' : blockReason === 'No alcanza la caja.' ? 'text-sala-bad' : 'text-ink'}`}>
           {costLabel}
         </strong>
         <span className="inline-flex items-center gap-1 text-[11px] font-bold text-sala-blue">
           <Flag size={11} /> {pa} {pa === 1 ? 'acción' : 'acciones'}
         </span>
-
+        {commitments.length > 0 && (
+          <ul aria-label="Compromisos fiscales conocidos" className="basis-full w-full min-w-0 space-y-1 text-[11px] leading-snug text-ink/85">
+            {commitments.map(item => <li key={item.key} className={item.conditional ? 'text-sala-warn' : undefined}>{item.text}</li>)}
+          </ul>
+        )}
       </div>
 
       {/* Acción */}

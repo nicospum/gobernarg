@@ -175,17 +175,25 @@ function immediateDelta(actionId: string, target: string, maxOffset = 0): number
     .reduce((a, r) => a + (r.magnitude as number), 0);
 }
 
+/** Deuda base del cierre actual, con el descuento que usa la ejecución. */
+function immediateDebtDelta(state: CausalState, actionId: string): number {
+  return (EFFECTS_BY_ACTION[actionId] ?? [])
+    .filter(row => row.target === 'DEUDA' && row.offset === 0 && (row.kind === 'IMMEDIATE' || row.kind === 'DELAYED') && row.magnitude !== null)
+    .reduce((total, row) => total + (row.magnitude as number) * (row.kind === 'IMMEDIATE' && (row.magnitude as number) > 0 ? 1 - state.perks.loanDiscount : 1), 0);
+}
+
 /**
  * Proyección de caja al cierre con la selección actual: incluye el costo, el
  * gasto permanente que agregan, los cambios de recaudación (alícuotas,
- * retenciones, exenciones, próximos 2 turnos) y los intereses de la deuda nueva.
+ * retenciones y exenciones que empiezan ahora) y los intereses de la deuda nueva.
+ * No adelanta cambios programados para cierres posteriores.
  */
 export function projectedCloseCaja(state: CausalState, selected: Selection[]): { caja: number; structural: number } {
   return projectCaja(state, selected, id => ({
     caja: cajaCost(state, CAUSAL_ACTIONS_BY_ID[id]),
     gasto: immediateDelta(id, 'GASTO_CORR'),
-    ingresoMult: immediateDelta(id, 'INGRESO_MULT', 2),
-    pres: immediateDelta(id, 'PRES', 1),
-    deuda: immediateDelta(id, 'DEUDA'),
+    ingresoMult: immediateDelta(id, 'INGRESO_MULT'),
+    pres: immediateDelta(id, 'PRES'),
+    deuda: immediateDebtDelta(state, id),
   }));
 }

@@ -48,6 +48,18 @@ describe('cierre de Light sin recuperar saturación', () => {
     expect(simpleEffects('inversion_educativa')).toEqual(expect.arrayContaining([expect.objectContaining({ label: 'Educación', tone: 'good', when: 'más adelante' })]));
   });
 
+  it('muestra gasto fijo y subsidios diferidos junto al costo inicial', () => {
+    const state = game();
+    const availability = getPolicyAvailability(state);
+    for (const [id, expected] of [['aumento_salarial', /Gasto fijo:.*150.*turno.*permanente/], ['congelar_tarifas', /Costo de caja:.*80.*turno.*4 trimestres/]] as const) {
+      render(<ActionCard availability={availability.find(a => a.action.id === id)!} requestedBy={[]} onSelect={() => {}} isSelected={false} disabled={false} />);
+      expect(screen.getByText('Costo inicial')).toBeTruthy();
+      expect(within(screen.getByRole('list', { name: 'Compromisos fiscales conocidos' })).getByText(expected)).toBeTruthy();
+      expect(screen.queryByRole('dialog')).toBeNull();
+      cleanup();
+    }
+  });
+
   it('recuerda una inversión real pendiente y la retira cuando ya se aplicó', () => {
     let state = createCausalState({ scenarioId: 'viento_de_cola', seed: 3 });
     expect(pendingPolicies(state)).toEqual([]);
