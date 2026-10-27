@@ -40,6 +40,7 @@ import { riskColor, type Risk } from '@/lib/risk';
 import { getActorIcon } from '../utils/actorIcons';
 import { fmtBudget } from '@/lib/format';
 import { ACTOR_POWER_TEXT } from '@/data/causal/playerTexts';
+import { InfoTooltip } from './InfoTooltip';
 
 /** "tensión media", no "tensión medio" (concordancia, glosario). */
 const TENSION_LABEL: Record<Risk, string> = { bajo: 'baja', medio: 'media', alto: 'alta', critico: 'crítica' };
@@ -111,7 +112,19 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
             <div className="font-medium text-[12px] text-foreground leading-tight truncate" title={def.description}>
               {def.name}
             </div>
-            <span className={`text-[9px] uppercase tracking-wide font-semibold ${riskColor(MOOD_RISK[mood])}`}>{mood}</span>
+            <div className="flex items-center gap-1">
+              <span className={`text-[10px] uppercase tracking-wide font-semibold ${riskColor(MOOD_RISK[mood])}`}>{mood}</span>
+              <InfoTooltip title={def.name} clickToOpen content={<div className="space-y-2 text-[13px] leading-relaxed">
+                <p>{def.description}</p>
+                <p><strong>Su poder:</strong> {ACTOR_POWER_TEXT[actor] ?? def.channelMain}.</p>
+                <p>La satisfacción refleja cómo le va con tu gestión. La relación refleja el vínculo político: reunirse revela información, cumplir acuerdos construye confianza.</p>
+                {organized && meetReason && <p><strong>Reunión:</strong> {meetReason}</p>}
+                {organized && negReason && <p><strong>Negociación:</strong> {negReason}</p>}
+                {!organized && pollReason && <p><strong>Encuesta:</strong> {pollReason}</p>}
+              </div>}>
+                <button type="button" aria-label={`Ayuda para ${def.name}`} className="min-w-9 min-h-9 inline-flex items-center justify-center rounded hover:bg-sunken text-ink/80"><Info size={14} /></button>
+              </InfoTooltip>
+            </div>
           </div>
           <div className="text-[10px] text-muted-foreground truncate" title={ACTOR_POWER_TEXT[actor] ?? def.channelMain}>
             Poder: {ACTOR_POWER_TEXT[actor] ?? def.channelMain}
@@ -130,7 +143,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
             <span className={`font-mono font-bold ${toneClass(band.tone)}`}>
               {Math.round(st.sat)}
               {Math.abs(satDelta) >= 0.5 && (
-                <span className={`ml-1 text-[9px] ${satDelta > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                <span className={`ml-1 text-[9px] ${satDelta > 0 ? 'text-emerald-800' : 'text-red-800'}`}>
                   {satDelta > 0 ? '▲' : '▼'}{Math.abs(satDelta).toFixed(0)}
                 </span>
               )}
@@ -174,13 +187,13 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
       {/* Demanda */}
       {demandRevealed && demandDef && (
         <div className="mb-1.5 px-2 py-1.5 rounded border border-amber-400/25 bg-amber-400/5">
-          <div className="text-[10px] text-amber-200/90 leading-snug">
+          <div className="text-[10px] text-amber-900/90 leading-snug">
             Piden: <span className="font-semibold">{demandDef.name}</span>
           </div>
           <button
             onClick={() => onSelectAction(demand!.actionId)}
             disabled={disabled || demandSelected || !demandAv?.available}
-            className="mt-1 w-full inline-flex items-center justify-center gap-1 text-[10px] font-semibold text-amber-200 border border-amber-400/30 hover:bg-amber-400/10 rounded py-0.5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="mt-1 w-full inline-flex items-center justify-center gap-1 text-[10px] font-semibold text-amber-900 border border-amber-400/30 hover:bg-amber-400/10 rounded py-0.5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             title={demandAv && !demandAv.available ? demandAv.reasons[0] : 'Agregar al turno: si la ejecutás, valoran que los escuchaste'}
           >
             {demandSelected ? <><Check size={10} /> En el turno</> : <><Plus size={10} /> Agregar al turno</>}
@@ -202,7 +215,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
           Aceptan acordar: vos te comprometés a <span className="font-semibold">{demandDef.name}</span> en {PARAMS.PLAZO_ACUERDO} turnos;
           ellos ofrecen: {agreementOffer(actor).toLowerCase()}. Incumplir rompe la relación.
           {demandAv && !demandAv.available && (
-            <div className="mt-1 text-red-300">Ojo: hoy no podrías ejecutarla ({demandAv.reasons[0]})</div>
+            <div className="mt-1 text-red-800">Ojo: hoy no podrías ejecutarla ({demandAv.reasons[0]})</div>
           )}
         </div>
       )}
@@ -265,13 +278,13 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }:
   return (
     <section className="p-4 border-b border-ink/8">
       <div className="flex items-center gap-2 mb-1.5">
-        <UsersIcon size={14} className="text-blue-400" />
+        <UsersIcon size={14} className="text-celeste-ink" />
         <h3 className="font-display text-[16px]   text-ink font-semibold">
           Actores & grupos de interés
         </h3>
       </div>
       <p className="text-[10px] text-ink/70 mb-3 flex items-start gap-1 leading-snug">
-        <Info size={11} className="mt-0.5 flex-shrink-0 text-blue-400" />
+        <Info size={11} className="mt-0.5 flex-shrink-0 text-celeste-ink" />
         Relación = vínculo político con tu gobierno. Satisfacción = evaluación de gestión. Mantener reuniones revela demandas y preocupaciones.
       </p>
       {gameState.lastInteractionMessage && (
@@ -316,7 +329,7 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled }:
                     <div className="font-display font-semibold text-sm text-ink truncate">{family.name}</div>
                     <div className="flex items-center gap-2 text-[9px] font-mono">
                       <span className={riskColor(worst)}>tensión {TENSION_LABEL[worst]}</span>
-                      {demands > 0 && <span className="text-amber-300 font-bold">{demands} demanda{demands > 1 ? 's' : ''}</span>}
+                      {demands > 0 && <span className="text-amber-900 font-bold">{demands} demanda{demands > 1 ? 's' : ''}</span>}
                     </div>
                   </div>
                 </div>

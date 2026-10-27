@@ -33,8 +33,8 @@ function useSteps(actions: number) {
     {
       title: 'Mirá antes de decidir',
       text: touch
-        ? 'Tocá "Ver detalle" en cada acción, o tocá un indicador, para ver qué produce, cuándo llega el efecto y a quién favorece o perjudica.'
-        : 'Pasá el mouse por cada acción o indicador para ver qué produce, cuándo llega el efecto y a quién favorece o perjudica.',
+        ? 'Leé el objetivo, el costo y el intercambio de cada acción. Tocá Ayuda para aclarar un riesgo o requisito; tocá los indicadores para conocer el país.'
+        : 'Leé el objetivo, el costo y el intercambio de cada acción. Ayuda aclara riesgos y requisitos con mouse o teclado. País y Actores aportan el contexto.',
     },
     {
       title: 'Cuidá a los actores',
@@ -42,7 +42,7 @@ function useSteps(actions: number) {
     },
     {
       title: 'Cerrá el turno',
-      text: `"Finalizar turno" hace pasar un trimestre y muchos efectos tardan en llegar. En el turno 8 hay legislativas y en el 16 elecciones: para ganar necesitás ${PARAMS.VOTOS_PARA_GANAR}% de intención de voto.`,
+      text: `"Finalizar turno" ejecuta la agenda y hace pasar un trimestre. El resumen explica lo ocurrido y Efectos en camino sigue lo que todavía tarda. En el turno 8 hay legislativas y en el 16 elecciones: para ganar necesitás ${PARAMS.VOTOS_PARA_GANAR}% de intención de voto.`,
     },
   ];
 }

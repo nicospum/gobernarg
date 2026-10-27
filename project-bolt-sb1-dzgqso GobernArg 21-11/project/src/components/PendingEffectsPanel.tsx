@@ -34,15 +34,15 @@ export function PendingEffectsPanel({ gameState }: PendingEffectsPanelProps) {
               <div className="flex items-start justify-between gap-2 mb-1.5">
                 <div className="font-display font-semibold text-base text-ink leading-tight">{item.title}</div>
                 <div className="flex items-center gap-1.5 flex-shrink-0 bg-ink/4 px-2 py-0.5 rounded border border-ink/8">
-                  <Clock size={11} className={urgent ? 'text-amber-400' : 'text-ink/70'} />
-                  <span className={`text-[10px] font-mono font-bold ${urgent ? 'text-amber-400' : 'text-ink/70'}`}>
+                  <Clock size={11} className={urgent ? 'text-amber-900' : 'text-ink/70'} />
+                  <span className={`text-[10px] font-mono font-bold ${urgent ? 'text-amber-900' : 'text-ink/70'}`}>
                     {urgent ? 'PRÓXIMO TURNO' : `en ${item.inTurns}t`}
                   </span>
                 </div>
               </div>
               <div className="text-[10px] text-ink/70 mb-2 font-mono">↳ Origen: decisión en turno {item.origin}</div>
               <div className="flex gap-1.5 items-center flex-wrap">
-                <Zap size={11} className="text-blue-400 flex-shrink-0" />
+                <Zap size={11} className="text-celeste-ink flex-shrink-0" />
                 {item.chips.map((c, i) => (
                   <span key={i} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] border font-mono ${toneChipClass(c.tone)}`}>
                     {c.label} {c.text}

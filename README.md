@@ -1,4 +1,6 @@
-# GobernArg
+# GobernArg Full
+
+Edición Full de la familia clara A · Despacho, basada en `rediseno-despacho`. El cierre mantiene los sistemas y reparte la información entre decisiones, ayuda y seguimiento. Ver [política de información y validación](_analisis_gobernarg/CIERRE-FULL.md). La edición Light se mantiene en su rama propia `codex/gobernarg-light-cierre-2026-10-27`.
 
 Simulación política: gobernás la Argentina durante uno o dos mandatos, negociás con empresas, sindicatos, gobernadores y el resto de los actores, y buscás la reelección. Hecho con React 18, Vite, TypeScript y Tailwind.
 

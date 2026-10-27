@@ -63,7 +63,7 @@ export function MobileHeader({ gameState, onOpenNotifications, onOpenMenu }: {
         <div className="flex-1 min-w-0 leading-tight">
           <div className="font-display text-[17px] font-semibold text-ink truncate">{gameState.governorName || '—'}</div>
           <div className="text-[12px] text-ink/70 truncate">
-            Año {gameState.year} · Turno {inMandate} de {MAX_TURNS}
+            Full · Año {gameState.year} · Turno {inMandate} de {MAX_TURNS}
             {scenario && <> · {scenario.name}</>}
           </div>
         </div>

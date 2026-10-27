@@ -212,7 +212,7 @@ export function GameHeader({
         <div className="flex items-center gap-2.5 flex-none">
           <img src={IMAGES.logo.primary} alt="GobernArg" className="h-9 w-auto object-contain mix-blend-multiply" />
           <div className="font-display text-xl font-semibold text-ink hidden sm:block">
-            Gobern<span className="text-gold-ink">arg</span>
+            Gobern<span className="text-gold-ink">arg</span><span className="ml-2 text-[11px] font-sans font-semibold uppercase tracking-wider text-gold-ink">Full</span>
           </div>
         </div>
 

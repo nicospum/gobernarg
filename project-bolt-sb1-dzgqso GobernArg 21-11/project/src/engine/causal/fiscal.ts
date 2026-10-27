@@ -87,6 +87,8 @@ export function projectCaja(state: CausalState, selections: { actionId: string }
   const pres = Math.max(0, effective(state, 'PRES', close) + d.pres);
   const infl = effective(state, 'INFL', close);
   const ing = PARAMS.INGRESO_BASE * (0.7 + (0.3 * actv) / 50) * (pres / 50) * (state.ingresoMult + d.ingresoMult) * (1 - (0.15 * Math.max(0, infl - 60)) / 40);
-  const structural = ing - (state.gastoCorr + d.gasto) - PARAMS.TASA_DEUDA * (state.deuda + d.deuda);
+  // La estimación respeta la suspensión de intereses del escenario Corralito.
+  const service = debtService({ ...state, deuda: state.deuda + d.deuda });
+  const structural = ing - (state.gastoCorr + d.gasto) - service;
   return { caja: state.caja + d.caja + structural, structural };
 }

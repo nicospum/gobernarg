@@ -17,6 +17,7 @@ import { actorReactions, indicatorChanges } from '@/lib/turnExplain';
 import { arrows, toneOf, toneClass } from '@/lib/causalText';
 import { getActorIcon } from '../utils/actorIcons';
 import { useDialog } from '@/lib/useDialog';
+import { upcomingEffects } from '@/lib/agendaView';
 
 interface TurnSummaryModalProps {
   summary: TurnSummary;
@@ -27,7 +28,7 @@ interface TurnSummaryModalProps {
 function Delta({ value, suffix = '' }: { value: number; suffix?: string }) {
   const r = Math.round(value * 10) / 10;
   return (
-    <span className={`font-mono font-bold ${r > 0 ? 'text-emerald-400' : r < 0 ? 'text-red-400' : 'text-muted-foreground'}`}>
+    <span className={`font-mono font-bold ${r > 0 ? 'text-emerald-800' : r < 0 ? 'text-red-800' : 'text-muted-foreground'}`}>
       {r > 0 ? '+' : ''}{r}{suffix}
     </span>
   );
@@ -51,6 +52,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
   const political = isLatest ? gameState.causal.political : record?.politicalAfter;
   const cajaFinal = isLatest ? gameState.causal.caja : record?.fiscal.cajaDespues ?? 0;
   const otherCash = record ? Math.round(cajaFinal - record.fiscal.cajaDespues) : 0;
+  const upcoming = isLatest ? upcomingEffects(gameState.causal) : [];
 
   return (
     <div ref={dialogRef} className="outline-none fixed inset-0 bg-ink/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
@@ -65,7 +67,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
             <div>
               <h2 className="font-display text-2xl font-semibold   text-ink">Resumen del trimestre</h2>
               <p className="flex items-center gap-1.5 text-ink/80 text-xs font-mono mt-0.5">
-                <CalendarDays className="w-3.5 h-3.5 text-blue-400" />
+                <CalendarDays className="w-3.5 h-3.5 text-celeste-ink" />
                 Año {summary.year} · Trimestre {summary.quarter}
               </p>
             </div>
@@ -79,7 +81,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
           {/* Decisiones */}
           {record && (
             <section className="bg-surface p-4 rounded-lg border border-ink/8">
-              <h4 className="flex items-center gap-2 font-display font-semibold text-xs   text-blue-300 mb-2">
+              <h4 className="flex items-center gap-2 font-display font-semibold text-xs   text-celeste-ink mb-2">
                 <ListChecks className="w-4 h-4" />
                 POLÍTICAS EJECUTADAS ESTE TRIMESTRE
               </h4>
@@ -88,7 +90,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {record.actions.map((a, i) => (
-                    <span key={i} className={`text-[11px] px-2.5 py-1 rounded-md border font-semibold ${a.suspended ? 'border-red-500/30 text-red-300 line-through bg-red-500/10' : a.forced ? 'border-amber-500/30 text-amber-300 bg-amber-500/10' : 'border-blue-500/30 text-ink bg-blue-500/10'}`}>
+                    <span key={i} className={`text-[11px] px-2.5 py-1 rounded-md border font-semibold ${a.suspended ? 'border-red-500/30 text-red-800 line-through bg-red-500/10' : a.forced ? 'border-amber-500/30 text-amber-900 bg-amber-500/10' : 'border-blue-500/30 text-ink bg-blue-500/10'}`}>
                       {CAUSAL_ACTIONS_BY_ID[a.actionId]?.name ?? a.actionId}{a.forced ? ' (forzada)' : ''}
                     </span>
                   ))}
@@ -100,7 +102,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
           {/* País */}
           {changes.length > 0 && (
             <section className="bg-surface p-4 rounded-lg border border-ink/8">
-              <h4 className="flex items-center gap-2 font-display font-semibold text-xs   text-blue-300 mb-2">
+              <h4 className="flex items-center gap-2 font-display font-semibold text-xs   text-celeste-ink mb-2">
                 <Globe2 className="w-4 h-4" />
                 EVOLUCIÓN DEL PAÍS
               </h4>
@@ -126,7 +128,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
           {/* Actores */}
           {reactions.length > 0 && (
             <section className="bg-surface p-4 rounded-lg border border-ink/8">
-              <h4 className="flex items-center gap-2 font-display font-semibold text-xs   text-blue-300 mb-2">
+              <h4 className="flex items-center gap-2 font-display font-semibold text-xs   text-celeste-ink mb-2">
                 <Users className="w-4 h-4" />
                 REACCIÓN DE LOS ACTORES
               </h4>
@@ -140,7 +142,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
                         <span className="text-ink font-medium">{r.name}</span>
                         {r.reason && <span className="text-ink/70 text-[10px]">— {r.reason}</span>}
                       </div>
-                      <span className={`font-mono font-bold ${r.delta > 0 ? 'text-emerald-400' : 'text-red-400'}`}>{arrows(r.delta)}</span>
+                      <span className={`font-mono font-bold ${r.delta > 0 ? 'text-emerald-800' : 'text-red-800'}`}>{arrows(r.delta)}</span>
                     </li>
                   );
                 })}
@@ -153,7 +155,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
             <section className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="rounded-lg border border-ink/8 bg-surface p-3.5">
                 <p className="flex items-center gap-1.5 font-bold text-[10px] text-ink/70 uppercase tracking-widest mb-2">
-                  <Vote className="w-3.5 h-3.5 text-blue-400" /> INDICADORES POLÍTICOS
+                  <Vote className="w-3.5 h-3.5 text-celeste-ink" /> INDICADORES POLÍTICOS
                 </p>
                 <div className="text-[12px] space-y-1.5 font-medium">
                   <div className="flex justify-between text-ink/80"><span>Aprobación</span><Delta value={political!.apro - record.politicalBefore.apro} /></div>
@@ -163,15 +165,15 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
               </div>
               <div className="rounded-lg border border-ink/8 bg-surface p-3.5">
                 <p className="flex items-center gap-1.5 font-bold text-[10px] text-ink/70 uppercase tracking-widest mb-2">
-                  <Wallet className="w-3.5 h-3.5 text-emerald-400" /> RESULTADO DE CUENTAS
+                  <Wallet className="w-3.5 h-3.5 text-emerald-800" /> RESULTADO DE CUENTAS
                 </p>
                 <div className="text-[12px] space-y-1.5 font-medium">
-                  <div className="flex justify-between text-ink/80"><span>Resultado fiscal</span><span className={`font-mono font-bold ${record.fiscal.resultado >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{fmtBudgetDelta(record.fiscal.resultado)}</span></div>
+                  <div className="flex justify-between text-ink/80"><span>Resultado fiscal</span><span className={`font-mono font-bold ${record.fiscal.resultado >= 0 ? 'text-emerald-800' : 'text-red-800'}`}>{fmtBudgetDelta(record.fiscal.resultado)}</span></div>
                   {record.fiscal.financiamiento !== 0 && (
-                    <div className="flex justify-between text-ink/80"><span>Financiamiento</span><span className="font-mono text-amber-300 font-bold">{fmtBudgetDelta(record.fiscal.financiamiento)}</span></div>
+                    <div className="flex justify-between text-ink/80"><span>Financiamiento</span><span className="font-mono text-amber-900 font-bold">{fmtBudgetDelta(record.fiscal.financiamiento)}</span></div>
                   )}
                   {otherCash !== 0 && (
-                    <div className="flex justify-between text-ink/80"><span>Eventos y otras decisiones</span><span className={`font-mono font-bold ${otherCash >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{fmtBudgetDelta(otherCash)}</span></div>
+                    <div className="flex justify-between text-ink/80"><span>Eventos y otras decisiones</span><span className={`font-mono font-bold ${otherCash >= 0 ? 'text-emerald-800' : 'text-red-800'}`}>{fmtBudgetDelta(otherCash)}</span></div>
                   )}
                   <div className="flex justify-between text-ink/80"><span>Caja final</span><span className="font-mono font-bold text-ink">{fmtBudget(cajaFinal)}</span></div>
                 </div>
@@ -179,9 +181,19 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
             </section>
           )}
 
+          {upcoming.length > 0 && (
+            <section className="rounded-lg border border-rule bg-sunken/40 p-4">
+              <h4 className="font-display font-semibold text-[15px] text-ink mb-2">Efectos que siguen en camino</h4>
+              <ul className="space-y-1 text-[13px] text-ink/85">
+                {upcoming.slice(0, 3).map(item => <li key={item.key}>{item.title} · {item.inTurns === 1 ? 'próximo trimestre' : `en ${item.inTurns} trimestres`}</li>)}
+              </ul>
+              <p className="mt-2 text-[12px] text-ink/75">{upcoming.length > 3 ? `${upcoming.length - 3} más. ` : ''}Consultá el seguimiento en Efectos en camino o en el Cuaderno.</p>
+            </section>
+          )}
+
           {/* Eventos y relaciones */}
           <section className="bg-surface p-4 rounded-lg border border-ink/8">
-            <h4 className="flex items-center gap-2 font-display font-semibold text-xs   text-blue-300 mb-2">
+            <h4 className="flex items-center gap-2 font-display font-semibold text-xs   text-celeste-ink mb-2">
               <Newspaper className="w-4 h-4" />
               NOVEDADES Y NOTICIAS
             </h4>
@@ -201,11 +213,11 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
 
           {summary.inflationEvent.triggered && (
             <div className="rounded-xl border border-red-500/40 bg-red-500/15 p-4 shadow-lg">
-              <div className="flex items-center gap-2 text-red-300">
+              <div className="flex items-center gap-2 text-red-800">
                 <AlertTriangle className="w-5 h-5" />
                 <p className="font-display font-semibold text-base  ">La inflación se está acelerando</p>
               </div>
-              <p className="text-[12px] text-red-200/80 mt-1 leading-relaxed">
+              <p className="text-[12px] text-red-800/80 mt-1 leading-relaxed">
                 La espiral de precios reduce el poder adquisitivo de los sectores populares y tensiona la recaudación del Tesoro.
               </p>
             </div>

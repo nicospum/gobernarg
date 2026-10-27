@@ -96,6 +96,13 @@
   }
 }
 
+.game-help [class*="text-[10px]"],
+.game-help [class*="text-[11px]"],
+.game-help [class*="text-xs"] {
+  font-size: 13px;
+  line-height: 1.45;
+}
+
 .info-sheet [class*="text-[10px]"],
 .info-sheet [class*="text-[11px]"],
 .info-sheet [class*="text-xs"] {

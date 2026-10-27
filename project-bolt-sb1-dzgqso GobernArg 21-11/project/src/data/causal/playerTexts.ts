@@ -175,4 +175,9 @@ export const ACTOR_POWER_TEXT: Record<string, string> = {
 export const ACTION_RISK_TEXT: Record<string, string> = {
   emitir_dinero: 'Hiperinflación: si la inflación queda desbocada dos turnos seguidos, se desata una crisis que puede costarte el gobierno.',
   reduccion_gasto: 'Conflicto social si la protección social ya está baja.',
+  prestamo_internacional: 'Las revisiones fiscales condicionan nuevos desembolsos; el endeudamiento aumenta los intereses.',
+  pacto_social: 'Emitir o devaluar durante el pacto lo rompe y deteriora la relación con sindicatos, industria y PyMEs.',
+  dnu: 'Repetir los decretos puede terminar en una suspensión judicial de la medida.',
+  reunion: 'Reunirse reiteradamente sin negociar ni atender demandas deteriora la relación.',
+  negociacion: 'Si fracasa, empeora la relación.',
 };

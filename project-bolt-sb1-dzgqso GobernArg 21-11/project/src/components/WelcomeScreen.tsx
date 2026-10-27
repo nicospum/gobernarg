@@ -31,9 +31,11 @@ export function WelcomeScreen({ onStart, saved, onContinue }: WelcomeScreenProps
       <div className="relative z-10 max-w-xl w-full mx-6 px-8 py-10 md:px-12 md:py-12 text-center bg-surface/95 backdrop-blur rounded-xl shadow-[0_24px_60px_-20px_rgba(20,33,61,0.45)] border border-rule">
         <img
           src={IMAGES.logo.wide}
-          alt="Gobernarg"
+          alt="GobernArg Full"
           className="w-full max-w-sm mx-auto mb-6 mix-blend-multiply"
         />
+
+        <p className="inline-flex mb-5 rounded-full border border-gold/40 bg-gold/10 px-4 py-1 text-[13px] font-semibold uppercase tracking-widest text-gold-ink">Edición Full</p>
 
         <p className="text-lg text-ink/80 mb-8 leading-relaxed">
           Simulación política donde tomás decisiones estratégicas, gestionás recursos,
