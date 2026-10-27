@@ -3,8 +3,6 @@ import { ArrowLeft, Lock, Play, Sparkles, Trophy } from 'lucide-react';
 import { IMAGES } from '../utils/imageAssets';
 import {
   DEFAULT_PLATFORM_BY_ARCHETYPE,
-  DEFAULT_SCENARIO_ID,
-  DIFFICULTY_LEVELS,
   HISTORIC_SCENARIOS,
   INDICATORS,
   NO_PLATFORM_ID,
@@ -16,7 +14,7 @@ import {
   type ScenarioDifficulty,
 } from '../data/causal';
 import { loadProgress } from '@/lib/progress';
-import { isNewScenarioAvailable } from '@/lib/editionAccess';
+import { DEFAULT_NEW_GAME_SCENARIO_ID, NEW_GAME_DIFFICULTY_LEVELS, isNewScenarioAvailable } from '@/lib/editionAccess';
 import { SetupSteps } from './SetupSteps';
 import type { CharacterDraft } from './CharacterCreation';
 
@@ -49,7 +47,7 @@ function selectableCls(selected: boolean): string {
 
 export function GameSetup({ draft, onBack, onStart }: GameSetupProps) {
   const [progress] = useState(loadProgress);
-  const [scenarioId, setScenarioId] = useState<string>(DEFAULT_SCENARIO_ID);
+  const [scenarioId, setScenarioId] = useState<string>(DEFAULT_NEW_GAME_SCENARIO_ID);
   // Plataforma del partido: opcional y apagada por defecto. El juego no la necesita.
   const [platformOn, setPlatformOn] = useState(false);
   const [platformId, setPlatformId] = useState<string>(DEFAULT_PLATFORM_BY_ARCHETYPE[draft.archetype] ?? PLATFORMS[0].id);
@@ -83,8 +81,8 @@ export function GameSetup({ draft, onBack, onStart }: GameSetupProps) {
           </div>
 
           {/* Niveles: cada uno abre un escenario disponible desde el principio */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10" role="radiogroup" aria-label="Dificultad">
-            {DIFFICULTY_LEVELS.map(level => {
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10" role="radiogroup" aria-label="Dificultad">
+            {NEW_GAME_DIFFICULTY_LEVELS.map(level => {
               const sc = getScenario(level.scenarioId);
               const img = scenarioImage(sc);
               const selected = scenarioId === sc.id;

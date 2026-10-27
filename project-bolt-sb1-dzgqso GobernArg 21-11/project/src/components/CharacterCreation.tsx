@@ -7,6 +7,7 @@ import { ARCHETYPE_PASSIVES } from '../data/specialAbilities';
 import { STARTING_POSITION } from '../data/careerRules';
 import { InfoTooltip } from './InfoTooltip';
 import { SetupSteps } from './SetupSteps';
+import { photoToDataUrl, validatePhotoFile } from '../lib/avatarPhoto';
 
 /** Lo que se define en el paso 1; la dificultad y el partido van en el paso 2 (GameSetup). */
 export interface CharacterDraft {
@@ -22,21 +23,21 @@ interface CharacterCreationProps {
 }
 
 export const AVATARS = [
-  { id: 'executive-1', src: IMAGES.characters.executive1, label: 'Ejecutivo' },
-  { id: 'executive-2', src: IMAGES.characters.executive2, label: 'Ejecutiva' },
-  { id: 'female-executive-1', src: IMAGES.characters.femaleExecutive1, label: 'Ejecutiva 1' },
-  { id: 'female-executive-2', src: IMAGES.characters.femaleExecutive2, label: 'Ejecutiva 2' },
-  { id: 'senior-leader', src: IMAGES.characters.seniorLeader, label: 'Líder sénior' },
-  { id: 'indigenous-leader', src: IMAGES.characters.indigenousLeader, label: 'Líder indígena' },
-  { id: 'youth-activist', src: IMAGES.characters.youthActivist, label: 'Activista joven' },
-  { id: 'business-executive', src: IMAGES.characters.businessExecutive, label: 'Empresaria' },
-  { id: 'popular-leader', src: IMAGES.characters.popularLeader, label: 'Líder popular' },
-  { id: 'spokesperson', src: IMAGES.characters.spokesperson, label: 'Vocera' },
-  { id: 'candidate-handshake', src: IMAGES.characters.candidateHandshake, label: 'Candidato' },
-  { id: 'conservative', src: IMAGES.characters.conservative, label: 'Conservador' },
-  { id: 'fighter', src: IMAGES.characters.fighter, label: 'Luchador social' },
-  { id: 'young-orator', src: IMAGES.characters.youngOrator, label: 'Joven orador' },
-  { id: 'podium-official', src: IMAGES.characters.podiumOfficial, label: 'Presidente' },
+  { id: 'executive-1', src: IMAGES.characters.executive1 },
+  { id: 'executive-2', src: IMAGES.characters.executive2 },
+  { id: 'female-executive-1', src: IMAGES.characters.femaleExecutive1 },
+  { id: 'female-executive-2', src: IMAGES.characters.femaleExecutive2 },
+  { id: 'senior-leader', src: IMAGES.characters.seniorLeader },
+  { id: 'indigenous-leader', src: IMAGES.characters.indigenousLeader },
+  { id: 'youth-activist', src: IMAGES.characters.youthActivist },
+  { id: 'business-executive', src: IMAGES.characters.businessExecutive },
+  { id: 'popular-leader', src: IMAGES.characters.popularLeader },
+  { id: 'spokesperson', src: IMAGES.characters.spokesperson },
+  { id: 'candidate-handshake', src: IMAGES.characters.candidateHandshake },
+  { id: 'conservative', src: IMAGES.characters.conservative },
+  { id: 'fighter', src: IMAGES.characters.fighter },
+  { id: 'young-orator', src: IMAGES.characters.youngOrator },
+  { id: 'podium-official', src: IMAGES.characters.podiumOfficial },
 ];
 
 export function CharacterCreation({ initial, onContinue }: CharacterCreationProps) {
@@ -47,8 +48,29 @@ export function CharacterCreation({ initial, onContinue }: CharacterCreationProp
   const [governorName, setGovernorName] = useState(initial?.governorName ?? '');
   const [avatar, setAvatar] = useState<string>(initial?.avatar ?? AVATARS[0].src);
   const [showNameError, setShowNameError] = useState(false);
+  const [ownPhoto, setOwnPhoto] = useState(initial?.avatar.startsWith('data:image/') ? initial.avatar : '');
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const [photoError, setPhotoError] = useState('');
+
+  const handlePhoto = async (file: File | undefined) => {
+    if (!file || photoBusy) return;
+    setPhotoError('');
+    const error = validatePhotoFile(file);
+    if (error) { setPhotoError(error); return; }
+    setPhotoBusy(true);
+    try {
+      const photo = await photoToDataUrl(file);
+      setOwnPhoto(photo);
+      setAvatar(photo);
+    } catch (error) {
+      setPhotoError(error instanceof Error ? error.message : 'No se pudo leer la foto. Probá con otra imagen.');
+    } finally {
+      setPhotoBusy(false);
+    }
+  };
 
   const handleSubmit = () => {
+    if (photoBusy) return;
     if (!governorName.trim()) {
       setShowNameError(true);
       return;
@@ -150,11 +172,46 @@ export function CharacterCreation({ initial, onContinue }: CharacterCreationProp
             })}
           </div>
 
-          <h2 className="font-display text-xl font-semibold mb-4  ">Elegí tu Avatar</h2>
-          <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-3 mb-10">
-            {AVATARS.map((av) => (
+          <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
+            <h2 className="font-display text-xl font-semibold">Elegí tu Avatar</h2>
+            <label className={`rounded-md border border-rule px-3 py-2 text-sm font-semibold focus-within:ring-2 focus-within:ring-accent focus-within:ring-offset-2 ${photoBusy ? 'opacity-60' : 'cursor-pointer hover:bg-sunken'}`}>
+              Subir mi foto
+              <input
+                type="file"
+                accept="image/*"
+                aria-label="Subir mi foto"
+                className="sr-only"
+                disabled={photoBusy}
+                onChange={event => {
+                  const file = event.currentTarget.files?.[0];
+                  event.currentTarget.value = '';
+                  void handlePhoto(file);
+                }}
+              />
+            </label>
+          </div>
+          {photoBusy && <p role="status" className="text-sm text-ink/75 mb-3">Procesando foto…</p>}
+          {photoError && <p role="alert" className="text-sm text-negative mb-3">{photoError}</p>}
+          <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-3 mb-10" aria-busy={photoBusy}>
+            {ownPhoto && (
+              <button
+                type="button"
+                aria-label="Mi foto"
+                aria-pressed={avatar === ownPhoto}
+                disabled={photoBusy}
+                onClick={() => setAvatar(ownPhoto)}
+                className={`flex flex-col items-center p-2 rounded-xl border-2 transition-all ${avatar === ownPhoto ? 'bg-ink/15 border-accent shadow-lg scale-[1.05]' : 'bg-ink/5 border-ink/20 hover:bg-ink/10 hover:border-ink/40'}`}
+              >
+                <img src={ownPhoto} alt="" className="w-16 h-16 rounded-full object-cover bg-ink/20" />
+              </button>
+            )}
+            {AVATARS.map((av, index) => (
               <button
                 key={av.id}
+                type="button"
+                aria-label={`Retrato ${index + 1}`}
+                aria-pressed={avatar === av.src}
+                disabled={photoBusy}
                 onClick={() => setAvatar(av.src)}
                 className={`flex flex-col items-center p-2 rounded-xl border-2 transition-all ${
                   avatar === av.src
@@ -164,10 +221,9 @@ export function CharacterCreation({ initial, onContinue }: CharacterCreationProp
               >
                 <img
                   src={av.src}
-                  alt={av.label}
+                  alt=""
                   className="w-16 h-16 rounded-full object-cover bg-ink/20"
                 />
-                <span className="text-xs mt-2 text-center opacity-90">{av.label}</span>
               </button>
             ))}
           </div>
@@ -175,11 +231,11 @@ export function CharacterCreation({ initial, onContinue }: CharacterCreationProp
           <button
             onClick={handleSubmit}
             className={`w-full flex items-center justify-center gap-2 font-semibold py-3.5 px-6 rounded-md transition-colors text-lg ${
-              !governorName.trim()
+              !governorName.trim() || photoBusy
                 ? 'bg-sunken text-ink/70 cursor-not-allowed'
                 : 'bg-ink hover:bg-ink/90 text-paper'
             }`}
-            disabled={!governorName.trim()}
+            disabled={!governorName.trim() || photoBusy}
           >
             Continuar
             <ArrowRight className={`w-5 h-5 ${governorName.trim() ? 'text-gold' : ''}`} />

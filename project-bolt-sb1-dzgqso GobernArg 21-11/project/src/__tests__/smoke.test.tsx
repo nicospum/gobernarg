@@ -47,7 +47,7 @@ describe('Prueba de humo de la interfaz', { timeout: 30000 }, () => {
     fireEvent.change(screen.getByPlaceholderText('Ingresá tu nombre'), { target: { value: 'Prueba de humo' } });
     await click(screen.getByRole('button', { name: /^Continuar$/ }));
 
-    await click(screen.getByRole('radio', { name: /^Fácil/ }));
+    await click(screen.getByRole('radio', { name: /^Normal/ }));
     await click(screen.getByRole('button', { name: /Comenzar gestión/ }));
     await click(screen.getByRole('button', { name: /Entendido/ }));
 

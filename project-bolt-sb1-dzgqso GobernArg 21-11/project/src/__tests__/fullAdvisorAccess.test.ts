@@ -58,8 +58,8 @@ describe('Asesores Full asequibles y con aportes reales', () => {
 });
 
 describe('Acceso de Full sin cambiar escenarios', () => {
-  it('ofrece los tres inicios regulares y bloquea los dos históricos', () => {
-    for (const id of ['pais_en_calma', 'viento_de_cola', 'herencia_pesada']) expect(isNewScenarioAvailable(id)).toBe(true);
-    for (const id of ['corralito', 'pais_en_llamas']) expect(isNewScenarioAvailable(id)).toBe(false);
+  it('ofrece Normal y Argentina; reserva Fácil y los históricos del catálogo interno', () => {
+    for (const id of ['viento_de_cola', 'herencia_pesada']) expect(isNewScenarioAvailable(id)).toBe(true);
+    for (const id of ['pais_en_calma', 'corralito', 'pais_en_llamas']) expect(isNewScenarioAvailable(id)).toBe(false);
   });
 });
