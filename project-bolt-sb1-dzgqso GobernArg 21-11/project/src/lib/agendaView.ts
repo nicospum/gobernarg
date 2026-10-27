@@ -32,6 +32,7 @@ export interface UpcomingItem {
   inTurns: number;
   chips: EffectChip[];
   positive: boolean;
+  conditional: boolean;
 }
 
 /** Efectos que todavía no empezaron, agrupados por decisión y momento. */
@@ -42,7 +43,8 @@ export function upcomingEffects(c: CausalState): UpcomingItem[] {
     if (e.mode === 'SET') continue;
     const key = `${e.actionId}.${e.originTurn}.${e.start}`;
     const chip = effectChip(e.target, e.magnitude);
-    const g = groups.get(key) ?? { key, title: sourceName(e.actionId), origin: e.originTurn, inTurns: e.start - c.turn + 1, chips: [], positive: true };
+    const g = groups.get(key) ?? { key, title: sourceName(e.actionId), origin: e.originTurn, inTurns: e.start - c.turn + 1, chips: [], positive: true, conditional: false };
+    g.conditional ||= !!e.applyCondition || !!e.whileCondition;
     g.chips.push(e.everyTurn && e.end > e.start && e.end < FOREVER ? { ...chip, text: `${chip.text} ×${e.end - e.start + 1}t` } : chip);
     groups.set(key, g);
   }

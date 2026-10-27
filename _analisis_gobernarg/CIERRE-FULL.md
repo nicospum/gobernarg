@@ -38,7 +38,7 @@ npm run build
 npm run playtest
 ```
 
-Resultados registrados: lint PASS (0 errores, 7 advertencias preexistentes de Fast Refresh), typecheck PASS, 29 archivos / 311 tests PASS, build PASS y 2 suites de playtest PASS (incluye matriz con 20 semillas por celda). No se agregaron dependencias ni se desactivaron assertions. `fullClosing.test.tsx` verifica ayuda sin selección accidental en mouse/tacto, retorno del foco, consulta por teclado/Escape, quitar una selección sin acciones e intereses de Corralito antes/después del vencimiento.
+Resultados registrados: lint PASS (0 errores, 7 advertencias preexistentes de Fast Refresh), typecheck PASS, 30 archivos / 320 tests PASS, build PASS y 2 suites de playtest PASS (incluye matriz con 20 semillas por celda) y comparación ideológica PASS (1 suite). No se agregaron dependencias ni se desactivaron assertions. `fullClosing.test.tsx` verifica ayuda sin selección accidental en mouse/tacto, retorno del foco, consulta por teclado/Escape, quitar una selección sin acciones e intereses de Corralito antes/después del vencimiento.
 
 El cambio de proyección puede modificar decisiones de bots que la consultan, particularmente en Corralito. No representa un cambio de balance: `closeTurn`, agenda, efectos y cálculo electoral no se modificaron. Los informes generados del playtest se conservan como artefactos de ejecución separados del cambio de implementación.
 
@@ -51,3 +51,12 @@ Se aplicó la checklist React: estado local mínimo para ayuda, sin efectos de s
 La QA integrada completó una partida real de 32 turnos desde la interfaz, con dos legislativas, reelección, eventos y victoria final; también comprobó selección/cancelación por teclado, ayuda, reunión, recarga, persistencia y primera secuencia móvil sin errores de consola.
 
 El tema Despacho invierte las escalas numéricas de Tailwind. Para evitar que una clase aparentemente oscura termine siendo pálida, las superficies revisadas usan texto semántico explícito (`positive`, `negative`, `caution`, `info-ink`) sin modificar fondos ni etiquetas blancas. Una nueva comprobación en Chromium tomó 36 muestras de colores calculados de KPI, tarjetas, Congreso, proyección y resumen: contraste mínimo observado 6,28:1 sobre sus fondos, sin errores. Capturas y `computed.json` se guardaron en la carpeta de evidencia `qa/Full-contrast` del informe integrado.
+
+
+## Revisión final de compromisos y previsión fiscal
+
+Reducir la tarjeta no debe ocultar una obligación fiscal conocida. Bajo el costo inicial se muestran únicamente compromisos de catálogo: gasto fijo permanente con inicio, cargos de caja diferidos o recurrentes con duración, menor ingreso estructural y deuda base/adicional. Por ejemplo, aumento salarial conserva −$200 M iniciales y +$150 M/turno permanentes; congelar tarifas conserva −$80 M/turno durante cuatro trimestres desde el siguiente. Los cargos por reiteración o contexto se distinguen y no se suman al inicial como si fueran seguros. La deuda base aplica el descuento actual del perfil; se rotula base porque otros efectos condicionales pueden ajustar el saldo final.
+
+El helper `lib/actionCommitments.ts` lee exclusivamente filas fiscales de `EFFECTS_BY_ACTION`, sin simular indicadores ni mutar el estado. Las agrupaciones de efectos pendientes ahora conservan si alguna fila requiere condiciones al aplicarse; resumen, seguimiento y Cuaderno lo indican. El préstamo ya no presenta su revisión fiscal como consecuencia garantizada.
+
+La estimación del cierre actual corrige dos anticipos: aplica el descuento de deuda inmediata antes de estimar intereses y no incluye rebajas tributarias/ingresos programados para uno o dos cierres posteriores. Las reglas de ejecución no cambian. Las regresiones contrastan el perfil Empresario con deuda realmente ejecutada y comprueban en cierres sucesivos cuándo comienzan los cambios tributarios. Los bots consultan esta estimación, por lo que se vuelven a ejecutar playtest y comparación ideológica; sus diferencias pueden reflejar decisiones mejor informadas, sin un rebalanceo.

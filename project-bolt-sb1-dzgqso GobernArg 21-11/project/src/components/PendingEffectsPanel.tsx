@@ -40,6 +40,7 @@ export function PendingEffectsPanel({ gameState }: PendingEffectsPanelProps) {
                   </span>
                 </div>
               </div>
+              {item.conditional && <p className="text-[12px] text-caution leading-relaxed mb-1">Incluye efectos sujetos a condiciones al llegar el turno.</p>}
               <div className="text-[10px] text-ink/70 mb-2 font-mono">↳ Origen: decisión en turno {item.origin}</div>
               <div className="flex gap-1.5 items-center flex-wrap">
                 <Zap size={11} className="text-celeste-ink flex-shrink-0" />

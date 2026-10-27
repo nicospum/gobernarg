@@ -185,7 +185,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
             <section className="rounded-lg border border-rule bg-sunken/40 p-4">
               <h4 className="font-display font-semibold text-[15px] text-ink mb-2">Efectos que siguen en camino</h4>
               <ul className="space-y-1 text-[13px] text-ink/85">
-                {upcoming.slice(0, 3).map(item => <li key={item.key}>{item.title} · {item.inTurns === 1 ? 'próximo trimestre' : `en ${item.inTurns} trimestres`}</li>)}
+                {upcoming.slice(0, 3).map(item => <li key={item.key}>{item.title} · {item.inTurns === 1 ? 'próximo trimestre' : `en ${item.inTurns} trimestres`}{item.conditional ? ' · según condiciones' : ''}</li>)}
               </ul>
               <p className="mt-2 text-[12px] text-ink/75">{upcoming.length > 3 ? `${upcoming.length - 3} más. ` : ''}Consultá el seguimiento en Efectos en camino o en el Cuaderno.</p>
             </section>

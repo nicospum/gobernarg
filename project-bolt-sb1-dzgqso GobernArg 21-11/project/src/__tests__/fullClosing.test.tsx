@@ -34,6 +34,15 @@ describe('Decisiones y ayuda accesible', () => {
     expect(onSelect).toHaveBeenCalledTimes(1);
   });
 
+  it('mantiene visible el gasto permanente al decidir, además del costo inicial', () => {
+    const av = getAvailability(createCausalState(), 'aumento_salarial', [], 3);
+    render(<ActionCard availability={av} requestedBy={[]} onSelect={() => {}} isSelected={false} disabled={false} />);
+    const costs = screen.getByRole('list', { name: 'Compromisos fiscales' }).textContent;
+    expect(costs).toMatch(/Gasto fijo: \+\$150.M\/turno/);
+    expect(costs).toContain('permanente');
+    expect(screen.getByText(/Inicial:/).parentElement?.textContent).toMatch(/−\$200.M/);
+  });
+
   it('permite quitar una selección aunque ya no queden acciones', () => {
     const onSelect = vi.fn();
     const av = getAvailability(createCausalState(), 'emitir_dinero', [], 0);

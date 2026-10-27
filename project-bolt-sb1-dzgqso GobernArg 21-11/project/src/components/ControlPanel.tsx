@@ -175,6 +175,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction }: Contr
                 isSelected={gameState.selectedActions.includes(av.action.id)}
                 disabled={!canTakeAction && !gameState.selectedActions.includes(av.action.id)}
                 disabledReason={gameState.gameOver ? 'La partida terminó.' : gameState.pendingElection ? 'Primero resolvé la elección pendiente.' : undefined}
+                loanDiscount={causal.perks.loanDiscount}
               />
             ))}
           </div>

@@ -1,6 +1,7 @@
 import { AlertTriangle, ArrowRight, Check, Clock, Flag, Info, Lock, Scale, Star } from 'lucide-react';
 import { InfoTooltip } from './InfoTooltip';
 import { fmtBudget } from '@/lib/format';
+import { actionFiscalCommitments } from '@/lib/actionCommitments';
 import { UI_CATEGORY_STYLES } from '@/data/categoryStyles';
 import { ACTORS, type ActorId } from '@/data/causal';
 import { ACTION_PLAYER_NOTES, ACTION_RISK_TEXT } from '@/data/causal/playerTexts';
@@ -14,6 +15,7 @@ interface ActionCardProps {
   isSelected: boolean;
   disabled: boolean;
   disabledReason?: string;
+  loanDiscount?: number;
 }
 
 const TAG_LABEL: Record<string, string> = {
@@ -21,7 +23,7 @@ const TAG_LABEL: Record<string, string> = {
 };
 
 /** La tarjeta explica el intercambio; el seguimiento usa efectos reales del turno. */
-export function ActionCard({ availability, requestedBy, onSelect, isSelected, disabled, disabledReason = 'No te quedan acciones este turno.' }: ActionCardProps) {
+export function ActionCard({ availability, requestedBy, onSelect, isSelected, disabled, disabledReason = 'No te quedan acciones este turno.', loanDiscount = 0 }: ActionCardProps) {
   const { action, pa, caja, reasons, available, needsDnu, repetitionWarning } = availability;
   const style = UI_CATEGORY_STYLES[action.category];
   const blocked = !isSelected && (!available || disabled);
@@ -31,6 +33,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
   const riskText = ACTION_RISK_TEXT[action.id] ?? action.risksText;
   const opensInterna = !!COALITION_ACTIONS[action.id];
   const headingId = `action-${action.id}`;
+  const commitments = actionFiscalCommitments(action.id, { loanDiscount });
 
   return (
     <article aria-labelledby={headingId} className={`flex flex-col gap-3 rounded-lg border p-4 transition-colors ${
@@ -53,10 +56,14 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
       </div>
 
       <div className="flex items-center gap-x-3 gap-y-1 flex-wrap text-[13px] font-mono">
-        <span className={`font-semibold ${caja > 0 ? 'text-positive' : 'text-ink'}`}>{costLabel}</span>
+        <span className={`font-semibold ${caja > 0 ? 'text-positive' : 'text-ink'}`}><span className="font-sans font-normal text-ink/75">Inicial: </span>{costLabel}</span>
         <span className="inline-flex items-center gap-1 text-ink/80"><Flag size={12} />{pa} {pa === 1 ? 'acción' : 'acciones'}</span>
         {action.cooldown > 1 && <span className="inline-flex items-center gap-1 text-ink/75"><Clock size={12} />Cada {action.cooldown} turnos</span>}
       </div>
+
+      {commitments.length > 0 && <ul aria-label="Compromisos fiscales" className="space-y-1 text-[12px] leading-relaxed text-ink/90">
+        {commitments.map(item => <li key={item.key} className={item.conditional ? 'text-caution' : ''}>{item.text}</li>)}
+      </ul>}
 
       {playerNote && <p className="text-[13px] leading-relaxed text-ink/85 border-l-2 border-gold/40 pl-3">{playerNote}</p>}
       {opensInterna && <p className="text-[12px] leading-relaxed text-caution bg-amber-500/10 p-2 rounded">Abre una interna en tu partido: las políticas cuestan más y rinden menos mientras dure.</p>}

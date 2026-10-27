@@ -144,6 +144,7 @@ function EfectosDiferidosSection({ gameState }: { gameState: GameState }) {
                       <div className="font-display font-semibold text-[16px] text-foreground leading-tight">{item.title}</div>
                       <div className="text-[9px] text-muted-foreground mt-0.5">
                         {item.chips.map(ch => `${ch.label} ${ch.text}`).join(' · ')}
+                        {item.conditional && <span className="block text-caution mt-1">Según condiciones al aplicarse.</span>}
                       </div>
                     </div>
                     <span className="flex-shrink-0 text-[10px] font-mono text-amber-400">en {item.inTurns}t</span>
