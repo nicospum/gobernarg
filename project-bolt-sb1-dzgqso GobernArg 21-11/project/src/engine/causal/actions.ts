@@ -1,3 +1,4 @@
+import { calendarText, equivalentTurns } from '../../lib/calendar';
 import {
   CAUSAL_ACTIONS_BY_ID,
   EFFECTS_BY_ACTION,
@@ -45,7 +46,7 @@ export function paCost(state: CausalState, action: CausalActionDef): number {
 
 /** Apoyo legislativo disponible para leyes (incluye luna de miel en los primeros turnos de cada mandato). */
 export function legForLaws(state: CausalState): number {
-  const honeymoon = state.turn - state.mandateStart + 1 <= PARAMS.LUNA_MIEL ? PARAMS.LUNA_MIEL_LEG : 0;
+  const honeymoon = state.turn - state.mandateStart + 1 <= equivalentTurns(PARAMS.LUNA_MIEL, state) ? PARAMS.LUNA_MIEL_LEG : 0;
   return effectiveLeg(state, viewRef(state)) + honeymoon;
 }
 
@@ -108,9 +109,9 @@ export function getAvailability(
 
   // Cooldown: no se puede repetir antes de N turnos (cooldown 1 = no dos veces por turno).
   if (action.cooldown > 0 && !isSelected) {
-    const recent = state.executions.find(e => e.actionId === actionId && e.turn > state.turn - action.cooldown);
+    const recent = state.executions.find(e => e.actionId === actionId && e.turn > state.turn - equivalentTurns(action.cooldown, state));
     if (recent) {
-      const wait = recent.turn + action.cooldown - state.turn;
+      const wait = recent.turn + equivalentTurns(action.cooldown, state) - state.turn;
       reasons.push(wait <= 0 ? 'Ya se ejecutó este turno.' : `Disponible en ${wait} turno${wait === 1 ? '' : 's'}.`);
       blocked = true;
     }
@@ -118,7 +119,7 @@ export function getAvailability(
 
   for (const req of action.requirements) {
     if (!evalCondition(req.when, ctx)) {
-      reasons.push(req.reason);
+      reasons.push(calendarText(req.reason, state));
       blocked = true;
     }
   }

@@ -1,9 +1,10 @@
 import type { ActorId, IndicatorId } from '../../data/causal';
+import type { CalendarId } from '../../lib/calendar';
 
 /**
  * Convenciones de tiempo del motor causal
  * ----------------------------------------
- * `turn` es el turno ABSOLUTO de la partida (1..32, continuo entre mandatos).
+ * `turn` es el turno ABSOLUTO de la partida (1..24 en Light nuevo, 1..32 en legacy; continuo entre mandatos).
  * Durante la fase de decisión el jugador está en el turno `state.turn`; al
  * "Finalizar turno" se ejecuta el CIERRE de ese turno (pasos T.2–T.10 del
  * Excel) y `state.turn` avanza.
@@ -234,9 +235,11 @@ export interface TurnRecord {
 }
 
 export interface CausalState {
+  /** Ausencia en guardados anteriores significa legacy-16; nunca se remapea su agenda. */
+  calendar?: CalendarId;
   /** Turno absoluto de la fase de decisión actual (el próximo cierre). */
   turn: number;
-  /** Turno absoluto en que empezó el mandato actual (1, 17…): luna de miel por mandato. */
+  /** Turno absoluto en que empezó el mandato actual (1, 13 en Light nuevo; 1, 17 en legacy): luna de miel por mandato. */
   mandateStart: number;
   base: Record<IndicatorId, number>;
   expect: Record<string, number>;

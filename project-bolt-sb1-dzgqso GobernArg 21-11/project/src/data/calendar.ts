@@ -1,3 +1,4 @@
+import { equivalentTurns, type CalendarSource } from '../lib/calendar';
 import type { CalendarEvent } from '../types/game';
 
 export const POLITICAL_CALENDAR: CalendarEvent[] = [
@@ -67,6 +68,10 @@ export const POLITICAL_CALENDAR: CalendarEvent[] = [
   }
 ];
 
-export function getCalendarEventForTurn(year: number, turn: number): CalendarEvent | undefined {
-  return POLITICAL_CALENDAR.find(event => event.year === year && event.turn === turn);
+export function calendarEventsFor(source?: CalendarSource): CalendarEvent[] {
+  return POLITICAL_CALENDAR.map(event => ({ ...event, turn: equivalentTurns(event.turn, source) }));
+}
+
+export function getCalendarEventForTurn(year: number, turn: number, source?: CalendarSource): CalendarEvent | undefined {
+  return calendarEventsFor(source).find(event => event.year === year && event.turn === turn);
 }

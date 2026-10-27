@@ -1,3 +1,4 @@
+import { equivalentTurns } from '../lib/calendar';
 import type {
   GameState,
   LegislativeResults,
@@ -76,7 +77,7 @@ function runLegislativeElection(state: GameState): GameState {
 }
 
 export function processCalendarEvents(state: GameState): GameState {
-  const event = getCalendarEventForTurn(state.year, state.turn);
+  const event = getCalendarEventForTurn(state.year, state.turn, state);
   if (!event) return state;
 
   state = processCalendarEvent(state, event);
@@ -149,7 +150,7 @@ export function resolveRandomEvents(state: GameState): GameEvent[] {
   for (const event of allEvents) {
     if (event.type !== 'triggered') continue;
     const lastFired = state.lastEventFiredTurns?.[event.id];
-    if (lastFired !== undefined && getGlobalTurn(state) - lastFired < (event.cooldown ?? 0)) {
+    if (lastFired !== undefined && getGlobalTurn(state) - lastFired < equivalentTurns(event.cooldown ?? 0, state)) {
       continue;
     }
     if (checkEventConditions(event, state)) {
@@ -159,7 +160,7 @@ export function resolveRandomEvents(state: GameState): GameEvent[] {
     }
   }
 
-  if (state.lastRandomEventTurn > 0 && getGlobalTurn(state) - state.lastRandomEventTurn < GLOBAL_COOLDOWN_TURNS) {
+  if (state.lastRandomEventTurn > 0 && getGlobalTurn(state) - state.lastRandomEventTurn < equivalentTurns(GLOBAL_COOLDOWN_TURNS, state)) {
     return triggered;
   }
   if (state.randomEventsThisTerm >= MAX_RANDOM_EVENTS_PER_TERM) {
@@ -221,7 +222,7 @@ export function checkEventConditions(event: GameEvent, state: GameState): boolea
   }
 
   const totalTurns = getGlobalTurn(state);
-  if (cond.turnRange && (totalTurns < cond.turnRange.min || totalTurns > cond.turnRange.max)) return false;
+  if (cond.turnRange && (totalTurns < equivalentTurns(cond.turnRange.min, state) || totalTurns > equivalentTurns(cond.turnRange.max, state))) return false;
 
   return true;
 }
@@ -261,7 +262,7 @@ export function applyEventChoice(gameState: GameState, event: GameEvent, choiceI
   for (const [i, effect] of (choice.effects.delayed ?? []).entries()) {
     const translated = translateLegacyEffect(effect.target ?? '', effect.value ?? 0);
     if (!translated) continue;
-    const start = causal.turn + ((effect as { turnsUntil?: number }).turnsUntil ?? 1) - 1;
+    const start = causal.turn + equivalentTurns((effect as { turnsUntil?: number }).turnsUntil ?? 1, causal) - 1;
     causal.agenda.push({
       uid: `${event.id}.${choiceId}.${causal.turn}.${i}`,
       effectId: `${event.id}.${choiceId}`,

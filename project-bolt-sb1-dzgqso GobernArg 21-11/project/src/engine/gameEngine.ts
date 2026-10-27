@@ -1,4 +1,5 @@
 import type { GameState, Archetype } from '../types/game';
+import type { CalendarId } from '../lib/calendar';
 import { STARTING_POSITION } from '../data/careerRules';
 import { CAUSAL_ACTIONS_BY_ID, PARAMS, type ActorId } from '../data/causal';
 import { getPresidentialGoals } from '../utils/victoryConditions';
@@ -97,6 +98,7 @@ export function getInitialGameState(): GameState {
 }
 
 export interface NewGameOptions {
+  calendar?: CalendarId;
   archetype: Archetype;
   governorName: string;
   avatar?: string;
@@ -104,9 +106,9 @@ export interface NewGameOptions {
   scenarioId?: string;
 }
 
-export function createNewGame({ archetype, governorName, avatar = '', seed, scenarioId }: NewGameOptions): GameState {
+export function createNewGame({ archetype, governorName, avatar = '', seed, scenarioId, calendar }: NewGameOptions): GameState {
   const base = getInitialGameState();
-  const causal = newCausalForGame(archetype, seed, scenarioId);
+  const causal = newCausalForGame(archetype, seed, scenarioId, calendar);
 
   let state: GameState = {
     ...base,

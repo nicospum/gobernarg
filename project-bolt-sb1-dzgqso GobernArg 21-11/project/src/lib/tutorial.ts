@@ -1,6 +1,7 @@
+import type { GameState } from '../types/game';
+import { calendarFor, NEW_CALENDAR_ID } from './calendar';
 import { useState } from 'react';
 import { PARAMS } from '@/data/causal';
-import { useIsTouch } from '@/lib/useMediaQuery';
 
 const SEEN_KEY = 'gobernarg.lite.tutorial.v1';
 
@@ -21,8 +22,8 @@ export function markTutorialSeen() {
 }
 
 /** Los cuatro pasos del primer turno (los usan la tarjeta y la guía). */
-export function useTutorialSteps(actions: number) {
-  const touch = useIsTouch();
+export function useTutorialSteps(actions: number, gameState?: GameState) {
+  const calendar = calendarFor(gameState ?? NEW_CALENDAR_ID);
   return [
     {
       title: 'Elegí qué hacer',
@@ -30,9 +31,7 @@ export function useTutorialSteps(actions: number) {
     },
     {
       title: 'Mirá antes de decidir',
-      text: touch
-        ? 'Tocá "Ver detalle" en cada acción, o tocá un indicador, para ver qué produce, cuándo llega el efecto y a quién favorece o perjudica.'
-        : 'Pasá el mouse por cada acción o indicador para ver qué produce, cuándo llega el efecto y a quién favorece o perjudica.',
+      text: 'Abrí “Ayuda” en cada acción para consultar su contexto con mouse, teclado o tacto. Los costos conocidos quedan visibles en la tarjeta.',
     },
     {
       title: 'Cuidá a los actores',
@@ -40,7 +39,7 @@ export function useTutorialSteps(actions: number) {
     },
     {
       title: 'Cerrá el turno',
-      text: `"Finalizar turno" hace pasar un trimestre y muchos efectos tardan en llegar. En el turno 8 hay legislativas y en el 16 elecciones: para ganar necesitás ${PARAMS.VOTOS_PARA_GANAR}% de intención de voto.`,
+      text: `"Finalizar turno" hace pasar un ${calendar.periodLabel} y muchos efectos tardan en llegar. En el turno ${calendar.midtermTurn} hay legislativas y en el ${calendar.turnsPerMandate} elecciones: para ganar necesitás ${PARAMS.VOTOS_PARA_GANAR}% de intención de voto.`,
     },
   ];
 }

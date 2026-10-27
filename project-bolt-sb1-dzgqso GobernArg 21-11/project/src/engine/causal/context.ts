@@ -1,3 +1,4 @@
+import { equivalentTurns } from '../../lib/calendar';
 import { INDICATOR_IDS, isIndicatorId, type ActorId, type IndicatorId } from '../../data/causal';
 import type { DslContext } from './dsl';
 import type { CausalState } from './types';
@@ -64,7 +65,7 @@ export function countExecutions(state: CausalState, action: string, window: numb
     actionId = m[1];
     actor = m[2];
   }
-  const from = currentTurn - window;
+  const from = currentTurn - equivalentTurns(window, state);
   let n = 0;
   for (const e of state.executions) {
     if (e.actionId !== actionId) continue;

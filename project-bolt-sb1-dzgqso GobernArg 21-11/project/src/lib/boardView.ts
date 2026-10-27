@@ -1,3 +1,4 @@
+import { calendarFor, mandateTurn } from './calendar';
 /**
  * Datos derivados para el tablero "sala de situación". Todo sale del estado
  * real de la partida: no hay números de ejemplo.
@@ -8,18 +9,20 @@ import { effective, viewRef } from '@/engine/causal';
 import { indicatorBand } from './causalText';
 import type { Risk } from './risk';
 
-export const MANDATE_TURNS = 16;
+/** Default para nuevas partidas; para un estado usar calendarFor(state). */
+export const MANDATE_TURNS = 12;
 
-/** Turno dentro del mandato (1-16). */
+/** Turno dentro del mandato según el calendario persistido (1-12 o 1-16). */
 export function turnInMandate(state: GameState): number {
-  return ((state.year - 1) * 4 + state.turn - 1) % MANDATE_TURNS + 1;
+  return mandateTurn(state);
 }
 
 /** Próxima elección del mandato y cuántos cierres faltan. */
 export function nextElection(state: GameState): { label: string; turns: number } {
   const inMandate = turnInMandate(state);
-  if (inMandate <= 8) return { label: 'Legislativas', turns: 8 - inMandate };
-  return { label: state.term >= 2 ? 'Sucesión presidencial' : 'Presidenciales', turns: 16 - inMandate };
+  const calendar = calendarFor(state);
+  if (inMandate <= calendar.midtermTurn) return { label: 'Legislativas', turns: calendar.midtermTurn - inMandate };
+  return { label: state.term >= 2 ? 'Sucesión presidencial' : 'Presidenciales', turns: calendar.turnsPerMandate - inMandate };
 }
 
 /** Riesgo de derrota según la distancia al umbral de victoria (45%). */

@@ -1,3 +1,4 @@
+import { equivalentTurns } from '../../lib/calendar';
 import {
   ACTOR_IDS,
   ACTORS,
@@ -54,7 +55,7 @@ export function demandScore(state: CausalState, actor: ActorId, actionId: string
     if (!s) continue;
     const worry = contribs.find(c => c.indicator === r.target);
     const urgency = 1 + Math.max(0, -(worry?.contribution ?? 0)) * 2;
-    const dur = typeof r.duration === 'number' && r.kind === 'PERSISTENT' ? Math.min(r.duration, 6) : 1;
+    const dur = typeof r.duration === 'number' && r.kind === 'PERSISTENT' ? Math.min(equivalentTurns(r.duration, state), equivalentTurns(6, state)) : 1;
     score += s * r.magnitude * urgency * dur;
   }
   return score;
@@ -70,7 +71,7 @@ export function pickDemand(state: CausalState, actor: ActorId, closeRef: number)
     const def = CAUSAL_ACTIONS_BY_ID[id];
     if (!def) continue;
     if (def.visibleWhen && !evalCondition(def.visibleWhen, ctx)) continue;
-    if (state.executions.some(e => e.actionId === id && e.turn > state.turn - 3)) continue;
+    if (state.executions.some(e => e.actionId === id && e.turn > state.turn - equivalentTurns(3, state))) continue;
     const score = demandScore(state, actor, id, closeRef);
     if (score > bestScore) { best = id; bestScore = score; }
   }
@@ -112,19 +113,19 @@ export function processRelations(state: CausalState, close: number): RelationOut
     if (st.demand) {
       const d = st.demand;
       if (executedIn(state, d.actionId, close, close)) {
-        const revealed = d.revealedTurn !== null && close - d.revealedTurn < PARAMS.VENTANA_DEMANDA;
+        const revealed = d.revealedTurn !== null && close - d.revealedTurn < equivalentTurns(PARAMS.VENTANA_DEMANDA, state);
         changeRel(state, actor, revealed ? 8 : 3);
         if (revealed) st.lastContact = close;
         messages.push(`${ACTORS[actor].shortName}: ${revealed ? 'valoran que atendiste su reclamo' : 'notan la medida que pedían'}.`);
         st.demand = null;
-      } else if (close - d.createdTurn >= PARAMS.VENTANA_DEMANDA) {
+      } else if (close - d.createdTurn >= equivalentTurns(PARAMS.VENTANA_DEMANDA, state)) {
         st.demand = null;
       }
     }
 
     // Deriva sin contacto: −dificultad/10 por turno tras 4 turnos sin contacto.
     const last = st.lastContact ?? 0;
-    if (close - last >= 4) changeRel(state, actor, -(ACTORS[actor].interactionDifficulty ?? 0) / 10);
+    if (close - last >= equivalentTurns(4, state)) changeRel(state, actor, -(ACTORS[actor].interactionDifficulty ?? 0) / 10);
 
     // Nueva demanda si no hay.
     if (!st.demand) {

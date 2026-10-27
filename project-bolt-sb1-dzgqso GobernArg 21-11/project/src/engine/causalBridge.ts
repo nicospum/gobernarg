@@ -5,6 +5,7 @@
  * acá, sin meter lógica del motor en los componentes React.
  */
 import type { GameState, Mood, Archetype, MidtermStrategy, ElectionBreakdown } from '../types/game';
+import { calendarFor, equivalentTurns, NEW_CALENDAR_ID, LEGACY_CALENDAR_ID, type CalendarId } from '../lib/calendar';
 import {
   ACTOR_IDS,
   ACTORS,
@@ -67,7 +68,7 @@ export function computePerks(archetype: Archetype): Perks {
 
 // ─────────────────────────────── Creación ───────────────────────────────
 
-export function newCausalForGame(archetype: Archetype, seed?: number, scenarioId?: string): CausalState {
+export function newCausalForGame(archetype: Archetype, seed?: number, scenarioId?: string, calendar?: CalendarId): CausalState {
   const scenario = getScenario(scenarioId ?? DESIGN_SCENARIO_ID);
   const relBonus: Partial<Record<ActorId, number>> = {};
   let imagen = scenario.imagen ?? 50;
@@ -80,6 +81,7 @@ export function newCausalForGame(archetype: Archetype, seed?: number, scenarioId
     ingresoBonus += (passive.incomeBonus ?? 0) * 0.15;
   }
   const causal = createCausalState({
+    calendar: scenario.reelectionsToUnlock > 0 ? LEGACY_CALENDAR_ID : calendar ?? NEW_CALENDAR_ID,
     perks: computePerks(archetype),
     seed: seed ?? Math.floor(Math.random() * 2 ** 31),
     imagen,
@@ -185,13 +187,13 @@ export function applyCausalEffects(causal: CausalState, effects: CausalEventEffe
     const t = e.target;
     if (isIndicatorId(t)) {
       if (e.mode === 'BONUS') {
-        causal.bonuses.push({ id: `${source}.${t}.${turn}.${Math.round(e.value * 100)}`, target: t, value: e.value, start: ref, end: ref + Math.max(1, e.duration ?? 1) - 1, source, label: source });
+        causal.bonuses.push({ id: `${source}.${t}.${turn}.${Math.round(e.value * 100)}`, target: t, value: e.value, start: ref, end: ref + equivalentTurns(Math.max(1, e.duration ?? 1), causal) - 1, source, label: source });
       } else {
         causal.base[t] = clamp(causal.base[t] + e.value);
       }
     } else if (t === 'SOLV' || t === 'LEG') {
       if (e.mode === 'BONUS') {
-        causal.bonuses.push({ id: `${source}.${t}.${turn}`, target: t, value: e.value, start: ref, end: ref + Math.max(1, e.duration ?? 1) - 1, source, label: source });
+        causal.bonuses.push({ id: `${source}.${t}.${turn}`, target: t, value: e.value, start: ref, end: ref + equivalentTurns(Math.max(1, e.duration ?? 1), causal) - 1, source, label: source });
       } else if (t === 'LEG') {
         causal.political.legAdj += e.value;
       }
@@ -215,7 +217,7 @@ export function applyCausalEffects(causal: CausalState, effects: CausalEventEffe
       expandCoalition(causal, e.value);
     } else if (t.startsWith('FLAG:')) {
       const name = t.slice(5);
-      causal.flags[name] = { value: e.value, start: turn, end: e.duration ? turn + e.duration - 1 : null, source };
+      causal.flags[name] = { value: e.value, start: turn, end: e.duration ? turn + equivalentTurns(e.duration, causal) - 1 : null, source };
     }
   }
   recomputePolitical(causal, ref);
@@ -226,8 +228,8 @@ export function applyCausalEffects(causal: CausalState, effects: CausalEventEffe
 export function applyMidtermStrategy(causal: CausalState, strategy: MidtermStrategy): void {
   const def = MIDTERM_CAUSAL[strategy];
   const start = causal.turn;
-  const mandateEnd = causal.mandateStart + PARAMS.TURNOS_MANDATO - 1;
-  const end = def.duration === null ? mandateEnd : start + def.duration - 1;
+  const mandateEnd = causal.mandateStart + calendarFor(causal).turnsPerMandate - 1;
+  const end = def.duration === null ? mandateEnd : start + equivalentTurns(def.duration, causal) - 1;
   causal.modifiers.push({
     id: `midterm_${strategy}_${start}`,
     label: strategy,
@@ -246,7 +248,7 @@ export function applyMidtermStrategy(causal: CausalState, strategy: MidtermStrat
       confPerTurn: def.after.confPerTurn,
       imagenPerTurn: def.after.imagenPerTurn,
       start: end + 1,
-      end: end + def.after.duration,
+      end: end + equivalentTurns(def.after.duration, causal),
     });
   }
   if (def.legOnce) causal.political.legAdj += def.legOnce;

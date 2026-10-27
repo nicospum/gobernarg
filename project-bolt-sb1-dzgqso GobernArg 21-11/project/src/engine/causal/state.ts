@@ -13,6 +13,7 @@ import { satisfactionTarget } from './actors';
 import { computeApro, recomputePolitical } from './political';
 import { pickDemand } from './relations';
 import { debtService, revenue } from './fiscal';
+import { LEGACY_CALENDAR_ID, type CalendarId } from '../../lib/calendar';
 import type { ActorState, CausalState, Perks } from './types';
 
 export function defaultPerks(): Perks {
@@ -33,6 +34,7 @@ export function defaultPerks(): Perks {
 }
 
 export interface CreateOptions {
+  calendar?: CalendarId;
   perks?: Perks;
   seed?: number;
   /** Imagen inicial del presidente (componente OTROS). */
@@ -69,6 +71,7 @@ export function createCausalState(opts: CreateOptions = {}): CausalState {
   const state: CausalState = {
     turn: 1,
     mandateStart: 1,
+    calendar: scenario.reelectionsToUnlock > 0 ? LEGACY_CALENDAR_ID : opts.calendar ?? LEGACY_CALENDAR_ID,
     base,
     expect: { ...base, APRO: 50 },
     bonuses: [],

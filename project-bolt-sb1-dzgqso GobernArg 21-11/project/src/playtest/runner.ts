@@ -1,3 +1,4 @@
+import { calendarFor, type CalendarId } from '../lib/calendar';
 /**
  * Runner de playtest: juega partidas completas con las MISMAS funciones que
  * usa la UI (createNewGame, interactWithActor, toggleActionSelection,
@@ -96,15 +97,17 @@ function snapshotIndicators(state: GameState): Record<string, number> {
 }
 
 export interface PlayOptions {
+  /** Sólo para verificar compatibilidad de partidas anteriores. */
+  calendar?: CalendarId;
   /** Escenario (por defecto el del Excel: herencia pesada). */
   scenarioId?: string;
   maxTurns?: number;
 }
 
 export function playGame(bot: Bot, seed: number, opts: PlayOptions = {}): GameOutcome {
-  const maxTurns = opts.maxTurns ?? 40;
+  const maxTurns = opts.maxTurns ?? calendarFor(opts.calendar ?? 'legacy-16').totalTurns + 8;
   return withSeededRandom(seed, () => {
-    let state = createNewGame({ archetype: bot.archetype, governorName: `Bot ${bot.id}`, seed, scenarioId: opts.scenarioId });
+    let state = createNewGame({ archetype: bot.archetype, governorName: `Bot ${bot.id}`, seed, scenarioId: opts.scenarioId, calendar: opts.calendar });
     const log: TurnLog[] = [];
     const outcome: GameOutcome = {
       bot: bot.id, seed, turnsPlayed: 0, gameOver: false, victorious: false, defeatReason: null,

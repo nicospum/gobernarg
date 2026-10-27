@@ -1,3 +1,4 @@
+import { equivalentTurns } from '../../lib/calendar';
 import {
   ACTORS,
   CAUSAL_ACTIONS_BY_ID,
@@ -57,7 +58,7 @@ export function meet(input: CausalState, actor: ActorId, paLeft: number): Intera
   const st = state.actors[actor];
   st.lastMeeting = state.turn;
   st.lastContact = state.turn;
-  st.revealedUntil = state.turn + PARAMS.FRESCURA_INFO - 1;
+  st.revealedUntil = state.turn + equivalentTurns(PARAMS.FRESCURA_INFO, state) - 1;
   if (!st.demand) {
     const id = pickDemand(state, actor, state.turn - 1);
     if (id) st.demand = { actionId: id, createdTurn: state.turn, revealedTurn: null };
@@ -90,7 +91,7 @@ export function poll(input: CausalState, actor: ActorId): InteractionResult {
   state.executions.push({ actionId: 'encuesta', turn: state.turn, actor });
   const st = state.actors[actor];
   st.lastMeeting = state.turn;
-  st.revealedUntil = state.turn + PARAMS.FRESCURA_INFO - 1;
+  st.revealedUntil = state.turn + equivalentTurns(PARAMS.FRESCURA_INFO, state) - 1;
   return { ok: true, state, paSpent: 0, message: `Encuesta sobre ${ACTORS[actor].shortName}.` };
 }
 
@@ -109,8 +110,8 @@ export function negotiationChance(state: CausalState, actor: ActorId): number {
 
 export function canNegotiate(state: CausalState, actor: ActorId, paLeft: number): string | null {
   if (!isOrganized(actor)) return 'No hay con quién negociar: es electorado no organizado.';
-  if (!flagValue(state, `reunido_${actor}`, state.turn)) return 'Primero hay que reunirse (la reunión habilita negociar por 3 turnos).';
-  if (state.executions.some(e => e.actionId === 'negociacion' && e.actor === actor && e.turn > state.turn - 2)) return 'Ya negociaron hace poco: esperá un turno.';
+  if (!flagValue(state, `reunido_${actor}`, state.turn)) return `Primero hay que reunirse (la reunión habilita negociar por ${equivalentTurns(3, state)} turnos).`;
+  if (state.executions.some(e => e.actionId === 'negociacion' && e.actor === actor && e.turn > state.turn - equivalentTurns(2, state))) return 'Ya negociaron hace poco: esperá un turno.';
   if (state.agreements.some(a => a.actor === actor && a.status === 'active')) return 'Ya hay un acuerdo vigente con este actor.';
   if (!state.actors[actor].demand) return 'No hay una demanda concreta sobre la mesa.';
   if (paLeft < 1) return 'No te quedan acciones este turno.';
@@ -187,7 +188,7 @@ export function signAgreement(input: CausalState, actor: ActorId): InteractionRe
   state.executions.push({ actionId: 'acuerdo', turn, actor });
   applyImmediateAction(state, 'acuerdo', actor);
   // El flag acuerdo_[actor] dura el plazo (acuerdo.02 "plazo").
-  const deadline = turn + PARAMS.PLAZO_ACUERDO - 1;
+  const deadline = turn + equivalentTurns(PARAMS.PLAZO_ACUERDO, state) - 1;
   state.flags[`acuerdo_${actor}`] = { value: 1, start: turn, end: deadline, source: 'acuerdo' };
   state.agreements.push({
     id: `ag_${actor}_${turn}`,
@@ -202,7 +203,7 @@ export function signAgreement(input: CausalState, actor: ActorId): InteractionRe
     state.modifiers.push({ id: `consenso_${turn}`, label: 'Ley de consenso', umbralLey: -5, start: turn, end: deadline });
   }
   for (const e of OFFERS[actor].effects) {
-    const start = turn + e.offset;
+    const start = turn + equivalentTurns(e.offset, state);
     state.agenda.push({
       uid: `acuerdo.${actor}.${turn}.${e.target}`,
       effectId: `acuerdo.${actor}`,
@@ -213,7 +214,7 @@ export function signAgreement(input: CausalState, actor: ActorId): InteractionRe
       mode: e.mode,
       magnitude: e.magnitude,
       start,
-      end: e.duration >= FOREVER ? FOREVER : start + e.duration - 1,
+      end: e.duration >= FOREVER ? FOREVER : start + equivalentTurns(e.duration, state) - 1,
       everyTurn: e.everyTurn,
       appliedTotal: 0,
       explanation: e.explanation,
@@ -226,6 +227,6 @@ export function signAgreement(input: CausalState, actor: ActorId): InteractionRe
     ok: true,
     state,
     paSpent: 0,
-    message: `Acuerdo con ${ACTORS[actor].shortName}: te comprometés a "${actionName}" en ${PARAMS.PLAZO_ACUERDO} turnos. A cambio: ${OFFERS[actor].text.toLowerCase()}.`,
+    message: `Acuerdo con ${ACTORS[actor].shortName}: te comprometés a "${actionName}" en ${equivalentTurns(PARAMS.PLAZO_ACUERDO, state)} turnos. A cambio: ${OFFERS[actor].text.toLowerCase()}.`,
   };
 }

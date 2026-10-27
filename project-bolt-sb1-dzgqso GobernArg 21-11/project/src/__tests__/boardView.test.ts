@@ -25,8 +25,8 @@ describe('datos del tablero (sala de situación)', () => {
   it('próxima elección, turno del mandato, riesgo y alertas', () => {
     const s = game();
     expect(turnInMandate(s)).toBe(1);
-    expect(nextElection(s)).toEqual({ label: 'Legislativas', turns: 7 });
-    expect(nextElection({ ...s, year: 3, turn: 1 })).toEqual({ label: 'Presidenciales', turns: 7 });
+    expect(nextElection(s)).toEqual({ label: 'Legislativas', turns: 5 });
+    expect(nextElection({ ...s, year: 3, turn: 1 })).toEqual({ label: 'Presidenciales', turns: 5 });
     expect(defeatRisk(50)).toBe('bajo');
     expect(defeatRisk(30)).toBe('critico');
     const { alerts, total } = countryAlerts(s);

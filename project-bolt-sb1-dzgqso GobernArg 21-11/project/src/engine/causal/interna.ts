@@ -1,3 +1,4 @@
+import { equivalentTurns } from '../../lib/calendar';
 import { PARAMS } from '../../data/causal';
 import { clamp } from './context';
 import type { CausalState } from './types';
@@ -87,7 +88,7 @@ export function updateInterna(state: CausalState): { delta: number; reasons: str
     reasons.push('compartís poder con otros espacios');
   }
   // Luna de miel: los primeros turnos del mandato el partido te da tiempo.
-  const honeymoon = state.turn - state.mandateStart + 1 <= PARAMS.LUNA_MIEL;
+  const honeymoon = state.turn - state.mandateStart + 1 <= equivalentTurns(PARAMS.LUNA_MIEL, state);
   if (p.apro < INTERNA.IMPOPULAR_APRO && !honeymoon) {
     d += INTERNA.POR_TURNO_IMPOPULAR;
     reasons.push('la baja aprobación los envalentona');

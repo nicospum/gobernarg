@@ -18,7 +18,7 @@ function syntheticEvent(conditions: EventConditions, id = 'test_event'): GameEve
   };
 }
 
-// turno global = (año - 1) * 4 + turno → year 2, turn 1 = 5
+// Light: turno global = (año - 1) * 3 + turno → year 2, turn 1 = 4
 function validState(overrides: Partial<GameState> = {}): GameState {
   const base = getInitialGameState();
   return {
@@ -50,13 +50,13 @@ describe('checkEventConditions', () => {
   });
 
   it('turno global fuera del rango → false', () => {
-    expect(checkEventConditions(syntheticEvent(CONDITIONS), validState({ year: 1, turn: 2 }))).toBe(false); // 2 < 3
-    expect(checkEventConditions(syntheticEvent(CONDITIONS), validState({ year: 3, turn: 3 }))).toBe(false); // 11 > 10
+    expect(checkEventConditions(syntheticEvent(CONDITIONS), validState({ year: 1, turn: 1 }))).toBe(false); // 1 < 2
+    expect(checkEventConditions(syntheticEvent(CONDITIONS), validState({ year: 3, turn: 3 }))).toBe(false); // 9 > 8
   });
 
   it('boundary de turno global: en los extremos del rango → true', () => {
-    expect(checkEventConditions(syntheticEvent(CONDITIONS), validState({ year: 1, turn: 3 }))).toBe(true); // 3
-    expect(checkEventConditions(syntheticEvent(CONDITIONS), validState({ year: 3, turn: 2 }))).toBe(true); // 10
+    expect(checkEventConditions(syntheticEvent(CONDITIONS), validState({ year: 1, turn: 2 }))).toBe(true); // 2
+    expect(checkEventConditions(syntheticEvent(CONDITIONS), validState({ year: 3, turn: 2 }))).toBe(true); // 8
   });
 
   it('la condición del motor causal (`when`) decide: renuncia de ministro sólo con gobernabilidad baja', () => {

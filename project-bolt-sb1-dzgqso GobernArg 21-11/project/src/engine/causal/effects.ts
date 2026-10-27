@@ -1,3 +1,4 @@
+import { equivalentTurns } from '../../lib/calendar';
 import {
   CAUSAL_ACTIONS_BY_ID,
   EFFECTS_BY_ACTION,
@@ -132,8 +133,8 @@ export function scheduleActionEffects(
       magnitude *= 1 - state.perks.loanDiscount;
     }
 
-    const start = turn + Math.max(0, row.offset + ambientalDelay(state, action, row));
-    const { end, whileCondition } = durationEnd(start, row.duration);
+    const start = turn + equivalentTurns(Math.max(0, row.offset + ambientalDelay(state, action, row)), state);
+    const { end, whileCondition } = durationEnd(start, row.duration === 'plazo' ? equivalentTurns(PARAMS.PLAZO_ACUERDO, state) : typeof row.duration === 'number' ? equivalentTurns(row.duration, state) : row.duration);
     const mode = (row.mode ?? 'DELTA').toUpperCase() as ScheduledEffect['mode'];
     const multiTurn = end > start;
     const eff: ScheduledEffect = {

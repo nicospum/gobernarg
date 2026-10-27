@@ -1,3 +1,4 @@
+import { equivalentTurns } from '../../lib/calendar';
 import type { ActorId } from '../../data/causal';
 import { operativeSat } from './actors';
 import { effective, flagValue, saturate } from './context';
@@ -58,13 +59,13 @@ export function evaluateChannels(state: CausalState, close: number, rng: Rng): {
   const rel = (id: ActorId) => a[id].rel ?? 50;
   const push = (actor: ActorId, label: string, target: string, value: number, mode: ChannelEffect['mode'] = 'DELTA', duration = 1, eventId?: string) => {
     if (Math.abs(value) < 1e-9) return;
-    state.channelQueue.push({ id: `ch${++chId}`, actor, label, target, value, mode, duration, applyTurn: next, eventId });
+    state.channelQueue.push({ id: `ch${++chId}`, actor, label, target, value, mode, duration: equivalentTurns(duration, state), applyTurn: next, eventId });
     scheduled.push({ actor, label, target, value, eventId });
   };
   const fireEvent = (id: string): boolean => {
     const def = CHANNEL_EVENTS[id];
     const last = state.channelEventTurns[id];
-    if (last !== undefined && close - last < def.cooldown) return false;
+    if (last !== undefined && close - last < equivalentTurns(def.cooldown, state)) return false;
     state.channelEventTurns[id] = close;
     events.push(id);
     return true;
@@ -128,7 +129,7 @@ export function evaluateChannels(state: CausalState, close: number, rng: Rng): {
   const acuerdoEst = hasActiveAgreement(state, 'estudiantes', close);
   if (sat('estudiantes') < 35 && !acuerdoEst) push('estudiantes', 'Estudiantes: tomas y marchas', 'CONF', 2);
   if (sat('estudiantes') < 25 && fireEvent('marcha_federal')) {
-    state.saliency.push({ actor: 'clase_media', indicator: 'EDUC', mult: 1.5, end: close + 3, source: 'marcha_federal' });
+    state.saliency.push({ actor: 'clase_media', indicator: 'EDUC', mult: 1.5, end: close + equivalentTurns(4, state) - 1, source: 'marcha_federal' });
   }
 
   // Docentes
@@ -167,7 +168,7 @@ export function evaluateChannels(state: CausalState, close: number, rng: Rng): {
   // Derechos y cultura: denuncia pública (saliencia de INST para la clase media).
   if (sat('derechos_cultura') < 35) {
     state.saliency = state.saliency.filter(s => s.source !== 'denuncia_derechos');
-    state.saliency.push({ actor: 'clase_media', indicator: 'INST', mult: 1.5, end: close + 3, source: 'denuncia_derechos' });
+    state.saliency.push({ actor: 'clase_media', indicator: 'INST', mult: 1.5, end: close + equivalentTurns(4, state) - 1, source: 'denuncia_derechos' });
   }
 
   // Oficialismo: disidencias acumulativas (máx −6) que se recuperan; ruptura permanente.

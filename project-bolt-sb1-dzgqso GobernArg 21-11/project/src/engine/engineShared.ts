@@ -1,3 +1,4 @@
+import { calendarFor, type CalendarId } from '../lib/calendar';
 import type {
   GameState,
   TurnSummary,
@@ -25,13 +26,13 @@ export interface TurnResult {
 
 /**
  * Turno global absoluto (1, 2, 3, ...) que NO se reinicia al cambiar de año
- * (cada año tiene 4 turnos). Es la única aritmética válida para deadlines,
+ * (3 períodos por año en Light nuevo; 4 en legacy). Es la única aritmética válida para deadlines,
  * cooldowns y activationTurn que pueden cruzar el límite anual:
- * `state.turn` es cíclico 1-4, por lo que `turn + N` y `turn >= deadline`
+ * `state.turn` es cíclico 1-3 o 1-4, por lo que `turn + N` y `turn >= deadline`
  * nunca se cumplen cuando el deadline cae en otro año.
  */
-export function getGlobalTurn(state: { year: number; turn: number }): number {
-  return (state.year - 1) * 4 + state.turn;
+export function getGlobalTurn(state: { year: number; turn: number; causal?: { calendar?: CalendarId } }): number {
+  return (state.year - 1) * calendarFor(state).periodsPerYear + state.turn;
 }
 
 // Secuencia local para los ids: no consume Math.random, así agregar o quitar

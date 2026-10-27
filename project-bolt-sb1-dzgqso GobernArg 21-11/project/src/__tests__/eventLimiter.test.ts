@@ -12,10 +12,10 @@ afterEach(() => {
 });
 
 describe('resolveRandomEvents - limitador global', () => {
-  it('bloquea eventos si el último fue hace menos de 3 turnos', () => {
+  it('bloquea eventos si el último fue hace menos de 2 cuatrimestres', () => {
     const state = makeState({
-      turn: 5,
-      lastRandomEventTurn: 3, // hace 2 turnos → en cooldown
+      year: 2, turn: 1,
+      lastRandomEventTurn: 3, // hace 1 cuatrimestre → en cooldown
       randomEventsThisTerm: 1,
     });
 
@@ -23,29 +23,29 @@ describe('resolveRandomEvents - limitador global', () => {
     expect(triggered.length).toBe(0);
   });
 
-  it('permite eventos si el último fue hace 3+ turnos', () => {
+  it('permite eventos si el último fue hace 2+ cuatrimestres', () => {
     const state = makeState({
-      turn: 6,
-      lastRandomEventTurn: 3, // hace 3 turnos → fuera de cooldown
+      year: 2, turn: 2,
+      lastRandomEventTurn: 3, // hace 2 cuatrimestres → fuera de cooldown
       randomEventsThisTerm: 1,
     });
 
     // Fuerza el trigger: con random = 0, cualquier evento elegible con
     // probabilidad > 0 dispara. Con el estado inicial, student_protests
-    // (prob 0.25, turno 6 dentro de rango, popularidad 50 ≤ 50) es elegible.
+    // (prob 0.25, turno 5 dentro de rango, popularidad 50 ≤ 50) es elegible.
     vi.spyOn(Math, 'random').mockReturnValue(0);
 
     const triggered = resolveRandomEvents(state);
     expect(triggered.length).toBe(1);
     // resolveRandomEvents muta el estado pasado: registra el turno global
-    // ((año-1)*4 + turno = 6) y suma 1 al contador del mandato.
-    expect(state.lastRandomEventTurn).toBe(6);
+    // ((año-1)*3 + turno = 5) y suma 1 al contador del mandato.
+    expect(state.lastRandomEventTurn).toBe(5);
     expect(state.randomEventsThisTerm).toBe(2);
   });
 
   it('bloquea eventos si ya se alcanzó el máximo por mandato', () => {
     const state = makeState({
-      turn: 10,
+      year: 4, turn: 1,
       lastRandomEventTurn: 0, // sin cooldown
       randomEventsThisTerm: 5, // máximo alcanzado
     });

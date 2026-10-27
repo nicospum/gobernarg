@@ -1,3 +1,4 @@
+import { calendarFor, mandateTurn } from './calendar';
 import type { GameState } from '../types/game';
 import { CAUSAL_ACTIONS_BY_ID, DIFFICULTY_LEVELS, getScenario } from '../data/causal';
 import { fmtBudget, fmtPct } from './format';
@@ -40,7 +41,6 @@ export function gameSummary(state: GameState, isMobile: boolean): string {
   const c = state.causal;
   const scenario = getScenario(c?.scenarioId);
   const level = DIFFICULTY_LEVELS.find(l => l.scenarioId === c?.scenarioId);
-  const absoluteTurn = (state.year - 1) * 4 + state.turn;
   const result = !state.gameOver
     ? 'en curso'
     : state.victorious
@@ -55,7 +55,7 @@ export function gameSummary(state: GameState, isMobile: boolean): string {
     `Versión: ${GAME_VERSION}`,
     `Dispositivo: ${isMobile ? 'celular o tablet' : 'computadora'}`,
     `Escenario: ${scenario ? scenario.name : '—'}${level ? ` (nivel ${level.label})` : ''}`,
-    `Mandato ${state.term}, turno ${absoluteTurn} de 16`,
+    `Mandato ${state.term}, turno ${mandateTurn(state)} de ${calendarFor(state).turnsPerMandate}`,
     `Resultado: ${result}`,
     state.electionResults ? `Votos en la última elección: ${fmtPct(state.electionResults.votesPercentage, 1)}` : null,
     c ? `Aprobación ${Math.round(c.political.apro)} · Gobernabilidad ${Math.round(c.political.gob)} · Intención de voto ${Math.round(c.political.iv)} %` : null,

@@ -1,3 +1,4 @@
+import { calendarFor } from '../lib/calendar';
 import type { GameState, TurnSummary, TurnLogEntry } from '../types/game';
 import type { GameEvent } from '../systems/events/types';
 import { getAllEvents } from '../data/events';
@@ -57,12 +58,12 @@ function addWarningNotifications(state: GameState): GameState {
   const ref = viewRef(c);
   const infl = effective(c, 'INFL', ref);
   if (c.hyperStreak === 1) {
-    state = addNotification(state, { type: 'warning', category: 'economy', title: 'Al borde de la hiperinflación', message: 'La inflación está fuera de control. Otro trimestre así y el gobierno cae.', importance: 'critical' });
+    state = addNotification(state, { type: 'warning', category: 'economy', title: 'Al borde de la hiperinflación', message: `La inflación está fuera de control. Otro ${calendarFor(state).periodLabel} así y el gobierno cae.`, importance: 'critical' });
   } else if (infl >= 78) {
     state = addNotification(state, { type: 'warning', category: 'economy', title: 'Inflación desbocada', message: 'Los precios se aceleran y erosionan salarios, crédito y recaudación.', importance: 'high' });
   }
   if (c.govCrisisStreak === 1) {
-    state = addNotification(state, { type: 'warning', category: 'political', title: 'Crisis de gobernabilidad', message: 'El gobierno perdió capacidad de gobernar. Si no se recupera el próximo trimestre, avanza el juicio político.', importance: 'critical' });
+    state = addNotification(state, { type: 'warning', category: 'political', title: 'Crisis de gobernabilidad', message: `El gobierno perdió capacidad de gobernar. Si no se recupera el próximo ${calendarFor(state).periodLabel}, avanza el juicio político.`, importance: 'critical' });
   } else if (c.political.gob < 28) {
     state = addNotification(state, { type: 'warning', category: 'political', title: 'Gobernabilidad en riesgo', message: 'Congreso, actores y calle te dan cada vez menos margen.', importance: 'high' });
   }
@@ -194,7 +195,8 @@ export function processEndTurn(gameState: GameState): TurnResult {
   }
 
   // 7. Fin de mandato: reelección (1er mandato) o elección de sucesión (2º).
-  const isEndOfTerm = state.year === 4 && state.turn === 4;
+  const periodsPerYear = calendarFor(state).periodsPerYear;
+  const isEndOfTerm = state.year === 4 && state.turn === periodsPerYear;
   if (isEndOfTerm) {
     if (state.term < MAX_TERMS) state.pendingElection = true;
     else state = finalizePresidentialCareer(state);
@@ -203,7 +205,7 @@ export function processEndTurn(gameState: GameState): TurnResult {
   // 8. Avanzar calendario (salvo elección pendiente).
   if (!state.pendingElection && !state.gameOver) {
     state.turn += 1;
-    if (state.turn > 4) {
+    if (state.turn > periodsPerYear) {
       state.turn = 1;
       state.year += 1;
     }

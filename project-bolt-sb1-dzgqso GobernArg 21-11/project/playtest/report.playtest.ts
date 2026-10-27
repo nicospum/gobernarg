@@ -75,7 +75,7 @@ it(`genera el informe de playtest (${SEEDS} semillas)`, () => {
     '# Playtest automatizado — datos',
     '',
     `Generado por \`npm run playtest\` (playtest/report.playtest.ts). ${SEEDS} partidas por estrategia (semillas 1..${SEEDS}), mismas funciones que la UI.`,
-    'Victoria = ganar la reelección en T16 y que el espacio retenga el gobierno en la sucesión de T32 (IV ≥ 45).',
+    'Victoria = ganar la reelección en T12 y retener el gobierno en T24 en partidas nuevas Light (IV ≥ 45); los escenarios históricos y guardados anteriores conservan T16/T32.',
     '',
     header,
     ...rows,

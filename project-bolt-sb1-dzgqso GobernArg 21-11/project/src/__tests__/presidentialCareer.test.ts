@@ -65,10 +65,10 @@ describe('finalizePresidentialCareer (fin del 2º mandato: elección de sucesió
 });
 
 describe('processEndTurn — cierre al terminar el 2º mandato (path MVP)', () => {
-  it('presidente en año 4 turno 4 del mandato 2: gameOver sin elección pendiente', () => {
+  it('presidente en año 4 cuatrimestre 3 del mandato 2: gameOver sin elección pendiente', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.999);
 
-    const state = secondTermState({ year: 4, turn: 4 });
+    const state = secondTermState({ year: 4, turn: 3 });
 
     const result = processEndTurn(state);
 
@@ -80,7 +80,7 @@ describe('processEndTurn — cierre al terminar el 2º mandato (path MVP)', () =
     vi.spyOn(Math, 'random').mockReturnValue(0.999);
 
     // Electorado muy conforme al llegar al último cierre → retiene el gobierno.
-    const happy = secondTermState({ year: 4, turn: 4 });
+    const happy = secondTermState({ year: 4, turn: 3 });
     happy.causal = structuredClone(happy.causal);
     for (const a of ['clase_media', 'sectores_populares', 'sindicatos', 'pymes'] as const) happy.causal.actors[a].sat = 90;
     happy.causal.political.imagen = 80;
@@ -89,7 +89,7 @@ describe('processEndTurn — cierre al terminar el 2º mandato (path MVP)', () =
     expect(won.state.victorious).toBe(true);
 
     // Mismo turno con el electorado furioso → pierde la sucesión.
-    const angry = secondTermState({ year: 4, turn: 4 });
+    const angry = secondTermState({ year: 4, turn: 3 });
     angry.causal = structuredClone(angry.causal);
     for (const a of ['clase_media', 'sectores_populares', 'sindicatos', 'pymes'] as const) angry.causal.actors[a].sat = 5;
     const lost = processEndTurn(angry);
@@ -101,7 +101,7 @@ describe('processEndTurn — cierre al terminar el 2º mandato (path MVP)', () =
 describe('fin de mandato según el número de mandato', () => {
   it('mandato 1: queda pendiente la reelección', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.999);
-    const state = { ...getInitialGameState(), term: 1, year: 4, turn: 4, objectives: getPresidentialGoals() };
+    const state = { ...getInitialGameState(), term: 1, year: 4, turn: 3, objectives: getPresidentialGoals() };
     const result = processEndTurn(state);
     expect(result.state.pendingElection).toBe(true);
     expect(result.state.gameOver).toBe(false);

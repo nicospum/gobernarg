@@ -1,3 +1,4 @@
+import { calendarFor, equivalentTurns, type CalendarSource } from '../../lib/calendar';
 import {
   ACTOR_IDS,
   ACTORS,
@@ -86,14 +87,17 @@ export function updateSatisfaction(state: CausalState, closeRef: number): void {
  */
 export function operativeSat(state: CausalState, actor: ActorId, turn: number): number {
   const sat = state.actors[actor].sat;
-  if (actor === 'oposicion' && isPreElection(turn)) return clamp(sat - 15);
+  if (actor === 'oposicion' && isPreElection(turn, state)) return clamp(sat - 15);
   return sat;
 }
 
-/** Turnos 7-8 y 15-16 de cada mandato (legislativas T8, presidenciales T16). */
-export function isPreElection(turn: number): boolean {
-  const inMandate = ((turn - 1) % PARAMS.TURNOS_MANDATO) + 1;
-  return inMandate === 7 || inMandate === 8 || inMandate === 15 || inMandate === 16;
+/** Últimos dos cierres antes de legislativas y presidenciales del calendario guardado. */
+export function isPreElection(turn: number, source?: CalendarSource): boolean {
+  const calendar = calendarFor(source);
+  const inMandate = ((turn - 1) % calendar.turnsPerMandate) + 1;
+  const window = equivalentTurns(2, source);
+  return (inMandate > calendar.midtermTurn - window && inMandate <= calendar.midtermTurn)
+    || inMandate > calendar.turnsPerMandate - window;
 }
 
 /** Top preocupaciones (contribuciones más negativas) y alivio principal. */
