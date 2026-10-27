@@ -73,8 +73,9 @@ export interface SimpleEffect {
 
 /**
  * Hasta `max` efectos de una acción, sin números, sobre los indicadores que se
- * ven en el tablero (los de servicios se agrupan). Solo si la acción no toca
- * ninguno se nombran los otros (p. ej. ciencia), para que no quede vacía.
+ * ven en el tablero. Conserva primero un beneficio y una contrapartida reales,
+ * aunque su indicador no esté en la franja simple; después prioriza los visibles.
+ * Un mismo indicador puede empeorar ahora y recuperarse más adelante.
  */
 export function simpleEffects(actionId: string, max = 3): SimpleEffect[] {
   const rows = (EFFECTS_BY_ACTION[actionId] ?? []).filter(
@@ -82,22 +83,29 @@ export function simpleEffects(actionId: string, max = 3): SimpleEffect[] {
   );
   const visible: SimpleEffect[] = [];
   const hidden: SimpleEffect[] = [];
+  const candidates: SimpleEffect[] = [];
   const seen = new Set<string>();
   for (const r of rows) {
     const id = r.target as IndicatorId;
     const simple = KEY_OF[id];
     const label = simple?.label ?? INDICATORS[id].name;
-    if (seen.has(label)) continue;
-    seen.add(label);
+    const when = (r.offset ?? 0) === 0 ? 'ahora' : 'más adelante';
+    const identity = `${label}.${Math.sign(r.magnitude as number)}.${when}`;
+    if (seen.has(identity)) continue;
+    seen.add(identity);
     const effect: SimpleEffect = {
       label,
       up: (r.magnitude as number) > 0,
       tone: toneOf(id, r.magnitude as number),
-      when: (r.offset ?? 0) === 0 ? 'ahora' : 'más adelante',
+      when,
     };
+    candidates.push(effect);
     (simple ? visible : hidden).push(effect);
   }
-  return (visible.length > 0 ? visible : hidden).slice(0, max);
+  const good = candidates.find(e => e.tone === 'good');
+  const bad = candidates.find(e => e.tone === 'bad');
+  const priority = [good, bad, ...visible, ...hidden].filter((e): e is SimpleEffect => !!e);
+  return [...new Set(priority)].slice(0, max);
 }
 
 export interface SimpleChange {

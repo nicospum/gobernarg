@@ -19,7 +19,7 @@ export interface NewGameChoice {
 interface NewGameScreenProps {
   onStart: (choice: NewGameChoice) => void;
   onBack?: () => void;
-  /** Escenarios históricos desbloqueables (apagados en Lite; ver src/lite/config.ts). */
+  /** Desafíos históricos opcionales, desbloqueados con reelecciones. */
   historicScenarios?: boolean;
 }
 

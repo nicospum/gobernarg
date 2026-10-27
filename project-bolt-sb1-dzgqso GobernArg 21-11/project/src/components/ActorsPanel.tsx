@@ -137,7 +137,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
             <span className={`font-mono font-bold ${toneClass(band.tone)}`}>
               {Math.round(st.sat)}
               {Math.abs(satDelta) >= 0.5 && (
-                <span className={`ml-1 text-[9px] ${satDelta > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                <span className={`ml-1 text-[9px] ${satDelta > 0 ? 'text-sala-good' : 'text-sala-bad'}`}>
                   {satDelta > 0 ? '▲' : '▼'}{Math.abs(satDelta).toFixed(0)}
                 </span>
               )}
@@ -183,13 +183,13 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
       {/* Demanda */}
       {demandRevealed && demandDef && (
         <div className="mb-1.5 px-2 py-1.5 rounded border border-amber-400/25 bg-amber-400/5">
-          <div className="text-[10px] text-amber-200/90 leading-snug">
+          <div className="text-[10px] text-sala-warn leading-snug">
             Piden: <span className="font-semibold">{demandDef.name}</span>
           </div>
           <button
             onClick={() => onSelectAction(demand!.actionId)}
             disabled={disabled || demandSelected || !demandAv?.available}
-            className="mt-1 w-full inline-flex items-center justify-center gap-1 text-[10px] font-semibold text-amber-200 border border-amber-400/30 hover:bg-amber-400/10 rounded py-0.5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="mt-1 w-full inline-flex items-center justify-center gap-1 text-[10px] font-semibold text-sala-warn border border-amber-400/30 hover:bg-amber-400/10 rounded py-0.5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             title={demandAv && !demandAv.available ? demandAv.reasons[0] : 'Agregar al turno: si la ejecutás, valoran que los escuchaste'}
           >
             {demandSelected ? <><Check size={10} /> En el turno</> : <><Plus size={10} /> Agregar al turno</>}
@@ -199,7 +199,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
 
       {/* Acuerdo vigente */}
       {agreement && (
-        <div className="mb-1.5 px-2 py-1.5 rounded border border-emerald-400/25 bg-emerald-400/5 text-[10px] text-emerald-200/90 leading-snug">
+        <div className="mb-1.5 px-2 py-1.5 rounded border border-emerald-400/25 bg-emerald-400/5 text-[10px] text-sala-good leading-snug">
           Acuerdo vigente: te comprometiste a <span className="font-semibold">{CAUSAL_ACTIONS_BY_ID[agreement.commitmentActionId]?.name}</span>
           {' '}(vence en {Math.max(0, agreement.deadline - c.turn)} t). A cambio: {agreement.offer.toLowerCase()}.
         </div>
@@ -211,7 +211,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
           Aceptan acordar: vos te comprometés a <span className="font-semibold">{demandDef.name}</span> en {PARAMS.PLAZO_ACUERDO} turnos;
           ellos ofrecen: {agreementOffer(actor).toLowerCase()}. Incumplir rompe la relación.
           {demandAv && !demandAv.available && (
-            <div className="mt-1 text-red-300">Ojo: hoy no podrías ejecutarla ({demandAv.reasons[0]})</div>
+            <div className="mt-1 text-sala-bad">Ojo: hoy no podrías ejecutarla ({demandAv.reasons[0]})</div>
           )}
         </div>
       )}
@@ -302,6 +302,7 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled, i
           </div>
         </>
       )}
+      {!detailed() && <p className="px-4 pt-2 text-[12px] text-sala-muted">Reunite para conocer sus demandas; después podés negociar un acuerdo.</p>}
       {gameState.lastInteractionMessage && (
         <div className="mx-4 mt-3 px-3 py-2 rounded-lg border border-sala-blue/30 bg-sala-blue/10 text-[11px] text-sala-navy font-medium leading-snug">
           {gameState.lastInteractionMessage}

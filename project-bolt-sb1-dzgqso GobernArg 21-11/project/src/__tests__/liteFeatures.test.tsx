@@ -26,14 +26,15 @@ afterEach(() => {
   localStorage.clear();
 });
 
-describe('nivel Fácil oculto (LITE_FEATURES.nivelFacil)', () => {
-  it('apagado se ofrecen Normal y Argentina, con Normal de entrada', () => {
-    expect(LITE_FEATURES.nivelFacil).toBe(false);
-    expect(playableLevels().map(l => l.label)).toEqual(['Normal', 'Argentina']);
+describe('opciones de inicio de Light', () => {
+  it('ofrece Fácil, Normal y Argentina, con Normal de entrada', () => {
+    expect(LITE_FEATURES.nivelFacil).toBe(true);
+    expect(playableLevels().map(l => l.label)).toEqual(['Fácil', 'Normal', 'Argentina']);
+    expect(playableLevels({ nivelFacil: false }).map(l => l.label)).toEqual(['Normal', 'Argentina']);
     expect(playableLevels({ nivelFacil: true }).map(l => l.label)).toEqual(['Fácil', 'Normal', 'Argentina']);
     expect(DEFAULT_LEVEL_SCENARIO_ID).toBe('viento_de_cola');
     render(<NewGameScreen onStart={() => {}} historicScenarios={false} />);
-    expect(screen.queryByRole('radio', { name: /^Fácil/ })).toBeNull();
+    expect(screen.getByRole('radio', { name: /^Fácil/ })).toBeTruthy();
     expect(screen.getByRole('radio', { name: /^Normal/ }).getAttribute('aria-checked')).toBe('true');
   });
 
@@ -44,9 +45,9 @@ describe('nivel Fácil oculto (LITE_FEATURES.nivelFacil)', () => {
   });
 });
 
-describe('escenarios históricos ocultos (LITE_FEATURES.escenariosHistoricos)', () => {
+describe('desafíos históricos con progreso propio', () => {
   it('apagados se juegan sólo los niveles; prendidos, también los históricos', () => {
-    expect(playableScenarios({ escenariosHistoricos: false }).map(s => s.id).sort()).toEqual(['herencia_pesada', 'viento_de_cola']);
+    expect(playableScenarios({ escenariosHistoricos: false, nivelFacil: false }).map(s => s.id).sort()).toEqual(['herencia_pesada', 'viento_de_cola']);
     expect(playableScenarios({ escenariosHistoricos: false, nivelFacil: true }).map(s => s.id).sort()).toEqual(['herencia_pesada', 'pais_en_calma', 'viento_de_cola']);
     expect(playableScenarios()).toEqual(playableScenarios(LITE_FEATURES));
     expect(playableScenarios({ escenariosHistoricos: true }).map(s => s.id)).toEqual(
@@ -62,7 +63,11 @@ describe('escenarios históricos ocultos (LITE_FEATURES.escenariosHistoricos)', 
 
   it('prendidos, aparecen bloqueados y una reelección ganada desbloquea Corralito', async () => {
     const view = render(<NewGameScreen onStart={() => {}} historicScenarios />);
-    expect(screen.getByText('Escenarios históricos')).toBeTruthy();
+    expect(LITE_FEATURES.escenariosHistoricos).toBe(true);
+    const section = screen.getByText('Escenarios históricos').closest('details')!;
+    expect(section.open).toBe(false);
+    fireEvent.click(screen.getByText('Escenarios históricos'));
+    expect(section.open).toBe(true);
     expect(screen.getByRole('radio', { name: /Corralito/ }).getAttribute('aria-disabled')).toBe('true');
     view.unmount();
 
@@ -72,6 +77,7 @@ describe('escenarios históricos ocultos (LITE_FEATURES.escenariosHistoricos)', 
 
     const onStart = vi.fn();
     render(<NewGameScreen onStart={onStart} historicScenarios />);
+    fireEvent.click(screen.getByText('Escenarios históricos'));
     const corralito = screen.getByRole('radio', { name: /Corralito/ });
     expect(corralito.getAttribute('aria-disabled')).toBe('false');
     expect(screen.getByRole('radio', { name: /País en llamas/ }).getAttribute('aria-disabled')).toBe('true');

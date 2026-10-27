@@ -14,7 +14,7 @@ Hay varias versiones en paralelo, cada una en su rama:
 
 A y B comparten las funciones de las fases 0 a 3: inicio en dos pasos con niveles Fácil / Normal / Argentina, escenarios históricos que se desbloquean con reelecciones, guardado automático, versión para celular, tutorial del primer turno, glosario aplicado y formulario de playtest.
 
-## Versión Lite (`version-a-lite`)
+## GobernArg Light (base `version-a-lite`)
 
 Versión reducida y compacta de A, con la misma estética y el mismo motor causal (indicadores, actores, acciones, eventos, mandatos, elecciones, legislativas y estrategia post-legislativa sin cambios).
 
@@ -22,13 +22,15 @@ Versión reducida y compacta de A, con la misma estética y el mismo motor causa
 - **Tablero:** muestra la barra superior, la barra de comando (próxima elección y riesgo), las 5 métricas, Estado del país, Situación electoral, Acciones políticas, Este turno y Actores. Se sacaron los paneles de condiciones vigentes, próximas maduraciones, informes de gestión, notificaciones (con la campanita) y calendario político; el motor sigue registrando esos datos. Los avisos de "un trimestre más y caés" (hiperinflación, crisis de gobernabilidad) se ven en "Este turno".
 - **Qué está oculto (sigue en el código):**
   - *Historial de gestión:* no hay panel ni botón, pero el registro de turnos se sigue grabando y alimenta la pantalla de legado (obras, crisis, estadísticas).
-  - *Escenarios históricos* (Corralito y País en llamas), con sus mecánicas (default de deuda, ley de emergencia, rebote) y el desbloqueo por reelecciones. Están apagados en `project/src/lite/config.ts`.
-- **Inicio en una pantalla:** bienvenida (Empezar / Continuar) y "Nueva partida" con nombre, foto (de la grilla o propia, recortada a 256×256), perfil y nivel (Normal, elegido de entrada, o Argentina). Fácil está oculto: se vuelve a ofrecer con `LITE_FEATURES.nivelFacil = true` en `src/lite/config.ts`; las partidas guardadas en Fácil cargan igual.
+  - Los *escenarios históricos* (Corralito y País en llamas) se recuperaron como desafíos opcionales plegados: conservan sus mecánicas (default de deuda, ley de emergencia, rebote) y el desbloqueo por reelecciones.
+- **Inicio en una pantalla:** bienvenida (Empezar / Continuar) y "Nueva partida" con nombre, foto (de la grilla o propia, recortada a 256×256), perfil y nivel (Fácil, Normal elegido de entrada o Argentina). Los desafíos históricos son opcionales y se despliegan al final. Las partidas anteriores siguen cargando.
 - **Modo simple (pantalla con menos datos):** por defecto el tablero muestra palabras y flechas en vez de índices: 4 métricas (voto con la meta, aprobación, gobernabilidad, caja), 7 renglones del país con los nombres de la B (Precios, Empleo, Bolsillo, Obras, Educación, Salud, Seguridad), tarjetas con hasta 3 efectos sin números, actores con barras sin valores y un resumen del trimestre con lo que más se movió. El motor, las acciones, los actores y el guardado son los mismos. Para ver todos los datos: `LITE_FEATURES.modoDetallado = true` en `src/lite/config.ts`.
 - **Imágenes:** retratos de los 17 actores, ilustraciones de 15 políticas, portada y banda del resumen del trimestre, tomadas de la tanda de la B Lite. La tabla id → archivo está en `src/lite/imageMap.ts`; los archivos (aclarados para el tema claro: gamma 1,5, menos contraste, leve calidez) se generan con `scripts/aclarar-imagenes-lite.sh <carpeta b-lite>` en `src/assets/images/a-lite/`.
 - **Toque de realismo:** 6 acciones llevan foto diurna con carteles reales (`scripts/recortar-fotos-lite.sh`, sin aclarar) y 5 cambian solo el nombre visible (y alguna la descripción) desde `src/lite/actionOverrides.ts`: Desregulación del mercado laboral, Reforma previsional, Reforma tributaria integral, Desarrollo de Vaca Muerta y Promoción de exportaciones. Ids, efectos y costos no cambian, así que los guardados siguen andando.
 - **Guardado propio:** la partida se guarda en `gobernarg.lite.partida` (con versión de guardado), así no se mezcla con la de la versión completa en el mismo navegador. El formulario de playtest llega con la versión `A Lite`.
-- **Reactivar los escenarios históricos:** en `src/lite/config.ts` poner `LITE_FEATURES.escenariosHistoricos = true`. Con eso vuelven a "Nueva partida" (bloqueados hasta ganar reelecciones; el progreso se guarda en `gobernarg.lite.progress.v1` y se cuenta aun con el flag apagado, así las reelecciones ya ganadas valen) y `npm run playtest` los incluye. No hace falta tocar nada más: los datos están en `src/data/causal/scenarios.ts` y las pruebas (`scenariosInterna.test.ts`, `liteFeatures.test.tsx`) los cubren con el flag apagado o prendido.
+- **Desafíos históricos y progreso:** `LITE_FEATURES.escenariosHistoricos = true` y `nivelFacil = true`; `modoDetallado = false`. Corralito se desbloquea con una reelección y País en llamas con dos. El progreso sigue en `gobernarg.lite.progress.v1`, incluyendo reelecciones obtenidas antes de este cierre. `npm run playtest` ahora recorre los cinco escenarios.
+- **Decisiones con continuidad:** “Agregar al turno” arma la agenda; se ejecuta al cerrar el trimestre. Repetir una medida muestra el aviso real de costos adicionales. “Efectos en espera” recuerda hasta dos decisiones anteriores con efectos aún no iniciados, a partir de la agenda guardada; no enumera fórmulas ni promete efectos condicionales.
+- **Caja estimada:** el plan indica visiblemente que excluye efectos diferidos y eventos. La advertencia de emisión es condicional; en Corralito la estimación respeta la suspensión vigente de intereses usando la misma función que el cierre fiscal.
 - **Publicar en Netlify:** un sitio aparte apuntando a la rama `version-a-lite`, con los mismos pasos de abajo (el `netlify.toml` sirve tal cual).
 
 ## Correr el juego
@@ -49,7 +51,7 @@ npm run dev
 | `npm run typecheck` | Chequeo de tipos |
 | `npm run lint` | ESLint |
 | `npm run playtest` | Partidas completas con bots y matriz de escenarios |
-| `npm run playtest:ideologia` | Asimetría ideológica: heterodoxo y ortodoxo, coherentes y bien jugados, en los escenarios (3 en Lite) |
+| `npm run playtest:ideologia` | Asimetría ideológica: heterodoxo y ortodoxo, coherentes y bien jugados, en los escenarios disponibles (5 en Light) |
 
 Los resultados del playtest con bots quedan en `_analisis_gobernarg/playtest/`.
 

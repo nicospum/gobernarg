@@ -20,6 +20,7 @@ import { useDialog } from '@/lib/useDialog';
 import { detailed } from '@/lite/config';
 import { topChanges } from '@/lib/simpleView';
 import { DefeatAlerts } from './board/StatusStrip';
+import { PendingPolicies } from './board/PendingPolicies';
 
 interface TurnSummaryModalProps {
   summary: TurnSummary;
@@ -98,6 +99,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
                 </section>
               );
             })()}
+            {isLatest && <PendingPolicies state={gameState.causal} />}
             <DefeatAlerts gameState={gameState} />
             {record && (
               <p className="text-[14px] text-ink">

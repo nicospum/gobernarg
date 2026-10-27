@@ -9,7 +9,7 @@ import { fmtBudget, fmtPct } from './format';
  * navegador.
  */
 export const PLAYTEST_FORM = 'playtest';
-export const GAME_VERSION = 'A Lite';
+export const GAME_VERSION = 'GobernArg Light';
 const START_KEY = 'gobernarg.lite.playtest.inicio';
 
 /** Se marca al empezar cada partida para medir cuánto se jugó. */

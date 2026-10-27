@@ -1,6 +1,6 @@
 /**
- * Configuración de la versión Lite: funciones que existen en el código pero
- * están apagadas. Para reactivar una, poner su flag en `true`.
+ * Configuración de GobernArg Light: opciones recuperadas del juego existente
+ * y política de información. El modo detallado sigue apagado.
  */
 import { DIFFICULTY_LEVELS, SCENARIOS, type DifficultyLevel, type ScenarioDef } from '../data/causal';
 
@@ -28,12 +28,12 @@ export interface LiteFeatures {
 }
 
 export const LITE_FEATURES: LiteFeatures = {
-  // Para reactivar Corralito y País en llamas: true.
-  escenariosHistoricos: false,
+  // Desafíos opcionales, desbloqueados con el progreso entre partidas.
+  escenariosHistoricos: true,
   // Para ver todos los números como antes: true.
   modoDetallado: false,
-  // Para volver a ofrecer el nivel Fácil: true.
-  nivelFacil: false,
+  // Entrada amable; Normal sigue siendo el nivel elegido de entrada.
+  nivelFacil: true,
 };
 
 /** ¿Se muestra la pantalla con todos los datos? (ver `modoDetallado`). */

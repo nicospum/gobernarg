@@ -33,7 +33,7 @@ export function WelcomeScreen({ onStart, saved, onContinue }: WelcomeScreenProps
           className="w-full max-w-sm mx-auto mb-3 mix-blend-multiply"
         />
         <p className="mb-6">
-          <span className="sr-label inline-flex items-center gap-2"><span className="sr-live-dot" /> Sala de situación · Versión Lite</span>
+          <span className="sr-label inline-flex items-center gap-2"><span className="sr-live-dot" /> Sala de situación · GobernArg Light</span>
         </p>
 
         <p className="text-lg text-ink/80 mb-8 leading-relaxed">

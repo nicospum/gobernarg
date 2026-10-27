@@ -23,6 +23,7 @@ export function Sheet({ title, onClose, children, footer, tall = false }: SheetP
     <div
       ref={dialogRef}
       data-sheet
+      aria-label={typeof title === 'string' ? title : undefined}
       className="outline-none fixed inset-0 z-[60] flex items-end justify-center bg-sala-navy/55 animate-in fade-in-0 duration-150"
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >

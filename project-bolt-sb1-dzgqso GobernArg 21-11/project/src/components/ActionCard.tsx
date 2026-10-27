@@ -10,9 +10,7 @@ import {
   Scale,
   Users,
 } from 'lucide-react';
-import { InfoTooltip } from './InfoTooltip';
 import { Sheet } from './mobile/Sheet';
-import { useIsTouch } from '@/lib/useMediaQuery';
 import { Tooltip, TooltipContent } from './Tooltip';
 import { fmtBudget } from '@/lib/format';
 import { UI_CATEGORY_STYLES } from '@/data/categoryStyles';
@@ -46,17 +44,6 @@ const TAG_LABEL: Record<string, string> = {
   RESTRICTIVA: 'Restrictiva',
 };
 
-type RiskLevel = 'bajo' | 'medio' | 'alto' | 'critico';
-
-const RISK_LABEL: Record<RiskLevel, string> = { bajo: 'bajo', medio: 'medio', alto: 'alto', critico: 'crítico' };
-
-const RISK_CLS: Record<RiskLevel, string> = {
-  critico: 'text-sala-bad',
-  alto: 'text-sala-coral',
-  medio: 'text-sala-warn',
-  bajo: 'text-sala-muted',
-};
-
 const TONE_TEXT: Record<string, string> = { good: 'text-sala-good', bad: 'text-sala-bad', neutral: 'text-sala-blue' };
 
 /** Color de acento de cada categoría (variables de :root). */
@@ -72,15 +59,6 @@ const CATEGORY_ACCENT: Record<string, string> = {
   'Exterior': 'var(--sky)',
   'Política y relaciones': 'var(--violet)',
 };
-
-/** Nivel de riesgo a partir del texto de riesgos de la acción (heurística de la B0). */
-function riskLevelOf(risksText: string | null): RiskLevel {
-  if (!risksText) return 'bajo';
-  const t = risksText.toLowerCase();
-  if (t.includes('alto') || t.includes('paro') || t.includes('crisis')) return 'alto';
-  if (t.includes('crítico') || t.includes('default')) return 'critico';
-  return 'medio';
-}
 
 function ChipInline({ chip }: { chip: EffectChip }) {
   return (
@@ -112,7 +90,7 @@ function SimpleEffectList({ actionId }: { actionId: string }) {
   return (
     <ul>
       {list.map(e => (
-        <li key={e.label} className="flex items-center justify-between gap-2 py-[3px] text-[12px]">
+        <li key={`${e.label}.${e.up}.${e.when}`} className="flex items-center justify-between gap-2 py-[3px] text-[12px]">
           <span className="flex items-center gap-1.5 min-w-0">
             <b className={`flex-shrink-0 ${TONE_TEXT[e.tone === 'neutral' ? 'neutral' : e.tone]}`} aria-label={e.up ? 'sube' : 'baja'}>{e.up ? '↑' : '↓'}</b>
             <span className="text-ink/85 truncate">{e.label}</span>
@@ -134,11 +112,9 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
   const { winners, losers } = affectedActors(action.id, SENSITIVITIES as Record<ActorId, { target: string; s: number }[]>);
   const costLabel = caja < 0 ? `−${fmtBudget(Math.abs(caja))}` : caja > 0 ? `+${fmtBudget(caja)}` : 'Sin costo';
   const requested = requestedBy.length > 0;
-  const riskLevel = riskLevelOf(action.risksText);
   // Nota para el jugador (glosario): la nota de diseño usaba siglas del motor.
   const playerNote = ACTION_PLAYER_NOTES[action.id] ?? action.strategic;
   const riskText = ACTION_RISK_TEXT[action.id] ?? action.risksText;
-  const touch = useIsTouch();
   const [showDetail, setShowDetail] = useState(false);
   // Ilustración de la política (src/lite/imageMap.ts); no todas tienen.
   const illustration = actionImage(action.id);
@@ -156,7 +132,6 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
 
   const details = (
     <div className="flex flex-col gap-1.5 max-w-[280px]">
-      {!touch && illustrationImg('w-full aspect-[2/1] rounded-md mb-1')}
       {playerNote && <p className="text-[11px] text-ink/80 leading-snug">{playerNote}</p>}
       {!simple && timeline.length > 0 && (
         <div>
@@ -180,16 +155,16 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
       {!simple && notes.repetition.length > 0 && (
         <div>
           <div className="font-semibold text-[11px] text-ink mb-0.5">Si se repite</div>
-          {notes.repetition.slice(0, 2).map(n => <div key={n} className="text-[10px] text-amber-300">• {n}</div>)}
+          {notes.repetition.slice(0, 2).map(n => <div key={n} className="text-[10px] text-sala-warn">• {n}</div>)}
         </div>
       )}
       {(winners.length > 0 || losers.length > 0) && (
         <div className="text-[10px] text-ink/70">
-          {winners.length > 0 && <div><span className="text-emerald-400 font-semibold">Favorece:</span> {winners.map(a => ACTORS[a].shortName).join(', ')}</div>}
-          {losers.length > 0 && <div><span className="text-red-400 font-semibold">Perjudica:</span> {losers.map(a => ACTORS[a].shortName).join(', ')}</div>}
+          {winners.length > 0 && <div><span className="text-sala-good font-semibold">Favorece:</span> {winners.map(a => ACTORS[a].shortName).join(', ')}</div>}
+          {losers.length > 0 && <div><span className="text-sala-bad font-semibold">Perjudica:</span> {losers.map(a => ACTORS[a].shortName).join(', ')}</div>}
         </div>
       )}
-      {riskText && <div className="text-[10px] text-amber-300">Riesgo: {riskText}</div>}
+      {riskText && <div className="text-[10px] text-sala-warn">Riesgo: {riskText}</div>}
       <div className="text-[10px] text-ink/70">
         {costLabel} · {pa} {pa === 1 ? 'acción' : 'acciones'}{!simple && action.cooldown > 1 ? ` · repetible cada ${action.cooldown} turnos` : ''}
       </div>
@@ -270,11 +245,12 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
             Abre una interna en tu partido (+{COALITION_ACTIONS[action.id]}): tus políticas rinden menos y cuestan más.
           </p>
         )}
-        {simple ? favorLine : repetitionWarning ? (
+        {simple && favorLine}
+        {repetitionWarning ? (
           <p className="mt-2 flex items-start gap-1.5 text-[11px] text-sala-warn leading-snug">
             <AlertTriangle size={11} className="mt-0.5 flex-shrink-0" /> {repetitionWarning}
           </p>
-        ) : winners.length + losers.length > 0 ? (
+        ) : !simple && winners.length + losers.length > 0 ? (
           <div className="flex flex-wrap gap-1.5 mt-3">
             {winners.slice(0, 2).map(a => (
               <span key={a} className="inline-flex items-center gap-1 rounded bg-sunken px-1.5 py-1 text-[10px] text-sala-muted">
@@ -320,31 +296,26 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
         <span className="inline-flex items-center gap-1 text-[11px] font-bold text-sala-blue">
           <Flag size={11} /> {pa} {pa === 1 ? 'acción' : 'acciones'}
         </span>
-        <span className={`inline-flex items-center gap-1 text-[10px] font-semibold ${RISK_CLS[riskLevel]}`}>
-          {riskLevel !== 'bajo' && <AlertTriangle size={10} />}
-          Riesgo {RISK_LABEL[riskLevel]}
-        </span>
+
       </div>
 
       {/* Acción */}
       <div className={`flex md:col-span-3 xl:col-span-1 items-center gap-2 xl:flex-col xl:items-stretch ${simple ? SIMPLE_XL.action : ''}`}>
-        {touch && (
-          <button
+        <button
             type="button"
             onClick={e => { e.stopPropagation(); setShowDetail(true); }}
             onKeyDown={e => e.stopPropagation()}
             className="h-11 px-3 rounded-md border border-rule text-[13px] font-medium text-ink bg-surface"
           >
-            Ver detalle
+            Ayuda
           </button>
-        )}
         {isSelected ? (
           <span className="flex-1 inline-flex items-center justify-center gap-1 h-10 rounded-md bg-sala-navy text-white text-[12px] font-bold">
             <Check size={14} /> Seleccionada
           </span>
         ) : !blocked ? (
           <span className="flex-1 inline-flex items-center justify-center gap-1 h-10 rounded-md border border-[rgb(184_201_218)] bg-surface text-[12px] font-bold text-ink transition-colors group-hover:bg-sala-navy group-hover:text-white group-hover:border-sala-navy">
-            Ejecutar <ChevronRight size={14} />
+            Agregar al turno <ChevronRight size={14} />
           </span>
         ) : (
           <span className="flex-1 text-[11px] text-sala-bad leading-snug xl:text-center" title={blockReason ?? ''}>
@@ -355,14 +326,12 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
     </div>
   );
 
-  // Sin mouse, el cartel de "pasar por encima" es una hoja que se abre con "Ver detalle".
-  if (touch) {
-    return (
+  // Ayuda explícita con foco, teclado y pantalla táctil.
+  return (
       <>
         {card}
         {showDetail && (
           <Sheet
-            tall
             title={action.name}
             onClose={() => setShowDetail(false)}
             footer={
@@ -372,7 +341,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
                 onClick={() => { onSelect(); setShowDetail(false); }}
                 className="sr-btn-navy w-full h-12"
               >
-                {isSelected ? 'Quitar de la agenda' : blocked ? blockReason : 'Ejecutar'}
+                {isSelected ? 'Quitar de la agenda' : blocked ? blockReason : 'Agregar al turno'}
               </button>
             }
           >
@@ -382,8 +351,5 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
           </Sheet>
         )}
       </>
-    );
-  }
-
-  return <InfoTooltip content={details}>{card}</InfoTooltip>;
+  );
 }

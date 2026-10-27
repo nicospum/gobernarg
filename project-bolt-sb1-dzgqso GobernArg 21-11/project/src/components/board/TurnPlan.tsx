@@ -4,6 +4,7 @@ import { getPolicyAvailability } from '../../engine/gameEngine';
 import { projectedCloseCaja } from '@/engine/causal';
 import { fmtBudget, fmtBudgetDelta } from '@/lib/format';
 import { detailed } from '@/lite/config';
+import { PendingPolicies } from './PendingPolicies';
 
 interface TurnPlanProps {
   gameState: GameState;
@@ -75,16 +76,18 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
             ))}
           </ul>
         )}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <span className="text-[12px] text-sala-muted whitespace-nowrap" title="Estimación: no incluye efectos diferidos ni eventos.">
-            Caja al cierre{' '}
+            Caja estimada al cierre{' '}
             <strong className={`text-[15px] font-mono ${projection.caja >= 0 ? 'text-ink' : 'text-sala-bad'}`}>{fmtBudget(projection.caja)}</strong>
           </span>
           {endTurnButton('ml-auto px-4 h-10 text-[12px] min-w-[200px]')}
         </div>
+        <p className="text-[11px] text-sala-muted">No incluye efectos diferidos ni eventos.</p>
+        <PendingPolicies state={c} />
         {projection.caja < 0 && (
           <p className="flex items-center gap-1.5 text-[11px] font-semibold text-sala-bad">
-            <AlertTriangle size={12} className="flex-shrink-0" /> La caja queda en rojo: el Tesoro va a emitir.
+            <AlertTriangle size={12} className="flex-shrink-0" /> Si al cerrar falta caja, el Tesoro cubrirá el faltante con emisión.
           </p>
         )}
       </section>
@@ -141,7 +144,7 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
 
       {simple ? (
         <div className="flex items-center justify-between gap-3 px-4 py-3.5" title="Estimación: no incluye efectos diferidos ni eventos.">
-          <span className="text-[12px] text-sala-muted">Caja al cierre</span>
+          <span className="text-[12px] text-sala-muted">Caja estimada al cierre</span>
           <strong className={`text-[16px] font-mono ${projection.caja >= 0 ? 'text-ink' : 'text-sala-bad'}`}>{fmtBudget(projection.caja)}</strong>
         </div>
       ) : (
@@ -150,7 +153,7 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
         title="Estimación: caja actual + costo de lo elegido + recaudación − gasto corriente − intereses. No incluye efectos diferidos ni eventos."
       >
         <div className="flex flex-col gap-1.5">
-          <span className="sr-eyebrow !text-sala-muted">Caja al cierre</span>
+          <span className="sr-eyebrow !text-sala-muted">Caja estimada al cierre</span>
           <strong className={`text-[16px] font-mono ${projection.caja >= 0 ? 'text-ink' : 'text-sala-bad'}`}>{fmtBudget(projection.caja)}</strong>
         </div>
         <div className="flex flex-col gap-1.5">
@@ -161,10 +164,12 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
         </div>
       </div>
       )}
+      <p className="px-4 pb-3 text-[11px] text-sala-muted">Estimación sin efectos diferidos ni eventos.</p>
+      <div className="px-4 pb-3"><PendingPolicies state={c} /></div>
       {projection.caja < 0 && (
         <p className="mx-4 mb-3 flex items-start gap-1.5 rounded-md bg-red-500/10 px-2.5 py-2 text-[11px] font-semibold text-sala-bad">
           <AlertTriangle size={13} className="mt-px flex-shrink-0" />
-          {simple ? 'La caja queda en rojo: el Tesoro va a emitir.' : 'Alerta fiscal: la caja caerá en déficit y el Tesoro emitirá moneda en el próximo turno.'}
+          {simple ? 'Si al cerrar falta caja, el Tesoro cubrirá el faltante con emisión.' : 'Estimación en rojo: si al cerrar falta caja, el Tesoro cubrirá el faltante con emisión.'}
         </p>
       )}
       {/* Modo simple: estos avisos van arriba del tablero (DefeatAlerts). */}
