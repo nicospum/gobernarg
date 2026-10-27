@@ -3,6 +3,7 @@ import type { GameState } from '../../types/game';
 import { riskLabel } from '@/lib/risk';
 import { defeatRisk, nextElection, scrollToPanel, turnInMandate } from '@/lib/boardView';
 import { detailed } from '@/lite/config';
+import { calendarFor } from '@/lib/calendar';
 
 /** Barra de comando: briefing del turno, próxima elección y accesos a los paneles. */
 export function CommandStrip({ gameState }: { gameState: GameState }) {
@@ -40,7 +41,7 @@ export function CommandStrip({ gameState }: { gameState: GameState }) {
           <b className="text-sala-coral tracking-[0.06em] uppercase text-[10px]">{next.label}</b>
           {next.turns === 0 ? ' al cerrar este turno' : ` en ${next.turns} ${next.turns === 1 ? 'turno' : 'turnos'}`}
           <span>·</span> riesgo de derrota {riskLabel(risk).toLowerCase()}
-          <span className="hidden xl:inline text-sala-dim">· turno {inMandate} de 16</span>
+          <span className="hidden xl:inline text-sala-dim">· turno {inMandate} de {calendarFor(gameState).turnsPerMandate}</span>
         </div>
         <nav aria-label="Accesos" className="ml-auto flex gap-1">
           {links.map(({ id, label, icon: Icon }) => (

@@ -4,7 +4,7 @@
  * funcionan y se pueden reactivar con su flag.
  */
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { DEFAULT_LEVEL_SCENARIO_ID, LITE_FEATURES, playableLevels, playableScenarios } from '../lite/config';
 import { NewGameScreen } from '../components/NewGameScreen';
 import { loadProgress, recordReelectionWin } from '../lib/progress';
@@ -61,30 +61,20 @@ describe('desafíos históricos con progreso propio', () => {
     expect(screen.queryByText('Corralito')).toBeNull();
   });
 
-  it('prendidos, aparecen bloqueados y una reelección ganada desbloquea Corralito', async () => {
-    const view = render(<NewGameScreen onStart={() => {}} historicScenarios />);
-    expect(LITE_FEATURES.escenariosHistoricos).toBe(true);
-    const section = screen.getByText('Escenarios históricos').closest('details')!;
-    expect(section.open).toBe(false);
-    fireEvent.click(screen.getByText('Escenarios históricos'));
-    expect(section.open).toBe(true);
-    expect(screen.getByRole('radio', { name: /Corralito/ }).getAttribute('aria-disabled')).toBe('true');
-    view.unmount();
-
+  it('ni una reelección ni el prop de inicio habilitan históricos en esta edición', () => {
     recordReelectionWin();
-    expect(loadProgress().reelectionsWon).toBe(1);
-    expect(isScenarioUnlocked(getScenario('corralito'), 1)).toBe(true);
-
+    recordReelectionWin();
+    expect(loadProgress().reelectionsWon).toBe(2);
+    expect(isScenarioUnlocked(getScenario('corralito'), 2)).toBe(true);
+    expect(LITE_FEATURES.escenariosHistoricos).toBe(false);
     const onStart = vi.fn();
     render(<NewGameScreen onStart={onStart} historicScenarios />);
-    fireEvent.click(screen.getByText('Escenarios históricos'));
-    const corralito = screen.getByRole('radio', { name: /Corralito/ });
-    expect(corralito.getAttribute('aria-disabled')).toBe('false');
-    expect(screen.getByRole('radio', { name: /País en llamas/ }).getAttribute('aria-disabled')).toBe('true');
+    expect(screen.queryByText('Escenarios históricos')).toBeNull();
+    expect(screen.queryByRole('radio', { name: /Corralito/ })).toBeNull();
+    expect(screen.queryByRole('radio', { name: /País en llamas/ })).toBeNull();
     fireEvent.change(screen.getByPlaceholderText('Ingresá tu nombre'), { target: { value: 'Ana' } });
-    await act(async () => { fireEvent.click(corralito); });
-    await act(async () => { fireEvent.click(screen.getByRole('button', { name: /^Empezar$/ })); });
-    expect(onStart).toHaveBeenCalledWith(expect.objectContaining({ scenarioId: 'corralito' }));
+    fireEvent.click(screen.getByRole('button', { name: /^Empezar$/ }));
+    expect(onStart).toHaveBeenCalledWith(expect.objectContaining({ scenarioId: 'viento_de_cola' }));
   });
 
   it('se pueden jugar completos (bots)', () => {

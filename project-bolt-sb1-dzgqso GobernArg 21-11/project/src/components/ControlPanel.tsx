@@ -14,6 +14,7 @@ import {
   lawThreshold,
 } from '@/engine/causal';
 import { detailed } from '@/lite/config';
+import { calendarFor, equivalentTurns } from '@/lib/calendar';
 
 interface ControlPanelProps {
   gameState: GameState;
@@ -38,7 +39,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction, index, 
     const map: Record<string, ActorId[]> = {};
     for (const a of ACTOR_IDS) {
       const d = causal.actors[a].demand;
-      if (d && d.revealedTurn !== null && causal.turn - d.revealedTurn < PARAMS.VENTANA_DEMANDA) {
+      if (d && d.revealedTurn !== null && causal.turn - d.revealedTurn < equivalentTurns(PARAMS.VENTANA_DEMANDA, causal)) {
         (map[d.actionId] ??= []).push(a);
       }
     }
@@ -58,19 +59,19 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction, index, 
 
   const leg = Math.round(legForLaws(causal));
   const threshold = lawThreshold(causal);
-  const honeymoon = causal.turn - causal.mandateStart + 1 <= PARAMS.LUNA_MIEL;
+  const honeymoon = causal.turn - causal.mandateStart + 1 <= equivalentTurns(PARAMS.LUNA_MIEL, causal);
   const hasMajority = leg >= threshold;
   const interna = causal.political.interna;
 
   return (
     <section aria-label="Acciones políticas" className="flex flex-col">
       {/* Encabezado de la mesa de decisiones */}
-      <div className="flex items-start justify-between gap-3 px-1 pb-3">
-        <div>
+      <div className="flex flex-wrap items-start justify-between gap-2.5 px-1 pb-3">
+        <div className="min-w-0 flex-1 basis-[280px]">
           <span className="sr-label">{index ? `${index} / ` : ''}Mesa de decisiones</span>
-          <h2 className="mt-1.5 text-[24px] leading-tight font-bold tracking-tight text-ink">
+          <h2 className="mt-1.5 flex flex-wrap items-baseline gap-x-2 text-[24px] leading-tight font-bold tracking-tight text-ink">
             Acciones políticas{' '}
-            <sup className="text-[12px] text-sala-blue font-bold align-top">{inCategory.filter(a => a.available).length}</sup>
+            <sup className="text-[12px] text-sala-blue font-bold">{inCategory.filter(a => a.available).length}</sup>
             <small className="text-[11px] text-sala-muted font-normal"> / {inCategory.length} en total</small>
           </h2>
           <p className="text-[12px] text-sala-muted mt-1.5 leading-snug">
@@ -131,31 +132,34 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction, index, 
           <span className="inline-flex items-center gap-1.5">
             <LockKeyhole size={13} className="text-sala-blue" />
             {showBlocked
-              ? `Mostrando ${blockedCount} bloqueada${blockedCount === 1 ? '' : 's'} (requisitos, espera o Congreso).`
-              : `${blockedCount} bloqueada${blockedCount === 1 ? '' : 's'} oculta${blockedCount === 1 ? '' : 's'} (requisitos, espera o Congreso).`}
+              ? `Mostrando ${blockedCount} bloqueada${blockedCount === 1 ? '' : 's'}.`
+              : `${blockedCount} bloqueada${blockedCount === 1 ? '' : 's'}.`}
           </span>
           <button
             onClick={() => setShowBlocked(v => !v)}
+            aria-expanded={showBlocked}
+            aria-controls="politicas-disponibles"
             className="inline-flex items-center gap-1.5 px-2.5 py-1 max-lg:min-h-[44px] rounded-md border border-rule bg-surface hover:bg-sunken text-ink/80 transition-colors whitespace-nowrap"
           >
             {showBlocked ? <EyeOff size={11} /> : <Eye size={11} />}
-            {showBlocked ? 'Ocultar bloqueadas' : 'Ver también las bloqueadas'}
+            {showBlocked ? 'Ocultar preparativos' : 'Ver preparativos bloqueados'}
           </button>
         </div>
       )}
 
       {/* Lista de acciones */}
-      <div className={`mt-2.5 ${scroll ? 'lg:overflow-y-auto lg:max-h-[calc(100vh-150px)] lg:pr-1 -mr-1' : ''}`}>
+      <div id="politicas-disponibles" className={`mt-2.5 ${scroll ? 'lg:overflow-y-auto lg:max-h-[calc(100vh-150px)] lg:pr-1 -mr-1' : ''}`}>
         {filtered.length === 0 ? (
           <div className="sr-panel text-center py-12 text-[12px] text-sala-muted">
             {inCategory.length === 0 ? 'No hay acciones en esta categoría.' : 'Todas las acciones de esta categoría están bloqueadas por ahora.'}
           </div>
         ) : (
           // Modo simple en pantallas anchas: dos tarjetas por fila.
-          <div className={detailed() ? 'flex flex-col gap-2.5' : 'grid grid-cols-1 xl:grid-cols-2 gap-2.5'}>
+          <div className={detailed() ? 'flex flex-col gap-2.5' : 'grid grid-cols-1 xl:grid-cols-2 items-start gap-2.5'}>
             {filtered.map((av) => (
               <ActionCard
                 loanDiscount={causal.perks.loanDiscount}
+                calendar={calendarFor(gameState).id}
                 key={av.action.id}
                 availability={av}
                 requestedBy={requestedBy[av.action.id] ?? []}

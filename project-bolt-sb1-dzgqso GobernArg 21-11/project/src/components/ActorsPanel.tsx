@@ -41,6 +41,7 @@ import { riskColor, type Risk } from '@/lib/risk';
 import { getActorIcon } from '../utils/actorIcons';
 import { detailed } from '@/lite/config';
 import { fmtBudget } from '@/lib/format';
+import { equivalentTurns } from '@/lib/calendar';
 import { ACTOR_POWER_TEXT } from '@/data/causal/playerTexts';
 
 /** "tensión media", no "tensión medio" (concordancia, glosario). */
@@ -88,7 +89,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
   const icon = getActorIcon(actor);
   const agreement = c.agreements.find(a => a.actor === actor && a.status === 'active');
   const demand = st.demand;
-  const demandRevealed = demand && demand.revealedTurn !== null && c.turn - demand.revealedTurn < PARAMS.VENTANA_DEMANDA;
+  const demandRevealed = demand && demand.revealedTurn !== null && c.turn - demand.revealedTurn < equivalentTurns(PARAMS.VENTANA_DEMANDA, c);
   const demandDef = demand ? CAUSAL_ACTIONS_BY_ID[demand.actionId] : null;
   const demandSelected = demand ? state.selectedActions.includes(demand.actionId) : false;
   const demandAv = demand ? getAvailability(c, demand.actionId, state.selectedActions.map(actionId => ({ actionId })), state.actions) : null;
@@ -201,14 +202,14 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
       {agreement && (
         <div className="mb-1.5 px-2 py-1.5 rounded border border-emerald-400/25 bg-emerald-400/5 text-[10px] text-sala-good leading-snug">
           Acuerdo vigente: te comprometiste a <span className="font-semibold">{CAUSAL_ACTIONS_BY_ID[agreement.commitmentActionId]?.name}</span>
-          {' '}(vence en {Math.max(0, agreement.deadline - c.turn)} t). A cambio: {agreement.offer.toLowerCase()}.
+          {' '}({agreement.deadline <= c.turn ? 'vence este turno' : `vence en ${agreement.deadline - c.turn} turnos`}). A cambio: {agreement.offer.toLowerCase()}.
         </div>
       )}
 
       {/* Oferta de acuerdo abierta */}
       {offerOpen && demandDef && (
         <div className="mb-1.5 px-2 py-1.5 rounded border border-primary/30 bg-primary/5 text-[10px] text-foreground/80 leading-snug">
-          Aceptan acordar: vos te comprometés a <span className="font-semibold">{demandDef.name}</span> en {PARAMS.PLAZO_ACUERDO} turnos;
+          Aceptan acordar: vos te comprometés a <span className="font-semibold">{demandDef.name}</span> en {equivalentTurns(PARAMS.PLAZO_ACUERDO, c)} turnos;
           ellos ofrecen: {agreementOffer(actor).toLowerCase()}. Incumplir rompe la relación.
           {demandAv && !demandAv.available && (
             <div className="mt-1 text-sala-bad">Ojo: hoy no podrías ejecutarla ({demandAv.reasons[0]})</div>
@@ -223,7 +224,7 @@ function ActorCard({ state, actor, onInteract, onSelectAction, disabled }: {
             <button
               onClick={() => onInteract(actor, 'reunion')}
               disabled={disabled || !!meetReason}
-              title={meetReason ?? 'Reunión: revela qué les preocupa y qué piden; habilita negociar 3 turnos'}
+              title={meetReason ?? `Reunión: revela qué les preocupa y qué piden; habilita negociar ${equivalentTurns(3, c)} turnos`}
               className="sr-btn-ghost flex-1 min-w-[124px] whitespace-nowrap gap-1 text-[10px] px-1.5 py-1.5 max-lg:min-h-[44px]"
             >
               <MessageSquare size={11} />
@@ -313,14 +314,12 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled, i
         // Modo simple: lista plana, primero los más descontentos y, a igual
         // ánimo, los de más peso. Sin familias ni desplegables.
         // En pantallas anchas, dos por fila.
-        <div className="mx-3 mt-3 rounded-[10px] border border-rule overflow-hidden grid grid-cols-1 xl:grid-cols-2 gap-px bg-rule">
+        <div className="mx-3 mt-3 grid grid-cols-1 xl:grid-cols-2 items-start gap-2">
           {simpleActorOrder(c).map(a => (
-            <div key={a} className="bg-surface">
+            <div key={a} className="bg-surface rounded-lg border border-rule self-start">
               <ActorCard state={gameState} actor={a} onInteract={onInteract} onSelectAction={onSelectAction} disabled={disabled} />
             </div>
           ))}
-          {/* Con un número impar, la última celda de la fila queda en blanco y no gris. */}
-          {ACTOR_IDS.length % 2 === 1 && <div className="hidden xl:block bg-surface" aria-hidden="true" />}
         </div>
       ) : (
       <div className="p-3 space-y-2">
@@ -333,7 +332,7 @@ export function ActorsPanel({ gameState, onInteract, onSelectAction, disabled, i
           }, 'bajo');
           const demands = family.members.filter(a => {
             const d = c.actors[a].demand;
-            return d && d.revealedTurn !== null && c.turn - d.revealedTurn < PARAMS.VENTANA_DEMANDA;
+            return d && d.revealedTurn !== null && c.turn - d.revealedTurn < equivalentTurns(PARAMS.VENTANA_DEMANDA, c);
           }).length;
           return (
             <div key={family.id} className="rounded-[10px] border border-rule overflow-hidden bg-surface">

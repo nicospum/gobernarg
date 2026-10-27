@@ -21,6 +21,8 @@ import { detailed } from '@/lite/config';
 import { topChanges } from '@/lib/simpleView';
 import { DefeatAlerts } from './board/StatusStrip';
 import { PendingPolicies } from './board/PendingPolicies';
+import { calendarFor, periodCaption } from '@/lib/calendar';
+import { KnownDeadlines } from './board/KnownDeadlines';
 
 interface TurnSummaryModalProps {
   summary: TurnSummary;
@@ -39,6 +41,7 @@ function Delta({ value, suffix = '' }: { value: number; suffix?: string }) {
 
 export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryModalProps) {
   const dialogRef = useDialog<HTMLDivElement>(onClose);
+  const { periodLabel } = calendarFor(gameState);
   const record = gameState.causal.records.find(r => r.turn === summary.causalTurn) ?? null;
   const headerImage = screenImage('cierreTurno');
   const changes = record ? indicatorChanges(record) : [];
@@ -58,9 +61,9 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
         className="animate-in fade-in-0 zoom-in-95 duration-200 sr-modal w-full max-w-2xl max-h-[92vh] overflow-y-auto overflow-x-hidden"
       >
         <ModalHeader
-          label="Cierre del trimestre"
-          title="Resumen del trimestre"
-          subtitle={<span className="inline-flex items-center gap-1.5"><CalendarDays className="w-3.5 h-3.5" /> Año {summary.year} · Trimestre {summary.quarter}</span>}
+          label={`Cierre del ${periodLabel}`}
+          title={`Resumen del ${periodLabel}`}
+          subtitle={<span className="inline-flex items-center gap-1.5"><CalendarDays className="w-3.5 h-3.5" /> {periodCaption(gameState, summary.year, summary.quarter)}</span>}
           image={headerImage}
           veil="light"
           imageAlt=""
@@ -74,7 +77,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
               <b>Hiciste:</b>{' '}
               {record && record.actions.length > 0
                 ? record.actions.map(a => `${CAUSAL_ACTIONS_BY_ID[a.actionId]?.name ?? a.actionId}${a.forced ? ' (forzada)' : a.suspended ? ' (suspendida)' : ''}`).join(', ')
-                : 'nada nuevo este trimestre.'}
+                : `nada nuevo este ${periodLabel}.`}
             </p>
             {record && political && (() => {
               const top = topChanges(record, political);
@@ -82,7 +85,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
                 <section aria-label="Lo que más se movió">
                   <span className="sr-eyebrow block mb-2 !text-sala-muted">Lo que más se movió</span>
                   {top.length === 0 ? (
-                    <p className="text-[13px] text-sala-muted">Un trimestre tranquilo: nada se movió mucho.</p>
+                    <p className="text-[13px] text-sala-muted">Un {periodLabel} tranquilo: nada se movió mucho.</p>
                   ) : (
                     <ul className="divide-y divide-rule rounded-lg border border-rule">
                       {top.map(ch => (
@@ -100,6 +103,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
               );
             })()}
             {isLatest && <PendingPolicies state={gameState.causal} />}
+            {isLatest && <KnownDeadlines state={gameState.causal} />}
             <DefeatAlerts gameState={gameState} />
             {record && (
               <p className="text-[14px] text-ink">
@@ -125,10 +129,10 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
             <section className="bg-surface p-4 rounded-lg border border-ink/8">
               <h4 className="flex items-center gap-2 font-display font-semibold text-xs   text-blue-300 mb-2">
                 <ListChecks className="w-4 h-4" />
-                POLÍTICAS EJECUTADAS ESTE TRIMESTRE
+                POLÍTICAS EJECUTADAS ESTE {periodLabel.toUpperCase()}
               </h4>
               {record.actions.length === 0 ? (
-                <p className="text-[12px] text-ink/70 font-mono">Sin acciones en la agenda este trimestre.</p>
+                <p className="text-[12px] text-ink/70 font-mono">Sin acciones en la agenda este {periodLabel}.</p>
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {record.actions.map((a, i) => (
@@ -239,7 +243,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
                 ))}
               </ul>
             ) : (
-              <p className="text-[12px] text-ink/70 font-mono">Trimestre finalizado sin contingencias graves.</p>
+              <p className="text-[12px] text-ink/70 font-mono">{periodLabel === 'cuatrimestre' ? 'Cuatrimestre' : 'Trimestre'} finalizado sin contingencias graves.</p>
             )}
           </section>
 
@@ -257,7 +261,7 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
 
           <div className="text-center pt-2">
             <button onClick={onClose} className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl font-display font-semibold text-base   transition-colors shadow-lg shadow-blue-600/20">
-              Continuar al Siguiente Trimestre →
+              Continuar al siguiente {periodLabel} →
             </button>
           </div>
         </div>

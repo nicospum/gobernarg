@@ -76,6 +76,7 @@ export function ElectionResultsModal({ result, onClose }: ElectionResultsModalPr
         />
 
         <div className="p-6">
+          {victory && result.kind === 'reelection' && <p className="mb-4 text-[13px] text-sala-muted leading-relaxed">Empieza el segundo mandato con el mismo país: conservás caja, deuda, relaciones y efectos pendientes. Al final, otro candidato de tu espacio compite por la sucesión.</p>}
           <h3 className="font-display text-lg font-semibold mb-4 flex items-center gap-2 text-foreground  ">
             <BarChart className="w-5 h-5 text-primary" />
             Desglose del resultado

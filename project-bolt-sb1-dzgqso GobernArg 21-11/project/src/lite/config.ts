@@ -28,8 +28,8 @@ export interface LiteFeatures {
 }
 
 export const LITE_FEATURES: LiteFeatures = {
-  // Desafíos opcionales, desbloqueados con el progreso entre partidas.
-  escenariosHistoricos: true,
+  // Fuera de la edición actual; fuentes, reglas y progreso se conservan.
+  escenariosHistoricos: false,
   // Para ver todos los números como antes: true.
   modoDetallado: false,
   // Entrada amable; Normal sigue siendo el nivel elegido de entrada.

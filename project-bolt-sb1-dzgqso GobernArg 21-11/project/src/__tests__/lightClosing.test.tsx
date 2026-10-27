@@ -43,7 +43,7 @@ describe('cierre de Light sin recuperar saturación', () => {
   it('una política ambiental conserva beneficio y contrapartida aunque ambiente no esté en la franja', () => {
     const effects = simpleEffects('proteccion_ambiental');
     expect(effects).toEqual(expect.arrayContaining([expect.objectContaining({ label: expect.stringMatching(/Ambiente/i), tone: 'good', up: true })]));
-    expect(effects).toEqual(expect.arrayContaining([expect.objectContaining({ label: 'Empleo', tone: 'bad', up: false })]));
+    expect(effects).toEqual(expect.arrayContaining([expect.objectContaining({ label: 'Actividad', tone: 'bad', up: false })]));
     expect(effects.length).toBeLessThanOrEqual(3);
     expect(simpleEffects('inversion_educativa')).toEqual(expect.arrayContaining([expect.objectContaining({ label: 'Educación', tone: 'good', when: 'más adelante' })]));
   });
@@ -83,7 +83,7 @@ describe('cierre de Light sin recuperar saturación', () => {
   it('el plan muestra la estimación y su límite sin depender de hover', () => {
     render(<TurnPlan gameState={game()} onActionSelect={() => {}} onEndTurn={() => {}} canEndTurn compact />);
     expect(screen.getByText(/Caja estimada al cierre/)).toBeTruthy();
-    expect(screen.getByText('No incluye efectos diferidos ni eventos.')).toBeTruthy();
+    expect(screen.getByText(/No incluye efectos diferidos ni eventos/)).toBeTruthy();
   });
 
   it('la proyección respeta los intereses suspendidos de Corralito y vuelve a cobrarlos al vencer', () => {

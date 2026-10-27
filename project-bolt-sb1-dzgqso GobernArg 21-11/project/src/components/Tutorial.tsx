@@ -1,13 +1,15 @@
 import { BookOpen, X } from 'lucide-react';
 import { markTutorialSeen, useTutorialSteps } from '@/lib/tutorial';
+import type { GameState } from '@/types/game';
 
 /** Tarjeta breve del primer turno. Se cierra una vez y no vuelve a aparecer. */
-export function TutorialCard({ actions, onDismiss, onOpenGuide }: {
+export function TutorialCard({ actions, gameState, onDismiss, onOpenGuide }: {
   actions: number;
+  gameState?: GameState;
   onDismiss: () => void;
   onOpenGuide: () => void;
 }) {
-  const steps = useTutorialSteps(actions);
+  const steps = useTutorialSteps(actions, gameState);
   const dismiss = () => {
     markTutorialSeen();
     onDismiss();
@@ -23,7 +25,7 @@ export function TutorialCard({ actions, onDismiss, onOpenGuide }: {
           <X size={18} />
         </button>
       </div>
-      <ol className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+      <ol className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-3">
         {steps.map((s, i) => (
           <li key={s.title} className="flex gap-2.5">
             <span className="flex-shrink-0 w-6 h-6 rounded-full bg-sala-blue text-white text-xs font-bold flex items-center justify-center">{i + 1}</span>

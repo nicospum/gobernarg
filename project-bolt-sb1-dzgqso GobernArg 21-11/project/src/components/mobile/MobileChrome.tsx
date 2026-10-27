@@ -12,7 +12,8 @@ import { fmtBudget } from '@/lib/format';
 import { getValueRisk, riskColor } from '@/lib/risk';
 import { InfoTooltip } from '../InfoTooltip';
 import { BudgetDetails, TrendChip, indicatorCards } from '../IndicatorsPanel';
-import { MAX_TURNS, MILESTONES, MandateTimeline } from '../GameHeader';
+import { MandateTimeline } from '../GameHeader';
+import { calendarFor, mandateTurn, periodCaption } from '@/lib/calendar';
 import { Sheet } from './Sheet';
 import { detailed } from '@/lite/config';
 import { kpiWord } from '@/lib/simpleView';
@@ -38,9 +39,10 @@ export function MobileHeader({ gameState, onOpenMenu }: {
   gameState: GameState;
   onOpenMenu: () => void;
 }) {
-  const absoluteTurn = (gameState.year - 1) * 4 + gameState.turn;
-  const inMandate = ((absoluteTurn - 1) % MAX_TURNS) + 1;
-  const nextMilestone = Object.keys(MILESTONES).map(Number).find(t => t >= inMandate);
+  const calendar = calendarFor(gameState);
+  const inMandate = mandateTurn(gameState);
+  const milestones: Record<number, string> = { [calendar.midtermTurn]: 'Legislativas', [calendar.turnsPerMandate]: 'Presidenciales' };
+  const nextMilestone = Object.keys(milestones).map(Number).find(t => t >= inMandate);
   const scenario = getScenario(gameState.causal?.scenarioId);
   return (
     <header className="sticky top-0 z-40 sr-navy-bar shadow-[0_4px_18px_rgb(7_28_48/0.25)] pl-[max(1rem,env(safe-area-inset-left,0px))] pr-[max(0.375rem,env(safe-area-inset-right,0px))] pt-[calc(0.625rem+env(safe-area-inset-top,0px))] pb-3">
@@ -56,7 +58,7 @@ export function MobileHeader({ gameState, onOpenMenu }: {
           <div className="text-[8px] font-bold tracking-[0.15em] text-sala-on-navy">PRESIDENCIA · MANDATO {gameState.term}</div>
           <div className="text-[17px] font-bold truncate">{gameState.governorName || '—'}</div>
           <div className="text-[11px] text-sala-on-navy truncate">
-            Año {gameState.year} · Turno {inMandate} de {MAX_TURNS}
+            {periodCaption(gameState)} · T{inMandate}/{calendar.turnsPerMandate}
             {scenario && <> · {scenario.name}</>}
           </div>
         </div>
@@ -69,16 +71,16 @@ export function MobileHeader({ gameState, onOpenMenu }: {
         </button>
       </div>
       <div className="mt-2.5 pr-2.5">
-        <MandateTimeline turn={absoluteTurn} onNavy />
+        <MandateTimeline gameState={gameState} onNavy />
         <div className="flex justify-between mt-1.5 text-[11px] text-sala-on-navy">
           <span>Mandato</span>
           {nextMilestone && (
             <span className="text-[#ffd27a] font-semibold">
-              {MILESTONES[nextMilestone]}
+              {milestones[nextMilestone]}
               {nextMilestone > inMandate ? ` en ${nextMilestone - inMandate} ${nextMilestone - inMandate === 1 ? 'turno' : 'turnos'}` : ' este turno'}
             </span>
           )}
-          <span>Fin T{MAX_TURNS}</span>
+          <span>Fin T{calendar.turnsPerMandate}</span>
         </div>
       </div>
     </header>
@@ -223,8 +225,8 @@ export function MobileMenu({ gameState, onClose, onOpenHelp, onOpenFeedback, onR
   onRestart: () => void;
 }) {
   const [confirming, setConfirming] = useState(false);
-  const absoluteTurn = (gameState.year - 1) * 4 + gameState.turn;
-  const inMandate = ((absoluteTurn - 1) % MAX_TURNS) + 1;
+  const calendar = calendarFor(gameState);
+  const inMandate = mandateTurn(gameState);
   const item = 'w-full min-h-[52px] flex items-center justify-between px-1 text-[15px] text-ink rounded-md hover:bg-sunken';
   const go = (fn: () => void) => () => {
     onClose();
@@ -243,7 +245,7 @@ export function MobileMenu({ gameState, onClose, onOpenHelp, onOpenFeedback, onR
             <div>
               <div className="text-[15px] font-bold text-sala-bad">¿Reiniciar la partida?</div>
               <div className="text-[14px] text-ink/80 mt-0.5">
-                Perdés el mandato de {gameState.governorName || 'tu gobernante'} (turno {inMandate} de {MAX_TURNS}). No se puede deshacer.
+                Perdés el mandato de {gameState.governorName || 'tu gobernante'} (turno {inMandate} de {calendar.turnsPerMandate}). No se puede deshacer.
               </div>
             </div>
             <div className="grid grid-cols-2 gap-2.5">

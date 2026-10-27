@@ -14,6 +14,7 @@ import { fmtBudget, fmtBudgetDelta } from '@/lib/format';
 import { detailed } from '@/lite/config';
 import { kpiWord } from '@/lib/simpleView';
 import { getScenario } from '@/data/causal';
+import { calendarFor, mandateTurn, periodCaption } from '@/lib/calendar';
 
 interface GameHeaderProps {
   gameState: GameState;
@@ -30,18 +31,16 @@ const POSITION_LABEL: Record<string, string> = {
   presidente: 'Presidente',
 };
 
-export const MAX_TURNS = 16;
-/** Hitos del mandato marcados en la línea de tiempo (turno dentro del mandato). */
-export const MILESTONES: Record<number, string> = { 8: 'Legislativas', 16: 'Fin del mandato' };
-
 /** Línea de tiempo del mandato: un tramo por turno, con los hitos en oro. */
-export function MandateTimeline({ turn, onNavy = false }: { turn: number; onNavy?: boolean }) {
-  const current = ((turn - 1) % MAX_TURNS) + 1;
+export function MandateTimeline({ gameState, onNavy = false }: { gameState: GameState; onNavy?: boolean }) {
+  const calendar = calendarFor(gameState);
+  const current = mandateTurn(gameState);
+  const milestones: Record<number, string> = { [calendar.midtermTurn]: 'Legislativas', [calendar.turnsPerMandate]: 'Elección presidencial' };
   return (
-    <div className="flex items-center gap-[3px]" role="img" aria-label={`Turno ${current} de ${MAX_TURNS} del mandato`}>
-      {Array.from({ length: MAX_TURNS }, (_, i) => {
+    <div className="flex items-center gap-[3px]" role="img" aria-label={`Turno ${current} de ${calendar.turnsPerMandate} del mandato`}>
+      {Array.from({ length: calendar.turnsPerMandate }, (_, i) => {
         const n = i + 1;
-        const milestone = MILESTONES[n];
+        const milestone = milestones[n];
         const done = n < current;
         const now = n === current;
         return (
@@ -159,10 +158,10 @@ export function GameHeader({
   onOpenFeedback,
 }: GameHeaderProps) {
   const c = gameState.causal;
-  const absoluteTurn = (gameState.year - 1) * 4 + gameState.turn;
+  const calendar = calendarFor(gameState);
   const positionLabel = POSITION_LABEL[gameState.position] ?? gameState.position;
   const scenarioDef = getScenario(c?.scenarioId);
-  const inMandate = ((absoluteTurn - 1) % MAX_TURNS) + 1;
+  const inMandate = mandateTurn(gameState);
   const apro = Math.round(c.political.apro);
   const last = c.records[c.records.length - 1];
   const divider = 'pl-4 border-l border-white/15';
@@ -205,10 +204,10 @@ export function GameHeader({
         <div className={`hidden md:flex flex-col gap-1.5 flex-1 min-w-[136px] max-w-[260px] ${divider}`}>
           <div className="flex items-center gap-2 text-[11px] tracking-[0.08em] uppercase">
             <CalendarDays size={14} />
-            <span>Año {gameState.year} / Trimestre {gameState.turn}</span>
+            <span>{periodCaption(gameState)}</span>
           </div>
-          <span className="text-[10px] text-sala-on-navy">Turno <strong className="text-white">{inMandate}</strong> de {MAX_TURNS}</span>
-          <MandateTimeline turn={absoluteTurn} onNavy />
+          <span className="text-[10px] text-sala-on-navy">Turno <strong className="text-white">{inMandate}</strong> de {calendar.turnsPerMandate}</span>
+          <MandateTimeline gameState={gameState} onNavy />
         </div>
 
         <div className="flex-1" />
@@ -249,7 +248,7 @@ export function GameHeader({
         <div className={`flex items-center gap-1.5 flex-none ${divider}`}>
           <GameMenu
             governorName={gameState.governorName}
-            turnLabel={`turno ${inMandate} de ${MAX_TURNS}`}
+            turnLabel={`turno ${inMandate} de ${calendar.turnsPerMandate}`}
             onRestart={onRestart}
             onOpenHelp={onOpenHelp}
             onOpenFeedback={onOpenFeedback}

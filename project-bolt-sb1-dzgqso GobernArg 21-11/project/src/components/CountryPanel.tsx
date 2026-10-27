@@ -7,7 +7,7 @@ import { indicatorBand, inflationMonthly, type Tone } from '@/lib/causalText';
 import { countryAlerts } from '@/lib/boardView';
 import { InfoTooltip } from './InfoTooltip';
 import { detailed } from '@/lite/config';
-import { simpleIndicators, type SimpleIndicator } from '@/lib/simpleView';
+import { SIMPLE_GROUPS, simpleIndicators, type SimpleIndicator } from '@/lib/simpleView';
 
 /**
  * Estado del país (15 indicadores del motor) agrupado en las 4 categorías
@@ -57,7 +57,7 @@ function SimpleTrend({ ind }: { ind: SimpleIndicator }) {
     : <TrendingDown size={14} className={cls} aria-label="baja" />;
 }
 
-/** Modo simple: los 7 indicadores de la B Lite (Precios, Empleo, Bolsillo, Obras, Educación, Salud, Seguridad) con palabra y flecha. */
+/** Dos grupos de cuatro indicadores efectivos, con palabra y tendencia. */
 function SimpleCountryPanel({ gameState, compact, index }: { gameState: GameState; compact: boolean; index?: string }) {
   const rows = simpleIndicators(gameState);
   return (
@@ -68,8 +68,10 @@ function SimpleCountryPanel({ gameState, compact, index }: { gameState: GameStat
           <h2 className="sr-panel-title">Estado del país</h2>
         </div>
       </div>
-      <ul className="px-4 py-2">
-        {rows.map(ind => (
+      {SIMPLE_GROUPS.map(group => <section key={group} aria-label={group} className="px-4 py-2 border-t border-rule">
+      <h3 className="sr-eyebrow !text-sala-muted mb-1">{group}</h3>
+      <ul>
+        {rows.filter(ind => ind.group === group).map(ind => (
           <li key={ind.key} className={`flex items-center justify-between gap-2 border-b border-rule last:border-b-0 ${compact ? 'min-h-[46px]' : 'min-h-[38px]'}`}>
             <span className={`${compact ? 'text-[15px]' : 'text-[13px]'} text-ink`}>{ind.label}</span>
             <span className="flex items-center gap-2 flex-shrink-0">
@@ -79,6 +81,7 @@ function SimpleCountryPanel({ gameState, compact, index }: { gameState: GameStat
           </li>
         ))}
       </ul>
+      </section>)}
     </section>
   );
 }

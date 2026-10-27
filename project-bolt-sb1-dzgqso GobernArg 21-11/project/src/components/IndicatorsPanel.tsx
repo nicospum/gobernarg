@@ -96,7 +96,7 @@ export function indicatorCards(gameState: GameState): IndicatorCard[] {
       inverseRisk: false,
       target: PARAMS.GOB_CRISIS_UMBRAL,
       targetLabel: `Crisis < ${PARAMS.GOB_CRISIS_UMBRAL}`,
-      tooltipDetail: `Capacidad de gobernar: apoyo en el Congreso, cooperación de los actores organizados y paz social. Dos trimestres por debajo de ${PARAMS.GOB_CRISIS_UMBRAL} abren un juicio político.`,
+      tooltipDetail: `Capacidad de gobernar: apoyo en el Congreso, cooperación de los actores organizados y paz social. Dos cierres por debajo de ${PARAMS.GOB_CRISIS_UMBRAL} abren un juicio político.`,
       trend: last ? p.gob - last.politicalBefore.gob : null,
     },
     {

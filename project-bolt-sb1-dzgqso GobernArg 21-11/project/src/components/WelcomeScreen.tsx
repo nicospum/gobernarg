@@ -3,6 +3,7 @@ import { IMAGES } from '../utils/imageAssets';
 import { screenImage } from '@/lib/liteImages';
 import type { GameState } from '../types/game';
 import { getScenario } from '@/data/causal';
+import { periodCaption } from '@/lib/calendar';
 
 interface WelcomeScreenProps {
   onStart: () => void;
@@ -13,7 +14,7 @@ interface WelcomeScreenProps {
 
 function savedLabel(state: GameState): string {
   const scenario = getScenario(state.causal?.scenarioId);
-  const parts = [state.governorName || 'Tu gobernante', `Año ${state.year}, trimestre ${state.turn}`];
+  const parts = [state.governorName || 'Tu gobernante', periodCaption(state)];
   if (scenario) parts.push(scenario.name);
   return parts.join(' · ');
 }
@@ -40,6 +41,7 @@ export function WelcomeScreen({ onStart, saved, onContinue }: WelcomeScreenProps
           Simulación política donde tomás decisiones estratégicas, gestionás recursos,
           negociás con grupos de interés y buscás la legitimidad para gobernar.
         </p>
+        <p className="text-[13px] text-sala-muted -mt-4 mb-6 leading-relaxed">4 años · 12 cuatrimestres por mandato. Legislativas en T6 y presidenciales en T12. Si ganás la reelección, la gestión continúa otros 12 turnos.</p>
 
         {saved && onContinue ? (
           <div className="flex flex-col items-center gap-3">

@@ -4,6 +4,7 @@ import { INCUMBENCY_BONUS } from '../engine/causalBridge';
 import { ModalHeader } from './ModalHeader';
 import { useDialog } from '@/lib/useDialog';
 import { fmtPct } from '@/lib/format';
+import { calendarFor } from '@/lib/calendar';
 
 interface ReelectionChoiceModalProps {
   gameState: GameState;
@@ -44,7 +45,7 @@ export function ReelectionChoiceModal({ gameState, onSelect, onRetire }: Reelect
                   Buscar la reelección
                 </h3>
                 <p className="text-sm text-foreground/70 mt-1">
-                  Ventaja por incumbencia. Consolidá tu gestión con un segundo mandato.
+                  Si ganás, jugás otros {calendarFor(gameState).turnsPerMandate} turnos. Se mantienen la caja, la deuda, los efectos pendientes y tus acuerdos; la gestión continúa.
                 </p>
               </div>
               <div className={`text-right flex-shrink-0 ${difficultyColor}`}>

@@ -240,7 +240,7 @@ export function NewGameScreen({ onStart, onBack, historicScenarios = LITE_FEATUR
             </div>
           </Section>
 
-          {historicScenarios && <HistoricScenarios scenarioId={scenarioId} onSelect={setScenarioId} />}
+          {LITE_FEATURES.escenariosHistoricos && historicScenarios && <HistoricScenarios scenarioId={scenarioId} onSelect={setScenarioId} />}
 
           <button
             onClick={handleStart}

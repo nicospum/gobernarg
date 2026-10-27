@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { LITE_FEATURES } from '@/lite/config';
 import { Lock, Trophy } from 'lucide-react';
 import { IMAGES } from '../utils/imageAssets';
 import { HISTORIC_SCENARIOS, isScenarioUnlocked } from '../data/causal';
@@ -8,6 +9,7 @@ import { loadProgress } from '@/lib/progress';
 export function HistoricScenarios({ scenarioId, onSelect }: { scenarioId: string; onSelect: (id: string) => void }) {
   const [progress] = useState(loadProgress);
   const current = HISTORIC_SCENARIOS.find(sc => sc.id === scenarioId);
+  if (!LITE_FEATURES.escenariosHistoricos) return null;
   return (
     <details className="mb-7 rounded-xl border border-rule bg-surface">
       <summary className="cursor-pointer px-4 py-3 text-[14px] font-bold text-ink min-h-11">

@@ -10,17 +10,21 @@ import { effective, viewRef } from '@/engine/causal';
 import { toneOf, type Tone } from './causalText';
 
 /**
- * Los indicadores que se ven, con los mismos nombres que la B Lite. Los demás
- * (cuentas públicas, dólar, conflictividad, inversión…) siguen en el motor.
+ * Ocho indicadores efectivos en dos grupos. Actividad incluye empleo; Divisas
+ * representa el frente externo. Los demás indicadores siguen en el motor.
  */
-export const SIMPLE_INDICATORS: { key: string; label: string; ids: IndicatorId[] }[] = [
-  { key: 'INFL', label: 'Precios', ids: ['INFL'] },
-  { key: 'ACTV', label: 'Empleo', ids: ['ACTV'] },
-  { key: 'PODA', label: 'Bolsillo', ids: ['PODA'] },
-  { key: 'INFR', label: 'Obras', ids: ['INFR'] },
-  { key: 'EDUC', label: 'Educación', ids: ['EDUC'] },
-  { key: 'PSOC', label: 'Salud', ids: ['PSOC'] },
-  { key: 'SEGU', label: 'Seguridad', ids: ['SEGU'] },
+export const SIMPLE_GROUPS = ['Economía', 'Vida cotidiana'] as const;
+export type SimpleGroup = typeof SIMPLE_GROUPS[number];
+
+export const SIMPLE_INDICATORS: { key: string; group: SimpleGroup; label: string; ids: IndicatorId[] }[] = [
+  { key: 'INFL', group: 'Economía', label: 'Precios', ids: ['INFL'] },
+  { key: 'ACTV', group: 'Economía', label: 'Actividad', ids: ['ACTV'] },
+  { key: 'PODA', group: 'Economía', label: 'Bolsillo', ids: ['PODA'] },
+  { key: 'EXTE', group: 'Economía', label: 'Divisas', ids: ['EXTE'] },
+  { key: 'INFR', group: 'Vida cotidiana', label: 'Obras', ids: ['INFR'] },
+  { key: 'EDUC', group: 'Vida cotidiana', label: 'Educación', ids: ['EDUC'] },
+  { key: 'PSOC', group: 'Vida cotidiana', label: 'Salud', ids: ['PSOC'] },
+  { key: 'SEGU', group: 'Vida cotidiana', label: 'Seguridad', ids: ['SEGU'] },
 ];
 
 /** Palabras de estado de la B Lite (src/lite/present.ts de la B). */
@@ -41,6 +45,7 @@ for (const s of SIMPLE_INDICATORS) for (const id of s.ids) KEY_OF[id] = { key: s
 const avg = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
 
 export interface SimpleIndicator {
+  group: SimpleGroup;
   key: string;
   label: string;
   word: string;
@@ -56,11 +61,11 @@ export function simpleIndicators(state: GameState): SimpleIndicator[] {
   const c = state.causal;
   const ref = viewRef(c);
   const last = c.records[c.records.length - 1];
-  return SIMPLE_INDICATORS.map(({ key, label, ids }) => {
+  return SIMPLE_INDICATORS.map(({ key, group, label, ids }) => {
     const v = avg(ids.map(id => effective(c, id, ref)));
     const band = describeIndicator(ids[0], v);
     const delta = last ? avg(ids.map(id => last.indicatorsAfter[id] - last.indicatorsBefore[id])) : null;
-    return { key, label, word: band.word, tone: band.tone, delta, goodWhenUp: INDICATORS[ids[0]].goodDirection >= 0 };
+    return { key, group, label, word: band.word, tone: band.tone, delta, goodWhenUp: INDICATORS[ids[0]].goodDirection >= 0 };
   });
 }
 

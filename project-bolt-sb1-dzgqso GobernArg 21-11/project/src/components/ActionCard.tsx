@@ -17,6 +17,7 @@ import { UI_CATEGORY_STYLES } from '@/data/categoryStyles';
 import { actionImage } from '@/lib/liteImages';
 import { detailed } from '@/lite/config';
 import { actionFiscalCommitments } from '@/lib/actionCommitments';
+import { calendarText, type CalendarId } from '@/lib/calendar';
 import { simpleEffects } from '@/lib/simpleView';
 import { ACTORS, SENSITIVITIES, type ActorId } from '@/data/causal';
 import { ACTION_PLAYER_NOTES, ACTION_RISK_TEXT } from '@/data/causal/playerTexts';
@@ -39,6 +40,7 @@ interface ActionCardProps {
   disabled: boolean;
   /** Descuento vigente del perfil sobre la deuda de préstamos. */
   loanDiscount?: number;
+  calendar?: CalendarId;
 }
 
 const TAG_LABEL: Record<string, string> = {
@@ -83,7 +85,7 @@ const SIMPLE_XL = {
   image: 'lg:w-full lg:h-[120px] lg:mb-3',
   effects: 'lg:border-l-0 lg:border-t lg:pt-2.5 lg:pl-0',
   impact: 'lg:flex-row lg:flex-wrap lg:items-center lg:gap-x-3 lg:pt-1',
-  action: 'lg:col-span-1 lg:flex-col lg:items-stretch',
+  action: 'lg:col-span-1 lg:flex-row lg:items-center',
 };
 
 /** Modo simple: hasta 3 efectos con flecha y "ahora / más adelante", sin números. */
@@ -105,7 +107,7 @@ function SimpleEffectList({ actionId }: { actionId: string }) {
   );
 }
 
-export function ActionCard({ availability, requestedBy, onSelect, isSelected, disabled, loanDiscount = 0 }: ActionCardProps) {
+export function ActionCard({ availability, requestedBy, onSelect, isSelected, disabled, loanDiscount = 0, calendar = 'legacy-16' }: ActionCardProps) {
   const { action, pa, caja, reasons, available, needsDnu, repetitionWarning } = availability;
   const style = UI_CATEGORY_STYLES[action.category];
   const blocked = !isSelected && (!available || disabled);
@@ -115,10 +117,10 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
   const { winners, losers } = affectedActors(action.id, SENSITIVITIES as Record<ActorId, { target: string; s: number }[]>);
   const costLabel = caja < 0 ? `−${fmtBudget(Math.abs(caja))}` : caja > 0 ? `+${fmtBudget(caja)}` : 'Sin costo';
   const requested = requestedBy.length > 0;
-  const commitments = actionFiscalCommitments(action.id, { loanDiscount });
+  const commitments = actionFiscalCommitments(action.id, { loanDiscount, calendar });
   // Nota para el jugador (glosario): la nota de diseño usaba siglas del motor.
-  const playerNote = ACTION_PLAYER_NOTES[action.id] ?? action.strategic;
-  const riskText = ACTION_RISK_TEXT[action.id] ?? action.risksText;
+  const playerNote = calendarText(ACTION_PLAYER_NOTES[action.id] ?? action.strategic ?? '', calendar);
+  const riskText = calendarText(ACTION_RISK_TEXT[action.id] ?? action.risksText ?? '', calendar);
   const [showDetail, setShowDetail] = useState(false);
   // Ilustración de la política (src/lite/imageMap.ts); no todas tienen.
   const illustration = actionImage(action.id);
@@ -185,19 +187,10 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
   const effects = timeline.slice(0, 2).flatMap(t => t.chips.slice(0, 3).map(c => ({ ...c, when: t.when }))).slice(0, 4);
 
   const card = (
-    <div
-      role="button"
-      tabIndex={blocked ? -1 : 0}
-      aria-pressed={isSelected}
-      aria-disabled={blocked}
+    <article
+      aria-label={action.name}
       onClick={() => !blocked && onSelect()}
-      onKeyDown={(e) => {
-        if ((e.key === 'Enter' || e.key === ' ') && !blocked) {
-          e.preventDefault();
-          onSelect();
-        }
-      }}
-      className={`group relative grid grid-cols-1 md:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)_96px] ${simple ? SIMPLE_XL.card : 'xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)_96px_104px]'} gap-3 md:gap-3.5 md:items-center rounded-[10px] border bg-surface pl-5 pr-3.5 py-4 transition-all duration-150 ${
+      className={`group relative self-start grid grid-cols-1 md:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)_96px] ${simple ? SIMPLE_XL.card : 'xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)_96px_104px]'} gap-3 md:gap-3.5 md:items-center rounded-[10px] border bg-surface pl-5 pr-3.5 py-3 transition-all duration-150 ${
         isSelected
           ? 'border-sala-blue/60 bg-[rgb(250_253_255)] shadow-[0_7px_22px_rgb(36_107_206/0.1)] outline outline-2 outline-sala-cyan/30'
           : blocked
@@ -247,7 +240,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
           )}
         </div>
         <h3 className="text-[16px] font-bold text-ink leading-snug mt-2">{action.name}</h3>
-        <p className="text-[12px] text-sala-muted leading-snug mt-1">{action.description}</p>
+        <p className="text-[12px] text-sala-muted leading-snug mt-1">{calendarText(action.description, calendar)}</p>
         </div>
         </div>
         {COALITION_ACTIONS[action.id] && (
@@ -314,7 +307,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
       </div>
 
       {/* Acción */}
-      <div className={`flex md:col-span-3 xl:col-span-1 items-center gap-2 xl:flex-col xl:items-stretch ${simple ? SIMPLE_XL.action : ''}`}>
+      <div className={`flex md:col-span-3 xl:col-span-1 items-center gap-2 ${simple ? SIMPLE_XL.action : 'xl:flex-col xl:items-stretch'}`}>
         <button
             type="button"
             onClick={e => { e.stopPropagation(); setShowDetail(true); }}
@@ -324,20 +317,20 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
             Ayuda
           </button>
         {isSelected ? (
-          <span className="flex-1 inline-flex items-center justify-center gap-1 h-10 rounded-md bg-sala-navy text-white text-[12px] font-bold">
-            <Check size={14} /> Seleccionada
-          </span>
+          <button type="button" aria-pressed="true" aria-label={`Quitar ${action.name} del turno`} onClick={e => { e.stopPropagation(); onSelect(); }} className="flex-1 inline-flex items-center justify-center gap-1 h-11 rounded-md bg-sala-navy text-white text-[12px] font-bold">
+            <Check size={14} /> Seleccionada · quitar
+          </button>
         ) : !blocked ? (
-          <span className="flex-1 inline-flex items-center justify-center gap-1 h-10 rounded-md border border-[rgb(184_201_218)] bg-surface text-[12px] font-bold text-ink transition-colors group-hover:bg-sala-navy group-hover:text-white group-hover:border-sala-navy">
+          <button type="button" aria-pressed="false" aria-label={`Agregar ${action.name} al turno`} onClick={e => { e.stopPropagation(); onSelect(); }} className="flex-1 inline-flex items-center justify-center gap-1 h-11 rounded-md border border-[rgb(184_201_218)] bg-surface text-[12px] font-bold text-ink transition-colors group-hover:bg-sala-navy group-hover:text-white group-hover:border-sala-navy">
             Agregar al turno <ChevronRight size={14} />
-          </span>
+          </button>
         ) : (
           <span className="flex-1 text-[11px] text-sala-bad leading-snug xl:text-center" title={blockReason ?? ''}>
             {blockReason}
           </span>
         )}
       </div>
-    </div>
+    </article>
   );
 
   // Ayuda explícita con foco, teclado y pantalla táctil.
@@ -360,7 +353,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
             }
           >
             {illustrationImg('w-full aspect-[2/1] rounded-lg mb-3')}
-            <p className="text-[14px] text-ink/80 mb-3">{action.description}</p>
+            <p className="text-[14px] text-ink/80 mb-3">{calendarText(action.description, calendar)}</p>
             {details}
           </Sheet>
         )}

@@ -63,7 +63,7 @@ describe('Prueba de humo de la interfaz', { timeout: 30000 }, () => {
     expect(screen.getByText('Tu primer turno')).toBeTruthy();
 
     await click(screen.getByRole('button', { name: /Finalizar turno/ }));
-    const resumen = await screen.findByText('Resumen del trimestre');
+    const resumen = await screen.findByText('Resumen del cuatrimestre');
     expect(resumen).toBeTruthy();
     expect(screen.queryByText('Algo salió mal')).toBeNull();
 

@@ -40,10 +40,10 @@ describe('modo simple', () => {
     expect(LITE_FEATURES.modoDetallado).toBe(false);
   });
 
-  it('estado del país: los 7 de la B en palabras; con detalle, los 15 indicadores', () => {
+  it('estado del país: ocho indicadores en dos grupos; con detalle, los 15 indicadores', () => {
     render(<CountryPanel gameState={game()} />);
-    // Los mismos 7 que la B Lite, en el mismo orden.
-    expect(simpleIndicators(game()).map(i => i.label)).toEqual(['Precios', 'Empleo', 'Bolsillo', 'Obras', 'Educación', 'Salud', 'Seguridad']);
+    // Indicadores del motor, en Economía y Vida cotidiana.
+    expect(simpleIndicators(game()).map(i => i.label)).toEqual(['Precios', 'Actividad', 'Bolsillo', 'Divisas', 'Obras', 'Educación', 'Salud', 'Seguridad']);
     for (const name of ['Bolsillo', 'Salud', 'Seguridad']) expect(screen.getByText(name)).toBeTruthy();
     for (const name of ['Cuentas públicas', 'Dólar y reservas', 'Conflictividad', 'Ciencia e innovación']) expect(screen.queryByText(name)).toBeNull();
     expect(screen.queryByText(/indicadores sin alerta/)).toBeNull();
@@ -55,13 +55,13 @@ describe('modo simple', () => {
     expect(screen.getByText('Ciencia e innovación')).toBeTruthy();
   });
 
-  it('franja de arriba: voto en % y caja, más los 7 del país; sin aprobación ni gobernabilidad', () => {
+  it('franja de arriba: voto en % y caja, más ocho indicadores agrupados; sin aprobación ni gobernabilidad', () => {
     render(<MetricsRow gameState={game()} />);
     const state = game();
     expect(screen.getByText(`${Math.round(state.causal.political.iv)}%`)).toBeTruthy();
     expect(screen.getByText(/meta 45%/)).toBeTruthy();
     expect(screen.getByText('Caja')).toBeTruthy();
-    for (const name of ['Precios', 'Empleo', 'Bolsillo', 'Obras', 'Educación', 'Salud', 'Seguridad']) expect(screen.getByText(name)).toBeTruthy();
+    for (const name of ['Precios', 'Actividad', 'Bolsillo', 'Divisas', 'Obras', 'Educación', 'Salud', 'Seguridad']) expect(screen.getByText(name)).toBeTruthy();
     for (const name of ['Aprobación', 'Gobernabilidad', 'Conflictividad']) expect(screen.queryByText(name)).toBeNull();
     cleanup();
     LITE_FEATURES.modoDetallado = true;

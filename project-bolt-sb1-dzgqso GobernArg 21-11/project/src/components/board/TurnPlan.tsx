@@ -5,6 +5,8 @@ import { projectedCloseCaja } from '@/engine/causal';
 import { fmtBudget, fmtBudgetDelta } from '@/lib/format';
 import { detailed } from '@/lite/config';
 import { PendingPolicies } from './PendingPolicies';
+import { KnownDeadlines } from './KnownDeadlines';
+import { calendarFor } from '@/lib/calendar';
 
 interface TurnPlanProps {
   gameState: GameState;
@@ -23,6 +25,7 @@ interface TurnPlanProps {
  */
 export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, index, compact = false }: TurnPlanProps) {
   const c = gameState.causal;
+  const { periodLabel } = calendarFor(gameState);
   const selected = getPolicyAvailability(gameState).filter(av => gameState.selectedActions.includes(av.action.id));
   const projection = projectedCloseCaja(c, gameState.selectedActions.map(actionId => ({ actionId })));
   const left = gameState.actions;
@@ -30,8 +33,8 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
   const simple = !detailed();
   // Avisos que antes sólo estaban en Notificaciones: un trimestre más así y la partida termina.
   const critical = [
-    c.hyperStreak === 1 && 'Al borde de la hiperinflación: otro trimestre así y el gobierno cae.',
-    c.govCrisisStreak === 1 && 'Crisis de gobernabilidad: si no se recupera el próximo trimestre, avanza el juicio político.',
+    c.hyperStreak === 1 && `Al borde de la hiperinflación: otro ${periodLabel} así y el gobierno cae.`,
+    c.govCrisisStreak === 1 && `Crisis de gobernabilidad: si no se recupera el próximo ${periodLabel}, avanza el juicio político.`,
   ].filter((t): t is string => !!t);
 
   const endTurnButton = (cls: string) => (
@@ -44,7 +47,7 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
       data-no-restore-focus
       className={`sr-btn-lime justify-between ${cls}`}
     >
-      Cerrar el trimestre
+      Cerrar el {periodLabel}
       <ChevronRight size={17} />
     </button>
   );
@@ -83,7 +86,8 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
           </span>
           {endTurnButton('ml-auto px-4 h-10 text-[12px] min-w-[200px]')}
         </div>
-        <p className="text-[11px] text-sala-muted">No incluye efectos diferidos ni eventos.</p>
+        <p className="text-[11px] text-sala-muted">Margen fiscal estimado: <span className="font-mono">{fmtBudgetDelta(projection.structural)}</span> por turno. No incluye efectos diferidos ni eventos.</p>
+        <KnownDeadlines state={c} />
         <PendingPolicies state={c} />
         {projection.caja < 0 && (
           <p className="flex items-center gap-1.5 text-[11px] font-semibold text-sala-bad">
@@ -164,8 +168,9 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
         </div>
       </div>
       )}
-      <p className="px-4 pb-3 text-[11px] text-sala-muted">Estimación sin efectos diferidos ni eventos.</p>
-      <div className="px-4 pb-3"><PendingPolicies state={c} /></div>
+      <p className="px-4 pb-3 text-[11px] text-sala-muted">Margen fiscal estimado: <span className="font-mono">{fmtBudgetDelta(projection.structural)}</span> por turno. Estimación sin efectos diferidos ni eventos.</p>
+      <div className="px-4 pb-3 space-y-2"><KnownDeadlines state={c} />
+        <PendingPolicies state={c} /></div>
       {projection.caja < 0 && (
         <p className="mx-4 mb-3 flex items-start gap-1.5 rounded-md bg-red-500/10 px-2.5 py-2 text-[11px] font-semibold text-sala-bad">
           <AlertTriangle size={13} className="mt-px flex-shrink-0" />

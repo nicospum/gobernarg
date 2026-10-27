@@ -1,15 +1,20 @@
 import { ModalHeader } from './ModalHeader';
 import { useDialog } from '@/lib/useDialog';
+import type { GameState } from '@/types/game';
 import { useTutorialSteps } from '@/lib/tutorial';
 
 /** Guía "Cómo se juega", disponible siempre desde el menú. */
-export function HowToPlayModal({ actions, onClose }: { actions: number; onClose: () => void }) {
+export function HowToPlayModal({ actions, gameState, onClose }: { actions: number; gameState?: GameState; onClose: () => void }) {
   const dialogRef = useDialog<HTMLDivElement>(onClose);
-  const steps = useTutorialSteps(actions);
+  const steps = useTutorialSteps(actions, gameState);
   const more = [
     {
+      title: 'Economía y vida cotidiana',
+      text: 'Precios resume la inflación; Actividad, la producción y el empleo; Bolsillo, el poder de compra; Divisas, el dólar y las reservas. Obras, educación, salud y seguridad muestran la vida cotidiana. Las flechas comparan con el último cierre.',
+    },
+    {
       title: 'Los indicadores',
-      text: 'Aprobación es cuán conforme está la gente; Gobernabilidad, tu capacidad de gobernar (si queda debajo del umbral de crisis dos trimestres, hay juicio político); Conflictividad, la calle; Intención de voto, lo que decide las elecciones.',
+      text: 'Aprobación es cuán conforme está la gente; Gobernabilidad, tu capacidad de gobernar (si queda debajo del umbral de crisis dos cierres, hay juicio político); Conflictividad, la calle; Intención de voto, lo que decide las elecciones.',
     },
     {
       title: 'La caja',
@@ -21,7 +26,7 @@ export function HowToPlayModal({ actions, onClose }: { actions: number; onClose:
     },
     {
       title: 'Guardado',
-      text: 'La partida se guarda sola en este navegador. Si cerrás la pestaña, en la portada aparece "Continuar partida".',
+      text: 'La partida se guarda en este navegador. Si cerrás la pestaña, en la portada aparece "Continuar partida". Podés descargar un respaldo desde Guardado; si falla el autoguardado, se avisa en pantalla.',
     },
   ];
   return (
