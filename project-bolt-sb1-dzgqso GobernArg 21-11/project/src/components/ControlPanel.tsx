@@ -1,3 +1,4 @@
+import { ManagementActivityNotice } from './ManagementActivityNotice';
 import { useMemo, useState } from 'react';
 import { Eye, EyeOff, LayoutGrid, Scale, Users } from 'lucide-react';
 import { GameState } from '../types/game';
@@ -168,6 +169,8 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction, onOpenN
         {due.length > 0 && <button type="button" onClick={onOpenNotebook} className="min-h-9 text-caution underline underline-offset-2">{due.length} compromiso{due.length > 1 ? 's' : ''} vence{due.length > 1 ? 'n' : ''} entre este trimestre y el próximo · Ver cuaderno</button>}
       </div>
       {preparations && <p className="mx-5 mb-3 text-[12px] text-ink/70">Estas medidas habilitan herramientas existentes. Su efecto puede requerir cerrar el turno antes de usarlas.</p>}
+
+      <div className="mx-5 mb-2"><ManagementActivityNotice gameState={gameState} /></div>
 
       {/* Grid de tarjetas */}
       <div className="flex-1 overflow-y-auto px-5 pb-5 max-h-[min(760px,calc(100vh-190px))]">

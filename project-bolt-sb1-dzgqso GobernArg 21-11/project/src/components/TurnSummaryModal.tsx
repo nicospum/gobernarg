@@ -1,3 +1,4 @@
+import { ManagementActivityOutcome } from './ManagementActivityNotice';
 import {
   X,
   Wallet,
@@ -190,6 +191,8 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
               <p className="mt-2 text-[12px] text-ink/75">{upcoming.length > 3 ? `${upcoming.length - 3} más. ` : ''}Consultá el seguimiento en Efectos en camino o en el Cuaderno.</p>
             </section>
           )}
+
+          <ManagementActivityOutcome record={record} />
 
           {/* Eventos y relaciones */}
           <section className="bg-surface p-4 rounded-lg border border-ink/8">

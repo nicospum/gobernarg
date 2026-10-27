@@ -28,7 +28,7 @@ function useSteps(actions: number) {
   return [
     {
       title: 'Elegí qué hacer',
-      text: `Tenés ${actions} acciones por turno. Cada política cuesta acciones y plata de la caja: sumalas a tu agenda desde Acciones políticas.`,
+      text: `Tenés ${actions} acciones por turno. Cada política cuesta acciones y plata de la caja: sumalas a tu agenda desde Acciones políticas. Podés dejar una acción libre; la inacción repetida desgasta al gobierno.`,
     },
     {
       title: 'Mirá antes de decidir',
