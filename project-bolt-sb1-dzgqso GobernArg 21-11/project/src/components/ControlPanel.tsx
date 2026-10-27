@@ -1,3 +1,4 @@
+import { ManagementActivityNotice } from './ManagementActivityNotice';
 import { useMemo, useState } from 'react';
 import { Eye, EyeOff, LockKeyhole, Sparkles, Users } from 'lucide-react';
 import { GameState } from '../types/game';
@@ -146,6 +147,8 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction, index, 
           </button>
         </div>
       )}
+
+      <div className="mt-2"><ManagementActivityNotice gameState={gameState} /></div>
 
       {/* Lista de acciones */}
       <div id="politicas-disponibles" className={`mt-2.5 ${scroll ? 'lg:overflow-y-auto lg:max-h-[calc(100vh-150px)] lg:pr-1 -mr-1' : ''}`}>
