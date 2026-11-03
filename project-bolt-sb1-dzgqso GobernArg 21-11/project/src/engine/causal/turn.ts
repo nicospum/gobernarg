@@ -18,6 +18,7 @@ import { COALITION_ACTIONS, expandCoalition, updateInterna } from './interna';
 import { Rng } from './rng';
 import { previewManagementActivity, type ManagementActivityBudget } from './managementActivity';
 import { applyStructuralRules } from './rules';
+import { crisisQuarterRules, dollarizedShortfall, executeExtraordinaryAtClose, noteCrisisBets } from './crisis';
 import type { CausalState, PoliticalState, TurnActionRecord, TurnRecord } from './types';
 
 export interface CloseResult {
@@ -81,9 +82,14 @@ export function closeTurn(input: CausalState, selections: Selection[], options: 
   // D-10: caja negativa en el cierre anterior → emisión forzada.
   const sels: Selection[] = [...selections];
   if (state.forcedEmission) {
-    sels.unshift({ actionId: 'emitir_dinero', forced: true });
     state.forcedEmission = false;
-    notes.push('Caja negativa: el Tesoro emitió para cubrir el déficit (emisión forzada).');
+    if (flagValue(state, 'dolarizada', c)) {
+      // Economía dolarizada: no hay emisión posible; el faltante se paga con atraso de pagos.
+      dollarizedShortfall(state, notes);
+    } else {
+      sels.unshift({ actionId: 'emitir_dinero', forced: true });
+      notes.push('Caja negativa: el Tesoro emitió para cubrir el déficit (emisión forzada).');
+    }
   }
 
   // Pacto social: emitir o devaluar durante su vigencia lo rompe (04 pacto_social).
@@ -113,7 +119,9 @@ export function closeTurn(input: CausalState, selections: Selection[], options: 
     else if (action.isFinancing) flows.financiamiento += caja;
     else flows.ingresosAcciones += caja;
     state.executions.push({ actionId: sel.actionId, turn: c, forced: sel.forced });
-    const scheduled = scheduleActionEffects(state, sel.actionId, c);
+    const scheduled = action.extraordinary
+      ? executeExtraordinaryAtClose(state, sel.actionId, c, rng, notes)
+      : scheduleActionEffects(state, sel.actionId, c);
     if (COALITION_ACTIONS[sel.actionId]) expandCoalition(state, COALITION_ACTIONS[sel.actionId]);
     actions.push({ actionId: sel.actionId, caja, scheduled: scheduled.map(s => s.effectId), forced: sel.forced });
   }
@@ -134,8 +142,14 @@ export function closeTurn(input: CausalState, selections: Selection[], options: 
   const fiscal = closeFiscal(state, c, cajaAntes, flows, acc.cajaEffects, acc.financingEffects);
   if (state.caja < 0) state.forcedEmission = true;
 
-  // T.6 — reglas estructurales.
+  // T.6 — reglas estructurales (y la dinámica trimestral de la crisis histórica).
+  const inflBefore = effective(state, 'INFL', c);
   const rules = applyStructuralRules(state, c);
+  if (state.crisis) {
+    rules.push(...crisisQuarterRules(state, c, notes));
+    noteCrisisBets(state, acc.applied, notes);
+    if (state.crisis.kind === 'hiper') state.crisis.aceleracion = Math.round((effective(state, 'INFL', c) - inflBefore) * 10) / 10;
+  }
 
   // T.7 — satisfacción de actores.
   updateSatisfaction(state, c);

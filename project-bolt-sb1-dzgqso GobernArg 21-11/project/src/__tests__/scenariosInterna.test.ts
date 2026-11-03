@@ -48,25 +48,35 @@ describe('Escenarios', () => {
     expect(s.base.INFL).toBeLessThan(30);
   });
 
-  it('corralito: default sin crédito y sin intereses durante 8 turnos', () => {
-    let s = createCausalState({ scenarioId: 'corralito' });
-    expect(debtService(s)).toBe(0);
-    const loan = getAvailability(s, 'prestamo_internacional', [], 4);
-    expect(loan.available).toBe(false);
-    expect(loan.reasons.join(' ')).toMatch(/default/i);
-    for (let i = 0; i < 8; i++) s = step(s);
-    expect(debtService(s)).toBeGreaterThan(0);
-    expect(getAvailability(s, 'prestamo_internacional', [], 4).reasons.join(' ')).not.toMatch(/default/i);
+  it('corralito arranca pagando la deuda; la hiper arranca en default y el default no vence por tiempo', () => {
+    const corralito = createCausalState({ scenarioId: 'corralito' });
+    expect(debtService(corralito)).toBeGreaterThan(0);
+    // El préstamo internacional lo reemplaza la medida extraordinaria "Pedir un rescate al FMI".
+    expect(getAvailability(corralito, 'prestamo_internacional', [], 4).visible).toBe(false);
+    let hiper = createCausalState({ scenarioId: 'pais_en_llamas' });
+    expect(debtService(hiper)).toBe(0);
+    for (let i = 0; i < 8; i++) hiper = step(hiper);
+    expect(debtService(hiper)).toBe(0);
+    expect(hiper.flags.default_deuda.end).toBeNull();
   });
 
-  it('las crisis traen ley de emergencia (gobernabilidad extra) y rebote de actividad', () => {
+  it('las crisis ya no traen margen automático ni rebote gratis: el rebote es condicional', () => {
     const sc = getScenario('corralito');
-    let s = createCausalState({ scenarioId: 'corralito' });
-    expect(s.bonuses.some(b => b.target === 'GOB' && b.value === sc.emergencia!.gob)).toBe(true);
-    const actv0 = s.base.ACTV;
-    s = step(s);
-    expect(s.records[0].applied.some(a => a.effectId?.startsWith('escenario.corralito'))).toBe(true);
-    expect(s.base.ACTV).not.toBe(actv0);
+    expect(sc.emergencia).toBeUndefined();
+    expect(sc.impulsos?.[0].condition).toContain('not FLAG(convertibilidad)');
+    const s = createCausalState({ scenarioId: 'corralito' });
+    expect(s.bonuses.some(b => b.target === 'GOB')).toBe(false);
+    // Con convertibilidad vigente el rebote no aplica aunque llegue su turno.
+    let a = s;
+    for (let i = 0; i < 3; i++) a = step(a);
+    expect(a.records.flatMap(r => r.applied).some(x => x.effectId?.startsWith('escenario.corralito'))).toBe(false);
+    // Con nuevo régimen y precios contenidos, aplica.
+    const b = structuredClone(s);
+    b.flags.convertibilidad = { value: 0, start: 1, end: null, source: 'test' };
+    b.base.INFL = 30;
+    let c = b;
+    for (let i = 0; i < 3; i++) c = step(c);
+    expect(c.records.flatMap(r => r.applied).some(x => x.effectId?.startsWith('escenario.corralito'))).toBe(true);
   });
 
   it('dificultad: Fácil, Normal y Argentina abren un escenario cada una desde el inicio', () => {

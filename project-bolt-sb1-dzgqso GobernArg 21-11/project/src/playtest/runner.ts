@@ -28,6 +28,8 @@ export interface TurnLog {
   term: number;
   year: number;
   quarter: number;
+  /** Subronda de la emergencia (escenarios históricos); ausente en los turnos normales. */
+  round?: number;
   actions: string[];
   interactions: string[];
   events: string[];
@@ -70,6 +72,8 @@ export interface GameOutcome {
   agreementsSigned: number;
   agreementsBroken: number;
   channelEvents: number;
+  /** Subrondas de emergencia jugadas (escenarios históricos). */
+  rounds?: number;
   log: TurnLog[];
 }
 
@@ -166,10 +170,47 @@ export function playGame(bot: Bot, seed: number, opts: PlayOptions = {}): GameOu
       }
 
       const c = state.causal;
-      const record = c.records[c.records.length - 1];
-      outcome.channelEvents += record.events.length;
       const actors = {} as TurnLog['actors'];
       for (const a of ACTOR_IDS) actors[a] = { sat: Math.round(c.actors[a].sat), rel: c.actors[a].rel === null ? null : Math.round(c.actors[a].rel!) };
+      const crisisRound = result.summary.crisisRound;
+      if (crisisRound) {
+        // Subronda de la emergencia (escenarios históricos): no hay registro trimestral.
+        const round = c.crisis?.log[c.crisis.log.length - 1];
+        outcome.rounds = (outcome.rounds ?? 0) + 1;
+        log.push({
+          turn: c.turn,
+          term: gameStateTerm(result.state),
+          year: result.summary.year,
+          quarter: result.summary.quarter,
+          round: crisisRound.round,
+          actions: round?.measure ? [CAUSAL_ACTIONS_BY_ID[round.measure]?.name ?? round.measure] : [],
+          interactions,
+          events: round?.lines ?? [],
+          indicatorsBefore: before,
+          indicatorsAfter: snapshotIndicators(state),
+          causes: [],
+          channels: [],
+          pendingEffects: c.agenda.filter(e => e.start >= c.turn).length,
+          actors,
+          apro: round0(c.political.apro),
+          iv: round0(c.political.iv),
+          gob: round0(c.political.gob),
+          leg: round0(c.political.leg),
+          imagen: round0(c.political.imagen),
+          caja: Math.round(c.caja),
+          deuda: Math.round(c.deuda),
+          gastoCorr: Math.round(c.gastoCorr),
+          resultado: 0,
+          financiamiento: 0,
+          pa: paUsed,
+          notes: round?.lines ?? [],
+        });
+        outcome.minGob = Math.min(outcome.minGob, c.political.gob);
+        outcome.maxInfl = Math.max(outcome.maxInfl, effective(c, 'INFL', viewRef(c)));
+        continue;
+      }
+      const record = c.records[c.records.length - 1];
+      outcome.channelEvents += record.events.length;
       log.push({
         turn: record.turn,
         term: gameStateTerm(result.state),
@@ -224,3 +265,5 @@ function gameStateTerm(s: GameState): number {
 function round(v: number): number {
   return Math.round(v * 10) / 10;
 }
+
+const round0 = round;

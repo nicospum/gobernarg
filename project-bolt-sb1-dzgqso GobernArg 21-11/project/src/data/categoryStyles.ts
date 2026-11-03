@@ -70,6 +70,7 @@ export const UI_CATEGORY_STYLES: Record<UiCategory, CategoryStyle> = {
   'Producción y trabajo': { color: 'text-amber-400', bgColor: 'bg-amber-400/15', borderColor: 'border-amber-400/40', imageSrc: IMAGES.icons.categories.economyGrowth, label: 'Producción' },
   'Social y salud': { ...CATEGORY_STYLES.social, label: 'Social' },
   'Educación, ciencia y cultura': { ...CATEGORY_STYLES.educacion, label: 'Educación' },
+  'Emergencia': { color: 'text-red-700', bgColor: 'bg-red-500/15', borderColor: 'border-red-500/40', imageSrc: IMAGES.icons.categories.government, label: 'Emergencia' },
   'Infraestructura': { ...CATEGORY_STYLES.infraestructura, label: 'Obras' },
   'Seguridad y justicia': { ...CATEGORY_STYLES.seguridad, label: 'Seguridad' },
   'Instituciones y ambiente': { color: 'text-teal-400', bgColor: 'bg-teal-400/15', borderColor: 'border-teal-400/40', imageSrc: IMAGES.icons.categories.government, label: 'Instituciones' },

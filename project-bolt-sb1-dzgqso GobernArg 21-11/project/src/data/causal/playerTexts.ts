@@ -3,6 +3,8 @@
  * notas de diseño de las acciones y el "Poder" de los actores, que usaban
  * siglas del motor. Mismo contenido, en lenguaje de jugador y con voseo.
  */
+import { CRISIS_ACTION_ROWS, CRISIS_META } from './crisisActions';
+
 export const ACTION_PLAYER_NOTES: Record<string, string> = {
   // Economía y moneda
   emitir_dinero:
@@ -176,3 +178,11 @@ export const ACTION_RISK_TEXT: Record<string, string> = {
   emitir_dinero: 'Hiperinflación: si la inflación queda desbocada dos turnos seguidos, se desata una crisis que puede costarte el gobierno.',
   reduccion_gasto: 'Conflicto social si la protección social ya está baja.',
 };
+
+// Medidas extraordinarias de los escenarios históricos: la nota larga y el riesgo
+// viven en crisisActions.ts (una sola fuente); acá se registran para el glosario.
+for (const row of CRISIS_ACTION_ROWS) {
+  ACTION_PLAYER_NOTES[row.id] ??= row.strategic || row.description || row.name || row.id;
+  const risk = CRISIS_META[row.id]?.risk ?? row.risksText;
+  if (risk) ACTION_RISK_TEXT[row.id] ??= risk;
+}

@@ -31,6 +31,30 @@ const FLAG_LABELS: Record<string, string> = {
   agenda_int: 'Agenda internacional activa',
   riesgo_judicial: 'Riesgo judicial por DNU',
   crisis_energetica: 'Emergencia energética',
+  // Escenarios históricos
+  convertibilidad: 'Convertibilidad vigente',
+  regimen_flotante: 'Peso flotante',
+  dolarizada: 'Economía dolarizada',
+  corralito: 'Corralito',
+  corralon: 'Corralón',
+  corrida: 'Corrida bancaria',
+  bancos_al_limite: 'Bancos al límite',
+  bancos_estables: 'Bancos estables',
+  pesificacion: 'Contratos pesificados',
+  default_deuda: 'Default de la deuda',
+  deuda_renegociada: 'Deuda renegociada',
+  cuasimonedas: 'Cuasimonedas en circulación',
+  ley_emergencia: 'Ley de emergencia',
+  estado_de_sitio: 'Estado de sitio',
+  congelamiento: 'Precios y salarios congelados',
+  nueva_moneda: 'Moneda nueva',
+  transicion: 'Transición acordada',
+  apertura_total: 'Economía abierta',
+  privatizacion_total: 'Todo privatizado',
+  reforma_constitucional: 'Constitución reformada',
+  escenario_crisis: 'Escenario histórico',
+  crisis_corralito: 'Corralito 2001',
+  crisis_hiper: 'Hiper 1989',
 };
 
 export function targetLabel(target: string): string {
@@ -55,6 +79,7 @@ export function targetLabel(target: string): string {
     case 'LEG': return 'Apoyo legislativo';
     case 'GOB': return 'Gobernabilidad';
     case 'imagen': return 'Imagen';
+    case 'IMAGEN': return 'Imagen';
     default: return target;
   }
 }

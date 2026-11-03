@@ -206,7 +206,10 @@ describe('Integración de caída y persistencia', () => {
   });
 
   it('los históricos no registran ni aplican la nueva regla', () => {
-    const s = createNewGame({ scenarioId: 'corralito', archetype: 'politico', governorName: 'Histórico', seed: 1 });
+    let s = createNewGame({ scenarioId: 'corralito', archetype: 'politico', governorName: 'Histórico', seed: 1 });
+    // Las tres subrondas de la emergencia no son turnos; después viene el primer cierre trimestral.
+    for (let i = 0; i < 3; i++) s = processEndTurn(s).state;
+    expect(s.causal.crisis?.phase).toBe('gestion');
     const result = processEndTurn(s).state;
     expect(result.causal.calendar).toBe('legacy-16');
     expect(result.causal.managementActivity).toBeUndefined();

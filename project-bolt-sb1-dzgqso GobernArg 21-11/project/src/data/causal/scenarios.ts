@@ -20,6 +20,39 @@ import type { ActorId, IndicatorId } from './index';
  */
 export type ScenarioDifficulty = 'Exploración' | 'Normal' | 'Difícil' | 'Muy difícil';
 
+/** Meta visible de un escenario histórico (se evalúa con los mismos requisitos que las metas de gestión). */
+export interface ScenarioGoalDef {
+  id: string;
+  title: string;
+  description: string;
+  indicators?: Record<string, { min?: number; max?: number }>;
+  /** Condiciones vigentes del motor: nombre → 1 (debe regir) o 0 (no debe regir). */
+  flags?: Record<string, number>;
+  budget?: number;
+}
+
+/**
+ * Reglas nuevas de un escenario histórico: emergencia por subrondas al
+ * arrancar, medidas extraordinarias y objetivos propios. Solo lo tienen
+ * Corralito e Hiper; las partidas guardadas antes siguen con sus reglas.
+ */
+export interface CrisisScenarioDef {
+  kind: 'corralito' | 'hiper';
+  /** Fecha de inicio (texto) y moneda, para la ficha. */
+  start: string;
+  currency: string;
+  /** Etiquetas de las subrondas de la emergencia y su unidad. */
+  rounds: string[];
+  roundUnit: 'semana' | 'mes';
+  /** Qué está pasando: hechos documentados, en tres líneas. */
+  context: string[];
+  /** Aclaración de historia alternativa. */
+  alternateHistory: string;
+  /** Liquidez bancaria inicial (Corralito). */
+  liquidez?: number;
+  goals: ScenarioGoalDef[];
+}
+
 export interface ScenarioDef {
   id: string;
   name: string;
@@ -53,7 +86,7 @@ export interface ScenarioDef {
    * Inercias del país heredado: cambios por turno durante los primeros turnos
    * (p. ej. rebote por capacidad ociosa después de una crisis).
    */
-  impulsos?: { target: IndicatorId; perTurn: number; turns: number; label: string }[];
+  impulsos?: { target: IndicatorId; perTurn: number; turns: number; label: string; /** Solo aplica en los cierres en que se cumple (DSL). */ condition?: string; /** Empieza a contar desde este cierre (1 = primer cierre). */ from?: number }[];
   /** Condiciones vigentes al inicio: nombre → turnos de duración (null = hasta que se resuelva). */
   flags?: Record<string, number | null>;
   /**
@@ -61,6 +94,7 @@ export interface ScenarioDef {
    * para jugarlo. 0 = disponible desde el inicio.
    */
   reelectionsToUnlock: number;
+  crisis?: CrisisScenarioDef;
 }
 
 export const SCENARIOS: ScenarioDef[] = [
@@ -106,42 +140,93 @@ export const SCENARIOS: ScenarioDef[] = [
   {
     id: 'corralito',
     name: 'Corralito',
-    era: 'Diciembre de 2001',
+    era: '30 de noviembre de 2001',
     difficulty: 'Difícil',
-    description: 'Los depósitos están atrapados, el país está en default y la calle se llenó de cacerolas. No hay crédito: hay que reconstruir con lo que hay.',
-    highlights: ['Default: 8 turnos sin crédito (tampoco se pagan intereses)', 'Desempleo, pobreza y conflicto muy altos', 'Ley de emergencia: el Congreso te da margen los primeros turnos'],
+    description: 'Hoy se fueron 1.800 millones de los bancos en un solo día. La convertibilidad sigue en pie, la recesión lleva tres años y el crédito se cortó. Todavía no hay corralito, ni default, ni devaluación: lo que venga lo decidís vos.',
+    highlights: ['Emergencia de tres semanas: una medida extraordinaria por semana', 'Convertibilidad vigente, reservas flacas y corrida bancaria', 'Desocupación del 18 % y pobreza del 38 %; el Congreso te dio la espalda en octubre'],
     image: { group: 'events', key: 'economicCrisis' },
-    indicators: { INFL: 40, ACTV: 36, PODA: 34, INVC: 38, PRES: 55, SOLV: 18, EXTE: 50, PSOC: 34, SEGU: 36, INST: 38, CONF: 55 },
-    caja: 700,
+    // Hipótesis de diseño calibradas con datos de 2001: IPC -1,5 % anual (deflación),
+    // PIB -4,4 %, desocupación 18,3 % (oct-2001), pobreza 38,3 %. Ver ESCENARIOS-HISTORICOS-LIGHT.md.
+    indicators: { INFL: 12, ACTV: 33, PODA: 35, INVC: 20, PRES: 52, SOLV: 15, EXTE: 20, INFR: 48, EDUC: 48, PSOC: 33, SEGU: 38, CIEN: 45, INST: 40, AMBI: 50, CONF: 60 },
+    caja: 450,
     gastoCorr: 820,
     deuda: 6000,
-    desanclaje: 8,
-    legAdj: 4,
-    imagen: 50,
-    emergencia: { gob: 12, turns: 6 },
-    impulsos: [{ target: 'ACTV', perTurn: 1.8, turns: 8, label: 'Rebote: capacidad ociosa después del derrumbe' }],
-    relDelta: { financiero: -15, sindicatos: -10, org_sociales: -10, oposicion: -10 },
-    flags: { default_deuda: 8 },
+    ingresoMult: 0.9,
+    desanclaje: 2,
+    legAdj: -6,
+    imagen: 25,
+    relDelta: { financiero: -10, sindicatos: -10, org_sociales: -12, oposicion: -10, gobernadores: -8 },
+    // Rebote por capacidad ociosa: solo con nuevo régimen cambiario y precios contenidos, desde el tercer cierre.
+    impulsos: [{ target: 'ACTV', perTurn: 1.2, turns: 8, from: 3, condition: 'not FLAG(convertibilidad) and INFL<55', label: 'Rebote: capacidad ociosa después del derrumbe (con nuevo régimen y precios contenidos)' }],
+    flags: { convertibilidad: null, corrida: null, crisis_corralito: null, escenario_crisis: null },
     reelectionsToUnlock: 1,
+    crisis: {
+      kind: 'corralito',
+      start: '30 de noviembre de 2001',
+      currency: 'peso convertible (1 peso = 1 dólar)',
+      rounds: ['Primera semana de diciembre', 'Mediados de diciembre', 'Fin de año'],
+      roundUnit: 'semana',
+      context: [
+        'El 30 de noviembre de 2001 los bancos perdieron unos 1.800 millones de depósitos en un día (2,5 % del total). La convertibilidad sigue vigente: 1 peso = 1 dólar, y cada peso que sale se paga con reservas.',
+        'La economía cae desde 1998: PIB -4,4 % en 2001, desocupación del 18,3 % y pobreza del 38,3 % (INDEC, octubre de 2001). Los precios bajan (deflación) y no hay crédito.',
+        'El gobierno perdió las legislativas de octubre y no tiene mayoría. El FMI suspendió los desembolsos. Las organizaciones sociales y la clase media están en la calle.',
+      ],
+      alternateHistory: 'Desde acá la historia es alternativa: no hay corralito, default ni devaluación hasta que vos los decidas, y el mandato sigue cuatro años más.',
+      liquidez: 40,
+      goals: [
+        { id: 'meta_corrida', title: 'Contener la corrida', description: 'Los bancos dejan de perder depósitos y vuelven a tener liquidez.', flags: { bancos_estables: 1 } },
+        { id: 'meta_caja', title: 'Pagos esenciales al día', description: 'La caja cierra en positivo: sueldos, jubilaciones y proveedores cobran.', budget: 0 },
+        { id: 'meta_depositos', title: 'Bancos en pie y depósitos libres', description: 'Sin corralito ni corralón, con los bancos estables.', flags: { corralito: 0, corralon: 0, bancos_estables: 1 } },
+        { id: 'meta_deuda', title: 'Deuda al día o renegociada', description: 'Sin default: la deuda se paga o se renegoció con quita.', flags: { default_deuda: 0 } },
+        { id: 'meta_precios', title: 'Precios bajo control', description: 'Si devaluaste, el traslado a precios se contuvo (Precios altos como mucho).', indicators: { INFL: { max: 50 } } },
+        { id: 'meta_calle', title: 'La calle se calma', description: 'Conflictividad por debajo de la zona de riesgo.', indicators: { CONF: { max: 45 } } },
+      ],
+    },
   },
   {
     id: 'pais_en_llamas',
     name: 'País en llamas',
-    era: '1989: la hiperinflación',
+    era: '1 de junio de 1989',
     difficulty: 'Muy difícil',
-    description: 'La inflación está al borde de la hiper, la caja vacía y los saqueos en la tapa de los diarios. El primer año decide todo.',
-    highlights: ['Inflación al borde de la hiper: dos turnos sobre 90 y caés', 'Caja flaca y expectativas desancladas', 'Asumís con apoyo: ley de emergencia y buena imagen, por poco tiempo'],
+    description: 'La hiperinflación está en marcha: los precios subieron 78 % en mayo y siguen acelerando. Perdiste la elección del 14 de mayo, hay saqueos, el Banco Central no tiene reservas y la deuda está en default desde 1988. Hay que frenar la aceleración, que la gente coma y lograr una salida viable.',
+    highlights: ['Emergencia de tres meses: una medida extraordinaria por mes', 'Precios en 96 de 100 y acelerando: dos meses así y caés', 'Austral sin respaldo, caja vacía, default y gobierno en transición'],
     image: { group: 'events', key: 'socialProtest' },
-    indicators: { INFL: 72, ACTV: 40, PODA: 33, INVC: 38, SOLV: 30, EXTE: 38, PSOC: 38, SEGU: 40, INST: 46, CONF: 52 },
-    caja: 900,
-    deuda: 5000,
+    // Hipótesis de diseño calibradas con datos de 1989: IPC mayo 78,5 % mensual (CEPAL),
+    // pobreza GBA 25,9 % (mayo) y 47,3 % (octubre), BCRA sin reservas desde febrero, moratoria desde abril de 1988.
+    indicators: { INFL: 96, ACTV: 36, PODA: 24, INVC: 18, PRES: 45, SOLV: 12, EXTE: 16, INFR: 42, EDUC: 45, PSOC: 30, SEGU: 38, CIEN: 42, INST: 42, AMBI: 50, CONF: 70 },
+    caja: 250,
     gastoCorr: 850,
-    desanclaje: 10,
-    legAdj: 4,
-    imagen: 58,
-    emergencia: { gob: 12, turns: 6 },
-    impulsos: [{ target: 'ACTV', perTurn: 1.6, turns: 8, label: 'Rebote: la economía vuelve a moverse si se calma la inflación' }],
+    deuda: 5000,
+    ingresoMult: 0.85,
+    desanclaje: 30,
+    legAdj: -8,
+    imagen: 22,
+    relDelta: { financiero: -10, sindicatos: -5, industria: -5, org_sociales: -5, oposicion: 5 },
+    // Rebote: la economía vuelve a moverse solo si la inflación se calma.
+    impulsos: [{ target: 'ACTV', perTurn: 1.5, turns: 6, from: 2, condition: 'INFL<60', label: 'Rebote: la economía vuelve a moverse si se calma la inflación' }],
+    flags: { default_deuda: null, estado_de_sitio: 1, crisis_hiper: null, escenario_crisis: null },
     reelectionsToUnlock: 2,
+    crisis: {
+      kind: 'hiper',
+      start: '1 de junio de 1989',
+      currency: 'austral',
+      rounds: ['Junio de 1989', 'Julio de 1989', 'Agosto de 1989'],
+      roundUnit: 'mes',
+      context: [
+        'Los precios subieron 33 % en abril y 78 % en mayo de 1989 (IPC, CEPAL). La gente se saca los australes de encima apenas los cobra y ahorra en dólares.',
+        'El Banco Central dejó de intervenir en febrero por falta de reservas; la deuda externa está en moratoria desde abril de 1988. Hubo saqueos del 24 al 30 de mayo y el estado de sitio rige desde el 29.',
+        'El gobierno perdió la elección del 14 de mayo y debe entregar el poder en diciembre. La pobreza del Gran Buenos Aires pasó del 26 % en mayo al 47 % en octubre.',
+      ],
+      alternateHistory: 'Desde acá la historia es alternativa: en la realidad el gobierno entregó el poder el 8 de julio de 1989. Acá seguís gobernando; si acordás la transición, gobernás con la fuerza que ganó.',
+      goals: [
+        { id: 'meta_frenar', title: 'Frenar la aceleración', description: 'Salir de la emergencia con los precios lejos del colapso (índice 85 o menos).', indicators: { INFL: { max: 85 } } },
+        { id: 'meta_estabilizar', title: 'Estabilizar los precios', description: 'Inflación alta pero contenida (índice 60 o menos).', indicators: { INFL: { max: 60 } } },
+        { id: 'meta_ingresos', title: 'Ingresos básicos sostenidos', description: 'Protección social y bolsillo fuera de la zona crítica.', indicators: { PSOC: { min: 35 }, PODA: { min: 30 } } },
+        { id: 'meta_transicion', title: 'Transición acordada', description: 'Un acuerdo con la fuerza que ganó para gobernar la emergencia.', flags: { transicion: 1 } },
+        { id: 'meta_moneda', title: 'Una moneda que se sostiene', description: 'Moneda nueva en circulación y precios estabilizados.', flags: { nueva_moneda: 1 }, indicators: { INFL: { max: 60 } } },
+        { id: 'meta_deuda', title: 'Deuda renegociada', description: 'Salir del default con una quita.', flags: { default_deuda: 0 } },
+      ],
+    },
   },
 ];
 

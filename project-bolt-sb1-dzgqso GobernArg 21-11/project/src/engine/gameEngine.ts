@@ -2,7 +2,7 @@ import type { GameState, Archetype } from '../types/game';
 import type { CalendarId } from '../lib/calendar';
 import { STARTING_POSITION } from '../data/careerRules';
 import { CAUSAL_ACTIONS_BY_ID, PARAMS, type ActorId } from '../data/causal';
-import { getPresidentialGoals } from '../utils/victoryConditions';
+import { getPresidentialGoals, getScenarioGoals } from '../utils/victoryConditions';
 import { applyArchetypePassives } from './archetypeEngine';
 import { meet, negotiate, poll, signAgreement, type InteractionResult } from './causal';
 import { newCausalForGame, paForTurn, syncLegacy } from './causalBridge';
@@ -34,6 +34,7 @@ export {
 } from './electionEngine';
 
 export { processEndTurn } from './turnProcessor';
+export { processEmergencyRound } from './crisisProcessor';
 
 // ===========================
 // Creación de partida
@@ -118,7 +119,7 @@ export function createNewGame({ archetype, governorName, avatar = '', seed, scen
       { position: STARTING_POSITION, term: 1, startYear: 1, endYear: 1, result: 'victory', type: 'initial', votesPercentage: 50 },
     ],
     governorName,
-    objectives: getPresidentialGoals(),
+    objectives: getScenarioGoals(scenarioId) ?? getPresidentialGoals(),
     causal,
   };
 

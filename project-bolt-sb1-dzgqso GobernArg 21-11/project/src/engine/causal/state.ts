@@ -14,6 +14,7 @@ import { computeApro, recomputePolitical } from './political';
 import { pickDemand } from './relations';
 import { debtService, revenue } from './fiscal';
 import { LEGACY_CALENDAR_ID, type CalendarId } from '../../lib/calendar';
+import { createCrisisState, syncCrisisFlags } from './crisis';
 import type { ActorState, CausalState, Perks } from './types';
 
 export function defaultPerks(): Perks {
@@ -72,6 +73,7 @@ export function createCausalState(opts: CreateOptions = {}): CausalState {
     turn: 1,
     mandateStart: 1,
     calendar: scenario.reelectionsToUnlock > 0 ? LEGACY_CALENDAR_ID : opts.calendar ?? LEGACY_CALENDAR_ID,
+    ...(scenario.crisis ? { crisis: createCrisisState(scenario) } : {}),
     ...(scenario.reelectionsToUnlock === 0 ? { managementActivity: { version: 2, pressure: 0, mandateStart: 1, observedTurns: 0, perfectUse: true, bonusGranted: false } } : {}),
     base,
     expect: { ...base, APRO: 50 },
@@ -125,12 +127,16 @@ export function createCausalState(opts: CreateOptions = {}): CausalState {
   }
 
   (scenario.impulsos ?? []).forEach((imp, i) => {
+    const start = imp.from ?? 1;
     state.agenda.push({
       uid: `escenario.${scenario.id}.${i}`, effectId: `escenario.${scenario.id}.${i}`, actionId: 'escenario', originTurn: 0,
-      target: imp.target, mode: 'DELTA', magnitude: imp.perTurn, start: 1, end: imp.turns, everyTurn: true,
+      target: imp.target, mode: 'DELTA', magnitude: imp.perTurn, start, end: start + imp.turns - 1, everyTurn: true,
+      // Rebote condicional: solo aplica en los cierres en que se cumple (sin terminar el impulso).
+      ...(imp.condition ? { applyCondition: imp.condition, whileCondition: false } : {}),
       appliedTotal: 0, explanation: imp.label,
     });
   });
+  syncCrisisFlags(state);
 
   // SAT inicial = objetivo con los indicadores iniciales (E = valor: sin componente relativo).
   // Primero los actores no políticos (APRO depende de ellos), después APRO y los políticos.

@@ -12,6 +12,7 @@ import { finalizePresidentialCareer } from './electionEngine';
 import { applyArchetypePassives } from './archetypeEngine';
 import { CHANNEL_EVENTS, closeTurn, countExecutions, effective, viewRef, type TurnRecord } from './causal';
 import { paForTurn, selectionsFor, syncLegacy } from './causalBridge';
+import { processEmergencyRound } from './crisisProcessor';
 
 // ===========================
 // Perfil de gestión (narrativo)
@@ -119,6 +120,8 @@ function recordLines(record: TurnRecord): string[] {
 // ===========================
 
 export function processEndTurn(gameState: GameState): TurnResult {
+  // Escenario histórico en emergencia: "cerrar el turno" cierra la subronda (semana o mes).
+  if (gameState.causal.crisis?.phase === 'emergencia' && !gameState.gameOver) return processEmergencyRound(gameState);
   let state: GameState = {
     ...gameState,
     completedActions: [...gameState.completedActions],

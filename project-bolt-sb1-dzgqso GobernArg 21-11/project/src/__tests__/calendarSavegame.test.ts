@@ -108,9 +108,13 @@ describe('Guardados de ambos calendarios sin pérdida', () => {
 
   it('conserva una partida histórica antigua en calendario16 y rechaza forzarla a12', () => {
     const historic = createNewGame({ archetype: 'politico', governorName: 'Histórica', seed: 1, scenarioId: 'corralito' });
+    // Partida anterior a las reglas nuevas: sin estado de crisis, con default a 8 turnos y rebote automático.
     delete historic.causal.calendar;
+    delete historic.causal.crisis;
+    historic.causal.flags = { default_deuda: { value: 1, start: 1, end: 8, source: 'escenario:corralito' } };
     const old = parseSavedGame(JSON.stringify({ v: 1, state: historic, savedAt: '', pendingEvents: [] }));
     expect(old?.state.causal.calendar).toBe('legacy-16');
+    expect(old?.state.causal.crisis).toBeUndefined();
     expect(old?.state.causal.flags.default_deuda.end).toBe(8);
     const invalid = JSON.parse(encodeSavedGame(old!.state));
     invalid.state.causal.calendar = 'light-12';

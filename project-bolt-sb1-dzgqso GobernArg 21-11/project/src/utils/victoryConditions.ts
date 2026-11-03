@@ -1,5 +1,5 @@
 import type { DefeatReason, GameState, Objective } from '../types/game';
-import { isIndicatorId } from '../data/causal';
+import { getScenario, isIndicatorId } from '../data/causal';
 import { effective, flagValue, viewRef } from '../engine/causal/context';
 
 export function updateObjectives(gameState: GameState): GameState {
@@ -107,6 +107,25 @@ export function getPresidentialGoals(): Objective[] {
     goal('meta_solvencia', 'Cuentas en orden', 'Solvencia fiscal sólida (≥ 55): riesgo país bajo.', { SOLV: { min: 55 } }),
     goal('meta_paz_social', 'Paz social', 'Conflictividad baja (≤ 30).', { CONF: { max: 30 } }),
   ];
+}
+
+/** Metas propias de un escenario histórico con reglas nuevas; null si el escenario usa las metas de gestión. */
+export function getScenarioGoals(scenarioId: string | undefined): Objective[] | null {
+  const def = getScenario(scenarioId).crisis;
+  if (!def) return null;
+  return def.goals.map(g => ({
+    id: g.id,
+    title: g.title,
+    description: g.description,
+    requirements: {
+      ...(g.indicators ? { indicators: g.indicators } : {}),
+      ...(g.flags ? { flags: g.flags } : {}),
+      ...(g.budget !== undefined ? { budget: g.budget } : {}),
+    },
+    reward: {},
+    completed: false,
+    progress: 0,
+  }));
 }
 
 /** Derrotas anticipadas del motor causal (R-24, aceptadas por el usuario). */

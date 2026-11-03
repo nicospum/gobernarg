@@ -163,7 +163,7 @@ export function scheduleActionEffects(
   return scheduled;
 }
 
-function applyDelta(state: CausalState, eff: ScheduledEffect, value: number, acc: EffectAccumulator): number {
+export function applyDelta(state: CausalState, eff: ScheduledEffect, value: number, acc: EffectAccumulator): number {
   const t = eff.target;
   if (isIndicatorId(t)) {
     const before = state.base[t];
@@ -202,6 +202,12 @@ function applyDelta(state: CausalState, eff: ScheduledEffect, value: number, acc
     case 'LEG':
       state.political.legAdj += value;
       return value;
+    case 'IMAGEN': {
+      // Medidas extraordinarias: la imagen del presidente también es un objetivo de efectos.
+      const before = state.political.imagen;
+      state.political.imagen = clamp(before + value);
+      return state.political.imagen - before;
+    }
     default:
       return 0;
   }

@@ -20,14 +20,19 @@ describe('Calendario Light persistido', () => {
     expect(equivalentTurns(99, state)).toBe(99);
   });
 
-  it('las históricas conservan datos, suspensión de deuda y calendario trimestral incluso si se solicita 12', () => {
+  it('las históricas conservan datos, condiciones iniciales y calendario trimestral incluso si se solicita 12', () => {
     const state = createNewGame({ archetype: 'politico', governorName: 'Ana', scenarioId: 'corralito', seed: 1, calendar: 'light-12' });
     expect(calendarFor(state).id).toBe('legacy-16');
-    expect(state.causal.caja).toBe(700);
+    expect(state.causal.caja).toBe(450);
     expect(state.causal.deuda).toBe(6000);
-    expect(state.causal.flags.default_deuda.end).toBe(8);
-    expect(state.causal.bonuses.find(b => b.target === 'GOB')?.end).toBe(5);
-    expect(calendarFor(createCausalState({ scenarioId: 'pais_en_llamas', calendar: 'light-12' })).id).toBe('legacy-16');
+    // Reglas nuevas: arranca con convertibilidad y sin default; el default no vence por tiempo.
+    expect(state.causal.flags.convertibilidad.end).toBeNull();
+    expect(state.causal.flags.default_deuda).toBeUndefined();
+    expect(state.causal.bonuses.find(b => b.target === 'GOB')).toBeUndefined();
+    expect(state.causal.crisis).toMatchObject({ kind: 'corralito', phase: 'emergencia', round: 1, rounds: 3 });
+    const llamas = createCausalState({ scenarioId: 'pais_en_llamas', calendar: 'light-12' });
+    expect(calendarFor(llamas).id).toBe('legacy-16');
+    expect(llamas.flags.default_deuda.end).toBeNull();
   });
 
   it('el calendario civil y la presión electoral apuntan a T6/T12 y conservan T8/T16 en legacy', () => {

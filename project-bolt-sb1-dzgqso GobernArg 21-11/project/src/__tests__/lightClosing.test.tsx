@@ -86,19 +86,22 @@ describe('cierre de Light sin recuperar saturación', () => {
     expect(screen.getByText(/No incluye efectos diferidos ni eventos/)).toBeTruthy();
   });
 
-  it('la proyección respeta los intereses suspendidos de Corralito y vuelve a cobrarlos al vencer', () => {
-    const state = createCausalState({ scenarioId: 'corralito' });
+  it('la proyección respeta los intereses suspendidos por el default (Hiper 1989) y los reducidos tras renegociar', () => {
+    const state = createCausalState({ scenarioId: 'pais_en_llamas' });
     const defaultProjection = projectedCloseCaja(state, []);
     expect(debtService(state)).toBe(0);
     const regular = structuredClone(state);
     delete regular.flags.default_deuda;
     expect(defaultProjection.caja - projectedCloseCaja(regular, []).caja).toBeCloseTo(debtService(regular));
     expect(debtService(regular)).toBeGreaterThan(0);
-    const expired = structuredClone(state);
-    expired.turn = (expired.flags.default_deuda.end ?? 0) + 1;
-    const expiredRegular = structuredClone(expired);
-    delete expiredRegular.flags.default_deuda;
-    expect(projectedCloseCaja(expired, [])).toEqual(projectedCloseCaja(expiredRegular, []));
+    // El default no vence por tiempo.
+    const later = structuredClone(state);
+    later.turn = 12;
+    expect(debtService(later)).toBe(0);
+    // Renegociada con quita: intereses reducidos (el valor del flag es el factor).
+    const renegotiated = structuredClone(regular);
+    renegotiated.flags.deuda_renegociada = { value: 0.6, start: 1, end: 8, source: 'negociar_deuda_exito' };
+    expect(debtService(renegotiated)).toBeCloseTo(debtService(regular) * 0.6);
   });
 
   it('revela demandas después de la reunión y habilita agregar la respuesta al turno', () => {

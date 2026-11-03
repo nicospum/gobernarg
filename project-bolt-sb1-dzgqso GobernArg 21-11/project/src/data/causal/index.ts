@@ -15,6 +15,20 @@ import { EXCEL_PARAMS } from './generated/params';
 import { AUDIT_ROWS } from './generated/audit';
 import type { ActionRow, EffectRow, MeetingRow } from './types';
 import { ACTION_TEXT_OVERRIDES } from '../../lite/actionOverrides';
+import {
+  CRISIS_ACTION_ROWS,
+  CRISIS_EFFECT_ROWS,
+  CRISIS_FINANCING_IDS,
+  CRISIS_FLAG,
+  CRISIS_META,
+  CRISIS_OUTCOME_IDS,
+  CRISIS_REQUIREMENTS,
+  CRISIS_VISIBLE_WHEN,
+  HIDDEN_IN_CRISIS,
+} from './crisisActions';
+
+export { CRISIS_FLAG, CRISIS_KIND_FLAG, CRISIS_META, EXTRAORDINARY_IDS, CRISIS_OUTCOME_IDS, HIDDEN_IN_CRISIS, isExtraordinary, betSummary } from './crisisActions';
+export type { CrisisActionMeta } from './crisisActions';
 
 // ─────────────────────────────── Indicadores ───────────────────────────────
 
@@ -210,12 +224,12 @@ export const PARAMS = {
 export type UiCategory =
   | 'Economía y moneda' | 'Impuestos' | 'Producción y trabajo' | 'Social y salud'
   | 'Educación, ciencia y cultura' | 'Infraestructura' | 'Seguridad y justicia'
-  | 'Instituciones y ambiente' | 'Exterior' | 'Política y relaciones';
+  | 'Instituciones y ambiente' | 'Exterior' | 'Política y relaciones' | 'Emergencia';
 
 export const UI_CATEGORIES: UiCategory[] = [
   'Economía y moneda', 'Impuestos', 'Producción y trabajo', 'Social y salud',
   'Educación, ciencia y cultura', 'Infraestructura', 'Seguridad y justicia',
-  'Instituciones y ambiente', 'Exterior', 'Política y relaciones',
+  'Instituciones y ambiente', 'Exterior', 'Política y relaciones', 'Emergencia',
 ];
 
 export type ActionTag = 'RESTRICTIVA' | 'FEDERAL' | 'AMBIENTAL';
@@ -223,7 +237,7 @@ export type ActionTag = 'RESTRICTIVA' | 'FEDERAL' | 'AMBIENTAL';
 /** Acciones de sistema: se ejecutan desde el panel de actores, no desde la grilla de políticas. */
 export const SYSTEM_ACTION_IDS = ['reunion', 'negociacion', 'acuerdo', 'encuesta'] as const;
 /** Acciones que financian (no son ingreso fiscal: 00B "emisión y préstamos NO son ingreso"). */
-export const FINANCING_ACTION_IDS = ['emitir_dinero', 'prestamo_internacional', 'prestamo_local', 'privatizacion'];
+export const FINANCING_ACTION_IDS = ['emitir_dinero', 'prestamo_internacional', 'prestamo_local', 'privatizacion', ...CRISIS_FINANCING_IDS];
 
 export interface Requirement {
   /** Condición en el DSL del Excel. */
@@ -253,6 +267,10 @@ export interface CausalActionDef {
   directRelationText: string | null;
   isSystem: boolean;
   isFinancing: boolean;
+  /** Medida extraordinaria de un escenario histórico (sin costo, una por turno, con apuesta). */
+  extraordinary: boolean;
+  /** Resultado de una medida incierta: lo ejecuta el motor, nunca el jugador. */
+  outcome: boolean;
   /** Ids del juego anterior que esta acción reemplaza o fusiona (09_AUDITORIA). */
   legacyIds: string[];
 }
@@ -292,11 +310,20 @@ const REQUIREMENTS: Record<string, Requirement[]> = {
   obras_hidricas: [{ when: 'FLAG(estudio_vigente)', reason: 'Requiere un estudio de factibilidad vigente.' }],
   lucha_narcotrafico: [{ when: 'DONE(fortalecimiento_justicia,99)', reason: 'Sin fiscales y jueces los operativos no condenan: primero fortalecer la justicia.' }],
   ampliar_coalicion: [{ when: 'FLAG(reunido_aliados) or FLAG(reunido_oposicion)', reason: 'Hay que reunirse antes con aliados u oposición.' }],
+  // Escenarios históricos: con la economía dolarizada no hay emisión posible.
+  emitir_dinero: [{ when: 'not FLAG(dolarizada)', reason: 'Con la economía dolarizada no hay emisión posible.' }],
+  ...CRISIS_REQUIREMENTS,
 };
 
 const VISIBLE_WHEN: Record<string, string> = {
   liberar_cambios: 'FLAG(cepo)',
+  ...CRISIS_VISIBLE_WHEN,
 };
+// En los escenarios históricos se ocultan las políticas menores y las que reemplaza una medida extraordinaria.
+for (const id of HIDDEN_IN_CRISIS) {
+  const existing = VISIBLE_WHEN[id];
+  VISIBLE_WHEN[id] = existing ? '(' + existing + ') and not FLAG(' + CRISIS_FLAG + ')' : 'not FLAG(' + CRISIS_FLAG + ')';
+}
 
 function parseTags(tags: string[]): ActionTag[] {
   return tags.map(t => t.toUpperCase()).filter((t): t is ActionTag => ['RESTRICTIVA', 'FEDERAL', 'AMBIENTAL'].includes(t));
@@ -335,13 +362,15 @@ function toActionDef(r: ActionRow): CausalActionDef {
     directRelationText: r.directRelationText,
     isSystem,
     isFinancing: FINANCING_ACTION_IDS.includes(r.id),
+    extraordinary: r.id in CRISIS_META,
+    outcome: CRISIS_OUTCOME_IDS.includes(r.id),
     legacyIds: LEGACY_IDS[r.id] ?? [],
   };
 }
 
-export const CAUSAL_ACTIONS: CausalActionDef[] = ACTION_ROWS.map(toActionDef);
+export const CAUSAL_ACTIONS: CausalActionDef[] = [...ACTION_ROWS, ...CRISIS_ACTION_ROWS].map(toActionDef);
 export const CAUSAL_ACTIONS_BY_ID: Record<string, CausalActionDef> = Object.fromEntries(CAUSAL_ACTIONS.map(a => [a.id, a]));
-export const POLICY_ACTIONS: CausalActionDef[] = CAUSAL_ACTIONS.filter(a => !a.isSystem);
+export const POLICY_ACTIONS: CausalActionDef[] = CAUSAL_ACTIONS.filter(a => !a.isSystem && !a.outcome);
 
 /** Obras con descuento por estudio de factibilidad (06: "Habilita + costo −20%"). */
 export const INFRA_DISCOUNT_ACTIONS = ['infraestructura_vial', 'infraestructura_energetica', 'energia_renovable', 'obras_hidricas', 'construccion_hospitales'];
@@ -357,7 +386,7 @@ const REMOVED_EFFECTS: { actionId: string; target: string }[] = [
   { actionId: 'transparencia_anticorrupcion', target: 'REL:oficialismo' },
 ];
 
-const ACTIVE_EFFECT_ROWS = EFFECT_ROWS.filter(e => !REMOVED_EFFECTS.some(r => r.actionId === e.actionId && r.target === e.target));
+const ACTIVE_EFFECT_ROWS = [...EFFECT_ROWS, ...CRISIS_EFFECT_ROWS].filter(e => !REMOVED_EFFECTS.some(r => r.actionId === e.actionId && r.target === e.target));
 
 export const EFFECTS_BY_ACTION: Record<string, EffectRow[]> = ACTIVE_EFFECT_ROWS.reduce((acc, e) => {
   (acc[e.actionId] ??= []).push(e);

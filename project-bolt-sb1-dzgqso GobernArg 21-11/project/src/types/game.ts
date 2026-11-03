@@ -136,6 +136,8 @@ export interface TurnSummary {
   };
   /** Turno absoluto cerrado (índice en causal.records). */
   causalTurn?: number;
+  /** Subronda de la emergencia cerrada (escenarios históricos): número y etiqueta. */
+  crisisRound?: { round: number; label: string; last: boolean };
 }
 
 // =====================

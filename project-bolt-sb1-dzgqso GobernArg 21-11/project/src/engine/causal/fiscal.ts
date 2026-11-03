@@ -24,9 +24,12 @@ export function revenue(state: CausalState, close: number): number {
 }
 
 export function debtService(state: CausalState): number {
-  // En default (escenario Corralito) no se pagan intereses: a cambio, no hay crédito.
+  // En default (escenarios históricos) no se pagan intereses: a cambio, no hay crédito.
   if (flagValue(state, 'default_deuda', state.turn)) return 0;
-  return PARAMS.TASA_DEUDA * state.deuda;
+  // Deuda renegociada con quita: intereses reducidos mientras dure (el valor del flag es el factor).
+  const renegotiated = flagValue(state, 'deuda_renegociada', state.turn);
+  const factor = renegotiated > 0 && renegotiated < 1 ? renegotiated : 1;
+  return PARAMS.TASA_DEUDA * state.deuda * factor;
 }
 
 /**

@@ -8,6 +8,7 @@ import {
   type CausalActionDef,
 } from '../../data/causal';
 import { evalCondition } from './dsl';
+import { CRISIS_META } from '../../data/causal';
 import { countExecutions, decisionContext, effectiveLeg, flagValue, viewRef } from './context';
 import { projectCaja } from './fiscal';
 import { internaCostMult, internaLawPlus } from './interna';
@@ -105,7 +106,21 @@ export function getAvailability(
   const caja = cajaCost(state, action);
   const isSelected = selected.some(s => s.actionId === actionId);
 
-  const visible = !action.visibleWhen || evalCondition(action.visibleWhen, ctx) || isSelected;
+  let visible = !action.visibleWhen || evalCondition(action.visibleWhen, ctx) || isSelected;
+  const emergency = state.crisis?.phase === 'emergencia';
+  if (action.extraordinary) {
+    // Medidas extraordinarias: solo en escenarios históricos con reglas nuevas, una sola vez
+    // (salvo las repetibles) y una por turno o subronda.
+    if (!state.crisis) visible = false;
+    else if (CRISIS_META[actionId]?.once && state.crisis.used.includes(actionId) && !isSelected) visible = false;
+    const otherExtraordinary = selected.some(s => s.actionId !== actionId && CAUSAL_ACTIONS_BY_ID[s.actionId]?.extraordinary);
+    if (otherExtraordinary && !isSelected) {
+      reasons.push(emergency ? 'Una sola medida extraordinaria por subronda.' : 'Una sola medida extraordinaria por turno.');
+    }
+  } else if (emergency) {
+    // Durante la emergencia solo se juegan medidas extraordinarias.
+    visible = false;
+  }
 
   // Cooldown: no se puede repetir antes de N turnos (cooldown 1 = no dos veces por turno).
   if (action.cooldown > 0 && !isSelected) {
@@ -163,6 +178,12 @@ export function getAvailability(
 
 export function listPolicyAvailability(state: CausalState, selected: Selection[], paLeft: number): Availability[] {
   return POLICY_ACTIONS.map(a => getAvailability(state, a.id, selected, paLeft)).filter(a => a.visible);
+}
+
+/** Medidas extraordinarias visibles ahora (bloque de emergencia). Vacío fuera de los escenarios históricos nuevos. */
+export function listExtraordinaryAvailability(state: CausalState, selected: Selection[], paLeft: number): Availability[] {
+  if (!state.crisis) return [];
+  return listPolicyAvailability(state, selected, paLeft).filter(a => a.action.extraordinary);
 }
 
 /** Gasto corriente permanente que agrega una acción al ejecutarse (offset 0). */
