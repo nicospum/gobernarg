@@ -47,3 +47,6 @@ dist.zip
 
 # Estado local del subidor de Netlify
 .netlify/
+
+# Worktrees de agentes
+.claude/worktrees/
