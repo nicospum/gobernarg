@@ -18,7 +18,7 @@ import {
   type ActorId,
   type IndicatorId,
 } from '../data/causal';
-import { canMeet, canNegotiate, canSignAgreement, decisionContext, effective, evalCondition, projectedCloseCaja, viewRef, type Availability } from '../engine/causal';
+import { canMeet, canNegotiate, canSignAgreement, decisionContext, effective, evalCondition, flagValue, projectedCloseCaja, viewRef, type Availability } from '../engine/causal';
 import { getPolicyAvailability } from '../engine/actionEngine';
 import { eventChoiceEffects } from '../engine/eventResolver';
 import { toneOf } from '../lib/causalText';
@@ -391,16 +391,31 @@ function firstAvailable(s: GameState, priority: CrisisPick[]): string | null {
 /** Estado de sitio solo con la calle incendiada. */
 const sitioIfStreetBurns: CrisisPick = { id: 'estado_de_sitio', when: s => view(s, 'CONF') >= 75 };
 
+/** Ortodoxo bien jugado: contiene el hambre antes de reprimir, abre la economía solo con actividad y divisas, y libera los depósitos. */
+const hungerFirst: CrisisPick = { id: 'emergencia_alimentaria', when: s => view(s, 'PSOC') < 38 || view(s, 'CONF') >= 75 };
+const openIfStrong: CrisisPick = { id: 'apertura_total', when: s => view(s, 'ACTV') >= 38 && view(s, 'EXTE') >= 25 };
 const ORTHODOX_EMERGENCY: Record<CrisisKind, CrisisPick[]> = {
   corralito: [
-    'dolarizar', 'rescate_fmi', 'ley_emergencia', 'apertura_total',
-    // El corralito, solo cuando a los bancos ya les queda poca liquidez.
+    'dolarizar', 'rescate_fmi', 'ley_emergencia', hungerFirst,
+    // El corralito, solo cuando a los bancos ya les queda poca liquidez; liberar apenas se pueda.
     { id: 'limitar_retiros', when: s => (s.causal.crisis?.liquidez ?? 100) <= 30 },
-    sitioIfStreetBurns, 'negociar_deuda',
+    'liberar_depositos', 'negociar_deuda', openIfStrong, sitioIfStreetBurns,
   ],
-  hiper: ['shock_fiscal', 'nueva_moneda', 'privatizar_todo', 'apertura_total', 'negociar_deuda', 'rescate_fmi', sitioIfStreetBurns, 'intervencion_total'],
+  hiper: ['shock_fiscal', 'nueva_moneda', 'privatizar_todo', hungerFirst, 'negociar_deuda', 'rescate_fmi', { id: 'intervencion_total', when: s => view(s, 'EXTE') >= 25 }, openIfStrong, sitioIfStreetBurns],
 };
-const ORTHODOX_REGULAR = ['reduccion_gasto', 'actualizar_tarifas', 'politica_monetaria_contractiva', 'mejorar_recaudacion', 'reforma_laboral'];
+/** Programa regular ortodoxo: no apila medidas recesivas con la actividad por el piso ni deja la olla vacía. */
+function orthodoxRegular(s: GameState): string[] {
+  const actv = view(s, 'ACTV');
+  const out: string[] = [];
+  if (view(s, 'PSOC') < 35) out.push('asistencia_alimentaria');
+  if (view(s, 'INFL') >= 55 && !flagValue(s.causal, 'dolarizada', s.causal.turn)) out.push('politica_monetaria_contractiva');
+  if (actv >= 30 || s.causal.caja < 300) out.push('reduccion_gasto', 'actualizar_tarifas');
+  out.push('mejorar_recaudacion');
+  if (actv < 35) out.push('credito_pyme');
+  if (view(s, 'CONF') >= 70) out.push('seguridad_ciudadana');
+  out.push('reforma_laboral', 'incentivos_exportacion');
+  return out;
+}
 
 const HETERODOX_EMERGENCY: Record<CrisisKind, CrisisPick[]> = {
   // Liberar los depósitos va primero: se toma apenas aparece.
@@ -449,7 +464,7 @@ export const crisisOrthodoxBot: Bot = {
   id: 'XO', fiscalGuard: true, avoidRepetition: true, name: 'Ortodoxo de crisis', archetype: 'empresario',
   description: 'Corralito: dolariza, pide el rescate al FMI, ley de emergencia y apertura; el corralito solo con los bancos sin liquidez. Hiper: shock fiscal, moneda nueva, privatiza todo y abre. En la gestión ajusta el gasto, actualiza tarifas, sube tasas, recauda y reforma, con la coalición de finanzas, industria y agro.',
   interactions: (s) => (inEmergency(s) ? [] : coalitionInteractions(s, ['financiero', 'industria', 'agro'])),
-  policies: (s) => crisisPolicies(s, (st, kind) => firstAvailable(st, ORTHODOX_EMERGENCY[kind]), (st) => [...committedActions(st), ...diplomacyIfDefault(st), ...ORTHODOX_REGULAR]),
+  policies: (s) => crisisPolicies(s, (st, kind) => firstAvailable(st, ORTHODOX_EMERGENCY[kind]), (st) => [...committedActions(st), ...diplomacyIfDefault(st), ...orthodoxRegular(st)]),
   eventChoice: bestChoice,
   midterm: orthodoxSkilledBot.midterm,
 };

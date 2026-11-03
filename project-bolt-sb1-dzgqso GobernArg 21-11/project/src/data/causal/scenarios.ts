@@ -149,9 +149,9 @@ export const SCENARIOS: ScenarioDef[] = [
     // PIB -4,4 %, desocupación 18,3 % (oct-2001), pobreza 38,3 %. Ver ESCENARIOS-HISTORICOS-LIGHT.md.
     indicators: { INFL: 12, ACTV: 35, PODA: 35, INVC: 24, PRES: 52, SOLV: 15, EXTE: 20, INFR: 48, EDUC: 48, PSOC: 33, SEGU: 38, CIEN: 45, INST: 40, AMBI: 50, CONF: 60 },
     caja: 450,
-    gastoCorr: 820,
+    gastoCorr: 780,
     deuda: 6000,
-    ingresoMult: 0.9,
+    ingresoMult: 0.95,
     desanclaje: 2,
     // Congreso en contra pero con la luna de miel alcanza para una ley de emergencia los primeros turnos.
     legAdj: -4,
@@ -194,11 +194,11 @@ export const SCENARIOS: ScenarioDef[] = [
     image: { group: 'events', key: 'socialProtest' },
     // Hipótesis de diseño calibradas con datos de 1989: IPC mayo 78,5 % mensual (CEPAL),
     // pobreza GBA 25,9 % (mayo) y 47,3 % (octubre), BCRA sin reservas desde febrero, moratoria desde abril de 1988.
-    indicators: { INFL: 97, ACTV: 37, PODA: 24, INVC: 22, PRES: 45, SOLV: 12, EXTE: 16, INFR: 42, EDUC: 45, PSOC: 30, SEGU: 38, CIEN: 42, INST: 42, AMBI: 50, CONF: 70 },
+    indicators: { INFL: 97, ACTV: 37, PODA: 24, INVC: 22, PRES: 45, SOLV: 12, EXTE: 18, INFR: 42, EDUC: 45, PSOC: 30, SEGU: 38, CIEN: 42, INST: 42, AMBI: 50, CONF: 70 },
     caja: 250,
-    gastoCorr: 850,
+    gastoCorr: 800,
     deuda: 5000,
-    ingresoMult: 0.85,
+    ingresoMult: 0.92,
     desanclaje: 30,
     legAdj: -6,
     imagen: 22,

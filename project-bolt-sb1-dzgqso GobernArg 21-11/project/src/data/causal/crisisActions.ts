@@ -336,7 +336,7 @@ measure({
     scenarios: ['corralito', 'hiper'], once: true,
     solves: 'Terminar con la inflación y la desconfianza en la moneda de una vez.',
     risk: 'Sin emisión ni devaluación, cualquier déficit se paga con recesión.',
-    bet: { bien: 'Sale bien si ordenás las cuentas: baja el riesgo país y vuelve la inversión.', mal: 'Explota si hay déficit: el ajuste cae sobre la actividad y los salarios.' },
+    bet: { bien: 'Sale bien si las cuentas quedan casi en orden: baja el riesgo país y vuelve la inversión.', mal: 'Explota si el déficit sigue grande: el ajuste cae sobre la actividad y los salarios.' },
     history: 'Propuesta discutida en 1999 y en diciembre de 2001; nunca se aplicó en la Argentina.',
   },
   visibleWhen: 'not FLAG(dolarizada) and not FLAG(regimen_flotante)',
@@ -357,7 +357,7 @@ measure({
     { t: 'REL:agro', m: -4, x: 'El campo cobra en dólares caros.' },
   ],
   bet: {
-    off: 4, cond: 'RESULT3>=0',
+    off: 4, cond: 'RESULT3>=-120',
     bien: [
       { t: 'SOLV', m: 10, x: 'Con cuentas ordenadas, el riesgo país se desploma.' },
       { t: 'INVC', m: 8, x: 'Llueven inversiones en una economía previsible.' },
@@ -518,7 +518,7 @@ measure({
     { t: 'REL:financiero', m: -3, x: 'Tres monedas en circulación.' },
   ],
   bet: {
-    off: 4, cond: 'INFL<45 and RESULT3>=-100',
+    off: 4, cond: 'INFL<55 and RESULT3>=-150',
     bien: [
       { t: 'INST', m: 3, x: 'Rescate ordenado de las cuasimonedas.' },
       { t: 'CAJA', m: -200, x: 'Costo del rescate.' },
@@ -658,7 +658,7 @@ measure({
     { t: 'REL:financiero', m: 4, x: 'Menos presión de precios.' },
   ],
   bet: {
-    off: 4, cond: 'EXTE>=30 and INVC>=15',
+    off: 4, cond: 'EXTE>=25 and INVC>=15',
     bien: [
       { t: 'ACTV', m: 8, x: 'La competencia modernizó lo que quedó en pie.' },
       { t: 'INVC', m: 8, x: 'Inversión en sectores competitivos.' },
@@ -735,7 +735,7 @@ measure({
     { t: 'DESANCLAJE', m: -10, floor: 0, x: 'Las expectativas se calman.' },
   ],
   bet: {
-    off: 2, cond: 'RESULT3>=-150',
+    off: 2, cond: 'RESULT3>=-200',
     bien: [
       { t: 'INFL', m: -15, x: 'Con respaldo, el congelamiento se convirtió en estabilización.' },
       { t: 'DESANCLAJE', m: -12, floor: 0, x: 'Expectativas ancladas.' },
@@ -744,7 +744,7 @@ measure({
       { t: 'IMAGEN', m: 6, x: 'El plan funcionó.' },
     ],
     mal: [
-      { t: 'INFL', m: 18, x: 'El congelamiento estalló: rebote de precios.' },
+      { t: 'INFL', m: 12, x: 'El congelamiento estalló: rebote de precios.' },
       { t: 'CONF', m: 10, x: 'Desabastecimiento y mercado negro.' },
       { t: 'PODA', m: -6, x: 'Los salarios congelados quedaron atrás.' },
       { t: 'ACTV', m: -3, x: 'Góndolas vacías.' },
@@ -765,7 +765,7 @@ measure({
     history: 'El austral reemplazó al peso argentino en 1985; el peso convertible, al austral en 1992.',
   },
   visibleWhen: 'not FLAG(nueva_moneda)',
-  requirements: [{ when: 'EXTE>=20', reason: 'Sin un mínimo de reservas nadie cree en una moneda nueva.' }],
+  requirements: [{ when: 'EXTE>=12', reason: 'Sin un mínimo de reservas nadie cree en una moneda nueva.' }],
   effects: [
     { t: 'FLAG:nueva_moneda', m: 1, mode: 'SET', dur: 'PERM', x: 'Moneda nueva en circulación.' },
     { t: 'INFL', m: -20, x: 'Los precios se reacomodan a la moneda nueva.' },
@@ -776,7 +776,7 @@ measure({
     { t: 'EXTE', m: 2, x: 'Vuelven algunos dólares del colchón.' },
   ],
   bet: {
-    off: 3, cond: 'RESULT3>=-100 and EXTE>=20',
+    off: 3, cond: 'RESULT3>=-150 and EXTE>=18',
     bien: [
       { t: 'INFL', m: -15, x: 'La moneda nueva se sostiene: estabilidad.' },
       { t: 'INVC', m: 10, x: 'Vuelve el crédito a largo plazo.' },
@@ -808,7 +808,8 @@ measure({
   visibleWhen: 'not DONE(shock_fiscal,99)',
   effects: [
     { t: 'GASTO_CORR', m: -200, x: 'Subsidios cortados para siempre.' },
-    { t: 'INFL', m: 6, x: 'Tarifazo: suben los precios regulados.' },
+    { t: 'INFL', m: 4, x: 'Tarifazo: suben los precios regulados.' },
+    { t: 'INFL', m: -10, mode: 'BONUS', dur: 2, x: 'Ancla fiscal: la carrera de precios afloja.' },
     { t: 'INFL', m: -8, off: 1, x: 'Menos emisión, menos inflación.' },
     { t: 'INFL', m: -8, off: 2, x: 'El ajuste empieza a rendir.' },
     { t: 'INVC', m: -4, mode: 'BONUS', dur: 2, x: 'Tasas por las nubes.' },
@@ -822,7 +823,7 @@ measure({
     { t: 'REL:financiero', m: 10, x: 'Las finanzas aplauden.' },
   ],
   bet: {
-    off: 3, cond: 'INFL<70',
+    off: 3, cond: 'INFL<80',
     bien: [
       { t: 'SOLV', m: 8, x: 'El ajuste rindió: solvencia.' },
       { t: 'INVC', m: 8, x: 'Vuelve el crédito.' },
@@ -853,12 +854,12 @@ measure({
   requirements: [{ when: 'EXTE>=10', reason: 'No quedan reservas para vender.' }],
   effects: [
     { t: 'INFL', m: -8, mode: 'BONUS', dur: 2, x: 'Dólar contenido.' },
-    { t: 'EXTE', m: -10, x: 'Reservas vendidas.' },
+    { t: 'EXTE', m: -8, x: 'Reservas vendidas.' },
     { t: 'INVC', m: 3, x: 'Un respiro para el crédito.' },
     { t: 'DESANCLAJE', m: -4, floor: 0, x: 'Señal de que el Central pelea.' },
   ],
   bet: {
-    off: 2, cond: 'DESANCLAJE<20 and RESULT3>=-150',
+    off: 2, cond: 'DESANCLAJE<25 and RESULT3>=-250',
     bien: [
       { t: 'INFL', m: -8, x: 'El mercado se calmó: la intervención alcanzó.' },
       { t: 'EXTE', m: 8, x: 'Vuelven las reservas.' },
@@ -1004,6 +1005,7 @@ measure({
     { t: 'CAJA', m: 1500, x: 'Ingreso extraordinario por las ventas.' },
     { t: 'GASTO_CORR', m: -150, x: 'Menos empresas deficitarias.' },
     { t: 'INVC', m: 4, x: 'Capitales que entran a comprar.' },
+    { t: 'DESANCLAJE', m: -6, floor: 0, x: 'Señal de que el Estado no va a emitir para financiarse.' },
     { t: 'CONF', m: 8, x: 'Despidos masivos y paros.' },
     { t: 'ACTV', m: -2, x: 'Reestructuraciones.' },
     { t: 'INFR', m: -1, x: 'Obras frenadas mientras cambian de manos.' },

@@ -144,6 +144,8 @@ export type ActorInteraction = 'reunion' | 'negociar' | 'acuerdo' | 'encuesta';
  */
 export function interactWithActor(state: GameState, actor: ActorId, kind: ActorInteraction): GameState {
   if (state.gameOver || state.pendingElection) return state;
+  // Emergencia de un escenario histórico: la agenda del presidente la ocupa la crisis (solo medidas extraordinarias).
+  if (state.causal.crisis?.phase === 'emergencia') return { ...state, lastInteractionMessage: 'Durante la emergencia no hay reuniones: la agenda la ocupa la crisis.' };
   let result: InteractionResult;
   switch (kind) {
     case 'reunion': result = meet(state.causal, actor, state.actions); break;

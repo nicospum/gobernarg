@@ -17,7 +17,9 @@ export function applyStructuralRules(state: CausalState, close: number): RuleRec
   };
 
   // R01 — inflación converge a un ancla de fundamentos + expectativas.
-  const ancla = 35 + 0.3 * (50 - v.SOLV) + 0.3 * (50 - v.EXTE) + state.desanclaje;
+  // Economía dolarizada (escenarios históricos): sin moneda propia, los precios convergen a la inflación del dólar.
+  const dolarizada = !!flagValue(state, 'dolarizada', close + 1);
+  const ancla = dolarizada ? 18 : 35 + 0.3 * (50 - v.SOLV) + 0.3 * (50 - v.EXTE) + state.desanclaje;
   add('R01', 'INFL', 0.2 * (ancla - v.INFL));
   // R02 — la inflación erosiona el poder adquisitivo.
   if (v.INFL > 45) add('R02', 'PODA', -0.1 * (v.INFL - 45));
@@ -32,9 +34,9 @@ export function applyStructuralRules(state: CausalState, close: number): RuleRec
     add('R06', 'ACTV', -0.06 * (v.CONF - 55));
     add('R06', 'INVC', -0.04 * (v.CONF - 55));
   }
-  // R07 — restricción externa.
+  // R07 — restricción externa (dolarizada: la falta de dólares frena la actividad, no mueve los precios).
   if (v.EXTE < 35) {
-    add('R07', 'INFL', 0.1 * (35 - v.EXTE));
+    if (!dolarizada) add('R07', 'INFL', 0.1 * (35 - v.EXTE));
     add('R07', 'ACTV', -0.06 * (35 - v.EXTE));
   }
   // R08 — clima de inversión.

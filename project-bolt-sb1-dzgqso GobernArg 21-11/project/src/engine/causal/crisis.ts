@@ -352,7 +352,7 @@ function hiperRound(state: CausalState, lines: string[]): void {
   bump(state, 'PODA', f('congelamiento') ? -0.5 : -2);
   bump(state, 'ACTV', -1.5);
   bump(state, 'PSOC', -1);
-  bump(state, 'EXTE', f('nueva_moneda') || f('dolarizada') ? -0.5 : -1.5);
+  bump(state, 'EXTE', f('nueva_moneda') || f('dolarizada') ? -0.5 : -1);
   let calle = 3;
   if (effective(state, 'PSOC', ref) >= 35) calle -= 2;
   if (f('estado_de_sitio')) calle = 0;

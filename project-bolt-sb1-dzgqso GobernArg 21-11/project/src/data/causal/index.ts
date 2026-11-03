@@ -312,6 +312,7 @@ const REQUIREMENTS: Record<string, Requirement[]> = {
   ampliar_coalicion: [{ when: 'FLAG(reunido_aliados) or FLAG(reunido_oposicion)', reason: 'Hay que reunirse antes con aliados u oposición.' }],
   // Escenarios históricos: con la economía dolarizada no hay emisión posible.
   emitir_dinero: [{ when: 'not FLAG(dolarizada)', reason: 'Con la economía dolarizada no hay emisión posible.' }],
+  politica_monetaria_contractiva: [{ when: 'not FLAG(dolarizada)', reason: 'Sin moneda propia no hay política monetaria.' }],
   ...CRISIS_REQUIREMENTS,
 };
 

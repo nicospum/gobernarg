@@ -94,9 +94,10 @@ describe('Medidas extraordinarias: catálogo y disponibilidad', () => {
     expect(av.limitar_retiros).toBeUndefined();
     expect(av.rescate_fmi).toBeUndefined(); // en default
     expect(av.estado_de_sitio).toBeUndefined(); // ya rige el del 29/5
-    expect(av.nueva_moneda.available).toBe(false);
-    expect(av.nueva_moneda.reasons[0]).toMatch(/reservas/);
+    // La moneda nueva pide un mínimo de reservas (12): en junio de 1989 alcanza; dolarizar pide más (20) y queda bloqueada con motivo.
+    expect(av.nueva_moneda.available).toBe(true);
     expect(av.dolarizar.available).toBe(false);
+    expect(av.dolarizar.reasons[0]).toMatch(/reservas/);
     expect(av.negociar_deuda.available).toBe(false);
     expect(av.negociar_deuda.reasons.join(' ')).toMatch(/tiempo en default/);
   });
