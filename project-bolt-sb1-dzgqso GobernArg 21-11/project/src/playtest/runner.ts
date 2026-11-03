@@ -18,6 +18,7 @@ import {
   triggerMidtermStrategy,
 } from '../engine/gameEngine';
 import { effective, immediateGastoDelta, nextRandom, projectedCloseCaja, repetitionWarning, viewRef } from '../engine/causal';
+import { isConsultantEvent } from '../engine/consultant';
 import { indicatorChanges } from '../lib/turnExplain';
 import type { Bot } from './bots';
 
@@ -158,7 +159,8 @@ export function playGame(bot: Bot, seed: number, opts: PlayOptions = {}): GameOu
       const events: string[] = [];
       for (const ev of result.triggeredEvents) {
         if (ev.choices && ev.choices.length > 0) {
-          const choice = bot.eventChoice(state, ev);
+          // Los bots no conocen a Gastón: siguen su instinto (así el balance de los niveles no depende del consultor).
+          const choice = isConsultantEvent(ev) ? 'instinto' : bot.eventChoice(state, ev);
           state = applyEventChoice(state, ev, choice);
           events.push(`${ev.title} → ${ev.choices.find(c => c.id === choice)?.text ?? choice}`);
         } else {
