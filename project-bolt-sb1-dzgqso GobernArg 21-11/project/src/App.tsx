@@ -290,7 +290,8 @@ function App() {
       compact={!emergency}
     />
   );
-  const showTutorialCard =!tutorial.dismissed && gameState.term === 1 && gameState.year === 1 && gameState.turn === 1;
+  // En la emergencia de un escenario histórico la tarjeta del primer turno no aplica: el bloque de emergencia explica qué hacer.
+  const showTutorialCard = !tutorial.dismissed && gameState.term === 1 && gameState.year === 1 && gameState.turn === 1 && !inEmergency(gameState.causal);
   const tutorialCard = showTutorialCard && (
     <TutorialCard gameState={gameState} actions={gameState.baseActions} onDismiss={tutorial.dismiss} onOpenGuide={() => setShowHelp(true)} />
   );
@@ -319,12 +320,15 @@ function App() {
                     canTakeAction={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
                   />
                 )}
-                <TurnPlan
-                  gameState={gameState}
-                  onActionSelect={handleActionSelect}
-                  onEndTurn={handleEndTurn}
-                  canEndTurn={!modalOpen}
-                />
+                {/* En la emergencia el bloque ya muestra lo elegido y el cierre de la semana: sin duplicar el plan en el celular. */}
+                {!emergency && (
+                  <TurnPlan
+                    gameState={gameState}
+                    onActionSelect={handleActionSelect}
+                    onEndTurn={handleEndTurn}
+                    canEndTurn={!modalOpen}
+                  />
+                )}
               </>
             )}
             {mobileTab === 'pais' && <CountryPanel gameState={gameState} compact />}

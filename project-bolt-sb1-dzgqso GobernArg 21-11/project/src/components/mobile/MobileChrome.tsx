@@ -14,7 +14,7 @@ import { InfoTooltip } from '../InfoTooltip';
 import { BudgetDetails, TrendChip, indicatorCards } from '../IndicatorsPanel';
 import { MandateTimeline } from '../GameHeader';
 import { calendarFor, mandateTurn, periodCaption } from '@/lib/calendar';
-import { crisisRoundLabel, crisisScenario, inEmergency } from '@/engine/causal';
+import { crisisScenario, inEmergency } from '@/engine/causal';
 import { emergencyStage, unitWords } from '@/lib/crisisView';
 import { Sheet } from './Sheet';
 import { detailed } from '@/lite/config';
@@ -63,7 +63,7 @@ export function MobileHeader({ gameState, onOpenMenu }: {
           <div className="text-[8px] font-bold tracking-[0.15em] text-sala-on-navy">PRESIDENCIA · MANDATO {gameState.term}</div>
           <div className="text-[17px] font-bold truncate">{gameState.governorName || '—'}</div>
           <div className="text-[11px] text-sala-on-navy truncate">
-            {emergency ? `${crisisRoundLabel(gameState.causal)} · ${emergencyStage(gameState.causal)}` : <>{periodCaption(gameState)} · T{inMandate}/{calendar.turnsPerMandate}</>}
+            {emergency ? emergencyStage(gameState.causal) : <>{periodCaption(gameState)} · T{inMandate}/{calendar.turnsPerMandate}</>}
             {scenario && <> · {scenario.name}</>}
             {crisisDef && !emergency && <> · desde el {crisisDef.start}</>}
           </div>
