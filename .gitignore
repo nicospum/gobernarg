@@ -44,3 +44,6 @@ project-bolt-sb1-dzgqso GobernArg 21-11/new assets/
 project-bolt-sb1-dzgqso GobernArg 21-11/project/src/assets/images/raw/
 *.tsbuildinfo
 dist.zip
+
+# Estado local del subidor de Netlify
+.netlify/
