@@ -12,7 +12,7 @@ import { GameState, TurnSummary } from '../types/game';
 import { actionImage, screenImage } from '@/lib/liteImages';
 import type { TurnRecord } from '@/engine/causal';
 import { fmtBudgetDelta, fmtBudget } from '@/lib/format';
-import { CAUSAL_ACTIONS_BY_ID, INDICATORS } from '@/data/causal';
+import { CAUSAL_ACTIONS_BY_ID, INDICATORS, getScenario } from '@/data/causal';
 import { actorReactions, indicatorChanges } from '@/lib/turnExplain';
 import { arrows, toneOf, toneClass } from '@/lib/causalText';
 import { getActorIcon } from '../utils/actorIcons';
@@ -25,6 +25,9 @@ import { PendingPolicies } from './board/PendingPolicies';
 import { calendarFor, periodCaption } from '@/lib/calendar';
 import { KnownDeadlines } from './board/KnownDeadlines';
 import { ManagementActivityOutcome } from './ManagementActivityNotice';
+import { CrisisRoundSummary } from './CrisisRoundSummary';
+import { crisisScenario } from '@/engine/causal';
+import { unitWords } from '@/lib/crisisView';
 
 interface TurnSummaryModalProps {
   summary: TurnSummary;
@@ -71,6 +74,9 @@ function PolicyImages({ record }: { record: TurnRecord | null }) {
 export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryModalProps) {
   const dialogRef = useDialog<HTMLDivElement>(onClose);
   const { periodLabel } = calendarFor(gameState);
+  // Subronda de la emergencia (escenarios históricos): resumen propio, sin registro trimestral.
+  const crisisRound = summary.crisisRound;
+  const crisisWords = unitWords(crisisScenario(gameState.causal)?.roundUnit ?? 'turno');
   const record = gameState.causal.records.find(r => r.turn === summary.causalTurn) ?? null;
   const headerImage = screenImage('cierreTurno');
   const changes = record ? indicatorChanges(record) : [];
@@ -90,9 +96,11 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
         className="animate-in fade-in-0 zoom-in-95 duration-200 sr-modal w-full max-w-2xl max-h-[92vh] overflow-y-auto overflow-x-hidden"
       >
         <ModalHeader
-          label={`Cierre del ${periodLabel}`}
-          title={`Resumen del ${periodLabel}`}
-          subtitle={<span className="inline-flex items-center gap-1.5"><CalendarDays className="w-3.5 h-3.5" /> {periodCaption(gameState, summary.year, summary.quarter)}</span>}
+          label={crisisRound ? `Cierre de ${crisisWords.withArticle}` : `Cierre del ${periodLabel}`}
+          title={crisisRound ? crisisRound.label : `Resumen del ${periodLabel}`}
+          subtitle={<span className="inline-flex items-center gap-1.5"><CalendarDays className="w-3.5 h-3.5" /> {crisisRound
+            ? `${crisisWords.cap} ${crisisRound.round} de ${gameState.causal.crisis?.rounds ?? crisisRound.round} · ${getScenario(gameState.causal.scenarioId).name}`
+            : periodCaption(gameState, summary.year, summary.quarter)}</span>}
           image={headerImage}
           veil="light"
           imageAlt=""
@@ -100,7 +108,9 @@ export function TurnSummaryModal({ summary, gameState, onClose }: TurnSummaryMod
           closeLabel="Cerrar resumen"
         />
 
-        {!detailed() ? (
+        {crisisRound ? (
+          <CrisisRoundSummary summary={summary} gameState={gameState} onClose={onClose} />
+        ) : !detailed() ? (
           <div className="p-6 space-y-4">
             <p className="text-[14px] text-ink leading-snug">
               <b>Hiciste:</b>{' '}

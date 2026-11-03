@@ -10,6 +10,7 @@ import { CommandStrip } from './components/board/CommandStrip';
 import { MetricsRow } from './components/board/MetricsRow';
 import { CivicBand, CivicBanner } from './components/board/CivicBanner';
 import { TurnPlan } from './components/board/TurnPlan';
+import { EmergencyBlock } from './components/board/EmergencyBlock';
 import { ElectoralPanel } from './components/board/ElectoralPanel';
 import { StatusFooter } from './components/board/StatusFooter';
 import { DefeatAlerts } from './components/board/StatusStrip';
@@ -18,6 +19,7 @@ import { CountryPanel } from './components/CountryPanel';
 import { clearSavedGame, loadGame, saveGame, rehydrate, type SavedGame } from './lib/savegame';
 import { SaveControls } from './components/SaveControls';
 import { periodCaption } from './lib/calendar';
+import { closedRoundText } from './lib/crisisView';
 import { isNewScenarioAvailable } from './lib/editionAccess';
 import { recordReelectionWin, recordScenarioWin } from './lib/progress';
 import { LITE_FEATURES, detailed } from './lite/config';
@@ -43,6 +45,7 @@ import {
   triggerMidtermStrategy,
   type ActorInteraction,
 } from './engine/gameEngine';
+import { inCrisis, inEmergency } from './engine/causal';
 
 // Pantallas que aparecen pocas veces: se descargan recién cuando hacen falta
 // (Fase 4), así la primera carga del juego es más liviana.
@@ -174,7 +177,7 @@ function App() {
     setGameState(result.state);
 
     // En el celular el aviso tapaba el título del resumen, que ya dice año y trimestre.
-    if (!isMobile) toast(`Turno finalizado — ${periodCaption(gameState, result.summary.year, result.summary.quarter)}`);
+    if (!isMobile) toast(result.summary.crisisRound ? closedRoundText(gameState.causal, result.summary.crisisRound.label) : `Turno finalizado — ${periodCaption(gameState, result.summary.year, result.summary.quarter)}`);
 
     // Si hay estrategia pendiente, mostrar modal
     if (result.state.pendingMidtermStrategy) {
@@ -270,7 +273,19 @@ function App() {
 
   const currentEvent = pendingEvents[0] || null;
   const simple = !detailed();
-  const showTutorialCard = !tutorial.dismissed && gameState.term === 1 && gameState.year === 1 && gameState.turn === 1;
+  // Escenarios históricos: en la emergencia solo se juegan medidas extraordinarias (el bloque reemplaza
+  // a la grilla y a las interacciones con actores); en la gestión queda arriba de la grilla, más chico.
+  const emergency = inEmergency(gameState.causal);
+  const emergencyBlock = inCrisis(gameState.causal) && (
+    <EmergencyBlock
+      gameState={gameState}
+      onActionSelect={handleActionSelect}
+      onEndTurn={handleEndTurn}
+      canEndTurn={!modalOpen}
+      compact={!emergency}
+    />
+  );
+  const showTutorialCard =!tutorial.dismissed && gameState.term === 1 && gameState.year === 1 && gameState.turn === 1;
   const tutorialCard = showTutorialCard && (
     <TutorialCard gameState={gameState} actions={gameState.baseActions} onDismiss={tutorial.dismiss} onOpenGuide={() => setShowHelp(true)} />
   );
@@ -291,11 +306,14 @@ function App() {
             {tutorialCard}
             {mobileTab === 'acciones' && (
               <>
-                <ControlPanel
-                  gameState={gameState}
-                  onActionSelect={handleActionSelect}
-                  canTakeAction={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
-                />
+                {emergencyBlock}
+                {!emergency && (
+                  <ControlPanel
+                    gameState={gameState}
+                    onActionSelect={handleActionSelect}
+                    canTakeAction={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
+                  />
+                )}
                 <TurnPlan
                   gameState={gameState}
                   onActionSelect={handleActionSelect}
@@ -313,7 +331,7 @@ function App() {
                   gameState={gameState}
                   onInteract={handleActorInteraction}
                   onSelectAction={handleActionSelect}
-                  disabled={gameState.gameOver || gameState.pendingElection}
+                  disabled={gameState.gameOver || gameState.pendingElection || emergency}
                 />
               </>
             )}
@@ -355,12 +373,15 @@ function App() {
               <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 items-start xl:items-stretch xl:grid-rows-[minmax(0,1fr)] xl:flex-1 xl:min-h-0">
                 <div className="flex flex-col gap-4 min-w-0 xl:min-h-0 xl:overflow-y-auto xl:pr-1 [scrollbar-gutter:stable] [&>*]:shrink-0" data-columna="acciones">
                   {tutorialCard}
-                  <ControlPanel
-                    gameState={gameState}
-                    onActionSelect={handleActionSelect}
-                    canTakeAction={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
-                    index="01"
-                  />
+                  {emergencyBlock}
+                  {!emergency && (
+                    <ControlPanel
+                      gameState={gameState}
+                      onActionSelect={handleActionSelect}
+                      canTakeAction={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
+                      index="01"
+                    />
+                  )}
                 </div>
                 <aside className="flex flex-col gap-4 min-w-0 xl:min-h-0" aria-label="Turno y actores">
                   <div className="xl:flex-none">
@@ -378,7 +399,7 @@ function App() {
                       gameState={gameState}
                       onInteract={handleActorInteraction}
                       onSelectAction={handleActionSelect}
-                      disabled={gameState.gameOver || gameState.pendingElection}
+                      disabled={gameState.gameOver || gameState.pendingElection || emergency}
                       index="03"
                     />
                   </div>
@@ -398,13 +419,16 @@ function App() {
 
               <div className="flex flex-col gap-4 min-w-0">
                 <CivicBanner />
-                <ControlPanel
-                  gameState={gameState}
-                  onActionSelect={handleActionSelect}
-                  canTakeAction={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
-                  index="03"
-                  scroll
-                />
+                {emergencyBlock}
+                {!emergency && (
+                  <ControlPanel
+                    gameState={gameState}
+                    onActionSelect={handleActionSelect}
+                    canTakeAction={gameState.actions > 0 && !gameState.gameOver && !gameState.pendingElection}
+                    index="03"
+                    scroll
+                  />
+                )}
               </div>
 
               <aside className="lg:col-span-2 xl:col-span-1 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-1 gap-4 min-w-0 items-start" aria-label="Turno y actores">
@@ -419,7 +443,7 @@ function App() {
                   gameState={gameState}
                   onInteract={handleActorInteraction}
                   onSelectAction={handleActionSelect}
-                  disabled={gameState.gameOver || gameState.pendingElection}
+                  disabled={gameState.gameOver || gameState.pendingElection || emergency}
                   index="05"
                 />
               </aside>

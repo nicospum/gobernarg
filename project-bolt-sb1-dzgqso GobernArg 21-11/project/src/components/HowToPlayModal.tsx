@@ -25,6 +25,10 @@ export function HowToPlayModal({ actions, gameState, onClose }: { actions: numbe
       text: 'Cada tanto pasa algo que no elegiste: una inundación, un paro, una ruptura en el Congreso. Casi siempre hay más de una forma de responder.',
     },
     {
+      title: 'Escenarios históricos',
+      text: 'Arrancan con una emergencia de tres semanas o meses: una medida extraordinaria por vez, sin costo, con impacto fuerte y una apuesta que se resuelve más adelante. Después sigue el mandato normal.',
+    },
+    {
       title: 'Guardado',
       text: 'La partida se guarda en este navegador. Si cerrás la pestaña, en la portada aparece "Continuar partida". Podés descargar un respaldo desde Guardado; si falla el autoguardado, se avisa en pantalla.',
     },

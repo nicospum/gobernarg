@@ -14,6 +14,8 @@ import { InfoTooltip } from '../InfoTooltip';
 import { BudgetDetails, TrendChip, indicatorCards } from '../IndicatorsPanel';
 import { MandateTimeline } from '../GameHeader';
 import { calendarFor, mandateTurn, periodCaption } from '@/lib/calendar';
+import { crisisRoundLabel, crisisScenario, inEmergency } from '@/engine/causal';
+import { emergencyStage, unitWords } from '@/lib/crisisView';
 import { Sheet } from './Sheet';
 import { detailed } from '@/lite/config';
 import { kpiWord } from '@/lib/simpleView';
@@ -44,6 +46,9 @@ export function MobileHeader({ gameState, onOpenMenu }: {
   const milestones: Record<number, string> = { [calendar.midtermTurn]: 'Legislativas', [calendar.turnsPerMandate]: 'Presidenciales' };
   const nextMilestone = Object.keys(milestones).map(Number).find(t => t >= inMandate);
   const scenario = getScenario(gameState.causal?.scenarioId);
+  // Escenarios históricos: durante la emergencia la leyenda es la subronda, no el trimestre.
+  const emergency = inEmergency(gameState.causal);
+  const crisisDef = crisisScenario(gameState.causal);
   return (
     <header className="sticky top-0 z-40 sr-navy-bar shadow-[0_4px_18px_rgb(7_28_48/0.25)] pl-[max(1rem,env(safe-area-inset-left,0px))] pr-[max(0.375rem,env(safe-area-inset-right,0px))] pt-[calc(0.625rem+env(safe-area-inset-top,0px))] pb-3">
       <div className="flex items-center gap-2.5">
@@ -58,8 +63,9 @@ export function MobileHeader({ gameState, onOpenMenu }: {
           <div className="text-[8px] font-bold tracking-[0.15em] text-sala-on-navy">PRESIDENCIA · MANDATO {gameState.term}</div>
           <div className="text-[17px] font-bold truncate">{gameState.governorName || '—'}</div>
           <div className="text-[11px] text-sala-on-navy truncate">
-            {periodCaption(gameState)} · T{inMandate}/{calendar.turnsPerMandate}
+            {emergency ? `${crisisRoundLabel(gameState.causal)} · ${emergencyStage(gameState.causal)}` : <>{periodCaption(gameState)} · T{inMandate}/{calendar.turnsPerMandate}</>}
             {scenario && <> · {scenario.name}</>}
+            {crisisDef && !emergency && <> · desde el {crisisDef.start}</>}
           </div>
         </div>
         <button
@@ -162,6 +168,9 @@ export function MobileBottomBar({ gameState, tab, onTab, onEndTurn, canEndTurn }
 }) {
   const [showBudget, setShowBudget] = useState(false);
   const caja = gameState.causal.caja;
+  // Escenarios históricos: durante la emergencia se cierra la semana o el mes.
+  const crisisDef = crisisScenario(gameState.causal);
+  const closeLabel = inEmergency(gameState.causal) && crisisDef ? unitWords(crisisDef.roundUnit).close : null;
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 bg-surface border-t border-rule shadow-[0_-6px_18px_rgb(9_44_85/0.08)] pb-[env(safe-area-inset-bottom,0px)] pl-[env(safe-area-inset-left,0px)] pr-[env(safe-area-inset-right,0px)]">
       <div className="flex items-center gap-2.5 min-[400px]:gap-3.5 h-[68px] pl-4 pr-3">
@@ -180,12 +189,12 @@ export function MobileBottomBar({ gameState, tab, onTab, onEndTurn, canEndTurn }
           }}
           disabled={!canEndTurn}
           data-no-restore-focus
-          aria-label="Finalizar turno"
+          aria-label={closeLabel ?? 'Finalizar turno'}
           className="sr-btn-lime ml-auto h-12 px-3 min-[400px]:px-3.5 gap-1 whitespace-nowrap text-[11px]"
         >
           {/* En pantallas de 360 px no entra "Finalizar turno" junto a la caja. */}
-          <span className="min-[400px]:hidden">Finalizar</span>
-          <span className="hidden min-[400px]:inline">Finalizar turno</span>
+          <span className="min-[400px]:hidden">{closeLabel ? 'Cerrar' : 'Finalizar'}</span>
+          <span className="hidden min-[400px]:inline">{closeLabel ?? 'Finalizar turno'}</span>
           <ChevronRight size={18} />
         </button>
       </div>

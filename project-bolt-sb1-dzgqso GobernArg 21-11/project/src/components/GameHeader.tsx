@@ -15,6 +15,8 @@ import { detailed } from '@/lite/config';
 import { kpiWord } from '@/lib/simpleView';
 import { getScenario } from '@/data/causal';
 import { calendarFor, mandateTurn, periodCaption } from '@/lib/calendar';
+import { crisisRoundLabel, crisisScenario, inEmergency } from '@/engine/causal';
+import { emergencyStage, unitWords } from '@/lib/crisisView';
 
 interface GameHeaderProps {
   gameState: GameState;
@@ -165,6 +167,10 @@ export function GameHeader({
   const apro = Math.round(c.political.apro);
   const last = c.records[c.records.length - 1];
   const divider = 'pl-4 border-l border-white/15';
+  // Escenarios históricos: durante la emergencia se cierra una semana o un mes, no el turno.
+  const emergency = inEmergency(c);
+  const crisisDef = crisisScenario(c);
+  const endTurnLabel = emergency && crisisDef ? unitWords(crisisDef.roundUnit).close : 'Finalizar turno';
 
   return (
     <header className="sticky top-0 z-50 sr-navy-bar shadow-[0_4px_18px_rgb(7_28_48/0.25)]">
@@ -197,6 +203,7 @@ export function GameHeader({
               {positionLabel} · Mandato {gameState.term}
               {scenarioDef && <span title={`Escenario: ${scenarioDef.name}`}> · {scenarioDef.name}</span>}
             </div>
+            {crisisDef && !emergency && <div className="hidden xl:block text-[10px] text-sala-on-navy truncate max-w-[200px]">desde el {crisisDef.start}</div>}
           </div>
         </div>
 
@@ -204,9 +211,11 @@ export function GameHeader({
         <div className={`hidden md:flex flex-col gap-1.5 flex-1 min-w-[136px] max-w-[260px] ${divider}`}>
           <div className="flex items-center gap-2 text-[11px] tracking-[0.08em] uppercase">
             <CalendarDays size={14} />
-            <span>{periodCaption(gameState)}</span>
+            <span>{emergency ? crisisRoundLabel(c) : periodCaption(gameState)}</span>
           </div>
-          <span className="text-[10px] text-sala-on-navy">Turno <strong className="text-white">{inMandate}</strong> de {calendar.turnsPerMandate}</span>
+          {emergency
+            ? <span className="text-[10px] text-sala-on-navy">{emergencyStage(c)}</span>
+            : <span className="text-[10px] text-sala-on-navy">Turno <strong className="text-white">{inMandate}</strong> de {calendar.turnsPerMandate}</span>}
           <MandateTimeline gameState={gameState} onNavy />
         </div>
 
@@ -265,7 +274,7 @@ export function GameHeader({
               data-no-restore-focus
               className="sr-btn-lime h-11 px-4 text-[11px] ml-1"
             >
-              Finalizar turno
+              {endTurnLabel}
               <ChevronRight size={17} />
             </button>
           )}

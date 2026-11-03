@@ -232,6 +232,16 @@
     padding: 18px 22px;
   }
   .sr-modal-head .sr-label { color: rgb(var(--sky)); }
+  /* Medidas extraordinarias (escenarios históricos): halo de luz ámbar. Fijo; late solo si el sistema permite animación. */
+  .sr-glow {
+    border-color: rgb(var(--sun) / 0.65);
+    box-shadow: 0 0 0 1px rgb(var(--sun) / 0.35), 0 0 16px 1px rgb(var(--sun) / 0.3);
+  }
+  /* Bloqueadas: el halo queda tenue y quieto. */
+  .sr-glow-dim {
+    border-color: rgb(var(--sun) / 0.3);
+    box-shadow: 0 0 0 1px rgb(var(--sun) / 0.15), 0 0 8px 0 rgb(var(--sun) / 0.12);
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -240,6 +250,15 @@
 @keyframes sr-civic-drift {
   from { transform: scale(1.01); }
   to { transform: scale(1.05); }
+}
+
+/* Halo de las medidas extraordinarias: respira despacio; con "reducir movimiento" queda fijo. */
+@media (prefers-reduced-motion: no-preference) {
+  .sr-glow:not(.sr-glow-dim) { animation: sr-glow 2.4s ease-in-out infinite alternate; }
+}
+@keyframes sr-glow {
+  from { box-shadow: 0 0 0 1px rgb(var(--sun) / 0.3), 0 0 10px 0 rgb(var(--sun) / 0.2); }
+  to { box-shadow: 0 0 0 1px rgb(var(--sun) / 0.65), 0 0 24px 4px rgb(var(--sun) / 0.45); }
 }
 
 @layer utilities {
