@@ -1,0 +1,5552 @@
+{
+  "generatedAt": "2026-11-03T02:47:03.958Z",
+  "seeds": 20,
+  "maxEntries": 35,
+  "summary": {
+    "corralito": {
+      "XI": {
+        "n": 20,
+        "survived": 20,
+        "reelected": 0,
+        "won": 0,
+        "lostElection": 0,
+        "defeats": {
+          "juicio político": 20
+        },
+        "avgTurns": 8,
+        "betsBien": 0,
+        "betsMal": 0,
+        "betsByMeasure": {},
+        "measures": {},
+        "avgMinGob": 11.675,
+        "avgMaxInfl": 75.8,
+        "avgFinalIv": 13.564999999999998,
+        "avgFinalCaja": -1362.35,
+        "avgFinalDeuda": 6000
+      },
+      "XO": {
+        "n": 20,
+        "survived": 20,
+        "reelected": 0,
+        "won": 0,
+        "lostElection": 0,
+        "defeats": {
+          "juicio político": 20
+        },
+        "avgTurns": 7,
+        "betsBien": 0,
+        "betsMal": 40,
+        "betsByMeasure": {
+          "estado_de_sitio": {
+            "bien": 0,
+            "mal": 20
+          },
+          "limitar_retiros": {
+            "bien": 0,
+            "mal": 20
+          }
+        },
+        "measures": {
+          "dolarizar": 20,
+          "rescate_fmi": 20,
+          "apertura_total": 20,
+          "limitar_retiros": 20,
+          "estado_de_sitio": 20
+        },
+        "avgMinGob": 0.17500000000000002,
+        "avgMaxInfl": 41.629999999999995,
+        "avgFinalIv": 8.835000000000003,
+        "avgFinalCaja": -385.2,
+        "avgFinalDeuda": 6202.5
+      },
+      "XH": {
+        "n": 20,
+        "survived": 20,
+        "reelected": 0,
+        "won": 0,
+        "lostElection": 0,
+        "defeats": {
+          "hiperinflación": 13,
+          "juicio político": 7
+        },
+        "avgTurns": 12.25,
+        "betsBien": 78,
+        "betsMal": 62,
+        "betsByMeasure": {
+          "limitar_retiros": {
+            "bien": 20,
+            "mal": 0
+          },
+          "salir_convertibilidad": {
+            "bien": 20,
+            "mal": 0
+          },
+          "liberar_depositos": {
+            "bien": 20,
+            "mal": 0
+          },
+          "pesificar": {
+            "bien": 0,
+            "mal": 20
+          },
+          "emergencia_alimentaria": {
+            "bien": 15,
+            "mal": 5
+          },
+          "suspender_pagos": {
+            "bien": 3,
+            "mal": 17
+          },
+          "cuasimonedas": {
+            "bien": 0,
+            "mal": 20
+          }
+        },
+        "measures": {
+          "limitar_retiros": 20,
+          "salir_convertibilidad": 20,
+          "pesificar": 20,
+          "suspender_pagos": 20,
+          "liberar_depositos": 20,
+          "emergencia_alimentaria": 20,
+          "cuasimonedas": 20,
+          "negociar_deuda": 7
+        },
+        "avgMinGob": 11.809999999999999,
+        "avgMaxInfl": 97.1,
+        "avgFinalIv": 9.95,
+        "avgFinalCaja": -764.7,
+        "avgFinalDeuda": 5942.5
+      },
+      "XA": {
+        "n": 20,
+        "survived": 20,
+        "reelected": 0,
+        "won": 0,
+        "lostElection": 0,
+        "defeats": {
+          "hiperinflación": 16,
+          "juicio político": 4
+        },
+        "avgTurns": 10.4,
+        "betsBien": 18,
+        "betsMal": 8,
+        "betsByMeasure": {
+          "emergencia_alimentaria": {
+            "bien": 18,
+            "mal": 2
+          },
+          "rescate_fmi_exito": {
+            "bien": 0,
+            "mal": 5
+          },
+          "estado_de_sitio": {
+            "bien": 0,
+            "mal": 1
+          }
+        },
+        "measures": {
+          "emergencia_alimentaria": 20,
+          "rescate_fmi": 20,
+          "estado_de_sitio": 1
+        },
+        "avgMinGob": 12.890000000000004,
+        "avgMaxInfl": 94.7,
+        "avgFinalIv": 11.23,
+        "avgFinalCaja": -160.15,
+        "avgFinalDeuda": 6340
+      },
+      "H": {
+        "n": 20,
+        "survived": 20,
+        "reelected": 0,
+        "won": 0,
+        "lostElection": 0,
+        "defeats": {
+          "juicio político": 14,
+          "hiperinflación": 6
+        },
+        "avgTurns": 9.5,
+        "betsBien": 36,
+        "betsMal": 4,
+        "betsByMeasure": {
+          "emergencia_alimentaria": {
+            "bien": 16,
+            "mal": 4
+          },
+          "estado_de_sitio": {
+            "bien": 20,
+            "mal": 0
+          }
+        },
+        "measures": {
+          "emergencia_alimentaria": 20,
+          "estado_de_sitio": 20
+        },
+        "avgMinGob": 10.849999999999998,
+        "avgMaxInfl": 91.10500000000002,
+        "avgFinalIv": 11.254999999999999,
+        "avgFinalCaja": -339.45,
+        "avgFinalDeuda": 5920
+      }
+    },
+    "pais_en_llamas": {
+      "XI": {
+        "n": 20,
+        "survived": 0,
+        "reelected": 0,
+        "won": 0,
+        "lostElection": 0,
+        "defeats": {
+          "hiperinflación": 20
+        },
+        "avgTurns": 2,
+        "betsBien": 0,
+        "betsMal": 0,
+        "betsByMeasure": {},
+        "measures": {},
+        "avgMinGob": 29.5,
+        "avgMaxInfl": 100,
+        "avgFinalIv": 17.199999999999996,
+        "avgFinalCaja": 250,
+        "avgFinalDeuda": 5000
+      },
+      "XO": {
+        "n": 20,
+        "survived": 20,
+        "reelected": 0,
+        "won": 0,
+        "lostElection": 0,
+        "defeats": {
+          "juicio político": 20
+        },
+        "avgTurns": 5,
+        "betsBien": 0,
+        "betsMal": 20,
+        "betsByMeasure": {
+          "estado_de_sitio": {
+            "bien": 0,
+            "mal": 20
+          }
+        },
+        "measures": {
+          "shock_fiscal": 20,
+          "privatizar_todo": 20,
+          "apertura_total": 20,
+          "estado_de_sitio": 20
+        },
+        "avgMinGob": 0,
+        "avgMaxInfl": 100,
+        "avgFinalIv": 8.280000000000001,
+        "avgFinalCaja": 1806,
+        "avgFinalDeuda": 5000
+      },
+      "XH": {
+        "n": 20,
+        "survived": 20,
+        "reelected": 0,
+        "won": 0,
+        "lostElection": 0,
+        "defeats": {
+          "hiperinflación": 20
+        },
+        "avgTurns": 7,
+        "betsBien": 0,
+        "betsMal": 60,
+        "betsByMeasure": {
+          "congelamiento_total": {
+            "bien": 0,
+            "mal": 20
+          },
+          "intervencion_total": {
+            "bien": 0,
+            "mal": 20
+          },
+          "emergencia_alimentaria": {
+            "bien": 0,
+            "mal": 20
+          }
+        },
+        "measures": {
+          "congelamiento_total": 20,
+          "emergencia_alimentaria": 20,
+          "acuerdo_transicion": 20,
+          "intervencion_total": 20
+        },
+        "avgMinGob": 33.269999999999996,
+        "avgMaxInfl": 100,
+        "avgFinalIv": 14.125,
+        "avgFinalCaja": -1040.95,
+        "avgFinalDeuda": 5000
+      },
+      "XA": {
+        "n": 20,
+        "survived": 20,
+        "reelected": 0,
+        "won": 0,
+        "lostElection": 0,
+        "defeats": {
+          "hiperinflación": 20
+        },
+        "avgTurns": 7,
+        "betsBien": 0,
+        "betsMal": 40,
+        "betsByMeasure": {
+          "congelamiento_total": {
+            "bien": 0,
+            "mal": 20
+          },
+          "emergencia_alimentaria": {
+            "bien": 0,
+            "mal": 20
+          }
+        },
+        "measures": {
+          "congelamiento_total": 20,
+          "emergencia_alimentaria": 20,
+          "acuerdo_transicion": 20,
+          "negociar_deuda": 20
+        },
+        "avgMinGob": 32.970000000000006,
+        "avgMaxInfl": 94.65499999999997,
+        "avgFinalIv": 15.02,
+        "avgFinalCaja": -333.35,
+        "avgFinalDeuda": 3512.5
+      },
+      "H": {
+        "n": 20,
+        "survived": 20,
+        "reelected": 0,
+        "won": 0,
+        "lostElection": 0,
+        "defeats": {
+          "hiperinflación": 20
+        },
+        "avgTurns": 7,
+        "betsBien": 0,
+        "betsMal": 40,
+        "betsByMeasure": {
+          "congelamiento_total": {
+            "bien": 0,
+            "mal": 20
+          },
+          "emergencia_alimentaria": {
+            "bien": 0,
+            "mal": 20
+          }
+        },
+        "measures": {
+          "congelamiento_total": 20,
+          "emergencia_alimentaria": 20,
+          "acuerdo_transicion": 20,
+          "estado_de_sitio": 20
+        },
+        "avgMinGob": 32.419999999999995,
+        "avgMaxInfl": 95.08999999999999,
+        "avgFinalIv": 12.535000000000002,
+        "avgFinalCaja": -217.5,
+        "avgFinalDeuda": 5000
+      }
+    }
+  },
+  "games": {
+    "corralito": {
+      "XI": [
+        {
+          "bot": "XI",
+          "seed": 1,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T5",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 8,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [],
+          "bets": {},
+          "minGob": 11.4,
+          "maxInfl": 75.8,
+          "finalIv": 13.4,
+          "finalCaja": -1352,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XI",
+          "seed": 2,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T5",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 8,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [],
+          "bets": {},
+          "minGob": 12.9,
+          "maxInfl": 75.7,
+          "finalIv": 12.7,
+          "finalCaja": -1351,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XI",
+          "seed": 3,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T5",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 8,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [],
+          "bets": {},
+          "minGob": 10.3,
+          "maxInfl": 75.8,
+          "finalIv": 14.2,
+          "finalCaja": -1452,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XI",
+          "seed": 4,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T5",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 8,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [],
+          "bets": {},
+          "minGob": 11.9,
+          "maxInfl": 75.7,
+          "finalIv": 12,
+          "finalCaja": -1201,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XI",
+          "seed": 5,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T5",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 8,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [],
+          "bets": {},
+          "minGob": 12.9,
+          "maxInfl": 75.7,
+          "finalIv": 12.8,
+          "finalCaja": -1251,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XI",
+          "seed": 6,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T5",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 8,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [],
+          "bets": {},
+          "minGob": 10.3,
+          "maxInfl": 75.8,
+          "finalIv": 14.2,
+          "finalCaja": -1452,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XI",
+          "seed": 7,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T5",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 8,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [],
+          "bets": {},
+          "minGob": 12.5,
+          "maxInfl": 76,
+          "finalIv": 13.6,
+          "finalCaja": -1506,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XI",
+          "seed": 8,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T5",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 8,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [],
+          "bets": {},
+          "minGob": 12.6,
+          "maxInfl": 75.9,
+          "finalIv": 14.3,
+          "finalCaja": -1304,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XI",
+          "seed": 9,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T5",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 8,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [],
+          "bets": {},
+          "minGob": 11.1,
+          "maxInfl": 75.9,
+          "finalIv": 14.3,
+          "finalCaja": -1604,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XI",
+          "seed": 10,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T5",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 8,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [],
+          "bets": {},
+          "minGob": 12.9,
+          "maxInfl": 75.6,
+          "finalIv": 13.4,
+          "finalCaja": -1051,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XI",
+          "seed": 11,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T5",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 8,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [],
+          "bets": {},
+          "minGob": 12.8,
+          "maxInfl": 75.7,
+          "finalIv": 15,
+          "finalCaja": -1351,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XI",
+          "seed": 12,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T5",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 8,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [],
+          "bets": {},
+          "minGob": 10.5,
+          "maxInfl": 75.8,
+          "finalIv": 14.1,
+          "finalCaja": -1552,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XI",
+          "seed": 13,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T5",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 8,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [],
+          "bets": {},
+          "minGob": 8.7,
+          "maxInfl": 75.7,
+          "finalIv": 12,
+          "finalCaja": -1201,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XI",
+          "seed": 14,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T5",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 8,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [],
+          "bets": {},
+          "minGob": 11.8,
+          "maxInfl": 75.9,
+          "finalIv": 14.1,
+          "finalCaja": -1552,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XI",
+          "seed": 15,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T5",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 8,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [],
+          "bets": {},
+          "minGob": 12.6,
+          "maxInfl": 75.9,
+          "finalIv": 13.6,
+          "finalCaja": -1254,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XI",
+          "seed": 16,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T5",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 8,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [],
+          "bets": {},
+          "minGob": 11.4,
+          "maxInfl": 75.8,
+          "finalIv": 13.5,
+          "finalCaja": -1252,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XI",
+          "seed": 17,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T5",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 8,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [],
+          "bets": {},
+          "minGob": 11.6,
+          "maxInfl": 75.7,
+          "finalIv": 14.2,
+          "finalCaja": -1301,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XI",
+          "seed": 18,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T5",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 8,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [],
+          "bets": {},
+          "minGob": 12.5,
+          "maxInfl": 75.8,
+          "finalIv": 13.3,
+          "finalCaja": -1452,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XI",
+          "seed": 19,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T5",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 8,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [],
+          "bets": {},
+          "minGob": 10,
+          "maxInfl": 76,
+          "finalIv": 12.8,
+          "finalCaja": -1306,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XI",
+          "seed": 20,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T5",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 8,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [],
+          "bets": {},
+          "minGob": 12.8,
+          "maxInfl": 75.8,
+          "finalIv": 13.8,
+          "finalCaja": -1502,
+          "finalDeuda": 6000
+        }
+      ],
+      "XO": [
+        {
+          "bot": "XO",
+          "seed": 1,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "dolarizar",
+            "rescate_fmi",
+            "apertura_total",
+            "limitar_retiros",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal",
+            "limitar_retiros": "mal"
+          },
+          "minGob": 0.1,
+          "maxInfl": 43.4,
+          "finalIv": 8.8,
+          "finalCaja": -684,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XO",
+          "seed": 2,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "dolarizar",
+            "rescate_fmi",
+            "apertura_total",
+            "limitar_retiros",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal",
+            "limitar_retiros": "mal"
+          },
+          "minGob": 0.1,
+          "maxInfl": 43.4,
+          "finalIv": 8,
+          "finalCaja": -590,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XO",
+          "seed": 3,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "dolarizar",
+            "rescate_fmi",
+            "apertura_total",
+            "limitar_retiros",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal",
+            "limitar_retiros": "mal"
+          },
+          "minGob": 0.1,
+          "maxInfl": 43.4,
+          "finalIv": 8.8,
+          "finalCaja": -984,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XO",
+          "seed": 4,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "dolarizar",
+            "rescate_fmi",
+            "apertura_total",
+            "limitar_retiros",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal",
+            "limitar_retiros": "mal"
+          },
+          "minGob": 0.1,
+          "maxInfl": 43.4,
+          "finalIv": 8,
+          "finalCaja": -740,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XO",
+          "seed": 5,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "dolarizar",
+            "rescate_fmi",
+            "apertura_total",
+            "limitar_retiros",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal",
+            "limitar_retiros": "mal"
+          },
+          "minGob": 0.1,
+          "maxInfl": 43.4,
+          "finalIv": 8,
+          "finalCaja": -590,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XO",
+          "seed": 6,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "dolarizar",
+            "rescate_fmi",
+            "apertura_total",
+            "limitar_retiros",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal",
+            "limitar_retiros": "mal"
+          },
+          "minGob": 0.1,
+          "maxInfl": 43.4,
+          "finalIv": 8.8,
+          "finalCaja": -984,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XO",
+          "seed": 7,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "dolarizar",
+            "rescate_fmi",
+            "apertura_total",
+            "limitar_retiros",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal",
+            "limitar_retiros": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 37.7,
+          "finalIv": 9.3,
+          "finalCaja": 227,
+          "finalDeuda": 6810
+        },
+        {
+          "bot": "XO",
+          "seed": 8,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "dolarizar",
+            "rescate_fmi",
+            "apertura_total",
+            "limitar_retiros",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal",
+            "limitar_retiros": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 37.6,
+          "finalIv": 10,
+          "finalCaja": 427,
+          "finalDeuda": 6810
+        },
+        {
+          "bot": "XO",
+          "seed": 9,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "dolarizar",
+            "rescate_fmi",
+            "apertura_total",
+            "limitar_retiros",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal",
+            "limitar_retiros": "mal"
+          },
+          "minGob": 1.1,
+          "maxInfl": 37.6,
+          "finalIv": 10,
+          "finalCaja": 127,
+          "finalDeuda": 6810
+        },
+        {
+          "bot": "XO",
+          "seed": 10,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "dolarizar",
+            "rescate_fmi",
+            "apertura_total",
+            "limitar_retiros",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal",
+            "limitar_retiros": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 40.2,
+          "finalIv": 8,
+          "finalCaja": -62,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XO",
+          "seed": 11,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "dolarizar",
+            "rescate_fmi",
+            "apertura_total",
+            "limitar_retiros",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal",
+            "limitar_retiros": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 43.2,
+          "finalIv": 8.7,
+          "finalCaja": 38,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XO",
+          "seed": 12,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "dolarizar",
+            "rescate_fmi",
+            "apertura_total",
+            "limitar_retiros",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal",
+            "limitar_retiros": "mal"
+          },
+          "minGob": 0.1,
+          "maxInfl": 43.4,
+          "finalIv": 8.8,
+          "finalCaja": -1084,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XO",
+          "seed": 13,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "dolarizar",
+            "rescate_fmi",
+            "apertura_total",
+            "limitar_retiros",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal",
+            "limitar_retiros": "mal"
+          },
+          "minGob": 1.6,
+          "maxInfl": 43.4,
+          "finalIv": 8,
+          "finalCaja": -740,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XO",
+          "seed": 14,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "dolarizar",
+            "rescate_fmi",
+            "apertura_total",
+            "limitar_retiros",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal",
+            "limitar_retiros": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 43.4,
+          "finalIv": 8.7,
+          "finalCaja": -790,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XO",
+          "seed": 15,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "dolarizar",
+            "rescate_fmi",
+            "apertura_total",
+            "limitar_retiros",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal",
+            "limitar_retiros": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 37.6,
+          "finalIv": 9.5,
+          "finalCaja": 577,
+          "finalDeuda": 6810
+        },
+        {
+          "bot": "XO",
+          "seed": 16,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "dolarizar",
+            "rescate_fmi",
+            "apertura_total",
+            "limitar_retiros",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal",
+            "limitar_retiros": "mal"
+          },
+          "minGob": 0.1,
+          "maxInfl": 43.4,
+          "finalIv": 8.3,
+          "finalCaja": -684,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XO",
+          "seed": 17,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "dolarizar",
+            "rescate_fmi",
+            "apertura_total",
+            "limitar_retiros",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal",
+            "limitar_retiros": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 40.3,
+          "finalIv": 8.8,
+          "finalCaja": -315,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XO",
+          "seed": 18,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "dolarizar",
+            "rescate_fmi",
+            "apertura_total",
+            "limitar_retiros",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal",
+            "limitar_retiros": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 43.4,
+          "finalIv": 8.8,
+          "finalCaja": -690,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XO",
+          "seed": 19,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "dolarizar",
+            "rescate_fmi",
+            "apertura_total",
+            "limitar_retiros",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal",
+            "limitar_retiros": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 37.6,
+          "finalIv": 10,
+          "finalCaja": 577,
+          "finalDeuda": 6810
+        },
+        {
+          "bot": "XO",
+          "seed": 20,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "dolarizar",
+            "rescate_fmi",
+            "apertura_total",
+            "limitar_retiros",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal",
+            "limitar_retiros": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 43.4,
+          "finalIv": 9.4,
+          "finalCaja": -740,
+          "finalDeuda": 6000
+        }
+      ],
+      "XH": [
+        {
+          "bot": "XH",
+          "seed": 1,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T10",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 13,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "limitar_retiros",
+            "salir_convertibilidad",
+            "pesificar",
+            "suspender_pagos",
+            "liberar_depositos",
+            "emergencia_alimentaria",
+            "cuasimonedas",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "limitar_retiros": "bien",
+            "salir_convertibilidad": "bien",
+            "liberar_depositos": "bien",
+            "pesificar": "mal",
+            "emergencia_alimentaria": "mal",
+            "suspender_pagos": "mal",
+            "cuasimonedas": "mal"
+          },
+          "minGob": 11.5,
+          "maxInfl": 100,
+          "finalIv": 9.3,
+          "finalCaja": -797,
+          "finalDeuda": 4290
+        },
+        {
+          "bot": "XH",
+          "seed": 2,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T9",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 12,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "limitar_retiros",
+            "salir_convertibilidad",
+            "pesificar",
+            "suspender_pagos",
+            "liberar_depositos",
+            "emergencia_alimentaria",
+            "cuasimonedas",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "limitar_retiros": "bien",
+            "salir_convertibilidad": "bien",
+            "liberar_depositos": "bien",
+            "pesificar": "mal",
+            "emergencia_alimentaria": "bien",
+            "suspender_pagos": "bien",
+            "cuasimonedas": "mal"
+          },
+          "minGob": 12.7,
+          "maxInfl": 100,
+          "finalIv": 9.3,
+          "finalCaja": -1154,
+          "finalDeuda": 4290
+        },
+        {
+          "bot": "XH",
+          "seed": 3,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T10",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 13,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "limitar_retiros",
+            "salir_convertibilidad",
+            "pesificar",
+            "suspender_pagos",
+            "liberar_depositos",
+            "emergencia_alimentaria",
+            "cuasimonedas"
+          ],
+          "bets": {
+            "limitar_retiros": "bien",
+            "salir_convertibilidad": "bien",
+            "liberar_depositos": "bien",
+            "pesificar": "mal",
+            "emergencia_alimentaria": "mal",
+            "suspender_pagos": "mal",
+            "cuasimonedas": "mal"
+          },
+          "minGob": 12,
+          "maxInfl": 100,
+          "finalIv": 10.6,
+          "finalCaja": -364,
+          "finalDeuda": 5800
+        },
+        {
+          "bot": "XH",
+          "seed": 4,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T9",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 12,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "limitar_retiros",
+            "salir_convertibilidad",
+            "pesificar",
+            "suspender_pagos",
+            "liberar_depositos",
+            "emergencia_alimentaria",
+            "cuasimonedas"
+          ],
+          "bets": {
+            "limitar_retiros": "bien",
+            "salir_convertibilidad": "bien",
+            "liberar_depositos": "bien",
+            "pesificar": "mal",
+            "emergencia_alimentaria": "bien",
+            "suspender_pagos": "mal",
+            "cuasimonedas": "mal"
+          },
+          "minGob": 12.2,
+          "maxInfl": 99,
+          "finalIv": 9,
+          "finalCaja": -597,
+          "finalDeuda": 6600
+        },
+        {
+          "bot": "XH",
+          "seed": 5,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T9",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 12,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "limitar_retiros",
+            "salir_convertibilidad",
+            "pesificar",
+            "suspender_pagos",
+            "liberar_depositos",
+            "emergencia_alimentaria",
+            "cuasimonedas",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "limitar_retiros": "bien",
+            "salir_convertibilidad": "bien",
+            "liberar_depositos": "bien",
+            "pesificar": "mal",
+            "emergencia_alimentaria": "bien",
+            "suspender_pagos": "bien",
+            "cuasimonedas": "mal"
+          },
+          "minGob": 15.9,
+          "maxInfl": 100,
+          "finalIv": 11.7,
+          "finalCaja": -1516,
+          "finalDeuda": 4290
+        },
+        {
+          "bot": "XH",
+          "seed": 6,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T8",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 11,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "limitar_retiros",
+            "salir_convertibilidad",
+            "pesificar",
+            "suspender_pagos",
+            "liberar_depositos",
+            "emergencia_alimentaria",
+            "cuasimonedas"
+          ],
+          "bets": {
+            "limitar_retiros": "bien",
+            "salir_convertibilidad": "bien",
+            "liberar_depositos": "bien",
+            "pesificar": "mal",
+            "emergencia_alimentaria": "bien",
+            "suspender_pagos": "mal",
+            "cuasimonedas": "mal"
+          },
+          "minGob": 10.5,
+          "maxInfl": 86.2,
+          "finalIv": 11.1,
+          "finalCaja": -701,
+          "finalDeuda": 6600
+        },
+        {
+          "bot": "XH",
+          "seed": 7,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T9",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 12,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "limitar_retiros",
+            "salir_convertibilidad",
+            "pesificar",
+            "suspender_pagos",
+            "liberar_depositos",
+            "emergencia_alimentaria",
+            "cuasimonedas"
+          ],
+          "bets": {
+            "limitar_retiros": "bien",
+            "salir_convertibilidad": "bien",
+            "liberar_depositos": "bien",
+            "pesificar": "mal",
+            "emergencia_alimentaria": "bien",
+            "suspender_pagos": "mal",
+            "cuasimonedas": "mal"
+          },
+          "minGob": 15,
+          "maxInfl": 99.9,
+          "finalIv": 10.9,
+          "finalCaja": -701,
+          "finalDeuda": 6600
+        },
+        {
+          "bot": "XH",
+          "seed": 8,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T9",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 12,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "limitar_retiros",
+            "salir_convertibilidad",
+            "pesificar",
+            "suspender_pagos",
+            "liberar_depositos",
+            "emergencia_alimentaria",
+            "cuasimonedas"
+          ],
+          "bets": {
+            "limitar_retiros": "bien",
+            "salir_convertibilidad": "bien",
+            "liberar_depositos": "bien",
+            "pesificar": "mal",
+            "emergencia_alimentaria": "bien",
+            "suspender_pagos": "mal",
+            "cuasimonedas": "mal"
+          },
+          "minGob": 13.1,
+          "maxInfl": 86.9,
+          "finalIv": 11.2,
+          "finalCaja": -1138,
+          "finalDeuda": 6600
+        },
+        {
+          "bot": "XH",
+          "seed": 9,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T9",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 12,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "limitar_retiros",
+            "salir_convertibilidad",
+            "pesificar",
+            "suspender_pagos",
+            "liberar_depositos",
+            "emergencia_alimentaria",
+            "cuasimonedas"
+          ],
+          "bets": {
+            "limitar_retiros": "bien",
+            "salir_convertibilidad": "bien",
+            "liberar_depositos": "bien",
+            "pesificar": "mal",
+            "emergencia_alimentaria": "bien",
+            "suspender_pagos": "mal",
+            "cuasimonedas": "mal"
+          },
+          "minGob": 12,
+          "maxInfl": 100,
+          "finalIv": 11.5,
+          "finalCaja": -553,
+          "finalDeuda": 6600
+        },
+        {
+          "bot": "XH",
+          "seed": 10,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T8",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 11,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "limitar_retiros",
+            "salir_convertibilidad",
+            "pesificar",
+            "suspender_pagos",
+            "liberar_depositos",
+            "emergencia_alimentaria",
+            "cuasimonedas"
+          ],
+          "bets": {
+            "limitar_retiros": "bien",
+            "salir_convertibilidad": "bien",
+            "liberar_depositos": "bien",
+            "pesificar": "mal",
+            "emergencia_alimentaria": "bien",
+            "suspender_pagos": "mal",
+            "cuasimonedas": "mal"
+          },
+          "minGob": 12.5,
+          "maxInfl": 80.1,
+          "finalIv": 10.8,
+          "finalCaja": -625,
+          "finalDeuda": 6600
+        },
+        {
+          "bot": "XH",
+          "seed": 11,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T9",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 12,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "limitar_retiros",
+            "salir_convertibilidad",
+            "pesificar",
+            "suspender_pagos",
+            "liberar_depositos",
+            "emergencia_alimentaria",
+            "cuasimonedas",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "limitar_retiros": "bien",
+            "salir_convertibilidad": "bien",
+            "liberar_depositos": "bien",
+            "pesificar": "mal",
+            "emergencia_alimentaria": "bien",
+            "suspender_pagos": "mal",
+            "cuasimonedas": "mal"
+          },
+          "minGob": 10.7,
+          "maxInfl": 97.1,
+          "finalIv": 8.6,
+          "finalCaja": -529,
+          "finalDeuda": 6600
+        },
+        {
+          "bot": "XH",
+          "seed": 12,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T8",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 11,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "limitar_retiros",
+            "salir_convertibilidad",
+            "pesificar",
+            "suspender_pagos",
+            "liberar_depositos",
+            "emergencia_alimentaria",
+            "cuasimonedas"
+          ],
+          "bets": {
+            "limitar_retiros": "bien",
+            "salir_convertibilidad": "bien",
+            "liberar_depositos": "bien",
+            "pesificar": "mal",
+            "emergencia_alimentaria": "bien",
+            "suspender_pagos": "mal",
+            "cuasimonedas": "mal"
+          },
+          "minGob": 10.5,
+          "maxInfl": 96,
+          "finalIv": 10.6,
+          "finalCaja": -213,
+          "finalDeuda": 6600
+        },
+        {
+          "bot": "XH",
+          "seed": 13,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T9",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 12,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "limitar_retiros",
+            "salir_convertibilidad",
+            "pesificar",
+            "suspender_pagos",
+            "liberar_depositos",
+            "emergencia_alimentaria",
+            "cuasimonedas"
+          ],
+          "bets": {
+            "limitar_retiros": "bien",
+            "salir_convertibilidad": "bien",
+            "liberar_depositos": "bien",
+            "pesificar": "mal",
+            "emergencia_alimentaria": "bien",
+            "suspender_pagos": "mal",
+            "cuasimonedas": "mal"
+          },
+          "minGob": 9.5,
+          "maxInfl": 100,
+          "finalIv": 8.2,
+          "finalCaja": -680,
+          "finalDeuda": 6600
+        },
+        {
+          "bot": "XH",
+          "seed": 14,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T9",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 12,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "limitar_retiros",
+            "salir_convertibilidad",
+            "pesificar",
+            "suspender_pagos",
+            "liberar_depositos",
+            "emergencia_alimentaria",
+            "cuasimonedas"
+          ],
+          "bets": {
+            "limitar_retiros": "bien",
+            "salir_convertibilidad": "bien",
+            "liberar_depositos": "bien",
+            "pesificar": "mal",
+            "emergencia_alimentaria": "bien",
+            "suspender_pagos": "mal",
+            "cuasimonedas": "mal"
+          },
+          "minGob": 11.3,
+          "maxInfl": 100,
+          "finalIv": 12,
+          "finalCaja": -1140,
+          "finalDeuda": 6600
+        },
+        {
+          "bot": "XH",
+          "seed": 15,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T10",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 13,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "limitar_retiros",
+            "salir_convertibilidad",
+            "pesificar",
+            "suspender_pagos",
+            "liberar_depositos",
+            "emergencia_alimentaria",
+            "cuasimonedas",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "limitar_retiros": "bien",
+            "salir_convertibilidad": "bien",
+            "liberar_depositos": "bien",
+            "pesificar": "mal",
+            "emergencia_alimentaria": "mal",
+            "suspender_pagos": "bien",
+            "cuasimonedas": "mal"
+          },
+          "minGob": 11.1,
+          "maxInfl": 100,
+          "finalIv": 9,
+          "finalCaja": -1050,
+          "finalDeuda": 4290
+        },
+        {
+          "bot": "XH",
+          "seed": 16,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T10",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 13,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "limitar_retiros",
+            "salir_convertibilidad",
+            "pesificar",
+            "suspender_pagos",
+            "liberar_depositos",
+            "emergencia_alimentaria",
+            "cuasimonedas"
+          ],
+          "bets": {
+            "limitar_retiros": "bien",
+            "salir_convertibilidad": "bien",
+            "liberar_depositos": "bien",
+            "pesificar": "mal",
+            "emergencia_alimentaria": "mal",
+            "suspender_pagos": "mal",
+            "cuasimonedas": "mal"
+          },
+          "minGob": 14.1,
+          "maxInfl": 100,
+          "finalIv": 10.6,
+          "finalCaja": -903,
+          "finalDeuda": 6600
+        },
+        {
+          "bot": "XH",
+          "seed": 17,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T9",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 12,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "limitar_retiros",
+            "salir_convertibilidad",
+            "pesificar",
+            "suspender_pagos",
+            "liberar_depositos",
+            "emergencia_alimentaria",
+            "cuasimonedas"
+          ],
+          "bets": {
+            "limitar_retiros": "bien",
+            "salir_convertibilidad": "bien",
+            "liberar_depositos": "bien",
+            "pesificar": "mal",
+            "emergencia_alimentaria": "bien",
+            "suspender_pagos": "mal",
+            "cuasimonedas": "mal"
+          },
+          "minGob": 10.6,
+          "maxInfl": 98,
+          "finalIv": 10.1,
+          "finalCaja": -563,
+          "finalDeuda": 6600
+        },
+        {
+          "bot": "XH",
+          "seed": 18,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T11",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 14,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "limitar_retiros",
+            "salir_convertibilidad",
+            "pesificar",
+            "suspender_pagos",
+            "liberar_depositos",
+            "emergencia_alimentaria",
+            "cuasimonedas",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "limitar_retiros": "bien",
+            "salir_convertibilidad": "bien",
+            "liberar_depositos": "bien",
+            "pesificar": "mal",
+            "emergencia_alimentaria": "bien",
+            "suspender_pagos": "mal",
+            "cuasimonedas": "mal"
+          },
+          "minGob": 8.2,
+          "maxInfl": 98.8,
+          "finalIv": 6.8,
+          "finalCaja": -187,
+          "finalDeuda": 5800
+        },
+        {
+          "bot": "XH",
+          "seed": 19,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T9",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 12,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "limitar_retiros",
+            "salir_convertibilidad",
+            "pesificar",
+            "suspender_pagos",
+            "liberar_depositos",
+            "emergencia_alimentaria",
+            "cuasimonedas",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "limitar_retiros": "bien",
+            "salir_convertibilidad": "bien",
+            "liberar_depositos": "bien",
+            "pesificar": "mal",
+            "emergencia_alimentaria": "bien",
+            "suspender_pagos": "mal",
+            "cuasimonedas": "mal"
+          },
+          "minGob": 14.1,
+          "maxInfl": 100,
+          "finalIv": 10.3,
+          "finalCaja": -1153,
+          "finalDeuda": 4290
+        },
+        {
+          "bot": "XH",
+          "seed": 20,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T11",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 14,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "limitar_retiros",
+            "salir_convertibilidad",
+            "pesificar",
+            "suspender_pagos",
+            "liberar_depositos",
+            "emergencia_alimentaria",
+            "cuasimonedas"
+          ],
+          "bets": {
+            "limitar_retiros": "bien",
+            "salir_convertibilidad": "bien",
+            "liberar_depositos": "bien",
+            "pesificar": "mal",
+            "emergencia_alimentaria": "mal",
+            "suspender_pagos": "mal",
+            "cuasimonedas": "mal"
+          },
+          "minGob": 8.7,
+          "maxInfl": 100,
+          "finalIv": 7.4,
+          "finalCaja": -730,
+          "finalDeuda": 6600
+        }
+      ],
+      "XA": [
+        {
+          "bot": "XA",
+          "seed": 1,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T7",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 10,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "rescate_fmi"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien"
+          },
+          "minGob": 16.1,
+          "maxInfl": 100,
+          "finalIv": 11.5,
+          "finalCaja": -731,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XA",
+          "seed": 2,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T7",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 10,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "rescate_fmi"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien"
+          },
+          "minGob": 15.6,
+          "maxInfl": 100,
+          "finalIv": 11,
+          "finalCaja": -651,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XA",
+          "seed": 3,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T7",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 10,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "rescate_fmi"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien"
+          },
+          "minGob": 15.7,
+          "maxInfl": 100,
+          "finalIv": 13.2,
+          "finalCaja": -476,
+          "finalDeuda": 6900
+        },
+        {
+          "bot": "XA",
+          "seed": 4,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T7",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 10,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "rescate_fmi"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien"
+          },
+          "minGob": 14.6,
+          "maxInfl": 95.8,
+          "finalIv": 11,
+          "finalCaja": 639,
+          "finalDeuda": 6900
+        },
+        {
+          "bot": "XA",
+          "seed": 5,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T7",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 10,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "rescate_fmi"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien"
+          },
+          "minGob": 15.7,
+          "maxInfl": 100,
+          "finalIv": 11.9,
+          "finalCaja": 24,
+          "finalDeuda": 6900
+        },
+        {
+          "bot": "XA",
+          "seed": 6,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T7",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 10,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "rescate_fmi"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien"
+          },
+          "minGob": 15.8,
+          "maxInfl": 100,
+          "finalIv": 12.5,
+          "finalCaja": -276,
+          "finalDeuda": 6900
+        },
+        {
+          "bot": "XA",
+          "seed": 7,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T8",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 11,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "rescate_fmi"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "rescate_fmi_exito": "mal"
+          },
+          "minGob": 9.9,
+          "maxInfl": 99.1,
+          "finalIv": 12.2,
+          "finalCaja": 293,
+          "finalDeuda": 6900
+        },
+        {
+          "bot": "XA",
+          "seed": 8,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T8",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 11,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "rescate_fmi"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "rescate_fmi_exito": "mal"
+          },
+          "minGob": 11.5,
+          "maxInfl": 68.1,
+          "finalIv": 12.9,
+          "finalCaja": 149,
+          "finalDeuda": 6900
+        },
+        {
+          "bot": "XA",
+          "seed": 9,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T9",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 12,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "rescate_fmi"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "rescate_fmi_exito": "mal"
+          },
+          "minGob": 8.6,
+          "maxInfl": 100,
+          "finalIv": 10.7,
+          "finalCaja": 106,
+          "finalDeuda": 6100
+        },
+        {
+          "bot": "XA",
+          "seed": 10,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T7",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 10,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "rescate_fmi"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien"
+          },
+          "minGob": 12.3,
+          "maxInfl": 100,
+          "finalIv": 9.9,
+          "finalCaja": -178,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XA",
+          "seed": 11,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T8",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 11,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "rescate_fmi"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 12.8,
+          "maxInfl": 100,
+          "finalIv": 10.1,
+          "finalCaja": -1005,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XA",
+          "seed": 12,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T7",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 10,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "rescate_fmi"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien"
+          },
+          "minGob": 13.9,
+          "maxInfl": 100,
+          "finalIv": 10.7,
+          "finalCaja": -931,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XA",
+          "seed": 13,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T7",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 10,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "rescate_fmi",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "estado_de_sitio": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 100,
+          "finalIv": 7.3,
+          "finalCaja": 192,
+          "finalDeuda": 6900
+        },
+        {
+          "bot": "XA",
+          "seed": 14,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T7",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 10,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "rescate_fmi"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien"
+          },
+          "minGob": 15,
+          "maxInfl": 100,
+          "finalIv": 12.2,
+          "finalCaja": -1034,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XA",
+          "seed": 15,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T8",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 11,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "rescate_fmi"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "rescate_fmi_exito": "mal"
+          },
+          "minGob": 11.8,
+          "maxInfl": 65.5,
+          "finalIv": 10.6,
+          "finalCaja": 225,
+          "finalDeuda": 6100
+        },
+        {
+          "bot": "XA",
+          "seed": 16,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T7",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 10,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "rescate_fmi"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien"
+          },
+          "minGob": 15.2,
+          "maxInfl": 99.4,
+          "finalIv": 11.4,
+          "finalCaja": -535,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "XA",
+          "seed": 17,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T8",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 11,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "rescate_fmi"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 13.4,
+          "maxInfl": 98.1,
+          "finalIv": 10.9,
+          "finalCaja": 105,
+          "finalDeuda": 6900
+        },
+        {
+          "bot": "XA",
+          "seed": 18,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T7",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 10,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "rescate_fmi"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien"
+          },
+          "minGob": 14,
+          "maxInfl": 97.8,
+          "finalIv": 11,
+          "finalCaja": -237,
+          "finalDeuda": 5200
+        },
+        {
+          "bot": "XA",
+          "seed": 19,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T8",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 11,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "rescate_fmi"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "rescate_fmi_exito": "mal"
+          },
+          "minGob": 11.4,
+          "maxInfl": 72.9,
+          "finalIv": 11.1,
+          "finalCaja": 444,
+          "finalDeuda": 6100
+        },
+        {
+          "bot": "XA",
+          "seed": 20,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T7",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 10,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "rescate_fmi"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien"
+          },
+          "minGob": 14.5,
+          "maxInfl": 97.3,
+          "finalIv": 12.5,
+          "finalCaja": 674,
+          "finalDeuda": 6100
+        }
+      ],
+      "H": [
+        {
+          "bot": "H",
+          "seed": 1,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T6",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 9,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "estado_de_sitio": "bien"
+          },
+          "minGob": 9.1,
+          "maxInfl": 81.9,
+          "finalIv": 12.4,
+          "finalCaja": -672,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "H",
+          "seed": 2,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T7",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 10,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "estado_de_sitio": "bien"
+          },
+          "minGob": 12.3,
+          "maxInfl": 100,
+          "finalIv": 10.9,
+          "finalCaja": -632,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "H",
+          "seed": 3,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T6",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 9,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "estado_de_sitio": "bien"
+          },
+          "minGob": 9.6,
+          "maxInfl": 82,
+          "finalIv": 12.5,
+          "finalCaja": -672,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "H",
+          "seed": 4,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T6",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 9,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "estado_de_sitio": "bien"
+          },
+          "minGob": 9.6,
+          "maxInfl": 92.7,
+          "finalIv": 10.2,
+          "finalCaja": 521,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "H",
+          "seed": 5,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T7",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 10,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "estado_de_sitio": "bien"
+          },
+          "minGob": 12.4,
+          "maxInfl": 100,
+          "finalIv": 10.9,
+          "finalCaja": -712,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "H",
+          "seed": 6,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T6",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 9,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "estado_de_sitio": "bien"
+          },
+          "minGob": 9.6,
+          "maxInfl": 82,
+          "finalIv": 12.5,
+          "finalCaja": -672,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "H",
+          "seed": 7,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T6",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 9,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "estado_de_sitio": "bien"
+          },
+          "minGob": 11.7,
+          "maxInfl": 90.9,
+          "finalIv": 11.8,
+          "finalCaja": -321,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "H",
+          "seed": 8,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T8",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 11,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "mal",
+            "estado_de_sitio": "bien"
+          },
+          "minGob": 12,
+          "maxInfl": 100,
+          "finalIv": 10.8,
+          "finalCaja": -847,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "H",
+          "seed": 9,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T6",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 9,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "estado_de_sitio": "bien"
+          },
+          "minGob": 12.9,
+          "maxInfl": 81.7,
+          "finalIv": 12.5,
+          "finalCaja": -665,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "H",
+          "seed": 10,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T6",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 9,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "estado_de_sitio": "bien"
+          },
+          "minGob": 11.8,
+          "maxInfl": 93.2,
+          "finalIv": 10.1,
+          "finalCaja": 462,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "H",
+          "seed": 11,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T8",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 11,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "mal",
+            "estado_de_sitio": "bien"
+          },
+          "minGob": 12.3,
+          "maxInfl": 100,
+          "finalIv": 10.2,
+          "finalCaja": -982,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "H",
+          "seed": 12,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T6",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 9,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "estado_de_sitio": "bien"
+          },
+          "minGob": 9.7,
+          "maxInfl": 82.1,
+          "finalIv": 12.4,
+          "finalCaja": -772,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "H",
+          "seed": 13,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T6",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 9,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "estado_de_sitio": "bien"
+          },
+          "minGob": 9.6,
+          "maxInfl": 92.7,
+          "finalIv": 10.2,
+          "finalCaja": 371,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "H",
+          "seed": 14,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T6",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 9,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "estado_de_sitio": "bien"
+          },
+          "minGob": 10.9,
+          "maxInfl": 91.2,
+          "finalIv": 12.5,
+          "finalCaja": -631,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "H",
+          "seed": 15,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T6",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 9,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "estado_de_sitio": "bien"
+          },
+          "minGob": 10.5,
+          "maxInfl": 78.4,
+          "finalIv": 11.7,
+          "finalCaja": -50,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "H",
+          "seed": 16,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T8",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 11,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "mal",
+            "estado_de_sitio": "bien"
+          },
+          "minGob": 10.2,
+          "maxInfl": 100,
+          "finalIv": 11,
+          "finalCaja": -949,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "H",
+          "seed": 17,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T8",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 11,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "mal",
+            "estado_de_sitio": "bien"
+          },
+          "minGob": 11.2,
+          "maxInfl": 100,
+          "finalIv": 8.5,
+          "finalCaja": -888,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "H",
+          "seed": 18,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T6",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 9,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "estado_de_sitio": "bien"
+          },
+          "minGob": 11.7,
+          "maxInfl": 93,
+          "finalIv": 11.3,
+          "finalCaja": 548,
+          "finalDeuda": 5200
+        },
+        {
+          "bot": "H",
+          "seed": 19,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T6",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 9,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "estado_de_sitio": "bien"
+          },
+          "minGob": 8,
+          "maxInfl": 85.9,
+          "finalIv": 10.8,
+          "finalCaja": 225,
+          "finalDeuda": 6000
+        },
+        {
+          "bot": "H",
+          "seed": 20,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T6",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 9,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "emergencia_alimentaria",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "emergencia_alimentaria": "bien",
+            "estado_de_sitio": "bien"
+          },
+          "minGob": 11.9,
+          "maxInfl": 94.4,
+          "finalIv": 11.9,
+          "finalCaja": 549,
+          "finalDeuda": 5200
+        }
+      ]
+    },
+    "pais_en_llamas": {
+      "XI": [
+        {
+          "bot": "XI",
+          "seed": 1,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "mes 2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 2,
+          "rounds": 2,
+          "survivedEmergency": false,
+          "used": [],
+          "bets": {},
+          "minGob": 29.5,
+          "maxInfl": 100,
+          "finalIv": 17.2,
+          "finalCaja": 250,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XI",
+          "seed": 2,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "mes 2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 2,
+          "rounds": 2,
+          "survivedEmergency": false,
+          "used": [],
+          "bets": {},
+          "minGob": 29.5,
+          "maxInfl": 100,
+          "finalIv": 17.2,
+          "finalCaja": 250,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XI",
+          "seed": 3,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "mes 2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 2,
+          "rounds": 2,
+          "survivedEmergency": false,
+          "used": [],
+          "bets": {},
+          "minGob": 29.5,
+          "maxInfl": 100,
+          "finalIv": 17.2,
+          "finalCaja": 250,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XI",
+          "seed": 4,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "mes 2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 2,
+          "rounds": 2,
+          "survivedEmergency": false,
+          "used": [],
+          "bets": {},
+          "minGob": 29.5,
+          "maxInfl": 100,
+          "finalIv": 17.2,
+          "finalCaja": 250,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XI",
+          "seed": 5,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "mes 2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 2,
+          "rounds": 2,
+          "survivedEmergency": false,
+          "used": [],
+          "bets": {},
+          "minGob": 29.5,
+          "maxInfl": 100,
+          "finalIv": 17.2,
+          "finalCaja": 250,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XI",
+          "seed": 6,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "mes 2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 2,
+          "rounds": 2,
+          "survivedEmergency": false,
+          "used": [],
+          "bets": {},
+          "minGob": 29.5,
+          "maxInfl": 100,
+          "finalIv": 17.2,
+          "finalCaja": 250,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XI",
+          "seed": 7,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "mes 2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 2,
+          "rounds": 2,
+          "survivedEmergency": false,
+          "used": [],
+          "bets": {},
+          "minGob": 29.5,
+          "maxInfl": 100,
+          "finalIv": 17.2,
+          "finalCaja": 250,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XI",
+          "seed": 8,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "mes 2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 2,
+          "rounds": 2,
+          "survivedEmergency": false,
+          "used": [],
+          "bets": {},
+          "minGob": 29.5,
+          "maxInfl": 100,
+          "finalIv": 17.2,
+          "finalCaja": 250,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XI",
+          "seed": 9,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "mes 2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 2,
+          "rounds": 2,
+          "survivedEmergency": false,
+          "used": [],
+          "bets": {},
+          "minGob": 29.5,
+          "maxInfl": 100,
+          "finalIv": 17.2,
+          "finalCaja": 250,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XI",
+          "seed": 10,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "mes 2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 2,
+          "rounds": 2,
+          "survivedEmergency": false,
+          "used": [],
+          "bets": {},
+          "minGob": 29.5,
+          "maxInfl": 100,
+          "finalIv": 17.2,
+          "finalCaja": 250,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XI",
+          "seed": 11,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "mes 2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 2,
+          "rounds": 2,
+          "survivedEmergency": false,
+          "used": [],
+          "bets": {},
+          "minGob": 29.5,
+          "maxInfl": 100,
+          "finalIv": 17.2,
+          "finalCaja": 250,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XI",
+          "seed": 12,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "mes 2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 2,
+          "rounds": 2,
+          "survivedEmergency": false,
+          "used": [],
+          "bets": {},
+          "minGob": 29.5,
+          "maxInfl": 100,
+          "finalIv": 17.2,
+          "finalCaja": 250,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XI",
+          "seed": 13,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "mes 2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 2,
+          "rounds": 2,
+          "survivedEmergency": false,
+          "used": [],
+          "bets": {},
+          "minGob": 29.5,
+          "maxInfl": 100,
+          "finalIv": 17.2,
+          "finalCaja": 250,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XI",
+          "seed": 14,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "mes 2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 2,
+          "rounds": 2,
+          "survivedEmergency": false,
+          "used": [],
+          "bets": {},
+          "minGob": 29.5,
+          "maxInfl": 100,
+          "finalIv": 17.2,
+          "finalCaja": 250,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XI",
+          "seed": 15,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "mes 2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 2,
+          "rounds": 2,
+          "survivedEmergency": false,
+          "used": [],
+          "bets": {},
+          "minGob": 29.5,
+          "maxInfl": 100,
+          "finalIv": 17.2,
+          "finalCaja": 250,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XI",
+          "seed": 16,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "mes 2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 2,
+          "rounds": 2,
+          "survivedEmergency": false,
+          "used": [],
+          "bets": {},
+          "minGob": 29.5,
+          "maxInfl": 100,
+          "finalIv": 17.2,
+          "finalCaja": 250,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XI",
+          "seed": 17,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "mes 2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 2,
+          "rounds": 2,
+          "survivedEmergency": false,
+          "used": [],
+          "bets": {},
+          "minGob": 29.5,
+          "maxInfl": 100,
+          "finalIv": 17.2,
+          "finalCaja": 250,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XI",
+          "seed": 18,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "mes 2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 2,
+          "rounds": 2,
+          "survivedEmergency": false,
+          "used": [],
+          "bets": {},
+          "minGob": 29.5,
+          "maxInfl": 100,
+          "finalIv": 17.2,
+          "finalCaja": 250,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XI",
+          "seed": 19,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "mes 2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 2,
+          "rounds": 2,
+          "survivedEmergency": false,
+          "used": [],
+          "bets": {},
+          "minGob": 29.5,
+          "maxInfl": 100,
+          "finalIv": 17.2,
+          "finalCaja": 250,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XI",
+          "seed": 20,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "mes 2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 2,
+          "rounds": 2,
+          "survivedEmergency": false,
+          "used": [],
+          "bets": {},
+          "minGob": 29.5,
+          "maxInfl": 100,
+          "finalIv": 17.2,
+          "finalCaja": 250,
+          "finalDeuda": 5000
+        }
+      ],
+      "XO": [
+        {
+          "bot": "XO",
+          "seed": 1,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 5,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "shock_fiscal",
+            "privatizar_todo",
+            "apertura_total",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 100,
+          "finalIv": 8.4,
+          "finalCaja": 1906,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XO",
+          "seed": 2,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 5,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "shock_fiscal",
+            "privatizar_todo",
+            "apertura_total",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 100,
+          "finalIv": 7.6,
+          "finalCaja": 1856,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XO",
+          "seed": 3,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 5,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "shock_fiscal",
+            "privatizar_todo",
+            "apertura_total",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 100,
+          "finalIv": 8.4,
+          "finalCaja": 1906,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XO",
+          "seed": 4,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 5,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "shock_fiscal",
+            "privatizar_todo",
+            "apertura_total",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 100,
+          "finalIv": 7.6,
+          "finalCaja": 1856,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XO",
+          "seed": 5,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 5,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "shock_fiscal",
+            "privatizar_todo",
+            "apertura_total",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 100,
+          "finalIv": 7.6,
+          "finalCaja": 1856,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XO",
+          "seed": 6,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 5,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "shock_fiscal",
+            "privatizar_todo",
+            "apertura_total",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 100,
+          "finalIv": 8.4,
+          "finalCaja": 1906,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XO",
+          "seed": 7,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 5,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "shock_fiscal",
+            "privatizar_todo",
+            "apertura_total",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 100,
+          "finalIv": 8.4,
+          "finalCaja": 1606,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XO",
+          "seed": 8,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 5,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "shock_fiscal",
+            "privatizar_todo",
+            "apertura_total",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 100,
+          "finalIv": 8.4,
+          "finalCaja": 1756,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XO",
+          "seed": 9,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 5,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "shock_fiscal",
+            "privatizar_todo",
+            "apertura_total",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 100,
+          "finalIv": 8.4,
+          "finalCaja": 1606,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XO",
+          "seed": 10,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 5,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "shock_fiscal",
+            "privatizar_todo",
+            "apertura_total",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 100,
+          "finalIv": 8.4,
+          "finalCaja": 2056,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XO",
+          "seed": 11,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 5,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "shock_fiscal",
+            "privatizar_todo",
+            "apertura_total",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 100,
+          "finalIv": 8.4,
+          "finalCaja": 1906,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XO",
+          "seed": 12,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 5,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "shock_fiscal",
+            "privatizar_todo",
+            "apertura_total",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 100,
+          "finalIv": 8.4,
+          "finalCaja": 1906,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XO",
+          "seed": 13,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 5,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "shock_fiscal",
+            "privatizar_todo",
+            "apertura_total",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 100,
+          "finalIv": 7.6,
+          "finalCaja": 1706,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XO",
+          "seed": 14,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 5,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "shock_fiscal",
+            "privatizar_todo",
+            "apertura_total",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 100,
+          "finalIv": 8.4,
+          "finalCaja": 1656,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XO",
+          "seed": 15,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 5,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "shock_fiscal",
+            "privatizar_todo",
+            "apertura_total",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 100,
+          "finalIv": 8.4,
+          "finalCaja": 1756,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XO",
+          "seed": 16,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 5,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "shock_fiscal",
+            "privatizar_todo",
+            "apertura_total",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 100,
+          "finalIv": 8.4,
+          "finalCaja": 1906,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XO",
+          "seed": 17,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 5,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "shock_fiscal",
+            "privatizar_todo",
+            "apertura_total",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 100,
+          "finalIv": 8.4,
+          "finalCaja": 1906,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XO",
+          "seed": 18,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 5,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "shock_fiscal",
+            "privatizar_todo",
+            "apertura_total",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 100,
+          "finalIv": 8.4,
+          "finalCaja": 1756,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XO",
+          "seed": 19,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 5,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "shock_fiscal",
+            "privatizar_todo",
+            "apertura_total",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 100,
+          "finalIv": 8.4,
+          "finalCaja": 1606,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XO",
+          "seed": 20,
+          "result": "derrota",
+          "defeatReason": "impeachment",
+          "endedAt": "T2",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 5,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "shock_fiscal",
+            "privatizar_todo",
+            "apertura_total",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "estado_de_sitio": "mal"
+          },
+          "minGob": 0,
+          "maxInfl": 100,
+          "finalIv": 9.2,
+          "finalCaja": 1706,
+          "finalDeuda": 5000
+        }
+      ],
+      "XH": [
+        {
+          "bot": "XH",
+          "seed": 1,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "intervencion_total"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "intervencion_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33.3,
+          "maxInfl": 100,
+          "finalIv": 14.2,
+          "finalCaja": -1112,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XH",
+          "seed": 2,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "intervencion_total"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "intervencion_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33.3,
+          "maxInfl": 100,
+          "finalIv": 13.9,
+          "finalCaja": -662,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XH",
+          "seed": 3,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "intervencion_total"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "intervencion_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33.3,
+          "maxInfl": 100,
+          "finalIv": 13.5,
+          "finalCaja": -1162,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XH",
+          "seed": 4,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "intervencion_total"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "intervencion_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33.3,
+          "maxInfl": 100,
+          "finalIv": 14.7,
+          "finalCaja": -1112,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XH",
+          "seed": 5,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "intervencion_total"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "intervencion_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33.3,
+          "maxInfl": 100,
+          "finalIv": 14.7,
+          "finalCaja": -962,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XH",
+          "seed": 6,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "intervencion_total"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "intervencion_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33.3,
+          "maxInfl": 100,
+          "finalIv": 13.5,
+          "finalCaja": -1162,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XH",
+          "seed": 7,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "intervencion_total"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "intervencion_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 32.7,
+          "maxInfl": 100,
+          "finalIv": 12.9,
+          "finalCaja": -1112,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XH",
+          "seed": 8,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "intervencion_total"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "intervencion_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33.3,
+          "maxInfl": 100,
+          "finalIv": 15.6,
+          "finalCaja": -1312,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XH",
+          "seed": 9,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "intervencion_total"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "intervencion_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33.3,
+          "maxInfl": 100,
+          "finalIv": 14.1,
+          "finalCaja": -1162,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XH",
+          "seed": 10,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "intervencion_total"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "intervencion_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33.3,
+          "maxInfl": 100,
+          "finalIv": 12.7,
+          "finalCaja": -602,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XH",
+          "seed": 11,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "intervencion_total"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "intervencion_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33.3,
+          "maxInfl": 100,
+          "finalIv": 12.7,
+          "finalCaja": -602,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XH",
+          "seed": 12,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "intervencion_total"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "intervencion_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33.3,
+          "maxInfl": 100,
+          "finalIv": 14.6,
+          "finalCaja": -1261,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XH",
+          "seed": 13,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "intervencion_total"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "intervencion_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33.3,
+          "maxInfl": 100,
+          "finalIv": 14.7,
+          "finalCaja": -1112,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XH",
+          "seed": 14,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "intervencion_total"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "intervencion_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33.3,
+          "maxInfl": 100,
+          "finalIv": 15.3,
+          "finalCaja": -1012,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XH",
+          "seed": 15,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "intervencion_total"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "intervencion_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33.3,
+          "maxInfl": 100,
+          "finalIv": 14.8,
+          "finalCaja": -1262,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XH",
+          "seed": 16,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "intervencion_total"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "intervencion_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33.3,
+          "maxInfl": 100,
+          "finalIv": 14.2,
+          "finalCaja": -1362,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XH",
+          "seed": 17,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "intervencion_total"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "intervencion_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33.3,
+          "maxInfl": 100,
+          "finalIv": 13.9,
+          "finalCaja": -1012,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XH",
+          "seed": 18,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "intervencion_total"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "intervencion_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33.3,
+          "maxInfl": 100,
+          "finalIv": 14.6,
+          "finalCaja": -1062,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XH",
+          "seed": 19,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "intervencion_total"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "intervencion_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33.3,
+          "maxInfl": 100,
+          "finalIv": 13.3,
+          "finalCaja": -962,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XH",
+          "seed": 20,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "intervencion_total"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "intervencion_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33.3,
+          "maxInfl": 100,
+          "finalIv": 14.6,
+          "finalCaja": -812,
+          "finalDeuda": 5000
+        }
+      ],
+      "XA": [
+        {
+          "bot": "XA",
+          "seed": 1,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 95.3,
+          "finalIv": 15.7,
+          "finalCaja": -184,
+          "finalDeuda": 3250
+        },
+        {
+          "bot": "XA",
+          "seed": 2,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 92.3,
+          "finalIv": 14.8,
+          "finalCaja": -135,
+          "finalDeuda": 3250
+        },
+        {
+          "bot": "XA",
+          "seed": 3,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 95.3,
+          "finalIv": 15,
+          "finalCaja": -234,
+          "finalDeuda": 3250
+        },
+        {
+          "bot": "XA",
+          "seed": 4,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 94.6,
+          "finalIv": 15.5,
+          "finalCaja": -746,
+          "finalDeuda": 3250
+        },
+        {
+          "bot": "XA",
+          "seed": 5,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 94.6,
+          "finalIv": 15.5,
+          "finalCaja": -596,
+          "finalDeuda": 3250
+        },
+        {
+          "bot": "XA",
+          "seed": 6,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 95.3,
+          "finalIv": 15,
+          "finalCaja": -234,
+          "finalDeuda": 3250
+        },
+        {
+          "bot": "XA",
+          "seed": 7,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 32.7,
+          "maxInfl": 95.3,
+          "finalIv": 14.1,
+          "finalCaja": -209,
+          "finalDeuda": 3250
+        },
+        {
+          "bot": "XA",
+          "seed": 8,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 95.3,
+          "finalIv": 15.6,
+          "finalCaja": -302,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XA",
+          "seed": 9,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 95.3,
+          "finalIv": 14,
+          "finalCaja": -302,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XA",
+          "seed": 10,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 92.9,
+          "finalIv": 12.5,
+          "finalCaja": 88,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "XA",
+          "seed": 11,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 92.3,
+          "finalIv": 14,
+          "finalCaja": -75,
+          "finalDeuda": 3250
+        },
+        {
+          "bot": "XA",
+          "seed": 12,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 95.3,
+          "finalIv": 15.7,
+          "finalCaja": -334,
+          "finalDeuda": 3250
+        },
+        {
+          "bot": "XA",
+          "seed": 13,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 94.6,
+          "finalIv": 15.5,
+          "finalCaja": -746,
+          "finalDeuda": 3250
+        },
+        {
+          "bot": "XA",
+          "seed": 14,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 94.7,
+          "finalIv": 16.1,
+          "finalCaja": -646,
+          "finalDeuda": 3250
+        },
+        {
+          "bot": "XA",
+          "seed": 15,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 95.3,
+          "finalIv": 15.8,
+          "finalCaja": -414,
+          "finalDeuda": 3250
+        },
+        {
+          "bot": "XA",
+          "seed": 16,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 95.3,
+          "finalIv": 15.7,
+          "finalCaja": -434,
+          "finalDeuda": 3250
+        },
+        {
+          "bot": "XA",
+          "seed": 17,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 95.3,
+          "finalIv": 15,
+          "finalCaja": -234,
+          "finalDeuda": 3250
+        },
+        {
+          "bot": "XA",
+          "seed": 18,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 94.7,
+          "finalIv": 15.4,
+          "finalCaja": -696,
+          "finalDeuda": 3250
+        },
+        {
+          "bot": "XA",
+          "seed": 19,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 32.7,
+          "maxInfl": 95.3,
+          "finalIv": 14.1,
+          "finalCaja": -209,
+          "finalDeuda": 3250
+        },
+        {
+          "bot": "XA",
+          "seed": 20,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "negociar_deuda"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 94.1,
+          "finalIv": 15.4,
+          "finalCaja": -25,
+          "finalDeuda": 3250
+        }
+      ],
+      "H": [
+        {
+          "bot": "H",
+          "seed": 1,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 95.3,
+          "finalIv": 13,
+          "finalCaja": -171,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "H",
+          "seed": 2,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 93.3,
+          "finalIv": 12.2,
+          "finalCaja": 28,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "H",
+          "seed": 3,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 95.3,
+          "finalIv": 12.3,
+          "finalCaja": -221,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "H",
+          "seed": 4,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 32.4,
+          "maxInfl": 95.9,
+          "finalIv": 12.8,
+          "finalCaja": -433,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "H",
+          "seed": 5,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 32.4,
+          "maxInfl": 95.9,
+          "finalIv": 12.8,
+          "finalCaja": -433,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "H",
+          "seed": 6,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 95.3,
+          "finalIv": 12.3,
+          "finalCaja": -221,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "H",
+          "seed": 7,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 29.3,
+          "maxInfl": 95.3,
+          "finalIv": 11.4,
+          "finalCaja": -47,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "H",
+          "seed": 8,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 95.3,
+          "finalIv": 14,
+          "finalCaja": -302,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "H",
+          "seed": 9,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 95.3,
+          "finalIv": 12.4,
+          "finalCaja": -152,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "H",
+          "seed": 10,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 31.9,
+          "maxInfl": 92.7,
+          "finalIv": 11.4,
+          "finalCaja": 88,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "H",
+          "seed": 11,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 31.9,
+          "maxInfl": 92.7,
+          "finalIv": 11.4,
+          "finalCaja": 88,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "H",
+          "seed": 12,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 95.3,
+          "finalIv": 13,
+          "finalCaja": -321,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "H",
+          "seed": 13,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 95.9,
+          "finalIv": 12.8,
+          "finalCaja": -583,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "H",
+          "seed": 14,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 32.7,
+          "maxInfl": 95.9,
+          "finalIv": 13.5,
+          "finalCaja": -483,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "H",
+          "seed": 15,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 95.3,
+          "finalIv": 13.1,
+          "finalCaja": -252,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "H",
+          "seed": 16,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 95.3,
+          "finalIv": 13,
+          "finalCaja": -421,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "H",
+          "seed": 17,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 95.3,
+          "finalIv": 12.3,
+          "finalCaja": -71,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "H",
+          "seed": 18,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 32.5,
+          "maxInfl": 95.9,
+          "finalIv": 12.8,
+          "finalCaja": -533,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "H",
+          "seed": 19,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 29.3,
+          "maxInfl": 95.3,
+          "finalIv": 11.4,
+          "finalCaja": -47,
+          "finalDeuda": 5000
+        },
+        {
+          "bot": "H",
+          "seed": 20,
+          "result": "derrota",
+          "defeatReason": "hyperinflation",
+          "endedAt": "T4",
+          "victorious": false,
+          "lastElectionVotes": null,
+          "turnsPlayed": 7,
+          "rounds": 3,
+          "survivedEmergency": true,
+          "used": [
+            "congelamiento_total",
+            "emergencia_alimentaria",
+            "acuerdo_transicion",
+            "estado_de_sitio"
+          ],
+          "bets": {
+            "congelamiento_total": "mal",
+            "emergencia_alimentaria": "mal"
+          },
+          "minGob": 33,
+          "maxInfl": 95.3,
+          "finalIv": 12.8,
+          "finalCaja": 137,
+          "finalDeuda": 5000
+        }
+      ]
+    }
+  }
+}

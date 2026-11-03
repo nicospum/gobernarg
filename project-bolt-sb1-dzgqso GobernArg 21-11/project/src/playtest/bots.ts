@@ -9,6 +9,8 @@ import type { GameEvent } from '../systems/events/types';
 import {
   ACTOR_IDS,
   ACTORS,
+  CAUSAL_ACTIONS_BY_ID,
+  CRISIS_META,
   EFFECTS_BY_ACTION,
   INDICATORS,
   isIndicatorId,
@@ -16,7 +18,7 @@ import {
   type ActorId,
   type IndicatorId,
 } from '../data/causal';
-import { canMeet, canNegotiate, canSignAgreement, effective, projectedCloseCaja, viewRef } from '../engine/causal';
+import { canMeet, canNegotiate, canSignAgreement, decisionContext, effective, evalCondition, projectedCloseCaja, viewRef, type Availability } from '../engine/causal';
 import { getPolicyAvailability } from '../engine/actionEngine';
 import { eventChoiceEffects } from '../engine/eventResolver';
 import { toneOf } from '../lib/causalText';
@@ -349,3 +351,181 @@ export const orthodoxSkilledBot: Bot = {
 
 export const ALL_BOTS: Bot[] = [passiveBot, printerBot, debtBot, infraBot, technocratBot, negotiatorBot, rigidHeterodoxBot, rigidHeterodoxModerateBot, heterodoxSkilledBot, rigidOrthodoxBot, rigidOrthodoxModerateBot, orthodoxSkilledBot, adaptiveBot];
 
+// ─────────────────────────── Bots de crisis (escenarios históricos) ───────────────────────────
+/**
+ * Corralito 2001 e Hiper 1989 con reglas nuevas: una emergencia de tres
+ * subrondas con una medida extraordinaria por subronda y, después, la gestión
+ * por trimestres con una extraordinaria por turno mientras sigan habilitadas.
+ * Estos bots eligen la medida extraordinaria con una prioridad por escenario
+ * (ortodoxo / heterodoxo) o por puntaje (adaptable) y, en la gestión, juegan
+ * su programa regular. Durante la emergencia no interactúan con actores (el
+ * bloque de emergencia no lo ofrece); en la gestión usan las interacciones de
+ * los bots base. Fuera de los escenarios históricos juegan su programa regular.
+ */
+type CrisisKind = 'corralito' | 'hiper';
+
+/** Entrada de una lista de prioridad: un id, o un id con una condición extra para elegirlo. */
+type CrisisPick = string | { id: string; when: (s: GameState) => boolean };
+
+const crisisKind = (s: GameState): CrisisKind | null => s.causal.crisis?.kind ?? null;
+const inEmergency = (s: GameState): boolean => s.causal.crisis?.phase === 'emergencia';
+const isExtraordinaryId = (id: string): boolean => !!CAUSAL_ACTIONS_BY_ID[id]?.extraordinary;
+
+/** Medidas extraordinarias que se pueden tomar ahora (las del bloque de emergencia sin motivo de bloqueo). */
+function extraordinaryAvailable(s: GameState): Availability[] {
+  return getPolicyAvailability(s).filter(a => a.action.extraordinary && a.available);
+}
+
+/** Primera medida de la prioridad que está disponible y cumple su condición. */
+function firstAvailable(s: GameState, priority: CrisisPick[]): string | null {
+  const avail = new Set(extraordinaryAvailable(s).map(a => a.action.id));
+  for (const p of priority) {
+    const id = typeof p === 'string' ? p : p.id;
+    if (!avail.has(id)) continue;
+    if (typeof p !== 'string' && !p.when(s)) continue;
+    return id;
+  }
+  return null;
+}
+
+/** Estado de sitio solo con la calle incendiada. */
+const sitioIfStreetBurns: CrisisPick = { id: 'estado_de_sitio', when: s => view(s, 'CONF') >= 75 };
+
+const ORTHODOX_EMERGENCY: Record<CrisisKind, CrisisPick[]> = {
+  corralito: [
+    'dolarizar', 'rescate_fmi', 'ley_emergencia', 'apertura_total',
+    // El corralito, solo cuando a los bancos ya les queda poca liquidez.
+    { id: 'limitar_retiros', when: s => (s.causal.crisis?.liquidez ?? 100) <= 30 },
+    sitioIfStreetBurns, 'negociar_deuda',
+  ],
+  hiper: ['shock_fiscal', 'nueva_moneda', 'privatizar_todo', 'apertura_total', 'negociar_deuda', 'rescate_fmi', sitioIfStreetBurns, 'intervencion_total'],
+};
+const ORTHODOX_REGULAR = ['reduccion_gasto', 'actualizar_tarifas', 'politica_monetaria_contractiva', 'mejorar_recaudacion', 'reforma_laboral'];
+
+const HETERODOX_EMERGENCY: Record<CrisisKind, CrisisPick[]> = {
+  // Liberar los depósitos va primero: se toma apenas aparece.
+  corralito: ['liberar_depositos', 'limitar_retiros', 'salir_convertibilidad', 'pesificar', 'suspender_pagos', 'emergencia_alimentaria', 'cuasimonedas', 'ley_emergencia', 'negociar_deuda'],
+  hiper: ['congelamiento_total', 'emergencia_alimentaria', 'acuerdo_transicion', 'intervencion_total', 'nueva_moneda', 'negociar_deuda', 'ley_emergencia'],
+};
+const HETERODOX_REGULAR: Record<CrisisKind, string[]> = {
+  corralito: ['control_cambios', 'asistencia_alimentaria', 'pacto_social', 'suba_salario_minimo', 'subir_retenciones', 'control_precios', 'credito_pyme'],
+  hiper: ['pacto_social', 'control_precios', 'asistencia_alimentaria', 'politica_monetaria_contractiva', 'mejorar_recaudacion', 'subir_retenciones'],
+};
+
+/**
+ * Políticas del turno de un bot de crisis: la medida extraordinaria elegida va
+ * primero (cuesta 0 PA, así no se queda sin acciones) y después el programa
+ * regular. En la emergencia, solo la medida.
+ */
+function crisisPolicies(
+  s: GameState,
+  choose: (s: GameState, kind: CrisisKind) => string | null,
+  regular: (s: GameState, kind: CrisisKind) => string[],
+): string[] {
+  const kind = crisisKind(s);
+  if (!kind) return regular(s, 'corralito');
+  const measure = choose(s, kind);
+  if (inEmergency(s)) return measure ? [measure] : [];
+  return [...(measure ? [measure] : []), ...regular(s, kind)];
+}
+
+/**
+ * Con la deuda en default, renegociar exige un mínimo de solvencia (que el
+ * default mismo hunde) o gestión diplomática reciente: los dos programas
+ * hacen agenda internacional cada seis turnos mientras dure el default.
+ */
+function diplomacyIfDefault(s: GameState): string[] {
+  return evalCondition('FLAG(default_deuda) and not DONE(agenda_internacional,6)', decisionContext(s.causal)) ? ['agenda_internacional'] : [];
+}
+
+/** Inacción: no toma ninguna medida extraordinaria; en la gestión juega como el pasivo. */
+export const crisisInactionBot: Bot = {
+  ...passiveBot, id: 'XI', name: 'Inacción',
+  description: 'No toma ninguna medida extraordinaria, ni en la emergencia ni después; en la gestión juega como el pasivo (una política barata cada dos turnos).',
+  policies: (s) => (inEmergency(s) ? [] : passiveBot.policies(s).filter(id => !isExtraordinaryId(id))),
+};
+
+export const crisisOrthodoxBot: Bot = {
+  id: 'XO', fiscalGuard: true, avoidRepetition: true, name: 'Ortodoxo de crisis', archetype: 'empresario',
+  description: 'Corralito: dolariza, pide el rescate al FMI, ley de emergencia y apertura; el corralito solo con los bancos sin liquidez. Hiper: shock fiscal, moneda nueva, privatiza todo y abre. En la gestión ajusta el gasto, actualiza tarifas, sube tasas, recauda y reforma, con la coalición de finanzas, industria y agro.',
+  interactions: (s) => (inEmergency(s) ? [] : coalitionInteractions(s, ['financiero', 'industria', 'agro'])),
+  policies: (s) => crisisPolicies(s, (st, kind) => firstAvailable(st, ORTHODOX_EMERGENCY[kind]), (st) => [...committedActions(st), ...diplomacyIfDefault(st), ...ORTHODOX_REGULAR]),
+  eventChoice: bestChoice,
+  midterm: orthodoxSkilledBot.midterm,
+};
+
+export const crisisHeterodoxBot: Bot = {
+  id: 'XH', fiscalGuard: true, avoidRepetition: true, name: 'Heterodoxo de crisis', archetype: 'sindicalista',
+  description: 'Corralito: corralito, salida de la convertibilidad, pesificación, default, emergencia alimentaria y cuasimonedas; libera los depósitos apenas puede. Hiper: congelamiento total, emergencia alimentaria, acuerdo de transición, intervención y moneda nueva. En la gestión controles, pacto social, salario mínimo, retenciones y crédito PyME, con la coalición de sindicatos, industria y PyMEs.',
+  interactions: (s) => (inEmergency(s) ? [] : coalitionInteractions(s, ['sindicatos', 'industria', 'pymes'])),
+  policies: (s) => crisisPolicies(s, (st, kind) => firstAvailable(st, HETERODOX_EMERGENCY[kind]), (st, kind) => [...committedActions(st), ...diplomacyIfDefault(st), ...HETERODOX_REGULAR[kind]]),
+  eventChoice: bestChoice,
+  midterm: heterodoxSkilledBot.midterm,
+};
+
+/**
+ * Puntaje de una medida extraordinaria por sus efectos no condicionales (como
+ * adaptiveScore, sumando además caja, deuda, gasto fijo, expectativas,
+ * gobernabilidad, Congreso e imagen). Las apuestas (filas condicionales) no
+ * cuentan acá: ver betBonus.
+ */
+function extraordinaryRowsScore(s: GameState, id: string): number {
+  let score = 0;
+  for (const r of EFFECTS_BY_ACTION[id] ?? []) {
+    if (r.magnitude === null || r.kind === 'CONDITIONAL' || r.kind === 'REPETITION') continue;
+    const dur = r.kind === 'PERSISTENT' && typeof r.duration === 'number' ? Math.min(4, r.duration) : r.mode === 'BONUS' ? 0.5 : 1;
+    const m = r.magnitude * dur;
+    if (isIndicatorId(r.target)) {
+      score += INDICATORS[r.target].goodDirection * m * urgency(s, r.target);
+      if (r.target === 'INFL' && r.magnitude > 0) score -= r.magnitude * 1.5 * (view(s, 'INFL') > 60 ? 2 : 1);
+    } else if (r.target === 'GOB') score += m * (s.causal.political.gob < 30 ? 1 : 0.5);
+    else if (r.target === 'LEG' || r.target === 'IMAGEN') score += m * 0.3;
+    else if (r.target === 'CAJA') score += m / 150;
+    else if (r.target === 'DEUDA') score -= m / 400;
+    else if (r.target === 'GASTO_CORR') score -= m / 50;
+    else if (r.target === 'DESANCLAJE') score -= m * 0.3 * (s.causal.desanclaje > 15 ? 1.5 : 1);
+  }
+  return score;
+}
+
+/** +6 si la condición de la apuesta ("sale bien si…") ya se cumple hoy; 0 si no, o si la medida no apuesta. */
+function betBonus(s: GameState, id: string): number {
+  const row = (EFFECTS_BY_ACTION[id] ?? []).find(r => r.id.startsWith(`${id}.bien.`));
+  if (!row?.condition) return 0;
+  return evalCondition(row.condition, decisionContext(s.causal)) ? 6 : 0;
+}
+
+/**
+ * Puntaje total de una medida extraordinaria para el adaptable de crisis. Las
+ * medidas inciertas (renegociar la deuda, rescate del FMI) no tienen efectos
+ * propios: se puntúan como el promedio de sus dos resultados posibles.
+ */
+export function extraordinaryScore(s: GameState, id: string): number {
+  const uncertain = CRISIS_META[id]?.uncertain;
+  if (uncertain) return 0.5 * (extraordinaryRowsScore(s, uncertain.success) + extraordinaryRowsScore(s, uncertain.failure));
+  return extraordinaryRowsScore(s, id) + betBonus(s, id);
+}
+
+/** La medida extraordinaria disponible de mejor puntaje, si supera el umbral. */
+function bestExtraordinary(s: GameState, threshold: number): string | null {
+  let best: string | null = null;
+  let bestScore = threshold;
+  for (const a of extraordinaryAvailable(s)) {
+    const score = extraordinaryScore(s, a.action.id);
+    if (score > bestScore) { best = a.action.id; bestScore = score; }
+  }
+  return best;
+}
+
+export const crisisAdaptiveBot: Bot = {
+  ...adaptiveBot, id: 'XA', name: 'Adaptable de crisis',
+  description: 'Lee el contexto como el adaptable y elige la medida extraordinaria de mejor puntaje por sus efectos, con un bono si la apuesta ya parece alcanzable; en la emergencia toma cualquiera que sume, en la gestión solo las que suman claramente.',
+  interactions: (s) => (inEmergency(s) ? [] : adaptiveBot.interactions(s)),
+  policies: (s) => crisisPolicies(
+    s,
+    (st) => bestExtraordinary(st, inEmergency(st) ? 0 : 4),
+    (st) => adaptiveBot.policies(st).filter(id => !isExtraordinaryId(id)),
+  ),
+};
+
+export const CRISIS_BOTS: Bot[] = [crisisInactionBot, crisisOrthodoxBot, crisisHeterodoxBot, crisisAdaptiveBot];
