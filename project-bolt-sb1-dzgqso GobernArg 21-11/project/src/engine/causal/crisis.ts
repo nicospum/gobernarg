@@ -176,9 +176,9 @@ export function resolveUncertainMeasure(state: CausalState, actionId: string, rn
   const diplomacia = countExecutions(state, 'agenda_internacional', 8, state.turn) > 0;
   let chance: number;
   if (actionId === 'negociar_deuda') {
-    chance = 0.35 + 0.01 * (solv - 15) + 0.004 * (relFin - 30) + (fiscalOk ? 0.15 : 0) + (diplomacia ? 0.1 : 0);
+    chance = 0.45 + 0.01 * (solv - 15) + 0.004 * (relFin - 30) + (fiscalOk ? 0.15 : 0) + (diplomacia ? 0.1 : 0);
   } else {
-    chance = 0.25 + 0.012 * (solv - 15) + (fiscalOk ? 0.25 : 0) + 0.006 * (inst - 40) + (diplomacia ? 0.1 : 0);
+    chance = 0.35 + 0.012 * (solv - 15) + (fiscalOk ? 0.25 : 0) + 0.006 * (inst - 40) + (diplomacia ? 0.1 : 0);
   }
   chance = Math.min(0.9, Math.max(0.1, chance));
   const success = rng.chance(chance);
@@ -198,6 +198,30 @@ export function resolveUncertainMeasure(state: CausalState, actionId: string, rn
   return outcome.failure;
 }
 
+/** Liquidez bancaria que mueve cada medida (Corralito): la mecánica bancaria no está en las filas de efectos. */
+const LIQUIDEZ_POR_MEDIDA: Record<string, number> = {
+  limitar_retiros: 6,
+  reprogramar_depositos: 18,
+  liberar_depositos: -8,
+  rescate_fmi_exito: 10,
+  dolarizar: 8,
+  pesificar: -4,
+  salir_convertibilidad: -3,
+  cuasimonedas: 3,
+};
+
+/**
+ * Tomar una medida extraordinaria es un impulso en sí mismo: el gobierno toma
+ * el toro por las astas. Gobernabilidad por dos cierres e imagen.
+ */
+function decisionBoost(state: CausalState, actionId: string, startRef: number, endRef: number): void {
+  if (CAUSAL_ACTIONS_BY_ID[actionId]?.outcome) return;
+  state.bonuses.push({ id: `crisis.decision.${actionId}.${startRef}`, target: 'GOB', value: 4, start: startRef, end: endRef, source: actionId, label: 'Decisión de emergencia: el gobierno toma el control' });
+  state.political.imagen = clamp(state.political.imagen + 2);
+  const c = state.crisis;
+  if (c && c.kind === 'corralito' && LIQUIDEZ_POR_MEDIDA[actionId]) c.liquidez = clamp(c.liquidez + LIQUIDEZ_POR_MEDIDA[actionId]);
+}
+
 /**
  * Ejecuta una medida extraordinaria en el CIERRE TRIMESTRAL (fase de gestión):
  * marca el uso, resuelve lo incierto y agenda los efectos como cualquier acción.
@@ -209,6 +233,8 @@ export function executeExtraordinaryAtClose(state: CausalState, actionId: string
   if (!c.used.includes(actionId)) c.used.push(actionId);
   const resolved = resolveUncertainMeasure(state, actionId, rng, notes);
   if (resolved !== actionId) state.executions.push({ actionId: resolved, turn, forced: true });
+  decisionBoost(state, actionId, turn, turn + 1);
+  if (resolved !== actionId && LIQUIDEZ_POR_MEDIDA[resolved] && c.kind === 'corralito') c.liquidez = clamp(c.liquidez + LIQUIDEZ_POR_MEDIDA[resolved]);
   return scheduleActionEffects(state, resolved, turn);
 }
 
@@ -249,6 +275,8 @@ function executeMeasureInRound(state: CausalState, actionId: string, rng: Rng, l
   lines.push(`Medida de la ${crisisScenario(state)?.roundUnit ?? 'subronda'}: ${name}.`);
   const resolved = resolveUncertainMeasure(state, actionId, rng, lines);
   if (resolved !== actionId) state.executions.push({ actionId: resolved, turn, forced: true });
+  decisionBoost(state, actionId, viewRef(state), turn);
+  if (resolved !== actionId && LIQUIDEZ_POR_MEDIDA[resolved] && c.kind === 'corralito') c.liquidez = clamp(c.liquidez + LIQUIDEZ_POR_MEDIDA[resolved]);
   const scheduled = scheduleActionEffects(state, resolved, turn);
   const now = scheduled.filter(e => e.start === turn && !e.applyCondition);
   const nowIds = new Set(now.map(e => e.uid));
@@ -284,23 +312,25 @@ function corralitoRound(state: CausalState, lines: string[]): void {
     bump(state, 'EXTE', fijo ? -4 : -2); bump(state, 'INVC', -2);
     lines.push('La corrida sigue: los depósitos se van de los bancos y las reservas respaldan cada peso que sale.');
   } else if (retiros === 'limitado') {
-    c.liquidez -= 4;
-    bump(state, 'CONF', 6); bump(state, 'ACTV', -2.5); bump(state, 'PODA', -1.5);
+    c.liquidez -= 3;
+    bump(state, 'CONF', 3); bump(state, 'ACTV', -1.5); bump(state, 'PODA', -1);
     lines.push('Con los retiros limitados la plata no circula: comercio parado y cacerolas en los balcones.');
   } else {
-    c.liquidez += 5;
-    bump(state, 'CONF', 4);
+    c.liquidez += 6;
+    bump(state, 'CONF', 2);
     lines.push('Depósitos reprogramados: los bancos respiran y los ahorristas protestan en la puerta.');
   }
   c.liquidez = clamp(c.liquidez);
   if (c.liquidez <= 10 && !f('crisis_bancaria')) bankCollapse(state, lines);
   if (fijo && effective(state, 'EXTE', viewRef(state)) < 10) forcedExit(state, lines);
-  let calle = 3;
+  let calle = 2;
   if (effective(state, 'PSOC', viewRef(state)) < 35) calle += 2;
   if (f('estado_de_sitio')) calle = 0;
+  // La calle también se cansa: un tercio del decaimiento trimestral (R15).
+  bump(state, 'CONF', 0.08 * (30 - effective(state, 'CONF', viewRef(state))));
   if (calle > 0) {
     bump(state, 'CONF', calle);
-    lines.push(calle >= 5 ? 'Saqueos en el conurbano: la olla está vacía.' : 'Diciembre caliente: más gente en la calle.');
+    lines.push(calle >= 4 ? 'Saqueos en el conurbano: la olla está vacía.' : 'Diciembre caliente: más gente en la calle.');
   } else {
     lines.push('Con el estado de sitio, la calle quedó vacía por la fuerza.');
   }
@@ -319,13 +349,14 @@ function hiperRound(state: CausalState, lines: string[]): void {
   if (f('congelamiento')) delta -= 2;
   if (f('nueva_moneda') || f('dolarizada')) delta -= 3;
   bump(state, 'INFL', delta);
-  bump(state, 'PODA', f('congelamiento') ? -1 : -3);
-  bump(state, 'ACTV', -2);
-  bump(state, 'PSOC', -1.5);
-  bump(state, 'EXTE', -2);
-  let calle = 4;
+  bump(state, 'PODA', f('congelamiento') ? -0.5 : -2);
+  bump(state, 'ACTV', -1.5);
+  bump(state, 'PSOC', -1);
+  bump(state, 'EXTE', f('nueva_moneda') || f('dolarizada') ? -0.5 : -1.5);
+  let calle = 3;
   if (effective(state, 'PSOC', ref) >= 35) calle -= 2;
   if (f('estado_de_sitio')) calle = 0;
+  bump(state, 'CONF', 0.08 * (30 - effective(state, 'CONF', ref)));
   if (calle > 0) {
     bump(state, 'CONF', calle);
     lines.push(calle >= 4 ? 'Saqueos y cortes: la gente no llega a fin de mes, ni de semana.' : 'La calle sigue tensa, pero la ayuda llega.');

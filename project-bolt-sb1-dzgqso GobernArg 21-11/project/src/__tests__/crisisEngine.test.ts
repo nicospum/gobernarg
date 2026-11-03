@@ -144,7 +144,8 @@ describe('Emergencia del Corralito', () => {
     expect(r.record.measure).toBe('limitar_retiros');
     expect(s.crisis!.used).toContain('limitar_retiros');
     expect(s.flags.corralito).toMatchObject({ value: 1, end: null });
-    expect(s.crisis!.liquidez).toBe(36);
+    // La corrida se frena: la liquidez no cae (impulso de la medida) frente a los 26 de la inacción.
+    expect(s.crisis!.liquidez).toBeGreaterThanOrEqual(40);
     expect(effective(s, 'CONF', viewRef(s))).toBeGreaterThan(effective(base, 'CONF', viewRef(base)));
     expect(effective(s, 'EXTE', viewRef(s))).toBeGreaterThan(effective(round(base).state, 'EXTE', 0));
     // Ya no vuelve a aparecer; en cambio aparecen el corralón (cuando los bancos están al límite) y la liberación.
@@ -160,7 +161,7 @@ describe('Emergencia del Corralito', () => {
     let s = round(corralito(), 'salir_convertibilidad').state;
     expect(flagValue(s, 'convertibilidad', 1)).toBe(0);
     expect(flagValue(s, 'regimen_flotante', 1)).toBe(1);
-    expect(infl(s)).toBeGreaterThanOrEqual(24);
+    expect(infl(s)).toBeGreaterThanOrEqual(22);
     expect(getAvailability(s, 'salir_convertibilidad', [], 4).visible).toBe(false);
     expect(getAvailability(s, 'dolarizar', [], 4).visible).toBe(false);
     s = round(s).state; s = round(s).state;

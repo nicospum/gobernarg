@@ -147,17 +147,18 @@ export const SCENARIOS: ScenarioDef[] = [
     image: { group: 'events', key: 'economicCrisis' },
     // Hipótesis de diseño calibradas con datos de 2001: IPC -1,5 % anual (deflación),
     // PIB -4,4 %, desocupación 18,3 % (oct-2001), pobreza 38,3 %. Ver ESCENARIOS-HISTORICOS-LIGHT.md.
-    indicators: { INFL: 12, ACTV: 33, PODA: 35, INVC: 20, PRES: 52, SOLV: 15, EXTE: 20, INFR: 48, EDUC: 48, PSOC: 33, SEGU: 38, CIEN: 45, INST: 40, AMBI: 50, CONF: 60 },
+    indicators: { INFL: 12, ACTV: 35, PODA: 35, INVC: 24, PRES: 52, SOLV: 15, EXTE: 20, INFR: 48, EDUC: 48, PSOC: 33, SEGU: 38, CIEN: 45, INST: 40, AMBI: 50, CONF: 60 },
     caja: 450,
     gastoCorr: 820,
     deuda: 6000,
     ingresoMult: 0.9,
     desanclaje: 2,
-    legAdj: -6,
+    // Congreso en contra pero con la luna de miel alcanza para una ley de emergencia los primeros turnos.
+    legAdj: -4,
     imagen: 25,
     relDelta: { financiero: -10, sindicatos: -10, org_sociales: -12, oposicion: -10, gobernadores: -8 },
-    // Rebote por capacidad ociosa: solo con nuevo régimen cambiario y precios contenidos, desde el tercer cierre.
-    impulsos: [{ target: 'ACTV', perTurn: 1.2, turns: 8, from: 3, condition: 'not FLAG(convertibilidad) and INFL<55', label: 'Rebote: capacidad ociosa después del derrumbe (con nuevo régimen y precios contenidos)' }],
+    // Rebote por capacidad ociosa (2002-2003 creció al 9 % anual): solo con nuevo régimen cambiario y precios contenidos, desde el tercer cierre.
+    impulsos: [{ target: 'ACTV', perTurn: 2.5, turns: 8, from: 3, condition: 'not FLAG(convertibilidad) and INFL<55', label: 'Rebote: capacidad ociosa después del derrumbe (con nuevo régimen y precios contenidos)' }],
     flags: { convertibilidad: null, corrida: null, crisis_corralito: null, escenario_crisis: null },
     reelectionsToUnlock: 1,
     crisis: {
@@ -193,17 +194,17 @@ export const SCENARIOS: ScenarioDef[] = [
     image: { group: 'events', key: 'socialProtest' },
     // Hipótesis de diseño calibradas con datos de 1989: IPC mayo 78,5 % mensual (CEPAL),
     // pobreza GBA 25,9 % (mayo) y 47,3 % (octubre), BCRA sin reservas desde febrero, moratoria desde abril de 1988.
-    indicators: { INFL: 96, ACTV: 36, PODA: 24, INVC: 18, PRES: 45, SOLV: 12, EXTE: 16, INFR: 42, EDUC: 45, PSOC: 30, SEGU: 38, CIEN: 42, INST: 42, AMBI: 50, CONF: 70 },
+    indicators: { INFL: 96, ACTV: 37, PODA: 24, INVC: 22, PRES: 45, SOLV: 12, EXTE: 16, INFR: 42, EDUC: 45, PSOC: 30, SEGU: 38, CIEN: 42, INST: 42, AMBI: 50, CONF: 70 },
     caja: 250,
     gastoCorr: 850,
     deuda: 5000,
     ingresoMult: 0.85,
     desanclaje: 30,
-    legAdj: -8,
+    legAdj: -6,
     imagen: 22,
     relDelta: { financiero: -10, sindicatos: -5, industria: -5, org_sociales: -5, oposicion: 5 },
     // Rebote: la economía vuelve a moverse solo si la inflación se calma.
-    impulsos: [{ target: 'ACTV', perTurn: 1.5, turns: 6, from: 2, condition: 'INFL<60', label: 'Rebote: la economía vuelve a moverse si se calma la inflación' }],
+    impulsos: [{ target: 'ACTV', perTurn: 2, turns: 6, from: 2, condition: 'INFL<60', label: 'Rebote: la economía vuelve a moverse si se calma la inflación' }],
     flags: { default_deuda: null, estado_de_sitio: 1, crisis_hiper: null, escenario_crisis: null },
     reelectionsToUnlock: 2,
     crisis: {

@@ -143,12 +143,11 @@ export function closeTurn(input: CausalState, selections: Selection[], options: 
   if (state.caja < 0) state.forcedEmission = true;
 
   // T.6 — reglas estructurales (y la dinámica trimestral de la crisis histórica).
-  const inflBefore = effective(state, 'INFL', c);
   const rules = applyStructuralRules(state, c);
   if (state.crisis) {
     rules.push(...crisisQuarterRules(state, c, notes));
     noteCrisisBets(state, acc.applied, notes);
-    if (state.crisis.kind === 'hiper') state.crisis.aceleracion = Math.round((effective(state, 'INFL', c) - inflBefore) * 10) / 10;
+    if (state.crisis.kind === 'hiper') state.crisis.aceleracion = Math.round((effective(state, 'INFL', c) - indicatorsBefore.INFL) * 10) / 10;
   }
 
   // T.7 — satisfacción de actores.
@@ -177,7 +176,10 @@ export function closeTurn(input: CausalState, selections: Selection[], options: 
     state.expect[id] += PARAMS.BETA_EXPECT * (v - state.expect[id]);
   }
   state.expect.APRO += PARAMS.BETA_EXPECT * (state.political.apro - state.expect.APRO);
-  state.hyperStreak = effective(state, 'INFL', c) >= PARAMS.HIPER_UMBRAL ? state.hyperStreak + 1 : 0;
+  // Hiper 1989: en los primeros cinco trimestres de gestión, los precios en zona de hiper no cuentan
+  // para la derrota mientras vengan bajando (trayectoria de estabilización); después rige la regla general.
+  const hyperGrace = state.crisis?.kind === 'hiper' && c <= 5 && state.crisis.aceleracion <= -1;
+  state.hyperStreak = effective(state, 'INFL', c) >= PARAMS.HIPER_UMBRAL && !hyperGrace ? state.hyperStreak + 1 : 0;
   state.govCrisisStreak = state.political.gob < PARAMS.GOB_CRISIS_UMBRAL ? state.govCrisisStreak + 1 : 0;
 
   const indicatorsAfter = effectiveAll(state, c) as Record<IndicatorId, number>;
