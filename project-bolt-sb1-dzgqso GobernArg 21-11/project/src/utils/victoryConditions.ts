@@ -1,6 +1,6 @@
 import type { DefeatReason, GameState, Objective } from '../types/game';
 import { isIndicatorId } from '../data/causal';
-import { effective, viewRef } from '../engine/causal/context';
+import { effective, flagValue, viewRef } from '../engine/causal/context';
 
 export function updateObjectives(gameState: GameState): GameState {
   const updatedObjectives = gameState.objectives.map(objective => {
@@ -49,6 +49,13 @@ export function updateObjectives(gameState: GameState): GameState {
         const progress = range.min !== undefined ? (v / target) * 100 : (target / Math.max(1, v)) * 100;
         checks.push({ completed: okMin && okMax, progress: Math.min(100, progress) });
       }
+    }
+
+    if (objective.requirements.flags) {
+      const c = gameState.causal;
+      const ref = c.turn;
+      const results = Object.entries(objective.requirements.flags).map(([name, expected]) => (flagValue(c, name, ref) ? 1 : 0) === (expected ? 1 : 0));
+      checks.push({ completed: results.every(Boolean), progress: results.length ? (results.filter(Boolean).length / results.length) * 100 : 0 });
     }
 
     if (objective.requirements.groupSupport) {

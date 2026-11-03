@@ -22,7 +22,7 @@ const optionalStrings = (x: unknown) => x === undefined || strings(x);
 const optionalNumbers = (x: unknown) => x === undefined || numbers(x);
 const range = (x: unknown) => obj(x) && optionalNumber(x.min) && optionalNumber(x.max);
 const requirements = (x: unknown) => obj(x) && optionalNumber(x.popularity) && optionalNumber(x.budget)
-  && optionalStrings(x.completedActions) && optionalNumbers(x.groupSupport)
+  && optionalStrings(x.completedActions) && optionalNumbers(x.groupSupport) && optionalNumbers(x.flags)
   && (x.indicators === undefined || (obj(x.indicators) && Object.values(x.indicators).every(range)));
 const breakdown = (x: unknown) => fields(x, ['apro','estructura','otros','incumbencia']) && obj(x)
   && ['aFavor','enContra'].every(k => list(x[k], a => obj(a) && string(a.actor) && number(a.sat)));
@@ -47,6 +47,19 @@ const activityRecord = (x: unknown) => fields(x, ['available','used','unused','p
   && number(x.imagenDelta) && x.imagenDelta >= -0.5 && x.imagenDelta <= 2 && typeof x.bonusAwarded === 'boolean';
 
 const indicatorMap = (x: unknown) => obj(x) && INDICATOR_IDS.every(id => number(x[id]));
+const crisisRound = (x: unknown) => obj(x) && integer(x.round) && string(x.label) && (x.measure === null || string(x.measure)) && strings(x.lines)
+  && indicatorMap(x.indicatorsBefore) && indicatorMap(x.indicatorsAfter) && fields(x, ['gobBefore','gobAfter','cajaBefore','cajaAfter']);
+/** Escenario histórico con reglas nuevas: emergencia por subrondas y medidas extraordinarias. */
+const crisis = (x: unknown) => obj(x) && x.version === 1 && ['corralito','hiper'].includes(String(x.kind)) && ['emergencia','gestion'].includes(String(x.phase))
+  && integer(x.round) && integer(x.rounds) && x.rounds >= 1 && x.rounds <= 6 && x.round >= 1 && x.round <= x.rounds + 1
+  && number(x.liquidez) && x.liquidez >= 0 && x.liquidez <= 100 && number(x.aceleracion) && integer(x.crisisStreak)
+  && strings(x.used) && obj(x.bets) && Object.values(x.bets).every(v => v === 'bien' || v === 'mal') && list(x.log, crisisRound);
+const consultantVisit = (x: unknown) => obj(x) && ['legislativas','presidenciales'].includes(String(x.election)) && ['anticipado','ultimo_momento'].includes(String(x.timing))
+  && integer(x.turn) && integer(x.mandateStart) && (x.actor === null || actor(x.actor)) && (x.policy === null || string(x.policy))
+  && number(x.fee) && x.fee >= 0 && (x.choice === null || ['encuestador','redes','instinto'].includes(String(x.choice))) && number(x.ivDelta);
+/** Consultor político: visitas, bono de voto vigente y medida fijada. */
+const consultant = (x: unknown) => obj(x) && x.version === 1 && list(x.visits, consultantVisit) && number(x.bonusIv) && integer(x.bonusUntil)
+  && (x.lockedPolicy === null || string(x.lockedPolicy)) && nullableInt(x.lockedTurn);
 const political = (x: unknown) => fields(x, ['leg','legAdj','gob','apro','estr','otros','iv','imagen','umbralLey','interna','coalicion']);
 const actorSnapshot = (x: unknown) => obj(x) && ACTOR_IDS.every(id => obj(x[id]) && number(x[id].sat) && (x[id].rel === null || number(x[id].rel)));
 const applied = (x: unknown) => obj(x) && optionalString(x.actionId) && optionalString(x.effectId) && optionalNumber(x.originTurn) && string(x.source) && string(x.target) && number(x.delta) && string(x.explanation) && ['DELTA','BONUS','SET'].includes(String(x.mode));
@@ -66,6 +79,8 @@ export function validGameState(value: unknown): value is GameState {
   if (!['light-12','legacy-16'].includes(String(c.calendar)) || !SCENARIOS.some(sc => sc.id === c.scenarioId)) return false;
   if (SCENARIOS.some(sc => sc.id === c.scenarioId && sc.reelectionsToUnlock > 0) && c.calendar !== 'legacy-16') return false;
   if (c.managementActivity !== undefined && !activity(c.managementActivity)) return false;
+  if (c.crisis !== undefined && !crisis(c.crisis)) return false;
+  if (c.consultant !== undefined && !consultant(c.consultant)) return false;
   const cal = calendarFor(c as { calendar: 'light-12' | 'legacy-16' });
   if (!integer(s.year) || s.year < 1 || s.year > 4 || !integer(s.turn) || s.turn < 1 || s.turn > cal.periodsPerYear || !integer(s.term) || s.term < 1 || s.term > 2) return false;
   if (!integer(c.turn) || c.turn < 1 || c.turn > cal.totalTurns + 1 || c.mandateStart !== (s.term - 1) * cal.turnsPerMandate + 1) return false;
@@ -91,7 +106,7 @@ export function validGameState(value: unknown): value is GameState {
     && (n.actions === undefined || list(n.actions, a => obj(a) && string(a.label) && optionalString(a.id) && optionalString(a.style) && optionalString(a.confirmationMessage) && optionalBoolean(a.requiresConfirmation) && a.action === undefined)))) return false;
   if (!(s.lastInteractionMessage === null || optionalString(s.lastInteractionMessage)) || !(s.legislativeSupport === null || number(s.legislativeSupport))) return false;
   if (!(s.midtermStrategy === null || ['acelerar','negociar','abrirse','jugada_audaz'].includes(String(s.midtermStrategy)))) return false;
-  if (!(s.defeatReason === null || ['low_popularity','negative_budget','impeachment','institutional_coup','hyperinflation','election_loss'].includes(String(s.defeatReason)))) return false;
+  if (!(s.defeatReason === null || ['low_popularity','negative_budget','impeachment','institutional_coup','hyperinflation','election_loss','resignation'].includes(String(s.defeatReason)))) return false;
   if (!list(s.objectives, o => obj(o) && string(o.id) && string(o.title) && string(o.description) && requirements(o.requirements) && obj(o.reward) && optionalNumber(o.reward.popularity) && optionalNumber(o.reward.budget) && typeof o.completed === 'boolean' && number(o.progress))) return false;
   if (!list(s.careerHistory, h => obj(h) && string(h.position) && integer(h.term) && number(h.startYear) && number(h.endYear) && string(h.result) && number(h.votesPercentage))) return false;
   if (!list(s.turnLog, t => obj(t) && integer(t.year) && integer(t.turn) && integer(t.term) && strings(t.actionsTaken) && strings(t.events) && strings(t.decisions) && strings(t.projectsCompleted) && strings(t.crisesFaced) && number(t.popularityChange) && number(t.budgetChange))) return false;

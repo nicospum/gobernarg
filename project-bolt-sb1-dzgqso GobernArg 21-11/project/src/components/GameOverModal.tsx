@@ -21,6 +21,7 @@ const DEFEAT_ICONS: Record<DefeatReason, typeof Trophy> = {
   institutional_coup: Swords,
   hyperinflation: Flame,
   election_loss: Vote,
+  resignation: Gavel,
 };
 
 export function GameOverModal({ gameState, onRestart, onShowLegacy, onFeedback }: GameOverModalProps) {

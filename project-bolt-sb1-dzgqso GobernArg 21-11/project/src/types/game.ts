@@ -18,6 +18,8 @@ export interface ObjectiveRequirements {
   groupSupport?: Record<string, number>;
   /** Metas de gestión del motor causal: rango de un indicador del país (valor efectivo). */
   indicators?: Record<string, { min?: number; max?: number }>;
+  /** Condiciones vigentes del motor: nombre → 1 (debe regir) o 0 (no debe regir). */
+  flags?: Record<string, number>;
 }
 
 export interface ObjectiveReward {
@@ -84,7 +86,7 @@ export interface MidtermStrategyEffect {
 }
 
 // Derrotas
-export type DefeatReason = 'low_popularity' | 'negative_budget' | 'impeachment' | 'institutional_coup' | 'hyperinflation' | 'election_loss';
+export type DefeatReason = 'low_popularity' | 'negative_budget' | 'impeachment' | 'institutional_coup' | 'hyperinflation' | 'election_loss' | 'resignation';
 
 /** Estado de ánimo de un actor (etiqueta del juego). */
 export type Mood = 'contento' | 'neutral' | 'disconforme' | 'enojado' | 'radicalizado';

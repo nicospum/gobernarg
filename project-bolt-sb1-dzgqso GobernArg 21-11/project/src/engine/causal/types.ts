@@ -257,9 +257,94 @@ export interface TurnRecord {
   internaReasons?: string[];
 }
 
+// ─────────────────────────────── Crisis históricas ───────────────────────────────
+
+export type CrisisKind = 'corralito' | 'hiper';
+export type CrisisPhase = 'emergencia' | 'gestion';
+
+/** Lo que pasó en una subronda de la emergencia (semana o mes), para el resumen. */
+export interface CrisisRoundRecord {
+  round: number;
+  label: string;
+  /** Medida extraordinaria ejecutada en la subronda (null = ninguna). */
+  measure: string | null;
+  /** Qué pasó y por qué, en lenguaje de jugador. */
+  lines: string[];
+  indicatorsBefore: Record<IndicatorId, number>;
+  indicatorsAfter: Record<IndicatorId, number>;
+  gobBefore: number;
+  gobAfter: number;
+  cajaBefore: number;
+  cajaAfter: number;
+}
+
+/**
+ * Estado de un escenario histórico con reglas nuevas (Corralito 2001, Hiper
+ * 1989). Ausencia = partida histórica anterior: sigue con sus reglas viejas
+ * (default a 8 turnos, rebote automático) y sin bloque de emergencia.
+ */
+export interface CrisisState {
+  version: 1;
+  kind: CrisisKind;
+  phase: CrisisPhase;
+  /** Subronda actual de la emergencia (1..rounds); en gestión queda en rounds + 1. */
+  round: number;
+  rounds: number;
+  /** Corralito: liquidez bancaria 0-100 (depósitos que quedan disponibles). Hiper: no se usa (0). */
+  liquidez: number;
+  /** Hiper: cambio del índice de precios en el último cierre (subronda o trimestre). */
+  aceleracion: number;
+  /** Cierres seguidos en condición de derrota propia del escenario (renuncia / hiper). */
+  crisisStreak: number;
+  /** Medidas extraordinarias ya ejecutadas (las de una sola vez no vuelven a aparecer). */
+  used: string[];
+  /** Apuestas ya resueltas: id del efecto → cómo salió. */
+  bets: Record<string, 'bien' | 'mal'>;
+  log: CrisisRoundRecord[];
+}
+
+// ─────────────────────────────── Consultor político ───────────────────────────────
+
+export type ConsultantElection = 'legislativas' | 'presidenciales';
+export type ConsultantTiming = 'anticipado' | 'ultimo_momento';
+export type ConsultantChoice = 'encuestador' | 'redes' | 'instinto';
+
+/** Una visita de Gastón Barenboim (evento con tres opciones). */
+export interface ConsultantVisit {
+  election: ConsultantElection;
+  timing: ConsultantTiming;
+  /** Turno absoluto de decisión en que apareció. */
+  turn: number;
+  mandateStart: number;
+  /** Lo que dicen las encuestas: sector con votos al que no le venís tirando la soga y la medida que lo mueve. */
+  actor: ActorId | null;
+  policy: string | null;
+  /** Honorario que cobra si elegís "lo que diga el encuestador". */
+  fee: number;
+  /** null = todavía no respondiste. */
+  choice: ConsultantChoice | null;
+  /** Puntos de intención de voto aplicados por esta visita (0 hasta elegir). */
+  ivDelta: number;
+}
+
+export interface ConsultantState {
+  version: 1;
+  visits: ConsultantVisit[];
+  /** Bono vigente sobre la intención de voto y último cierre (inclusive) en que rige. */
+  bonusIv: number;
+  bonusUntil: number;
+  /** Medida fijada por el encuestador: no se puede quitar de la agenda de ese turno. */
+  lockedPolicy: string | null;
+  lockedTurn: number | null;
+}
+
 export interface CausalState {
   /** Ausencia en guardados anteriores significa legacy-16; nunca se remapea su agenda. */
   calendar?: CalendarId;
+  /** Escenario histórico con reglas nuevas (emergencia y medidas extraordinarias). Ausencia = reglas anteriores. */
+  crisis?: CrisisState;
+  /** Visitas y bono del consultor político. Ausencia = todavía no apareció. */
+  consultant?: ConsultantState;
   /** Ausencia = presión neutral; nunca se infiere el uso de PA de cierres antiguos. */
   managementActivity?: ManagementActivity;
   /** Turno absoluto de la fase de decisión actual (el próximo cierre). */

@@ -48,6 +48,13 @@ export const DEFEAT_REASON_CONFIG: Record<DefeatReason, DefeatReasonConfig> = {
     advice: 'Emitir varias veces en pocos turnos desancla las expectativas; y con la caja en rojo el Tesoro emite solo. Cuidá el resultado fiscal y las divisas antes de que la inflación se acelere.',
     severity: 'economic',
   },
+  resignation: {
+    title: 'Renuncia',
+    description: 'Con la calle incendiada, los bancos cerrados y sin nadie que te atienda el teléfono, el gobierno se quedó sin poder. El presidente renunció antes de terminar el mandato.',
+    icon: 'Gavel',
+    advice: 'En una emergencia la gobernabilidad se mide por subronda: dos subrondas bajo el umbral de crisis y el gobierno cae. Atendé el hambre y la calle antes de las medidas duras, y buscá a la oposición y a los gobernadores.',
+    severity: 'institutional',
+  },
   election_loss: {
     title: 'Derrota Electoral',
     description: 'El pueblo eligió un nuevo rumbo en las urnas. Tu proyecto político no logró convencer a la mayoría.',
