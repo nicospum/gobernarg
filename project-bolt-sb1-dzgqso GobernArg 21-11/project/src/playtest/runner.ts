@@ -74,6 +74,8 @@ export interface GameOutcome {
   channelEvents: number;
   /** Subrondas de emergencia jugadas (escenarios históricos). */
   rounds?: number;
+  /** Escenarios históricos con reglas nuevas: si superó la emergencia, medidas extraordinarias usadas (en orden) y apuestas resueltas. */
+  crisis?: { survivedEmergency: boolean; used: string[]; bets: Record<string, 'bien' | 'mal'> };
   log: TurnLog[];
 }
 
@@ -144,7 +146,8 @@ export function playGame(bot: Bot, seed: number, opts: PlayOptions = {}): GameOu
       for (const id of bot.policies(state)) {
         if (state.selectedActions.includes(id) || state.actions <= 0) continue;
         if (bot.avoidRepetition && repetitionWarning(state.causal, id)) continue;
-        if (bot.fiscalGuard) {
+        // Las medidas extraordinarias cuestan 0: la proyección de caja no las frena.
+        if (bot.fiscalGuard && !CAUSAL_ACTIONS_BY_ID[id]?.extraordinary) {
           const sel = [...state.selectedActions, id].map(actionId => ({ actionId }));
           const p = projectedCloseCaja(state.causal, sel);
           if (p.caja < 150 || (p.structural < -60 && immediateGastoDelta(id) > 0)) continue;
@@ -252,6 +255,7 @@ export function playGame(bot: Bot, seed: number, opts: PlayOptions = {}): GameOu
     outcome.finalCaja = Math.round(c.caja);
     outcome.finalDeuda = Math.round(c.deuda);
     outcome.agreementsBroken = c.agreements.filter(a => a.status === 'broken').length;
+    if (c.crisis) outcome.crisis = { survivedEmergency: c.crisis.phase === 'gestion', used: [...c.crisis.used], bets: { ...c.crisis.bets } };
     outcome.minGob = round(outcome.minGob);
     outcome.maxInfl = round(outcome.maxInfl);
     return outcome;

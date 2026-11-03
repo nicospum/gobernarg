@@ -13,7 +13,8 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "playtest": "vitest run -c vitest.playtest.config.ts playtest/report.playtest.ts playtest/scenarios.playtest.ts",
-    "playtest:ideologia": "vitest run -c vitest.playtest.config.ts playtest/ideology.playtest.ts"
+    "playtest:ideologia": "vitest run -c vitest.playtest.config.ts playtest/ideology.playtest.ts",
+    "playtest:historicos": "vitest run -c vitest.playtest.config.ts playtest/historicos.playtest.ts"
   },
   "dependencies": {
     "@radix-ui/react-tooltip": "^1.2.10",
