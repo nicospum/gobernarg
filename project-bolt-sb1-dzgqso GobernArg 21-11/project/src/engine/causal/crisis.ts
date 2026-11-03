@@ -144,14 +144,14 @@ export function crisisStatus(state: CausalState): CrisisStatusLine[] {
 }
 
 /** Condiciones vigentes que la dinámica de la crisis mantiene (corrida, bancos). */
-export function syncCrisisFlags(state: CausalState): void {
+export function syncCrisisFlags(state: CausalState, decisionRef: number = state.turn): void {
   const c = state.crisis;
   if (!c || c.kind !== 'corralito') return;
   const set = (name: string, on: boolean) => {
     if (on) state.flags[name] = state.flags[name] ?? { value: 1, start: 0, end: null, source: 'crisis' };
     else delete state.flags[name];
   };
-  const restringido = !!flagValue(state, 'corralito', state.turn) || !!flagValue(state, 'corralon', state.turn);
+  const restringido = !!flagValue(state, 'corralito', decisionRef) || !!flagValue(state, 'corralon', decisionRef);
   set('corrida', c.liquidez < 50 && !restringido);
   set('bancos_al_limite', c.liquidez <= 25);
   set('bancos_estables', c.liquidez >= 50);
@@ -468,7 +468,8 @@ export function crisisQuarterRules(state: CausalState, close: number, notes: str
       notes.push(...lines);
       out.push({ ruleId: 'C03', target: 'INFL', delta: 15 });
     }
-    syncCrisisFlags(state);
+    // Las condiciones fijadas en este cierre rigen desde la decisión siguiente.
+    syncCrisisFlags(state, close + 1);
   }
   return out;
 }
