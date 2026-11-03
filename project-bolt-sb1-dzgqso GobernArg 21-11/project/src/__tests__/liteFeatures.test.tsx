@@ -43,10 +43,16 @@ describe('opciones de inicio de Light', () => {
     expect(screen.getByRole('radio', { name: /^Normal/ }).getAttribute('aria-checked')).toBe('true');
   });
 
-  it('el guard público rechaza Easy, históricos e ids desconocidos sin fallback', () => {
+  it('el guard público rechaza Easy, históricos bloqueados e ids desconocidos sin fallback', () => {
     expect(isNewScenarioAvailable('viento_de_cola')).toBe(true);
     expect(isNewScenarioAvailable('herencia_pesada')).toBe(true);
     for (const id of ['pais_en_calma','corralito','pais_en_llamas','desconocido','']) expect(isNewScenarioAvailable(id)).toBe(false);
+    recordReelectionWin();
+    expect(isNewScenarioAvailable('corralito')).toBe(true);
+    expect(isNewScenarioAvailable('pais_en_llamas')).toBe(false);
+    recordReelectionWin();
+    expect(isNewScenarioAvailable('pais_en_llamas')).toBe(true);
+    expect(isNewScenarioAvailable('pais_en_calma')).toBe(false);
   });
 
   it('los retratos no tienen leyendas ni profesiones; las fotos y perfiles siguen seleccionándose', () => {
@@ -94,20 +100,34 @@ describe('desafíos históricos con progreso propio', () => {
     expect(screen.queryByText('Corralito')).toBeNull();
   });
 
-  it('ni una reelección ni el prop de inicio habilitan históricos en esta edición', () => {
+  it('prendidos, se muestran plegados: bloqueados sin reelecciones y jugables al desbloquearlos', () => {
+    expect(LITE_FEATURES.escenariosHistoricos).toBe(true);
+    const onStart = vi.fn();
+    const { unmount } = render(<NewGameScreen onStart={onStart} />);
+    expect(screen.getByText('Escenarios históricos')).toBeTruthy();
+    const corralito = screen.getByRole('radio', { name: /Corralito/ });
+    expect(corralito.getAttribute('aria-disabled')).toBe('true');
+    expect(screen.getByRole('radio', { name: /País en llamas/ }).getAttribute('aria-disabled')).toBe('true');
+    fireEvent.click(corralito);
+    fireEvent.change(screen.getByPlaceholderText('Ingresá tu nombre'), { target: { value: 'Ana' } });
+    fireEvent.click(screen.getByRole('button', { name: /^Empezar$/ }));
+    expect(onStart).toHaveBeenCalledWith(expect.objectContaining({ scenarioId: 'viento_de_cola' }));
+    unmount();
+
     recordReelectionWin();
     recordReelectionWin();
     expect(loadProgress().reelectionsWon).toBe(2);
     expect(isScenarioUnlocked(getScenario('corralito'), 2)).toBe(true);
-    expect(LITE_FEATURES.escenariosHistoricos).toBe(false);
-    const onStart = vi.fn();
-    render(<NewGameScreen onStart={onStart} historicScenarios />);
-    expect(screen.queryByText('Escenarios históricos')).toBeNull();
-    expect(screen.queryByRole('radio', { name: /Corralito/ })).toBeNull();
-    expect(screen.queryByRole('radio', { name: /País en llamas/ })).toBeNull();
+    const onStart2 = vi.fn();
+    render(<NewGameScreen onStart={onStart2} />);
+    expect(screen.getByText(/2 reelecciones ganadas/)).toBeTruthy();
+    const llamas = screen.getByRole('radio', { name: /País en llamas/ });
+    expect(llamas.getAttribute('aria-disabled')).toBe('false');
+    fireEvent.click(llamas);
+    expect(llamas.getAttribute('aria-checked')).toBe('true');
     fireEvent.change(screen.getByPlaceholderText('Ingresá tu nombre'), { target: { value: 'Ana' } });
     fireEvent.click(screen.getByRole('button', { name: /^Empezar$/ }));
-    expect(onStart).toHaveBeenCalledWith(expect.objectContaining({ scenarioId: 'viento_de_cola' }));
+    expect(onStart2).toHaveBeenCalledWith(expect.objectContaining({ scenarioId: 'pais_en_llamas' }));
   });
 
   it('se pueden jugar completos (bots)', () => {

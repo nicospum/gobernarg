@@ -6,6 +6,7 @@ import type { NewGameChoice } from '../components/NewGameScreen';
 import type { GameState } from '../types/game';
 import { createNewGame } from '../engine/gameEngine';
 import { SAVE_KEY, loadGame, saveGame } from '../lib/savegame';
+import { recordReelectionWin } from '../lib/progress';
 
 // El callback de una pantalla no debe poder saltarse el filtro público de App.
 vi.mock('../components/NewGameScreen', () => ({
@@ -41,6 +42,15 @@ describe('Guard de inicio público en App', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Iniciar viento_de_cola' }));
     expect(screen.queryByTestId('new-game-stub')).toBeNull();
     expect(loadGame()?.state.causal.scenarioId).toBe('viento_de_cola');
+  });
+
+  it('acepta un histórico cuando las reelecciones ganadas lo desbloquearon', () => {
+    recordReelectionWin();
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'Abrir nueva partida' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Iniciar corralito' }));
+    expect(screen.queryByTestId('new-game-stub')).toBeNull();
+    expect(loadGame()?.state.causal.scenarioId).toBe('corralito');
   });
 
   it('continuar una partida anterior de Fácil conserva escenario, calendario y foto', () => {

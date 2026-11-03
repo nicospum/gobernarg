@@ -28,8 +28,8 @@ export interface LiteFeatures {
 }
 
 export const LITE_FEATURES: LiteFeatures = {
-  // Fuera de la edición actual; fuentes, reglas y progreso se conservan.
-  escenariosHistoricos: false,
+  // Corralito y País en llamas, plegados en "Nueva partida"; se desbloquean con reelecciones.
+  escenariosHistoricos: true,
   // Para ver todos los números como antes: true.
   modoDetallado: false,
   // Catálogo interno para herramientas; la entrada pública usa lib/editionAccess.
