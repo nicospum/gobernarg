@@ -14,6 +14,7 @@ import {
   legForLaws,
   lawThreshold,
 } from '@/engine/causal';
+import { isLockedPolicy } from '@/engine/consultant';
 import { detailed } from '@/lite/config';
 import { calendarFor, equivalentTurns } from '@/lib/calendar';
 
@@ -168,6 +169,7 @@ export function ControlPanel({ gameState, onActionSelect, canTakeAction, index, 
                 requestedBy={requestedBy[av.action.id] ?? []}
                 onSelect={() => onActionSelect(av.action.id)}
                 isSelected={gameState.selectedActions.includes(av.action.id)}
+                locked={isLockedPolicy(causal, av.action.id)}
                 disabled={!canTakeAction && !gameState.selectedActions.includes(av.action.id)}
               />
             ))}

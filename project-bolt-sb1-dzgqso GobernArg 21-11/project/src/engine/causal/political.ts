@@ -95,7 +95,10 @@ export function recomputePolitical(state: CausalState, close: number): void {
   p.apro = computeApro(state);
   p.estr = computeStructure(state, structureBonus);
   p.otros = p.imagen;
-  p.iv = computeIv(p.apro, p.estr, p.otros);
+  // Consultor político: el bono de voto rige hasta el cierre de la elección.
+  // Se lee directo del estado (engine/consultant no se importa desde acá).
+  const consultantBonus = state.consultant && close <= state.consultant.bonusUntil ? state.consultant.bonusIv : 0;
+  p.iv = clamp(computeIv(p.apro, p.estr, p.otros) + consultantBonus);
   const legEff = clamp(p.leg + bonusSum(state, 'LEG', close));
   const baseGob = clamp(
     0.3 * legNorm(legEff)

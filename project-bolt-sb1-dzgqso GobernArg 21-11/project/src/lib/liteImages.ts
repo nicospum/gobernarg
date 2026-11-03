@@ -21,3 +21,5 @@ export const actorPortrait = (actor: ActorId) => image('actores', ACTOR_IMAGE[ac
 export const actionImage = (actionId: string) =>
   image('fotos', ACTION_PHOTO[actionId]) ?? image('politicas', ACTION_IMAGE[actionId]);
 export const screenImage = (key: keyof typeof SCREEN_IMAGE) => image('pantallas', SCREEN_IMAGE[key]);
+/** Personajes (consultor político, etc.): personajes/<nombre>.webp. */
+export const personImage = (name: string) => image('personajes', name);

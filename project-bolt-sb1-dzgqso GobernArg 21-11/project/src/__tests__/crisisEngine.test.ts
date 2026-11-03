@@ -183,7 +183,7 @@ describe('Emergencia del Corralito', () => {
   });
 
   it('dolarizar bloquea la emisión y la caja en rojo se paga con atraso de sueldos', () => {
-    let s = round(corralito(), 'dolarizar').state;
+    const s = round(corralito(), 'dolarizar').state;
     expect(flagValue(s, 'dolarizada', 1)).toBe(1);
     s.crisis!.phase = 'gestion';
     const emitir = getAvailability(s, 'emitir_dinero', [], 4);
@@ -228,7 +228,7 @@ describe('Emergencia del Corralito', () => {
   });
 
   it('el estado de sitio dura una subronda y se vuelve a verificar la disponibilidad al cerrar', () => {
-    let s = corralito();
+    const s = corralito();
     s.base.CONF = 70;
     expect(getAvailability(s, 'estado_de_sitio', [], 4).visible).toBe(true);
     const r = round(s, 'estado_de_sitio');

@@ -1,6 +1,7 @@
 import type { GameState } from '../types/game';
 import { CAUSAL_ACTIONS_BY_ID } from '../data/causal';
 import { getAvailability, legForLaws, lawThreshold, listPolicyAvailability, type Availability, type Selection } from './causal';
+import { isLockedPolicy } from './consultant';
 
 /** Selección actual en formato del motor (para validar disponibilidad y costos). */
 function currentSelections(gameState: GameState): Selection[] {
@@ -24,6 +25,8 @@ export function toggleActionSelection(gameState: GameState, actionId: string): G
   const selections = currentSelections(gameState);
   const isSelected = gameState.selectedActions.includes(actionId);
   if (isSelected) {
+    // "Lo que diga el encuestador, se hace": la medida fijada no se quita este turno.
+    if (isLockedPolicy(gameState.causal, actionId)) return gameState;
     const av = getAvailability(gameState.causal, actionId, selections, gameState.actions);
     let selected = gameState.selectedActions.filter(id => id !== actionId);
     let refund = av.pa;
