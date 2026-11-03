@@ -10,7 +10,7 @@ Nota única de diseño, calibración y verificación. Rama `codex/gobernarg-ligh
 | Hiper arrancaba "al borde" (precios 72) y la regla general de hiper mataba en dos trimestres. | Arranca el 1/6/1989 con precios en 97 de 100 y acelerando, default desde 1988 sin vencimiento, estado de sitio ya declarado, gobierno en transición. Regla propia: dos meses con precios en 95 o más y acelerando, y el gobierno cae. | Empezar dentro de la hiperinflación con un plazo razonable para intervenir. |
 | El default vencía solo a los 8 turnos. | Dura hasta que se renegocia (medida incierta con quita del 35 %). | La deuda impaga necesita resolución; no se cura con un contador. |
 | Rebote de actividad gratis. | Rebote condicional: solo con nuevo régimen y precios contenidos (2001) o con la inflación calmada (1989). | La recuperación depende de condiciones observables y rezagos. |
-| Sin medidas propias de la crisis. | 22 medidas extraordinarias sin costo, una por turno, con impacto fuerte ya y una apuesta que se resuelve 2 a 4 trimestres después. Catálogo regular recortado a 28 políticas. | "Sin medidas extraordinarias no se puede ganar; con medidas y buen juego, la partida despega." |
+| Sin medidas propias de la crisis. | 22 medidas extraordinarias sin costo, una por turno, con impacto fuerte ya y una apuesta que se resuelve 2 a 4 trimestres después. Catálogo regular recortado a 33 políticas. | "Sin medidas extraordinarias no se puede ganar; con medidas y buen juego, la partida despega." |
 | Calendario trimestral de 16 turnos desde el minuto uno. | Emergencia de tres subrondas (semanas de diciembre de 2001; junio, julio y agosto de 1989) y después los 16 trimestres. | Varias decisiones significativas durante la crisis sin ejecutar un trimestre completo por semana. |
 
 ## 2. Base histórica usada
@@ -72,11 +72,11 @@ Una subronda ≈ 3 a 4 semanas. Aplica: efectos inmediatos de la medida elegida;
 
 Catálogo completo con efectos y apuestas en `project/src/data/causal/crisisActions.ts`. Reglas: costo cero en caja y acciones; una por turno o subronda; las de una sola vez no se repiten; los cambios de régimen son permanentes; se vuelve a verificar la disponibilidad al cerrar; la apuesta se resuelve con dos filas condicionales evaluadas al aplicar (premio si se cumple, castigo si no). Medidas inciertas (renegociar la deuda, rescate del FMI) se sortean con el generador de la partida: la probabilidad sube con solvencia, relación con finanzas, cuentas ordenadas y gestión diplomática; nunca es un rescate garantizado.
 
-Condiciones de apuesta (se eligieron para que sean alcanzables con buen juego desde el piso de la crisis, no gratis): corralito (salir del corralito en 3 trimestres), corralón (precios < 60 y divisas ≥ 25), liberar depósitos (divisas ≥ 25), devaluar (precios < 55), dolarizar (déficit ≤ 120), pesificar (crédito ≥ 15 y precios < 60), default (deuda renegociada en 6 trimestres), cuasimonedas (precios < 55 y déficit ≤ 150), estado de sitio (protección social ≥ 35 o asistencia reciente), rescate (déficit ≤ 100 a los 4 trimestres), apertura (divisas ≥ 25 y crédito ≥ 15), reforma constitucional (aprobación ≥ 30), congelamiento (déficit ≤ 200 a los 2 trimestres), moneda nueva (reservas ≥ 12 para tomarla; déficit ≤ 150 y divisas ≥ 18 a los 3), shock fiscal (ancla inmediata de precios; precios < 80 a los 3), vender reservas (desanclaje < 25 y déficit ≤ 250), devaluación de shock (divisas ≥ 25 y precios < 85), emergencia alimentaria (precios < 85), transición (precios < 80), privatizar todo (crédito ≥ 20 e instituciones ≥ 40). Con la economía dolarizada los precios convergen a la inflación del dólar (ancla 18), no hay emisión ni política monetaria, y la caja en rojo se paga con atraso de sueldos.
+Condiciones de apuesta (se eligieron para que sean alcanzables con buen juego desde el piso de la crisis, no gratis): corralito (salir del corralito en 3 trimestres), corralón (precios < 60 y divisas ≥ 25), liberar depósitos (divisas ≥ 25), devaluar (precios < 55), dolarizar (déficit ≤ 120), pesificar (crédito ≥ 15 y precios < 60), default (deuda renegociada en 6 trimestres, contando una renegociación en el mismo trimestre de la revisión; no se puede volver a defaultear después de renegociar), cuasimonedas (precios < 55 y déficit ≤ 150), estado de sitio (protección social ≥ 35 o asistencia reciente), rescate (déficit ≤ 100 a los 4 trimestres), apertura (divisas ≥ 25 y crédito ≥ 15), reforma constitucional (aprobación ≥ 30), congelamiento (déficit ≤ 200 a los 2 trimestres), moneda nueva (reservas ≥ 12 para tomarla; déficit ≤ 150 y divisas ≥ 18 a los 3), shock fiscal (ancla inmediata de precios; precios < 80 a los 3), vender reservas (desanclaje < 25 y déficit ≤ 250), devaluación de shock (divisas ≥ 25 y precios < 85), emergencia alimentaria (precios < 85), transición (precios < 80), privatizar todo (crédito ≥ 20 e instituciones ≥ 40). La ley de emergencia no pasa por la mayoría de leyes: pide un piso de bancas propias (35) o un acuerdo con la oposición. Las apuestas se resuelven al final del cierre y ven los regímenes que ese mismo cierre dejó puestos. El impulso de cada medida tomada en la emergencia se apaga escalonado (+4 hasta el primer trimestre, +2 algunos trimestres más). El corralón aparece con bancos al límite (liquidez ≤ 35). Con la economía dolarizada los precios convergen a la inflación del dólar (ancla 18), no hay emisión ni política monetaria, y la caja en rojo se paga con atraso de sueldos.
 
 ### 3.5 Catálogo regular en los históricos
 
-Siguen 28: emisión, tasas, cepo y liberar cepo, control de precios, ajuste del gasto, deuda local, recaudación, retenciones (subir y bajar), salarios estatales, salario mínimo, pacto social, transferencias sociales, asistencia alimentaria, bono a jubilados, tarifas (congelar y actualizar), crédito PyME, promoción industrial, incentivos a la exportación, reforma laboral, seguridad, antipiquetes, DNU, ampliar la coalición, transferencias a provincias y agenda internacional. Se ocultan 30 (menores en una crisis o reemplazadas por una extraordinaria: devaluación, privatización, préstamo internacional). Con la economía dolarizada no hay emisión; la caja en rojo se paga con atraso de sueldos.
+Siguen 33: emisión, tasas, cepo y liberar cepo, control de precios, ajuste del gasto, deuda local, recaudación, retenciones (subir y bajar), salarios estatales, salario mínimo, pacto social, transferencias sociales, asistencia alimentaria, bono a jubilados, tarifas (congelar y actualizar), crédito PyME, promoción industrial, incentivos a la exportación, reforma laboral, seguridad, antipiquetes, DNU, ampliar la coalición, transferencias a provincias y agenda internacional; además, para que cada actor tenga algo que pedir, empleo joven, financiamiento de la ciencia, fortalecimiento de la justicia, transparencia y protección ambiental (33). Se ocultan 26 (menores en una crisis o reemplazadas por una extraordinaria: devaluación, privatización, préstamo internacional). Con la economía dolarizada no hay emisión; la caja en rojo se paga con atraso de sueldos.
 
 ## 4. Objetivos visibles
 
@@ -84,21 +84,21 @@ Corralito: contener la corrida (bancos estables), pagos esenciales al día (caja
 
 ## 5. Resultados del playtest con bots
 
-`npm run playtest:historicos` (20 semillas por celda, informe completo con trayectorias de muestra en `_analisis_gobernarg/playtest/HISTORICOS.md`). Son hipótesis de diseño medidas con bots, no una prueba de diversión. Medición del 2026-11-03 sobre la calibración de este documento:
+`npm run playtest:historicos` (20 semillas por celda, informe completo con trayectorias de muestra en `_analisis_gobernarg/playtest/HISTORICOS.md`). Son hipótesis de diseño medidas con bots, no una prueba de diversión. Medición del 2026-11-03 sobre la calibración de este documento, después de los arreglos de la revisión de código:
 
 | Escenario | Bot | Supera la emergencia | Reelecto | Derrotas | Apuestas bien |
 |---|---|---|---|---|---|
-| Corralito | Inacción | 100 % | 0 % | juicio político (T5-T9) | — |
-| Corralito | Ortodoxo (dolarizar, rescate, ley de emergencia, hambre contenida, apertura solo con actividad) | 100 % | 0 % (llega a la elección en el 50 %) | juicio político 10 | 54 % |
-| Corralito | Heterodoxo (corralito, devaluar, liberar, default, alimentos, pesificar) | 100 % | 95 % | hiper en el 2.º mandato 4 | 93 % |
-| Corralito | Adaptable de crisis | 100 % | 0 % (llega en el 35 %) | juicio político 13 | 46 % |
+| Corralito | Inacción | 100 % | 0 % | juicio político 20 | — |
+| Corralito | Ortodoxo (dolarizar, rescate, ley de emergencia, hambre contenida, apertura solo con actividad) | 100 % | 0 % (pierde la elección en el 15 %) | juicio político 17 | 44 % |
+| Corralito | Heterodoxo (corralito, devaluar, liberar, default, alimentos, pesificar) | 100 % | 100 % | hiper en el 2.º mandato 4 | 91 % |
+| Corralito | Adaptable de crisis | 100 % | 0 % (pierde la elección en el 50 %) | juicio político 10 | 46 % |
 | Hiper | Inacción | 0 % | 0 % | hiperinflación en el 2.º mes | — |
-| Hiper | Ortodoxo (shock, moneda nueva, privatizar, hambre contenida) | 100 % | 0 % (llega al 100 %) | — | 66 % |
-| Hiper | Heterodoxo (congelamiento, alimentos, transición, reservas, moneda nueva) | 100 % | 0 % | hiperinflación (sin ancla fiscal) | 70 % |
-| Hiper | Adaptable de crisis | 100 % | 100 % | — | 73 % |
-| Hiper | Adaptable común | 100 % | 75 % | juicio político 1 | 93 % |
+| Hiper | Ortodoxo (shock, moneda nueva, privatizar, hambre contenida) | 100 % | 0 % (llega al 100 %) | — | 61 % |
+| Hiper | Heterodoxo (congelamiento, alimentos, transición, reservas, moneda nueva) | 100 % | 0 % | hiperinflación (sin ancla fiscal) | 72 % |
+| Hiper | Adaptable de crisis | 100 % | 90 % | — | 76 % |
+| Hiper | Adaptable común | 100 % | 75 % | — | 90 % |
 
-Lectura: la inacción pierde siempre; en cada escenario hay al menos una secuencia bien jugada que gana con margen (heterodoxa en 2001; moneda nueva más congelamiento, alimentos y transición en 1989); los paquetes que ignoran el hambre, apilan recesión o no ponen un ancla fiscal superan la emergencia pero no ganan. Las apuestas se ganan entre el 46 % y el 93 % según la habilidad del bot. Queda abierto que el paquete ortodoxo puro no llegue a la reelección: compite pero no convence (intención de voto final 13-18 %).
+Lectura: la inacción pierde siempre; en cada escenario hay al menos una secuencia bien jugada que gana con margen (heterodoxa en 2001; moneda nueva más congelamiento, alimentos y transición en 1989); los paquetes que ignoran el hambre, apilan recesión o no ponen un ancla fiscal superan la emergencia pero no ganan. Las apuestas se ganan entre el 44 % y el 91 % según la habilidad del bot. Queda abierto que el paquete ortodoxo puro no llegue a la reelección: compite pero no convence (intención de voto final 12-18 %).
 
 ## 6. Compatibilidad de guardados
 

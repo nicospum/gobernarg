@@ -38,6 +38,8 @@ export function ConsultantModal({ event, gameState, onChoice }: ConsultantModalP
   const policyName = visit?.policy ? CAUSAL_ACTIONS_BY_ID[visit.policy]?.name ?? visit.policy : null;
   const poll = pollSentence(visit?.actor ?? null, policyName);
   const fee = visit?.fee ?? 0;
+  // Como las encuestas comunes: sin caja para el honorario, hacerle caso no se puede elegir.
+  const noCaja = gameState.causal.caja < fee;
   const portrait = personImage(CONSULTANT_PORTRAIT);
 
   return (
@@ -71,17 +73,23 @@ export function ConsultantModal({ event, gameState, onChoice }: ConsultantModalP
             </div>
 
             <div className="flex flex-col gap-2" role="group" aria-label="Qué le respondés">
-              {CONSULTANT_CHOICE_IDS.map(id => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => onChoice(id)}
-                  className="w-full min-h-[44px] text-left rounded-lg border border-rule bg-surface px-4 py-3 hover:border-sala-blue/50 hover:bg-sunken transition-colors"
-                >
-                  <span className="block text-[14px] font-bold text-ink leading-snug">{CONSULTANT_OPTION_LABEL[id]}</span>
-                  <span className="block text-[12px] text-sala-muted mt-0.5 leading-snug">{consultantOptionSubtitle(id, fee, policyName)}</span>
-                </button>
-              ))}
+              {CONSULTANT_CHOICE_IDS.map(id => {
+                const blocked = id === 'encuestador' && noCaja;
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    disabled={blocked}
+                    title={blocked ? 'No alcanza la caja' : undefined}
+                    onClick={() => !blocked && onChoice(id)}
+                    className="w-full min-h-[44px] text-left rounded-lg border border-rule bg-surface px-4 py-3 hover:border-sala-blue/50 hover:bg-sunken transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-rule disabled:hover:bg-surface"
+                  >
+                    <span className="block text-[14px] font-bold text-ink leading-snug">{CONSULTANT_OPTION_LABEL[id]}</span>
+                    <span className="block text-[12px] text-sala-muted mt-0.5 leading-snug">{consultantOptionSubtitle(id, fee, policyName)}</span>
+                    {blocked && <span className="block text-[12px] text-sala-bad mt-0.5 leading-snug">No alcanza la caja</span>}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>

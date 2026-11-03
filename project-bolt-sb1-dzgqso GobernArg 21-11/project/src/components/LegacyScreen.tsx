@@ -305,6 +305,7 @@ function isVictivityMessage(gameState: GameState): string {
     if (reason === 'impeachment') return 'Una crisis de gobernabilidad terminó en juicio político.';
     if (reason === 'institutional_coup') return 'Las instituciones quebraron bajo tu mandato.';
     if (reason === 'hyperinflation') return 'La hiperinflación destruyó la economía y tu gobierno.';
+    if (reason === 'resignation') return 'Sin gobernabilidad en la emergencia, el presidente renunció.';
     if (reason === 'election_loss') {
       return gameState.term >= 2
         ? 'Completaste dos mandatos, pero tu espacio perdió la sucesión presidencial.'

@@ -1,4 +1,4 @@
-import { ACTOR_IDS, INDICATOR_IDS, SCENARIOS } from '../data/causal';
+import { ACTOR_IDS, CAUSAL_ACTIONS_BY_ID, INDICATOR_IDS, SCENARIOS } from '../data/causal';
 import type { GameState } from '../types/game';
 import type { GameEvent } from '../systems/events/types';
 import { calendarFor } from './calendar';
@@ -14,6 +14,8 @@ const numbers = (x: unknown) => obj(x) && Object.values(x).every(number);
 const fields = (x: unknown, keys: string[]) => obj(x) && keys.every(k => number(x[k]));
 const list = (x: unknown, check: (v: unknown) => boolean) => Array.isArray(x) && x.every(check);
 const actor = (x: unknown) => string(x) && (ACTOR_IDS as readonly string[]).includes(x);
+/** Medida del catálogo causal (el consultor fija y recomienda acciones existentes). */
+const policy = (x: unknown) => string(x) && Object.prototype.hasOwnProperty.call(CAUSAL_ACTIONS_BY_ID, x);
 const span = (x: unknown) => obj(x) && integer(x.start) && integer(x.end);
 const optionalNumber = (x: unknown) => x === undefined || number(x);
 const optionalString = (x: unknown) => x === undefined || string(x);
@@ -55,11 +57,11 @@ const crisis = (x: unknown) => obj(x) && x.version === 1 && ['corralito','hiper'
   && number(x.liquidez) && x.liquidez >= 0 && x.liquidez <= 100 && number(x.aceleracion) && integer(x.crisisStreak)
   && strings(x.used) && obj(x.bets) && Object.values(x.bets).every(v => v === 'bien' || v === 'mal') && list(x.log, crisisRound);
 const consultantVisit = (x: unknown) => obj(x) && ['legislativas','presidenciales'].includes(String(x.election)) && ['anticipado','ultimo_momento'].includes(String(x.timing))
-  && integer(x.turn) && integer(x.mandateStart) && (x.actor === null || actor(x.actor)) && (x.policy === null || string(x.policy))
+  && integer(x.turn) && integer(x.mandateStart) && (x.actor === null || actor(x.actor)) && (x.policy === null || policy(x.policy))
   && number(x.fee) && x.fee >= 0 && (x.choice === null || ['encuestador','redes','instinto'].includes(String(x.choice))) && number(x.ivDelta);
 /** Consultor político: visitas, bono de voto vigente y medida fijada. */
 const consultant = (x: unknown) => obj(x) && x.version === 1 && list(x.visits, consultantVisit) && number(x.bonusIv) && integer(x.bonusUntil)
-  && (x.lockedPolicy === null || string(x.lockedPolicy)) && nullableInt(x.lockedTurn);
+  && (x.lockedPolicy === null || policy(x.lockedPolicy)) && nullableInt(x.lockedTurn);
 const political = (x: unknown) => fields(x, ['leg','legAdj','gob','apro','estr','otros','iv','imagen','umbralLey','interna','coalicion']);
 const actorSnapshot = (x: unknown) => obj(x) && ACTOR_IDS.every(id => obj(x[id]) && number(x[id].sat) && (x[id].rel === null || number(x[id].rel)));
 const applied = (x: unknown) => obj(x) && optionalString(x.actionId) && optionalString(x.effectId) && optionalNumber(x.originTurn) && string(x.source) && string(x.target) && number(x.delta) && string(x.explanation) && ['DELTA','BONUS','SET'].includes(String(x.mode));
@@ -80,6 +82,12 @@ export function validGameState(value: unknown): value is GameState {
   if (SCENARIOS.some(sc => sc.id === c.scenarioId && sc.reelectionsToUnlock > 0) && c.calendar !== 'legacy-16') return false;
   if (c.managementActivity !== undefined && !activity(c.managementActivity)) return false;
   if (c.crisis !== undefined && !crisis(c.crisis)) return false;
+  // Coherencia con el escenario: la emergencia solo existe en los escenarios con reglas nuevas,
+  // del mismo tipo y con la misma cantidad de subrondas (si no, el cierre de subronda rompe).
+  if (obj(c.crisis)) {
+    const def = SCENARIOS.find(sc => sc.id === c.scenarioId)?.crisis;
+    if (!def || def.kind !== c.crisis.kind || c.crisis.rounds !== def.rounds.length) return false;
+  }
   if (c.consultant !== undefined && !consultant(c.consultant)) return false;
   const cal = calendarFor(c as { calendar: 'light-12' | 'legacy-16' });
   if (!integer(s.year) || s.year < 1 || s.year > 4 || !integer(s.turn) || s.turn < 1 || s.turn > cal.periodsPerYear || !integer(s.term) || s.term < 1 || s.term > 2) return false;

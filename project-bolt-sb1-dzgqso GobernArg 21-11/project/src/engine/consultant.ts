@@ -36,6 +36,7 @@ import {
   recomputePolitical,
   viewRef,
   type CausalState,
+  type ConsultantChoice,
   type ConsultantElection,
   type ConsultantState,
   type ConsultantTiming,
@@ -77,7 +78,9 @@ function visitsForElection(consultant: ConsultantState | undefined, election: Co
 /**
  * Qué visita corresponde en el turno de decisión actual, o null. A último
  * momento vuelve solo si en la anticipada seguiste tu instinto o si no hubo
- * anticipada (partida cargada de antes).
+ * anticipada (partida cargada de antes). Una anticipada sin responder
+ * (choice null) también la bloquea: nunca hay dos visitas vivas de la misma
+ * elección.
  */
 export function pendingConsultantVisit(causal: CausalState): { election: ConsultantElection; timing: ConsultantTiming } | null {
   const t = causal.turn - causal.mandateStart + 1;
@@ -88,7 +91,7 @@ export function pendingConsultantVisit(causal: CausalState): { election: Consult
       if (visits.some(v => v.timing === timing)) continue;
       if (timing === 'ultimo_momento') {
         const early = visits.find(v => v.timing === 'anticipado');
-        if (early && (early.choice === 'encuestador' || early.choice === 'redes')) continue;
+        if (early && early.choice !== 'instinto') continue;
       }
       return { election, timing };
     }
@@ -237,11 +240,28 @@ export function createConsultantVisit(gameState: GameState): { state: GameState;
 
 // ─────────────────────────────── Respuesta ───────────────────────────────
 
+/** Tope del bono por elección: lo que da hacerle caso en la anticipada (±4 legislativas, ±6 presidenciales). */
+export function consultantBonusCap(election: ConsultantElection): number {
+  return Math.abs(consultantIvDelta(election, 'anticipado', 'encuestador'));
+}
+
+/** Por qué la medida no entró en la agenda, en minúscula y sin punto final, para meterla entre paréntesis. */
+function agendaBlockReason(av: ReturnType<typeof getAvailability>): string {
+  const raw = !av.visible ? 'ya no está disponible' : av.reasons[0] ?? (av.needsDnu ? 'es ley: el Congreso no la aprueba' : 'ya no está disponible');
+  const text = raw.trim().replace(/\.$/, '');
+  return text.charAt(0).toLowerCase() + text.slice(1);
+}
+
 /**
  * Aplica la opción elegida a la visita pendiente del evento: cobra el
  * honorario, fija la medida en la agenda del turno (descontando sus PA) y
  * guarda el bono de voto; recalcula la capa política para que el tablero lo
  * muestre ya.
+ *
+ * Hacerle caso sin caja para el honorario no cobra, no fija nada ni da bono:
+ * queda registrado como instinto (y Gastón vuelve a último momento). Si la
+ * caja alcanza pero la medida dejó de estar disponible después de pagar, el
+ * consejo igual se cobra y el bono se da, pero la medida no entra en la agenda.
  */
 export function applyConsultantChoice(gameState: GameState, event: Pick<GameEvent, 'id'>, choiceId: string): GameState {
   if (!isConsultantChoice(choiceId) || gameState.gameOver) return gameState;
@@ -251,17 +271,25 @@ export function applyConsultantChoice(gameState: GameState, event: Pick<GameEven
   const causal = structuredClone(gameState.causal);
   const consultant = causal.consultant!;
   const visit = consultant.visits[index];
-  const delta = consultantIvDelta(visit.election, visit.timing, choiceId);
-  visit.choice = choiceId;
+  let message: string | null = null;
+  let choice: ConsultantChoice = choiceId;
+  if (choice === 'encuestador' && causal.caja < visit.fee) {
+    // Como las encuestas comunes (canPoll): sin caja no se cobra ni se hace nada.
+    choice = 'instinto';
+    message = 'Gastón: sin caja no hay encuesta. Seguís con tu instinto.';
+  }
+  const delta = consultantIvDelta(visit.election, visit.timing, choice);
+  visit.choice = choice;
   visit.ivDelta = delta;
-  consultant.bonusIv = visitsForElection(consultant, visit.election, visit.mandateStart).reduce((sum, v) => sum + v.ivDelta, 0);
+  const cap = consultantBonusCap(visit.election);
+  const sum = visitsForElection(consultant, visit.election, visit.mandateStart).reduce((acc, v) => acc + v.ivDelta, 0);
+  consultant.bonusIv = Math.max(-cap, Math.min(cap, sum));
   consultant.bonusUntil = consultantElectionClose(causal, visit.election, visit.mandateStart);
 
   let selectedActions = gameState.selectedActions;
   let actions = gameState.actions;
-  let message: string | null = null;
-  if (choiceId === 'encuestador') {
-    // Como las encuestas: entra al resultado fiscal del cierre. Si no alcanza, la caja queda en rojo.
+  if (choice === 'encuestador') {
+    // La caja alcanza (chequeado arriba): se cobra ahora y entra al resultado fiscal del cierre.
     causal.caja -= visit.fee;
     causal.immediateCosts += visit.fee;
     if (visit.policy) {
@@ -269,15 +297,16 @@ export function applyConsultantChoice(gameState: GameState, event: Pick<GameEven
         consultant.lockedPolicy = visit.policy;
         consultant.lockedTurn = causal.turn;
       } else {
-        const pa = getAvailability(causal, visit.policy, selectedActions.map(actionId => ({ actionId })), actions).pa;
-        if (pa <= actions) {
+        // Se revalida con la caja ya cobrada: puede haber dejado de alcanzar para la medida.
+        const av = getAvailability(causal, visit.policy, selectedActions.map(actionId => ({ actionId })), actions);
+        if (av.visible && av.available && !av.needsDnu && av.pa <= actions) {
           selectedActions = [...selectedActions, visit.policy];
-          actions -= pa;
+          actions -= av.pa;
           consultant.lockedPolicy = visit.policy;
           consultant.lockedTurn = causal.turn;
         } else {
           const name = CAUSAL_ACTIONS_BY_ID[visit.policy]?.name ?? visit.policy;
-          message = `Gastón: ${name} no entró en la agenda, no te quedan acciones este turno. Los números igual los tenés.`;
+          message = `Gastón: ${name} no entró en la agenda (${agendaBlockReason(av)}). Los números igual los tenés.`;
         }
       }
     }

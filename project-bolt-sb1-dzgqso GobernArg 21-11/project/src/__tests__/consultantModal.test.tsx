@@ -96,6 +96,32 @@ describe('visita de Gastón Barenboim', () => {
     expect(first.textContent).not.toContain('agenda');
   });
 
+  it('sin caja para el honorario, hacerle caso queda deshabilitado y lo dice; las otras dos siguen', () => {
+    const { state, event } = visitState();
+    const broke = { ...state, causal: { ...state.causal, caja: 149 }, budget: 149 };
+    const onChoice = vi.fn();
+    render(<ConsultantModal event={event} gameState={broke} onChoice={onChoice} />);
+    const buttons = within(screen.getByRole('dialog', { name: 'Gastón Barenboim' })).getAllByRole('button') as HTMLButtonElement[];
+    expect(buttons).toHaveLength(3);
+    expect(buttons[0].disabled).toBe(true);
+    expect(buttons[0].textContent).toContain(`Honorarios: ${fmtBudget(150)}`);
+    expect(buttons[0].textContent).toContain('No alcanza la caja');
+    expect(buttons[1].disabled).toBe(false);
+    expect(buttons[2].disabled).toBe(false);
+    expect(buttons[1].textContent).not.toContain('No alcanza la caja');
+    fireEvent.click(buttons[0]);
+    expect(onChoice).not.toHaveBeenCalled();
+    fireEvent.click(buttons[2]);
+    expect(onChoice).toHaveBeenLastCalledWith('instinto');
+    cleanup();
+
+    // Con la caja justa, se puede.
+    render(<ConsultantModal event={event} gameState={{ ...state, causal: { ...state.causal, caja: 150 } }} onChoice={onChoice} />);
+    const first = within(screen.getByRole('dialog', { name: 'Gastón Barenboim' })).getAllByRole('button')[0] as HTMLButtonElement;
+    expect(first.disabled).toBe(false);
+    expect(first.textContent).not.toContain('No alcanza la caja');
+  });
+
   it('la medida fijada por el encuestador no se puede quitar desde el plan ni desde la tarjeta', () => {
     const { state, event } = visitState();
     const after = applyEventChoice(state, event, 'encuestador');

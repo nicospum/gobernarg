@@ -1,6 +1,7 @@
 import { AlertTriangle, ChevronRight, Minus, TrendingDown, TrendingUp } from 'lucide-react';
 import type { GameState } from '../../types/game';
 import { PARAMS } from '@/data/causal';
+import { flagValue } from '@/engine/causal';
 import { fmtBudget } from '@/lib/format';
 import { riskLabel } from '@/lib/risk';
 import { defeatRisk } from '@/lib/boardView';
@@ -21,6 +22,9 @@ export function StatusStrip({ gameState, mobile = false }: { gameState: GameStat
   const risk = defeatRisk(iv);
   const target = PARAMS.VOTOS_PARA_GANAR;
   const indicators = simpleIndicators(gameState);
+  // Economía dolarizada (escenarios históricos): sin emisión, la caja en rojo se paga con atraso.
+  const dolarizada = !!flagValue(c, 'dolarizada', c.turn);
+  const inRed = dolarizada ? 'En rojo: pagos atrasados' : 'En rojo: se emite';
   return (
     <div className="relative">
       <section
@@ -43,7 +47,7 @@ export function StatusStrip({ gameState, mobile = false }: { gameState: GameStat
           <div className="bg-surface px-3 py-2 border-t-[3px] border-t-sala-blue">
             <span className="sr-eyebrow block !text-sala-blue">Caja</span>
             <strong className={`block text-[23px] leading-tight font-bold font-mono whitespace-nowrap ${c.caja >= 0 ? 'text-ink' : 'text-sala-bad'}`}>{fmtBudget(c.caja)}</strong>
-            <small className={`block text-[10px] mt-1.5 ${c.caja >= 0 ? 'text-sala-muted' : 'text-sala-bad'}`}>{c.caja >= 0 ? 'Con fondos' : 'En rojo: se emite'}</small>
+            <small className={`block text-[10px] mt-1.5 ${c.caja >= 0 ? 'text-sala-muted' : 'text-sala-bad'}`}>{c.caja >= 0 ? 'Con fondos' : inRed}</small>
           </div>
         </div>
         {SIMPLE_GROUPS.map(group => (

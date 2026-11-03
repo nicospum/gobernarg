@@ -1,9 +1,10 @@
 import { AlertTriangle, ChevronRight, Crosshair, X } from 'lucide-react';
 import type { GameState } from '../../types/game';
 import { getPolicyAvailability } from '../../engine/gameEngine';
-import { inEmergency, projectedCloseCaja } from '@/engine/causal';
+import { flagValue, inEmergency, projectedCloseCaja } from '@/engine/causal';
 import { isLockedPolicy } from '@/engine/consultant';
 import { fmtBudget, fmtBudgetDelta } from '@/lib/format';
+import { defeatWarnings } from '@/lib/simpleView';
 import { detailed } from '@/lite/config';
 import { PendingPolicies } from './PendingPolicies';
 import { KnownDeadlines } from './KnownDeadlines';
@@ -38,11 +39,19 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
   const words = unitWords(crisisUnit(c));
   const closeLabel = emergency ? words.close : `Cerrar el ${periodLabel}`;
   const title = emergency ? words.thisCap : 'Este turno';
+  // Economía dolarizada (escenarios históricos): el Tesoro no emite; la caja en rojo se paga con atraso.
+  const dolarizada = !!flagValue(c, 'dolarizada', c.turn);
+  const shortfall = dolarizada
+    ? 'Sin emisión posible (economía dolarizada): si falta caja, sueldos y proveedores cobran con atraso.'
+    : 'Si al cerrar falta caja, el Tesoro cubrirá el faltante con emisión.';
   // Avisos que antes sólo estaban en Notificaciones: un trimestre más así y la partida termina.
-  const critical = [
-    c.hyperStreak === 1 && `Al borde de la hiperinflación: otro ${periodLabel} así y el gobierno cae.`,
-    c.govCrisisStreak === 1 && `Crisis de gobernabilidad: si no se recupera el próximo ${periodLabel}, avanza el juicio político.`,
-  ].filter((t): t is string => !!t);
+  // En la emergencia la cuenta es la propia de la crisis (crisisStreak), no hyperStreak/govCrisisStreak.
+  const critical = emergency
+    ? defeatWarnings(gameState).filter(w => w.critical).map(w => w.text)
+    : [
+      c.hyperStreak === 1 && `Al borde de la hiperinflación: otro ${periodLabel} así y el gobierno cae.`,
+      c.govCrisisStreak === 1 && `Crisis de gobernabilidad: si no se recupera el próximo ${periodLabel}, avanza el juicio político.`,
+    ].filter((t): t is string => !!t);
 
   const endTurnButton = (cls: string) => (
     <button
@@ -105,7 +114,7 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
         <PendingPolicies state={c} />
         {!emergency && projection.caja < 0 && (
           <p className="flex items-center gap-1.5 text-[11px] font-semibold text-sala-bad">
-            <AlertTriangle size={12} className="flex-shrink-0" /> Si al cerrar falta caja, el Tesoro cubrirá el faltante con emisión.
+            <AlertTriangle size={12} className="flex-shrink-0" /> {shortfall}
           </p>
         )}
       </section>
@@ -197,7 +206,9 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
       {!emergency && projection.caja < 0 && (
         <p className="mx-4 mb-3 flex items-start gap-1.5 rounded-md bg-red-500/10 px-2.5 py-2 text-[11px] font-semibold text-sala-bad">
           <AlertTriangle size={13} className="mt-px flex-shrink-0" />
-          {simple ? 'Si al cerrar falta caja, el Tesoro cubrirá el faltante con emisión.' : 'Estimación en rojo: si al cerrar falta caja, el Tesoro cubrirá el faltante con emisión.'}
+          {simple ? shortfall : dolarizada
+            ? 'Estimación en rojo: sin emisión posible (economía dolarizada), si falta caja sueldos y proveedores cobran con atraso.'
+            : 'Estimación en rojo: si al cerrar falta caja, el Tesoro cubrirá el faltante con emisión.'}
         </p>
       )}
       {/* Modo simple: estos avisos van arriba del tablero (DefeatAlerts). */}

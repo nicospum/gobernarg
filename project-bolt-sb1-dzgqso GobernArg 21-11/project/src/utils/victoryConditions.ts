@@ -2,6 +2,12 @@ import type { DefeatReason, GameState, Objective } from '../types/game';
 import { getScenario, isIndicatorId } from '../data/causal';
 import { effective, flagValue, viewRef } from '../engine/causal/context';
 
+/** Avance hacia un umbral "valor ≥ requerido" (el tope a 100 se aplica al promedio final); con requerido ≤ 0 es todo o nada. */
+function thresholdProgress(value: number, required: number): number {
+  if (required > 0) return (value / required) * 100;
+  return value >= required ? 100 : 0;
+}
+
 export function updateObjectives(gameState: GameState): GameState {
   const updatedObjectives = gameState.objectives.map(objective => {
     if (objective.completed) return objective;
@@ -11,19 +17,22 @@ export function updateObjectives(gameState: GameState): GameState {
     // se completaba cumpliendo solo uno de los dos.
     const checks: { completed: boolean; progress: number }[] = [];
 
-    if (objective.requirements.popularity) {
+    // FIX: `budget: 0` ("Pagos esenciales al día" del Corralito) es un requisito
+    // válido: con la comparación truthy nunca se agregaba el check y la meta
+    // quedaba en 0 % para siempre. Se compara por tipo y sin dividir por cero.
+    if (typeof objective.requirements.popularity === 'number') {
       const required = objective.requirements.popularity;
       checks.push({
         completed: gameState.popularity >= required,
-        progress: (gameState.popularity / required) * 100
+        progress: thresholdProgress(gameState.popularity, required)
       });
     }
 
-    if (objective.requirements.budget) {
+    if (typeof objective.requirements.budget === 'number') {
       const required = objective.requirements.budget;
       checks.push({
         completed: gameState.budget >= required,
-        progress: (gameState.budget / required) * 100
+        progress: thresholdProgress(gameState.budget, required)
       });
     }
 

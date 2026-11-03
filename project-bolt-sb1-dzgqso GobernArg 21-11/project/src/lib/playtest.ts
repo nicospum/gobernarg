@@ -27,13 +27,14 @@ function minutesPlayed(): number | null {
   }
 }
 
-const DEFEAT_LABEL: Record<string, string> = {
+export const DEFEAT_LABEL: Record<string, string> = {
   election_loss: 'perdió la elección',
   hyperinflation: 'hiperinflación',
   impeachment: 'juicio político',
   institutional_coup: 'crisis institucional',
   low_popularity: 'aprobación en el piso',
   negative_budget: 'quiebra fiscal',
+  resignation: 'renuncia',
 };
 
 /** Resumen de la partida en una línea por dato, para leer en Netlify sin abrir el juego. */

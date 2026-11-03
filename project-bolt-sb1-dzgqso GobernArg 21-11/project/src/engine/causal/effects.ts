@@ -221,12 +221,18 @@ export function applyDelta(state: CausalState, eff: ScheduledEffect, value: numb
  */
 export function applyAgenda(state: CausalState, close: number, acc: EffectAccumulator): void {
   const ctx = dslContext(state, { closeRef: close - 1, decisionRef: close, currentTurn: close });
+  // Las apuestas de las medidas extraordinarias se resuelven al final del cierre y
+  // ven los flags que este mismo cierre dejó puestos (rigen desde la decisión siguiente):
+  // renegociar la deuda en el trimestre de la revisión cuenta.
+  const betCtx = dslContext(state, { closeRef: close - 1, decisionRef: close + 1, currentTurn: close });
+  const isBet = (eff: ScheduledEffect) => /\.(bien|mal)\.\d+$/.test(eff.effectId);
   const keep: ScheduledEffect[] = [];
-  for (const eff of state.agenda) {
+  const due = state.agenda.filter(e => !isBet(e)).concat(state.agenda.filter(isBet));
+  for (const eff of due) {
     if (eff.start > close) { keep.push(eff); continue; }
     if (eff.end < close) continue;
 
-    const condOk = !eff.applyCondition || evalCondition(eff.applyCondition, ctx, eff.actor);
+    const condOk = !eff.applyCondition || evalCondition(eff.applyCondition, isBet(eff) ? betCtx : ctx, eff.actor);
     if (!condOk) {
       // "Mientras se cumpla": al dejar de cumplirse, el efecto termina.
       if (eff.whileCondition) continue;

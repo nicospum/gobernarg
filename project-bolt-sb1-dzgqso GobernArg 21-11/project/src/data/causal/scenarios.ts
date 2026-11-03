@@ -153,7 +153,7 @@ export const SCENARIOS: ScenarioDef[] = [
     deuda: 6000,
     ingresoMult: 0.95,
     desanclaje: 2,
-    // Congreso en contra pero con la luna de miel alcanza para una ley de emergencia los primeros turnos.
+    // Congreso en contra: la ley de emergencia pide mayoría propia mínima (LEG ≥ 35) o un acuerdo con la oposición.
     legAdj: -4,
     imagen: 25,
     relDelta: { financiero: -10, sindicatos: -10, org_sociales: -12, oposicion: -10, gobernadores: -8 },

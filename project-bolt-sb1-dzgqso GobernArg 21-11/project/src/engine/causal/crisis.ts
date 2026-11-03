@@ -153,7 +153,7 @@ export function syncCrisisFlags(state: CausalState, decisionRef: number = state.
   };
   const restringido = !!flagValue(state, 'corralito', decisionRef) || !!flagValue(state, 'corralon', decisionRef);
   set('corrida', c.liquidez < 50 && !restringido);
-  set('bancos_al_limite', c.liquidez <= 25);
+  set('bancos_al_limite', c.liquidez <= 35);
   set('bancos_estables', c.liquidez >= 50);
 }
 
@@ -214,9 +214,11 @@ const LIQUIDEZ_POR_MEDIDA: Record<string, number> = {
  * Tomar una medida extraordinaria es un impulso en sí mismo: el gobierno toma
  * el toro por las astas. Gobernabilidad por dos cierres e imagen.
  */
-function decisionBoost(state: CausalState, actionId: string, startRef: number, endRef: number): void {
+function decisionBoost(state: CausalState, actionId: string, startRef: number, endRef: number, fadeEnd: number = endRef + 1): void {
   if (CAUSAL_ACTIONS_BY_ID[actionId]?.outcome) return;
   state.bonuses.push({ id: `crisis.decision.${actionId}.${startRef}`, target: 'GOB', value: 4, start: startRef, end: endRef, source: actionId, label: 'Decisión de emergencia: el gobierno toma el control' });
+  // Después el impulso se apaga de a poco, no de golpe.
+  state.bonuses.push({ id: `crisis.decision.${actionId}.${startRef}.fade`, target: 'GOB', value: 2, start: endRef + 1, end: fadeEnd, source: actionId, label: 'Decisión de emergencia: el impulso se apaga' });
   state.political.imagen = clamp(state.political.imagen + 2);
   const c = state.crisis;
   if (c && c.kind === 'corralito' && LIQUIDEZ_POR_MEDIDA[actionId]) c.liquidez = clamp(c.liquidez + LIQUIDEZ_POR_MEDIDA[actionId]);
@@ -275,7 +277,7 @@ function executeMeasureInRound(state: CausalState, actionId: string, rng: Rng, l
   lines.push(`Medida de la ${crisisScenario(state)?.roundUnit ?? 'subronda'}: ${name}.`);
   const resolved = resolveUncertainMeasure(state, actionId, rng, lines);
   if (resolved !== actionId) state.executions.push({ actionId: resolved, turn, forced: true });
-  decisionBoost(state, actionId, viewRef(state), turn);
+  decisionBoost(state, actionId, viewRef(state), turn, turn + c.round);
   if (resolved !== actionId && LIQUIDEZ_POR_MEDIDA[resolved] && c.kind === 'corralito') c.liquidez = clamp(c.liquidez + LIQUIDEZ_POR_MEDIDA[resolved]);
   const scheduled = scheduleActionEffects(state, resolved, turn);
   const now = scheduled.filter(e => e.start === turn && !e.applyCondition);
@@ -359,7 +361,7 @@ function hiperRound(state: CausalState, lines: string[]): void {
   bump(state, 'CONF', 0.08 * (30 - effective(state, 'CONF', ref)));
   if (calle > 0) {
     bump(state, 'CONF', calle);
-    lines.push(calle >= 4 ? 'Saqueos y cortes: la gente no llega a fin de mes, ni de semana.' : 'La calle sigue tensa, pero la ayuda llega.');
+    lines.push(calle >= 3 ? 'Saqueos y cortes: la gente no llega a fin de mes, ni de semana.' : 'La calle sigue tensa, pero la ayuda llega.');
   } else {
     lines.push('Con el estado de sitio, la calle quedó vacía por la fuerza.');
   }
@@ -426,6 +428,7 @@ export function closeCrisisRound(input: CausalState, selections: Selection[]): C
 
   // El estado de sitio dura una subronda.
   if (state.flags.estado_de_sitio) delete state.flags.estado_de_sitio;
+  state.bonuses = state.bonuses.filter(b => b.source !== 'estado_de_sitio' || b.id.startsWith('crisis.decision.'));
 
   partialSatisfaction(state);
   recomputePolitical(state, ref);

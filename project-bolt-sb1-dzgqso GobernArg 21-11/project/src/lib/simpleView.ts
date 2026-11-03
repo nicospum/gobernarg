@@ -60,7 +60,10 @@ export interface SimpleIndicator {
 export function simpleIndicators(state: GameState): SimpleIndicator[] {
   const c = state.causal;
   const ref = viewRef(c);
-  const last = c.records[c.records.length - 1];
+  // Durante la emergencia de un escenario histórico todavía no hay cierres
+  // trimestrales: la flecha sale del cierre de la última subronda.
+  const last: Pick<TurnRecord, 'indicatorsBefore' | 'indicatorsAfter'> | undefined =
+    c.records[c.records.length - 1] ?? c.crisis?.log[c.crisis.log.length - 1];
   return SIMPLE_INDICATORS.map(({ key, group, label, ids }) => {
     const v = avg(ids.map(id => effective(c, id, ref)));
     const band = describeIndicator(ids[0], v);
@@ -178,17 +181,20 @@ export function defeatWarnings(state: GameState): DefeatWarning[] {
   const crisisDef = crisisScenario(c);
   if (crisis && crisisDef && inEmergency(c)) {
     const another = crisisDef.roundUnit === 'semana' ? 'otra semana' : 'otro mes';
-    const streak = crisis.crisisStreak >= 1;
-    if (crisis.kind === 'hiper') {
-      if (streak && infl >= 95 && crisis.aceleracion > 0) {
-        out.push({ id: 'hyperinflation', critical: true, text: `Los precios están en el techo y acelerando: ${another} así y el gobierno cae.` });
-      } else if (infl >= 90) {
-        out.push({ id: 'hyperinflation', critical: false, text: 'Los precios están en el techo. Si siguen acelerando, el gobierno cae.' });
-      }
+    // La cuenta en marcha (crisisStreak ≥ 1) siempre es roja: el próximo cierre
+    // de subronda puede terminar el gobierno, aunque los números de hoy se
+    // hayan movido un poco. hyperStreak/govCrisisStreak no cuentan acá.
+    if (crisis.crisisStreak >= 1) {
+      const pricesOut = crisis.kind === 'hiper' && ((infl >= 95 && crisis.aceleracion > 0) || gob >= 15);
+      out.push(pricesOut
+        ? { id: 'hyperinflation', critical: true, text: `Los precios están en el techo y acelerando: ${another} así y el gobierno cae.` }
+        : { id: 'resignation', critical: true, text: `Sin gobernabilidad: ${another} así y el presidente renuncia.` });
+      return out;
     }
-    if (streak && gob < 15) {
-      out.push({ id: 'resignation', critical: true, text: `Sin gobernabilidad: ${another} así y el presidente renuncia.` });
-    } else if (gob < 25) {
+    if (crisis.kind === 'hiper' && infl >= 90) {
+      out.push({ id: 'hyperinflation', critical: false, text: 'Los precios están en el techo. Si siguen acelerando, el gobierno cae.' });
+    }
+    if (gob < 25) {
       out.push({ id: 'resignation', critical: false, text: 'Casi sin gobernabilidad. Si se hunde, el presidente renuncia.' });
     }
     return out;

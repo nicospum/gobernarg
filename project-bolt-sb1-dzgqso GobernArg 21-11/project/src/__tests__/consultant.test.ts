@@ -19,6 +19,8 @@ import { paForTurn } from '../engine/causalBridge';
 import { eventChoiceEffects } from '../engine/eventResolver';
 import {
   activeConsultantVisit,
+  consultantBonusCap,
+  consultantEventFor,
   consultantVisitTurn,
   isConsultantEvent,
   isLockedPolicy,
@@ -30,7 +32,7 @@ import { encodeSavedGame, parseSavedGame } from '../lib/savegame';
 import { validPendingEvents } from '../lib/savegameValidation';
 import type { GameState } from '../types/game';
 import type { GameEvent } from '../systems/events/types';
-import type { ConsultantChoice } from '../engine/causal/types';
+import type { ConsultantChoice, ConsultantVisit } from '../engine/causal/types';
 
 const game = (calendar?: CalendarId, seed = 1) =>
   createNewGame({ archetype: 'politico', governorName: 'Ana', seed, scenarioId: 'pais_en_calma', calendar });
@@ -150,6 +152,19 @@ describe('calendario de visitas', () => {
     expect(pendingConsultantVisit({ ...causal, turn: 5 })).toEqual({ election: 'legislativas', timing: 'ultimo_momento' });
     expect(pendingConsultantVisit({ ...causal, turn: 11 })).toEqual({ election: 'presidenciales', timing: 'ultimo_momento' });
     for (const turn of [1, 2, 4, 6, 7, 8, 10, 12]) expect(pendingConsultantVisit({ ...causal, turn }), String(turn)).toBeNull();
+  });
+
+  it('una anticipada sin responder (choice null) también bloquea la de último momento', () => {
+    const { state } = firstVisit();
+    expect(state.causal.consultant!.visits[0]).toMatchObject({ election: 'legislativas', timing: 'anticipado', choice: null });
+    expect(pendingConsultantVisit({ ...state.causal, turn: 5 })).toBeNull();
+    // Presidenciales: misma regla con la anticipada del 9 sin responder.
+    const pending: ConsultantVisit = { ...state.causal.consultant!.visits[0], election: 'presidenciales', turn: 9 };
+    const consultant = { ...state.causal.consultant!, visits: [pending] };
+    expect(pendingConsultantVisit({ ...state.causal, turn: 11, consultant })).toBeNull();
+    // Con instinto sí vuelve.
+    const instinto = { ...consultant, visits: [{ ...pending, choice: 'instinto' as const }] };
+    expect(pendingConsultantVisit({ ...state.causal, turn: 11, consultant: instinto })).toEqual({ election: 'presidenciales', timing: 'ultimo_momento' });
   });
 });
 
@@ -327,6 +342,116 @@ describe('las tres respuestas', () => {
     expect(lateYes.causal.consultant).toMatchObject({ bonusIv: 3, bonusUntil: 12 });
     expect(lateYes.causal.political.iv).toBeCloseTo(clamp(b + 3), 6);
     expect(applyEventChoice(s, late!, 'redes').causal.political.iv).toBeCloseTo(clamp(b - 3), 6);
+  });
+});
+
+describe('caja, agenda y tope del bono', () => {
+  /** Cambia la caja y, si se pide, la medida recomendada de la visita pendiente. */
+  function withCaja(state: GameState, caja: number, policy?: string): GameState {
+    const causal = structuredClone(state.causal);
+    causal.caja = caja;
+    if (policy) causal.consultant!.visits[0].policy = policy;
+    return { ...state, causal, budget: Math.round(caja) };
+  }
+
+  /** Una medida visible, disponible, sin DNU, con costo de caja y PA que alcanzan en este estado. */
+  function costlyPolicy(state: GameState): { id: string; cost: number; pa: number } {
+    for (const action of POLICY_ACTIONS) {
+      const av = getAvailability(state.causal, action.id, [], state.actions);
+      if (av.visible && av.available && !av.needsDnu && av.caja < 0 && av.pa <= state.actions) return { id: action.id, cost: -av.caja, pa: av.pa };
+    }
+    throw new Error('sin medida con costo');
+  }
+
+  it('sin caja para el honorario no se cobra, no se fija nada ni hay bono: queda como instinto y Gastón vuelve a último momento', () => {
+    const { state, event } = firstVisit();
+    const broke = withCaja(state, 149);
+    const after = applyEventChoice(broke, event, 'encuestador');
+    expect(after.causal.caja).toBe(149);
+    expect(after.causal.immediateCosts).toBe(broke.causal.immediateCosts);
+    expect(after.selectedActions).toEqual([]);
+    expect(after.actions).toBe(broke.actions);
+    expect(after.causal.consultant).toMatchObject({ bonusIv: 0, lockedPolicy: null, lockedTurn: null });
+    expect(after.causal.consultant!.visits[0]).toMatchObject({ choice: 'instinto', ivDelta: 0 });
+    expect(after.causal.political.iv).toBeCloseTo(ivWithoutBonus(after), 6);
+    expect(after.lastInteractionMessage).toBe('Gastón: sin caja no hay encuesta. Seguís con tu instinto.');
+    expect(activeConsultantVisit(after.causal)).toBeNull();
+    expect(pendingConsultantVisit({ ...after.causal, turn: 5 })).toEqual({ election: 'legislativas', timing: 'ultimo_momento' });
+    // Con la caja justa sí se cobra.
+    const exact = applyEventChoice(withCaja(state, 150), event, 'encuestador');
+    expect(exact.causal.caja).toBe(0);
+    expect(exact.causal.consultant!.visits[0].choice).toBe('encuestador');
+  });
+
+  it('si después de pagar la medida ya no se puede (no alcanza la caja), se cobra y hay bono pero no entra en la agenda', () => {
+    const { state, event } = firstVisit();
+    const { id: policy, cost } = costlyPolicy(state);
+    const name = CAUSAL_ACTIONS_BY_ID[policy].name;
+    const tight = withCaja(state, 150 + cost - 1, policy);
+    expect(getAvailability(tight.causal, policy, [], tight.actions).available).toBe(true);
+
+    const after = applyEventChoice(tight, event, 'encuestador');
+    expect(after.causal.caja).toBeCloseTo(cost - 1, 8);
+    expect(after.causal.immediateCosts).toBeCloseTo(tight.causal.immediateCosts + 150, 8);
+    expect(after.causal.consultant).toMatchObject({ bonusIv: 4, lockedPolicy: null, lockedTurn: null });
+    expect(after.causal.consultant!.visits[0]).toMatchObject({ choice: 'encuestador', ivDelta: 4 });
+    expect(after.selectedActions).toEqual([]);
+    expect(after.actions).toBe(tight.actions);
+    expect(isLockedPolicy(after.causal, policy)).toBe(false);
+    expect(after.lastInteractionMessage).toBe(`Gastón: ${name} no entró en la agenda (no alcanza la caja). Los números igual los tenés.`);
+    // Nada queda fijado: la agenda se puede tocar como siempre.
+    expect(toggleActionSelection({ ...after, causal: { ...after.causal, caja: 100000 } }, policy).selectedActions).toEqual([policy]);
+  });
+
+  it('sin acciones que queden, el mensaje dice el motivo con el mismo formato', () => {
+    const { state, event } = firstVisit();
+    const policy = state.causal.consultant!.visits[0].policy!;
+    const name = CAUSAL_ACTIONS_BY_ID[policy].name;
+    const after = applyEventChoice({ ...state, actions: 0 }, event, 'encuestador');
+    expect(after.selectedActions).toEqual([]);
+    expect(after.causal.consultant).toMatchObject({ bonusIv: 4, lockedPolicy: null });
+    expect(after.lastInteractionMessage).toBe(`Gastón: ${name} no entró en la agenda (no te quedan acciones este turno). Los números igual los tenés.`);
+  });
+
+  it('si la medida ya estaba en la agenda, se deja y se fija aunque la caja quede corta para repetirla', () => {
+    const { state, event } = firstVisit();
+    const { id: policy, cost, pa } = costlyPolicy(state);
+    const tight = withCaja(state, 150 + cost - 1, policy);
+    const planned = { ...tight, selectedActions: [policy], actions: tight.actions - pa };
+    const after = applyEventChoice(planned, event, 'encuestador');
+    expect(after.causal.caja).toBeCloseTo(cost - 1, 8);
+    expect(after.selectedActions).toEqual([policy]);
+    expect(after.actions).toBe(planned.actions);
+    expect(after.causal.consultant).toMatchObject({ bonusIv: 4, lockedPolicy: policy, lockedTurn: 3 });
+    expect(isLockedPolicy(after.causal, policy)).toBe(true);
+    expect(toggleActionSelection(after, policy)).toBe(after);
+    expect(after.lastInteractionMessage).toBe(state.lastInteractionMessage);
+  });
+
+  it.each([
+    ['legislativas', 4],
+    ['presidenciales', 6],
+  ] as const)('|bonusIv| nunca pasa de %i en %s aunque se fuercen dos visitas respondidas con encuestador', (election, cap) => {
+    expect(consultantBonusCap(election)).toBe(cap);
+    const { state } = firstVisit();
+    const rich = withCaja(state, 100000);
+    const base = rich.causal.consultant!.visits[0];
+    const run = (first: ConsultantChoice, second: ConsultantChoice) => {
+      const early: ConsultantVisit = { ...base, election, choice: first, ivDelta: consultantIvDelta(election, 'anticipado', first) };
+      const late: ConsultantVisit = { ...base, election, timing: 'ultimo_momento', turn: base.turn + 2, fee: consultantFee(election, 'ultimo_momento'), choice: null, ivDelta: 0 };
+      const forced: GameState = {
+        ...rich,
+        causal: { ...rich.causal, turn: late.turn, consultant: { ...rich.causal.consultant!, visits: [early, late], bonusIv: early.ivDelta } },
+      };
+      const after = applyEventChoice(forced, consultantEventFor(late), second);
+      const visits = after.causal.consultant!.visits;
+      expect(visits.map(v => v.choice)).toEqual([first, second]);
+      expect(Math.abs(visits[0].ivDelta) + Math.abs(visits[1].ivDelta)).toBeGreaterThan(cap);
+      return after.causal.consultant!.bonusIv;
+    };
+    expect(run('encuestador', 'encuestador')).toBe(cap);
+    expect(run('redes', 'redes')).toBe(-cap);
+    expect(Math.abs(run('encuestador', 'redes'))).toBeLessThanOrEqual(cap);
   });
 });
 

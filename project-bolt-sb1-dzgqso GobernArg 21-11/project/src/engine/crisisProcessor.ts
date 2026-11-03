@@ -40,12 +40,14 @@ export function processEmergencyRound(gameState: GameState): TurnResult {
 
   const last = record.round >= causal.crisis!.rounds;
   const unit = def.roundUnit;
+  // Con la cuenta de derrota en marcha, el aviso del cierre es crítico: otra subronda así y el gobierno cae.
+  const onTheBrink = !defeat && causal.crisis!.crisisStreak >= 1;
   state = addNotification(state, {
-    type: 'info',
+    type: onTheBrink ? 'warning' : 'info',
     category: 'political',
     title: `${record.label}: ${record.measure ? CAUSAL_ACTIONS_BY_ID[record.measure]?.name ?? record.measure : 'sin medidas extraordinarias'}`,
     message: record.lines.slice(0, 3).join(' '),
-    importance: 'medium',
+    importance: onTheBrink ? 'critical' : 'medium',
   });
 
   if (defeat) {

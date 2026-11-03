@@ -1,5 +1,5 @@
 import { equivalentTurns } from '../../lib/calendar';
-import { INDICATOR_IDS, isIndicatorId, type ActorId, type IndicatorId } from '../../data/causal';
+import { INDICATOR_IDS, isActorId, isIndicatorId, type ActorId, type IndicatorId } from '../../data/causal';
 import type { DslContext } from './dsl';
 import type { CausalState } from './types';
 
@@ -61,7 +61,7 @@ export function countExecutions(state: CausalState, action: string, window: numb
   let actionId = action;
   let actor: string | undefined;
   const m = /^(reunion|negociacion|acuerdo|encuesta)_(.+)$/.exec(action);
-  if (m) {
+  if (m && isActorId(m[2])) {
     actionId = m[1];
     actor = m[2];
   }

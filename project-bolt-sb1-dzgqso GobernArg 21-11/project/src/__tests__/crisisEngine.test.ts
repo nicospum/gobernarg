@@ -99,7 +99,7 @@ describe('Medidas extraordinarias: catálogo y disponibilidad', () => {
     expect(av.dolarizar.available).toBe(false);
     expect(av.dolarizar.reasons[0]).toMatch(/reservas/);
     expect(av.negociar_deuda.available).toBe(false);
-    expect(av.negociar_deuda.reasons.join(' ')).toMatch(/tiempo en default/);
+    expect(av.negociar_deuda.reasons.join(' ')).toMatch(/solvencia/);
   });
 
   it('una sola medida extraordinaria por subronda o turno', () => {

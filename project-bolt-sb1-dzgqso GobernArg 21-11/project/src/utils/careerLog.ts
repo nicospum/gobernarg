@@ -59,6 +59,7 @@ export function generateLegacyText(gameState: GameState): string {
       impeachment: `El Congreso destituyó a ${name} mediante un juicio político que puso fin a su mandato de forma abrupta.`,
       institutional_coup: `Las instituciones colapsaron bajo la gestión de ${name}, que fue removido del poder en un golpe institucional.`,
       hyperinflation: `La economía argentina colapsó en una hiperinflación desatada por la emisión descontrolada durante la gestión de ${name}.`,
+      resignation: `${name} renunció a la presidencia en medio de la emergencia: sin gobernabilidad, el gobierno se quedó sin poder antes de terminar el mandato.`,
       election_loss: `Finalmente, en las urnas, el pueblo decidió un cambio de rumbo. ${name} perdió las elecciones con el ${lastMilestone.votesPercentage.toFixed(1)}% de los votos, cerrando así su ciclo en el poder.`,
     };
     paragraphs.push(

@@ -428,7 +428,7 @@ measure({
     bet: { bien: 'Sale bien si renegociás la deuda dentro de seis trimestres.', mal: 'Explota si seguís aislado: riesgo país y divisas peor.' },
     history: 'Anuncio del default parcial de la deuda externa el 23/12/2001.',
   },
-  visibleWhen: 'not FLAG(default_deuda)',
+  visibleWhen: 'not FLAG(default_deuda) and not FLAG(deuda_renegociada)',
   effects: [
     { t: 'FLAG:default_deuda', m: 1, mode: 'SET', dur: 'PERM', x: 'En default hasta renegociar.' },
     { t: 'SOLV', m: -8, x: 'Riesgo país por las nubes.' },
@@ -448,7 +448,7 @@ measure({
       { t: 'EXTE', m: 4, x: 'Vuelve el financiamiento.' },
     ],
     mal: [
-      { t: 'SOLV', m: -6, x: 'Seis trimestres en default sin negociar: paria.' },
+      { t: 'SOLV', m: -6, x: 'Seis trimestres en default sin acuerdo: paria.' },
       { t: 'EXTE', m: -4, x: 'Sin financiamiento externo.' },
       { t: 'INVC', m: -4, x: 'Nadie invierte en un país aislado.' },
     ],
@@ -460,7 +460,7 @@ measure({
   name: 'Renegociar la deuda con quita',
   description: 'Se sienta con los acreedores a canjear la deuda por bonos nuevos con quita. Puede salir o no.',
   note: 'El resultado depende de la solvencia, de la relación con las finanzas y de que las cuentas cierren. Si sale, la quita es del 35 % y los intereses bajan; si no, se pierde tiempo e imagen.',
-  cooldown: 3,
+  cooldown: 2,
   meta: {
     scenarios: ['corralito', 'hiper'], once: false,
     solves: 'Salir del default con una quita y volver al crédito.',
@@ -470,7 +470,7 @@ measure({
   },
   visibleWhen: 'FLAG(default_deuda)',
   requirements: [
-    { when: 'TURN>=4', reason: 'Los acreedores recién se sientan después de un tiempo en default.' },
+    { when: 'TURN>=4 or FLAG(crisis_hiper)', reason: 'Los acreedores recién se sientan después de un tiempo en default.' },
     { when: 'SOLV>=18 or DONE(agenda_internacional,8)', reason: 'Sin un mínimo de solvencia o de gestión diplomática, nadie negocia.' },
   ],
   effects: [],
@@ -539,7 +539,7 @@ measure({
   name: 'Ley de emergencia económica',
   description: 'El Congreso delega facultades extraordinarias al Ejecutivo por un tiempo. Margen para gobernar la crisis, a costa de las instituciones.',
   note: 'Da seis trimestres de gobernabilidad y de margen legislativo. Hay que conseguir la mayoría o un acuerdo con la oposición: no sale por decreto. Cuando vence, el margen se va.',
-  ley: 'LEY (no admite DNU)',
+  requirements: [{ when: 'LEG>=35 or REL(oposicion)>=40 or FLAG(acuerdo_oposicion)', reason: 'Hace falta mayoría propia o un acuerdo con la oposición.' }],
   meta: {
     scenarios: ['corralito', 'hiper'], once: true,
     solves: 'Conseguir margen político para gobernar la crisis.',
@@ -599,13 +599,13 @@ measure({
   id: 'rescate_fmi',
   name: 'Pedir un rescate al FMI',
   description: 'Un programa de emergencia con el Fondo: dólares frescos a cambio de metas fiscales. Pueden decir que no.',
-  note: 'Si lo dan, entran dólares y confianza, y a los cuatro trimestres revisan la meta fiscal: con déficit se cae el desembolso. Si lo niegan, el costo es de imagen y de riesgo país.',
+  note: 'Si lo dan, entran dólares y confianza, y a los cuatro trimestres revisan la meta fiscal: con un déficit grande se cae el desembolso. Si lo niegan, el costo es de imagen y de riesgo país.',
   cooldown: 6,
   meta: {
     scenarios: ['corralito', 'hiper'], once: false,
     solves: 'Conseguir dólares y respaldo externo de urgencia.',
-    risk: 'Pueden negarlo; si lo dan, exigen superávit a los cuatro trimestres.',
-    bet: { bien: 'Sale bien si hay superávit cuando revisan la meta.', mal: 'Explota si hay déficit: se cae el desembolso.' },
+    risk: 'Pueden negarlo; si lo dan, revisan el déficit a los cuatro trimestres.',
+    bet: { bien: 'Sale bien si el déficit es chico cuando revisan la meta.', mal: 'Explota si el déficit sigue grande: se cae el desembolso.' },
     history: 'En diciembre de 2001 el FMI suspendió los desembolsos a la Argentina.',
     uncertain: { success: 'rescate_fmi_exito', failure: 'rescate_fmi_fracaso' },
   },
@@ -1046,10 +1046,12 @@ export const CRISIS_FINANCING_IDS = ['cuasimonedas', 'privatizar_todo', 'rescate
 export const HIDDEN_IN_CRISIS: string[] = [
   'devaluacion', 'privatizacion', 'prestamo_internacional',
   'reforma_tributaria', 'reduccion_impuestos', 'regimen_grandes_inversiones', 'desarrollo_energetico_minero', 'tratado_comercio',
-  'plan_viviendas', 'salud_preventiva', 'construccion_hospitales', 'empleo_joven', 'genero_y_cuidados',
-  'inversion_educativa', 'reforma_educativa', 'financiamiento_ciencia', 'economia_conocimiento', 'fomento_cultural', 'turismo_y_patrimonio',
+  'plan_viviendas', 'salud_preventiva', 'construccion_hospitales', 'genero_y_cuidados',
+  'inversion_educativa', 'reforma_educativa', 'economia_conocimiento', 'fomento_cultural', 'turismo_y_patrimonio',
   'estudio_factibilidad', 'infraestructura_vial', 'infraestructura_energetica', 'energia_renovable', 'obras_hidricas', 'plan_conectividad', 'mantenimiento_infraestructura',
-  'prevencion_comunitaria', 'lucha_narcotrafico', 'fortalecimiento_justicia', 'transparencia_anticorrupcion', 'proteccion_ambiental',
+  'prevencion_comunitaria', 'lucha_narcotrafico',
+  // Quedan visibles empleo_joven, financiamiento_ciencia, fortalecimiento_justicia,
+  // transparencia_anticorrupcion y proteccion_ambiental: cada actor tiene algo para pedir.
 ];
 
 export function isExtraordinary(actionId: string): boolean {
