@@ -33,7 +33,8 @@ type TabValue = 'todas' | UiCategory;
 export function ControlPanel({ gameState, onActionSelect, canTakeAction, index, scroll = false }: ControlPanelProps) {
   const [selectedCategory, setSelectedCategory] = useState<TabValue>('todas');
   const [showBlocked, setShowBlocked] = useState(false);
-  const availability = getPolicyAvailability(gameState);
+  // Las medidas extraordinarias de los escenarios históricos van en el bloque de emergencia, no en la grilla.
+  const availability = getPolicyAvailability(gameState).filter(av => !av.action.extraordinary);
   const causal = gameState.causal;
 
   // Demandas reveladas en reuniones → la acción pedida se marca en la grilla.

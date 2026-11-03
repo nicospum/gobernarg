@@ -34,6 +34,13 @@ export function HistoricScenarios({ scenarioId, onSelect }: { scenarioId: string
                 <span className="p-3 min-w-0">
                   <span className="block font-bold text-[14px] text-ink">{sc.name}</span>
                   <span className="block text-[11px] text-sala-muted mt-1">{sc.era} · {sc.difficulty}</span>
+                  {sc.crisis && (
+                    <span className="block mt-1.5 space-y-0.5 text-[11px] leading-snug text-sala-muted">
+                      <span className="block"><b className="font-semibold text-ink/80">Arranca el {sc.crisis.start}</b> · moneda: {sc.crisis.currency}</span>
+                      {sc.highlights[0] && <span className="block">{sc.highlights[0]}</span>}
+                      <span className="block italic">{sc.crisis.alternateHistory}</span>
+                    </span>
+                  )}
                   {unlocked ? <span className="block text-[12px] text-ink/85 mt-2 leading-snug">{sc.description}</span> : (
                     <span className="flex items-start gap-1 text-[12px] text-sala-muted mt-2 leading-snug">
                       <Lock size={12} className="shrink-0 mt-0.5" />

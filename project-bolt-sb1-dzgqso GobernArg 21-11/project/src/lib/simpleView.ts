@@ -6,7 +6,7 @@
 import type { GameState } from '../types/game';
 import type { TurnRecord } from '@/engine/causal';
 import { EFFECTS_BY_ACTION, INDICATORS, PARAMS, isIndicatorId, type IndicatorId } from '@/data/causal';
-import { effective, viewRef } from '@/engine/causal';
+import { crisisScenario, effective, inEmergency, viewRef } from '@/engine/causal';
 import { toneOf, type Tone } from './causalText';
 
 /**
@@ -153,7 +153,7 @@ export function trendWord(delta: number | null): string {
 }
 
 export interface DefeatWarning {
-  id: 'hyperinflation' | 'impeachment';
+  id: 'hyperinflation' | 'impeachment' | 'resignation';
   /** Rojo: el próximo cierre puede terminar el gobierno. */
   critical: boolean;
   text: string;
@@ -171,6 +171,28 @@ export function defeatWarnings(state: GameState): DefeatWarning[] {
   const infl = effective(c, 'INFL', viewRef(c));
   const gob = c.political.gob;
   const out: DefeatWarning[] = [];
+  // Emergencia de un escenario histórico: reglas propias por subronda (engine/causal/crisis.ts).
+  // Dos subrondas seguidas sin gobernabilidad (o, en la Hiper, con los precios en el techo y
+  // acelerando) terminan el gobierno; la regla general de hiper recién vuelve en la gestión.
+  const crisis = c.crisis;
+  const crisisDef = crisisScenario(c);
+  if (crisis && crisisDef && inEmergency(c)) {
+    const another = crisisDef.roundUnit === 'semana' ? 'otra semana' : 'otro mes';
+    const streak = crisis.crisisStreak >= 1;
+    if (crisis.kind === 'hiper') {
+      if (streak && infl >= 95 && crisis.aceleracion > 0) {
+        out.push({ id: 'hyperinflation', critical: true, text: `Los precios están en el techo y acelerando: ${another} así y el gobierno cae.` });
+      } else if (infl >= 90) {
+        out.push({ id: 'hyperinflation', critical: false, text: 'Los precios están en el techo. Si siguen acelerando, el gobierno cae.' });
+      }
+    }
+    if (streak && gob < 15) {
+      out.push({ id: 'resignation', critical: true, text: `Sin gobernabilidad: ${another} así y el presidente renuncia.` });
+    } else if (gob < 25) {
+      out.push({ id: 'resignation', critical: false, text: 'Casi sin gobernabilidad. Si se hunde, el presidente renuncia.' });
+    }
+    return out;
+  }
   if (c.hyperStreak >= 1) {
     out.push({ id: 'hyperinflation', critical: true, text: 'Los precios están fuera de control: si sigue así, el gobierno cae en el próximo cierre.' });
   } else if (infl >= PARAMS.HIPER_UMBRAL - 12) {

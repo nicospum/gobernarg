@@ -1,13 +1,14 @@
 import { AlertTriangle, ChevronRight, Crosshair, X } from 'lucide-react';
 import type { GameState } from '../../types/game';
 import { getPolicyAvailability } from '../../engine/gameEngine';
-import { projectedCloseCaja } from '@/engine/causal';
+import { inEmergency, projectedCloseCaja } from '@/engine/causal';
 import { isLockedPolicy } from '@/engine/consultant';
 import { fmtBudget, fmtBudgetDelta } from '@/lib/format';
 import { detailed } from '@/lite/config';
 import { PendingPolicies } from './PendingPolicies';
 import { KnownDeadlines } from './KnownDeadlines';
 import { calendarFor } from '@/lib/calendar';
+import { crisisUnit, unitWords } from '@/lib/crisisView';
 
 interface TurnPlanProps {
   gameState: GameState;
@@ -32,6 +33,11 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
   const left = gameState.actions;
   // Modo simple: lo elegido y la caja al cierre en una cifra; alertas solo críticas.
   const simple = !detailed();
+  // Emergencia de un escenario histórico: se cierra una semana o un mes, no el turno, y las medidas no cuestan acciones ni caja.
+  const emergency = inEmergency(c);
+  const words = unitWords(crisisUnit(c));
+  const closeLabel = emergency ? words.close : `Cerrar el ${periodLabel}`;
+  const title = emergency ? words.thisCap : 'Este turno';
   // Avisos que antes sólo estaban en Notificaciones: un trimestre más así y la partida termina.
   const critical = [
     c.hyperStreak === 1 && `Al borde de la hiperinflación: otro ${periodLabel} así y el gobierno cae.`,
@@ -48,7 +54,7 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
       data-no-restore-focus
       className={`sr-btn-lime justify-between ${cls}`}
     >
-      Cerrar el {periodLabel}
+      {closeLabel}
       <ChevronRight size={17} />
     </button>
   );
@@ -59,16 +65,17 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
       <section className="sr-panel px-4 py-3 flex flex-col gap-2.5" aria-label="Este turno">
         <div className="flex items-baseline gap-2">
           {index && <span className="sr-label">{index} /</span>}
-          <h2 className="text-[15px] font-bold text-ink">Este turno</h2>
-          <span className="text-[12px] text-sala-muted">· {left} {left === 1 ? 'acción' : 'acciones'}</span>
+          <h2 className="text-[15px] font-bold text-ink">{title}</h2>
+          {!emergency && <span className="text-[12px] text-sala-muted">· {left} {left === 1 ? 'acción' : 'acciones'}</span>}
         </div>
         {selected.length === 0 ? (
-          <p className="text-[12px] text-sala-muted">Sin acciones todavía.</p>
+          <p className="text-[12px] text-sala-muted">{emergency ? 'Sin medida extraordinaria todavía.' : 'Sin acciones todavía.'}</p>
         ) : (
           <ul className="flex flex-wrap gap-1.5">
             {selected.map(av => (
               <li key={av.action.id} className="inline-flex items-center gap-1 rounded-md bg-sunken pl-2.5 pr-1 py-0.5 text-[12px] font-medium text-ink">
                 {av.action.name}
+                {av.action.extraordinary && <em className="not-italic text-[10px] font-bold uppercase tracking-wider text-gold-ink">extraordinaria</em>}
                 {isLockedPolicy(c, av.action.id) ? (
                   <span className="ml-1 pr-1.5 text-[10px] font-semibold text-sala-blue whitespace-nowrap">fijada por el encuestador</span>
                 ) : (
@@ -85,16 +92,18 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
           </ul>
         )}
         <div className="flex flex-wrap items-center gap-3">
-          <span className="text-[12px] text-sala-muted whitespace-nowrap" title="Estimación: no incluye efectos diferidos ni eventos.">
-            Caja estimada al cierre{' '}
-            <strong className={`text-[15px] font-mono ${projection.caja >= 0 ? 'text-ink' : 'text-sala-bad'}`}>{fmtBudget(projection.caja)}</strong>
-          </span>
+          {!emergency && (
+            <span className="text-[12px] text-sala-muted whitespace-nowrap" title="Estimación: no incluye efectos diferidos ni eventos.">
+              Caja estimada al cierre{' '}
+              <strong className={`text-[15px] font-mono ${projection.caja >= 0 ? 'text-ink' : 'text-sala-bad'}`}>{fmtBudget(projection.caja)}</strong>
+            </span>
+          )}
           {endTurnButton('ml-auto px-4 h-10 text-[12px] min-w-[200px]')}
         </div>
-        <p className="text-[11px] text-sala-muted">Margen fiscal estimado: <span className="font-mono">{fmtBudgetDelta(projection.structural)}</span> por turno. No incluye efectos diferidos ni eventos.</p>
+        {!emergency && <p className="text-[11px] text-sala-muted">Margen fiscal estimado: <span className="font-mono">{fmtBudgetDelta(projection.structural)}</span> por turno. No incluye efectos diferidos ni eventos.</p>}
         <KnownDeadlines state={c} />
         <PendingPolicies state={c} />
-        {projection.caja < 0 && (
+        {!emergency && projection.caja < 0 && (
           <p className="flex items-center gap-1.5 text-[11px] font-semibold text-sala-bad">
             <AlertTriangle size={12} className="flex-shrink-0" /> Si al cerrar falta caja, el Tesoro cubrirá el faltante con emisión.
           </p>
@@ -108,11 +117,13 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
       <div className="sr-panel-head">
         <div>
           <span className="sr-label">{index ? `${index} / ` : ''}Plan de gobierno</span>
-          <h2 className="sr-panel-title">Este turno</h2>
+          <h2 className="sr-panel-title">{title}</h2>
         </div>
-        <span className="flex-shrink-0 whitespace-nowrap rounded px-2 py-1.5 text-[11px] font-bold bg-sala-lime/25 text-sala-lime-ink" title="Acciones que te quedan este turno">
-          {left} <span className="font-normal">{left === 1 ? 'acción' : 'acciones'}</span>
-        </span>
+        {!emergency && (
+          <span className="flex-shrink-0 whitespace-nowrap rounded px-2 py-1.5 text-[11px] font-bold bg-sala-lime/25 text-sala-lime-ink" title="Acciones que te quedan este turno">
+            {left} <span className="font-normal">{left === 1 ? 'acción' : 'acciones'}</span>
+          </span>
+        )}
       </div>
 
       {selected.length === 0 && simple ? (
@@ -131,7 +142,10 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
         <ul className="px-4 py-2 border-b border-rule">
           {selected.map(av => (
             <li key={av.action.id} className="flex items-center justify-between gap-2 py-2 border-b border-rule last:border-b-0 text-[12px]">
-              <span className="min-w-0 truncate font-medium text-ink">{av.action.name}</span>
+              <span className="min-w-0 truncate font-medium text-ink">
+                {av.action.name}
+                {av.action.extraordinary && <em className="not-italic ml-1.5 text-[10px] font-bold uppercase tracking-wider text-gold-ink">extraordinaria</em>}
+              </span>
               <span className="flex items-center gap-2 flex-shrink-0">
                 {!simple && (
                   <span className={`font-mono ${av.caja > 0 ? 'text-sala-good' : av.caja < 0 ? 'text-sala-bad' : 'text-sala-muted'}`}>
@@ -155,7 +169,7 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
         </ul>
       )}
 
-      {simple ? (
+      {!emergency && (simple ? (
         <div className="flex items-center justify-between gap-3 px-4 py-3.5" title="Estimación: no incluye efectos diferidos ni eventos.">
           <span className="text-[12px] text-sala-muted">Caja estimada al cierre</span>
           <strong className={`text-[16px] font-mono ${projection.caja >= 0 ? 'text-ink' : 'text-sala-bad'}`}>{fmtBudget(projection.caja)}</strong>
@@ -176,11 +190,11 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
           </strong>
         </div>
       </div>
-      )}
-      <p className="px-4 pb-3 text-[11px] text-sala-muted">Margen fiscal estimado: <span className="font-mono">{fmtBudgetDelta(projection.structural)}</span> por turno. Estimación sin efectos diferidos ni eventos.</p>
+      ))}
+      {!emergency && <p className="px-4 pb-3 text-[11px] text-sala-muted">Margen fiscal estimado: <span className="font-mono">{fmtBudgetDelta(projection.structural)}</span> por turno. Estimación sin efectos diferidos ni eventos.</p>}
       <div className="px-4 pb-3 space-y-2"><KnownDeadlines state={c} />
         <PendingPolicies state={c} /></div>
-      {projection.caja < 0 && (
+      {!emergency && projection.caja < 0 && (
         <p className="mx-4 mb-3 flex items-start gap-1.5 rounded-md bg-red-500/10 px-2.5 py-2 text-[11px] font-semibold text-sala-bad">
           <AlertTriangle size={13} className="mt-px flex-shrink-0" />
           {simple ? 'Si al cerrar falta caja, el Tesoro cubrirá el faltante con emisión.' : 'Estimación en rojo: si al cerrar falta caja, el Tesoro cubrirá el faltante con emisión.'}
