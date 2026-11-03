@@ -364,7 +364,8 @@ function hiperRound(state: CausalState, lines: string[]): void {
     lines.push('Con el estado de sitio, la calle quedó vacía por la fuerza.');
   }
   const after = effective(state, 'INFL', ref);
-  c.aceleracion = Math.round((after - before) * 10) / 10;
+  // El índice se satura en 100: en el techo, la aceleración es la presión que seguiría empujando (delta), no el cambio visible.
+  c.aceleracion = Math.round((after >= 99.9 && delta > 0 ? Math.max(delta, after - before) : after - before) * 10) / 10;
   if (c.aceleracion > 0) state.desanclaje += 1;
   else if (c.aceleracion <= -5) state.desanclaje = Math.max(0, state.desanclaje - 2);
   lines.push(

@@ -7,7 +7,7 @@ Nota única de diseño, calibración y verificación. Rama `codex/gobernarg-ligh
 | Antes (commit 49196ab) | Ahora | Por qué |
 |---|---|---|
 | Corralito arrancaba con depósitos atrapados, default, +12 de gobernabilidad y rebote automático, todo mezclado desde el turno 1. | Arranca el 30/11/2001: convertibilidad vigente, corrida en marcha, deflación, retiros libres y deuda pagándose. Corralito, default, devaluación y pesificación son decisiones del jugador. | Separar las etapas históricas y hacer que las salidas de la crisis sean elecciones, no condiciones iniciales. |
-| Hiper arrancaba "al borde" (precios 72) y la regla general de hiper mataba en dos trimestres. | Arranca el 1/6/1989 con precios en 96 de 100 y acelerando, default desde 1988 sin vencimiento, estado de sitio ya declarado, gobierno en transición. Regla propia: dos meses con precios en 95 o más y acelerando, y el gobierno cae. | Empezar dentro de la hiperinflación con un plazo razonable para intervenir. |
+| Hiper arrancaba "al borde" (precios 72) y la regla general de hiper mataba en dos trimestres. | Arranca el 1/6/1989 con precios en 97 de 100 y acelerando, default desde 1988 sin vencimiento, estado de sitio ya declarado, gobierno en transición. Regla propia: dos meses con precios en 95 o más y acelerando, y el gobierno cae. | Empezar dentro de la hiperinflación con un plazo razonable para intervenir. |
 | El default vencía solo a los 8 turnos. | Dura hasta que se renegocia (medida incierta con quita del 35 %). | La deuda impaga necesita resolución; no se cura con un contador. |
 | Rebote de actividad gratis. | Rebote condicional: solo con nuevo régimen y precios contenidos (2001) o con la inflación calmada (1989). | La recuperación depende de condiciones observables y rezagos. |
 | Sin medidas propias de la crisis. | 22 medidas extraordinarias sin costo, una por turno, con impacto fuerte ya y una apuesta que se resuelve 2 a 4 trimestres después. Catálogo regular recortado a 28 políticas. | "Sin medidas extraordinarias no se puede ganar; con medidas y buen juego, la partida despega." |
@@ -38,7 +38,7 @@ Hechos documentados (fuentes al final), separados de las interpretaciones y de l
 
 | Indicador (0-100) | Corralito | Hiper | Dato que lo orienta |
 |---|---|---|---|
-| Precios (INFL) | 12 | 96 | deflación 2001 / 78,5 % mensual mayo 1989 (95 ≈ más de 50 %) |
+| Precios (INFL) | 12 | 97 | deflación 2001 / 78,5 % mensual mayo 1989 (97 ≈ 83 % mensual en el mapeo orientativo) |
 | Actividad (ACTV) | 35 | 37 | PIB −4,4 %, desocupación 18,3 % / recesión 1989 |
 | Bolsillo (PODA) | 35 | 24 | pobreza 38,3 % / pobreza en aumento y salarios licuados |
 | Inversión y crédito (INVC) | 24 | 22 | sin crédito |

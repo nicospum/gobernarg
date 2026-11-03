@@ -48,12 +48,12 @@ describe('Estado inicial de los escenarios históricos', () => {
   it('Hiper: precios en 96, default desde 1988 sin vencimiento, estado de sitio por una subronda', () => {
     const s = hiper();
     expect(s.crisis).toMatchObject({ kind: 'hiper', phase: 'emergencia', round: 1, rounds: 3 });
-    expect(s.base.INFL).toBe(96);
+    expect(s.base.INFL).toBe(97);
     expect(s.flags.default_deuda.end).toBeNull();
     expect(flagValue(s, 'estado_de_sitio', 1)).toBe(1);
     expect(flagValue(s, 'crisis_hiper', 1)).toBe(1);
     expect(debtService(s)).toBe(0);
-    expect(monthlyInflation(96)).toBeGreaterThan(50);
+    expect(monthlyInflation(97)).toBeGreaterThan(75);
     expect(monthlyInflation(20)).toBe(1);
   });
 

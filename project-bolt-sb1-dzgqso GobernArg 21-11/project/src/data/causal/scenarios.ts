@@ -190,11 +190,11 @@ export const SCENARIOS: ScenarioDef[] = [
     era: '1 de junio de 1989',
     difficulty: 'Muy difícil',
     description: 'La hiperinflación está en marcha: los precios subieron 78 % en mayo y siguen acelerando. Perdiste la elección del 14 de mayo, hay saqueos, el Banco Central no tiene reservas y la deuda está en default desde 1988. Hay que frenar la aceleración, que la gente coma y lograr una salida viable.',
-    highlights: ['Emergencia de tres meses: una medida extraordinaria por mes', 'Precios en 96 de 100 y acelerando: dos meses así y caés', 'Austral sin respaldo, caja vacía, default y gobierno en transición'],
+    highlights: ['Emergencia de tres meses: una medida extraordinaria por mes', 'Precios en 97 de 100 (unos 80 % por mes) y acelerando: dos meses así y caés', 'Austral sin respaldo, caja vacía, default y gobierno en transición'],
     image: { group: 'events', key: 'socialProtest' },
     // Hipótesis de diseño calibradas con datos de 1989: IPC mayo 78,5 % mensual (CEPAL),
     // pobreza GBA 25,9 % (mayo) y 47,3 % (octubre), BCRA sin reservas desde febrero, moratoria desde abril de 1988.
-    indicators: { INFL: 96, ACTV: 37, PODA: 24, INVC: 22, PRES: 45, SOLV: 12, EXTE: 16, INFR: 42, EDUC: 45, PSOC: 30, SEGU: 38, CIEN: 42, INST: 42, AMBI: 50, CONF: 70 },
+    indicators: { INFL: 97, ACTV: 37, PODA: 24, INVC: 22, PRES: 45, SOLV: 12, EXTE: 16, INFR: 42, EDUC: 45, PSOC: 30, SEGU: 38, CIEN: 42, INST: 42, AMBI: 50, CONF: 70 },
     caja: 250,
     gastoCorr: 850,
     deuda: 5000,
