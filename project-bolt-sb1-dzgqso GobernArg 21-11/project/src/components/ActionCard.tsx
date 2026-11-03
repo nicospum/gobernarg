@@ -37,6 +37,8 @@ interface ActionCardProps {
   isSelected: boolean;
   /** No se puede agregar más (sin PA, elección pendiente…) aunque la acción esté disponible. */
   disabled: boolean;
+  /** Fijada por el encuestador este turno: seleccionada y sin botón de quitar. */
+  locked?: boolean;
   /** Descuento vigente del perfil sobre la deuda de préstamos. */
   loanDiscount?: number;
   calendar?: CalendarId;
@@ -103,7 +105,7 @@ function SimpleEffectList({ actionId }: { actionId: string }) {
   );
 }
 
-export function ActionCard({ availability, requestedBy, onSelect, isSelected, disabled, loanDiscount = 0, calendar = 'legacy-16' }: ActionCardProps) {
+export function ActionCard({ availability, requestedBy, onSelect, isSelected, disabled, locked = false, loanDiscount = 0, calendar = 'legacy-16' }: ActionCardProps) {
   const { action, pa, caja, reasons, available, needsDnu, repetitionWarning } = availability;
   const style = UI_CATEGORY_STYLES[action.category];
   const blocked = !isSelected && (!available || disabled);
@@ -181,7 +183,7 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
   const card = (
     <article
       aria-label={action.name}
-      onClick={() => !blocked && onSelect()}
+      onClick={() => !blocked && !locked && onSelect()}
       className={`group relative self-start grid grid-cols-1 md:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)_96px] ${simple ? SIMPLE_XL.card : 'xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)_96px_104px]'} gap-3 md:gap-3.5 md:items-center rounded-[10px] border bg-surface pl-5 pr-3.5 py-3 transition-all duration-150 ${
         isSelected
           ? 'border-sala-blue/60 bg-[rgb(250_253_255)] shadow-[0_7px_22px_rgb(36_107_206/0.1)] outline outline-2 outline-sala-cyan/30'
@@ -303,7 +305,11 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
           >
             Ayuda
           </button>
-        {isSelected ? (
+        {isSelected && locked ? (
+          <button type="button" disabled aria-pressed="true" aria-label={`${action.name}: fijada por el encuestador`} className="flex-1 inline-flex items-center justify-center gap-1 h-11 rounded-md bg-sala-navy/85 text-white text-[12px] font-bold cursor-not-allowed">
+            <Lock size={13} /> Fijada por el encuestador
+          </button>
+        ) : isSelected ? (
           <button type="button" aria-pressed="true" aria-label={`Quitar ${action.name} del turno`} onClick={e => { e.stopPropagation(); onSelect(); }} className="flex-1 inline-flex items-center justify-center gap-1 h-11 rounded-md bg-sala-navy text-white text-[12px] font-bold">
             <Check size={14} /> Seleccionada · quitar
           </button>
@@ -331,11 +337,11 @@ export function ActionCard({ availability, requestedBy, onSelect, isSelected, di
             footer={
               <button
                 type="button"
-                disabled={blocked}
+                disabled={blocked || locked}
                 onClick={() => { onSelect(); setShowDetail(false); }}
                 className="sr-btn-navy w-full h-12"
               >
-                {isSelected ? 'Quitar de la agenda' : blocked ? blockReason : 'Agregar al turno'}
+                {isSelected ? (locked ? 'Fijada por el encuestador' : 'Quitar de la agenda') : blocked ? blockReason : 'Agregar al turno'}
               </button>
             }
           >

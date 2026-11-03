@@ -18,6 +18,7 @@ import { LEGACY_ACTION_TO_NEW } from '../data/causal';
 import { addNotification, filterAvailableMidtermStrategies, getGlobalTurn } from './engineShared';
 import { decisionContext, evalCondition, FOREVER } from './causal';
 import { applyCausalEffects, legislativeElection, syncLegacy, translateLegacyEffect } from './causalBridge';
+import { applyConsultantChoice, isConsultantEvent } from './consultant';
 import { fmtPct } from '../lib/format';
 
 // ===========================
@@ -238,6 +239,8 @@ function eventTriggerEffects(event: GameEvent): CausalEventEffect[] {
 
 /** Efectos causales de una opción de un evento. */
 export function eventChoiceEffects(event: GameEvent, choiceId: string): CausalEventEffect[] {
+  // El consultor no mueve indicadores: sus efectos (honorarios, bono de voto, medida fijada) van por engine/consultant.
+  if (isConsultantEvent(event)) return [];
   const channel = CHANNEL_GAME_EVENTS[event.id]?.causal.choices?.[choiceId];
   if (channel) return channel;
   const explicit = EVENT_CAUSAL[event.id]?.choices?.[choiceId];
@@ -253,6 +256,7 @@ export function applyImmediateEventEffects(state: GameState, event: GameEvent): 
 }
 
 export function applyEventChoice(gameState: GameState, event: GameEvent, choiceId: string): GameState {
+  if (isConsultantEvent(event)) return applyConsultantChoice(gameState, event, choiceId);
   const choice = event.choices?.find(c => c.id === choiceId);
   if (!choice) return gameState;
 

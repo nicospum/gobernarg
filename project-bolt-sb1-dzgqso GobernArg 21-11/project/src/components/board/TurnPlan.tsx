@@ -2,6 +2,7 @@ import { AlertTriangle, ChevronRight, Crosshair, X } from 'lucide-react';
 import type { GameState } from '../../types/game';
 import { getPolicyAvailability } from '../../engine/gameEngine';
 import { projectedCloseCaja } from '@/engine/causal';
+import { isLockedPolicy } from '@/engine/consultant';
 import { fmtBudget, fmtBudgetDelta } from '@/lib/format';
 import { detailed } from '@/lite/config';
 import { PendingPolicies } from './PendingPolicies';
@@ -68,13 +69,17 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
             {selected.map(av => (
               <li key={av.action.id} className="inline-flex items-center gap-1 rounded-md bg-sunken pl-2.5 pr-1 py-0.5 text-[12px] font-medium text-ink">
                 {av.action.name}
-                <button
-                  onClick={() => onActionSelect(av.action.id)}
-                  aria-label={`Quitar ${av.action.name} de la agenda`}
-                  className="w-6 h-6 max-lg:w-11 max-lg:h-11 grid place-items-center rounded text-sala-muted hover:text-ink hover:bg-surface"
-                >
-                  <X size={12} />
-                </button>
+                {isLockedPolicy(c, av.action.id) ? (
+                  <span className="ml-1 pr-1.5 text-[10px] font-semibold text-sala-blue whitespace-nowrap">fijada por el encuestador</span>
+                ) : (
+                  <button
+                    onClick={() => onActionSelect(av.action.id)}
+                    aria-label={`Quitar ${av.action.name} de la agenda`}
+                    className="w-6 h-6 max-lg:w-11 max-lg:h-11 grid place-items-center rounded text-sala-muted hover:text-ink hover:bg-surface"
+                  >
+                    <X size={12} />
+                  </button>
+                )}
               </li>
             ))}
           </ul>
@@ -133,13 +138,17 @@ export function TurnPlan({ gameState, onActionSelect, onEndTurn, canEndTurn, ind
                     {av.caja === 0 ? 'sin costo' : fmtBudgetDelta(av.caja)}
                   </span>
                 )}
-                <button
-                  onClick={() => onActionSelect(av.action.id)}
-                  aria-label={`Quitar ${av.action.name} de la agenda`}
-                  className="w-7 h-7 max-lg:w-11 max-lg:h-11 grid place-items-center rounded text-sala-muted hover:text-ink hover:bg-sunken"
-                >
-                  <X size={13} />
-                </button>
+                {isLockedPolicy(c, av.action.id) ? (
+                  <span className="text-[10px] font-semibold text-sala-blue whitespace-nowrap">fijada por el encuestador</span>
+                ) : (
+                  <button
+                    onClick={() => onActionSelect(av.action.id)}
+                    aria-label={`Quitar ${av.action.name} de la agenda`}
+                    className="w-7 h-7 max-lg:w-11 max-lg:h-11 grid place-items-center rounded text-sala-muted hover:text-ink hover:bg-sunken"
+                  >
+                    <X size={13} />
+                  </button>
+                )}
               </span>
             </li>
           ))}

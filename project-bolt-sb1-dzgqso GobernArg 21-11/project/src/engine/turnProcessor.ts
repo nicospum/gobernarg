@@ -12,6 +12,7 @@ import { finalizePresidentialCareer } from './electionEngine';
 import { applyArchetypePassives } from './archetypeEngine';
 import { CHANNEL_EVENTS, closeTurn, countExecutions, effective, viewRef, type TurnRecord } from './causal';
 import { paForTurn, selectionsFor, syncLegacy } from './causalBridge';
+import { createConsultantVisit } from './consultant';
 
 // ===========================
 // Perfil de gestión (narrativo)
@@ -234,6 +235,16 @@ export function processEndTurn(gameState: GameState): TurnResult {
     state.causal = { ...state.causal, paPenaltyNextTurn: 0 };
   }
 
+  // 9b. Gastón Barenboim: se acerca alrededor de cada elección, ya en el turno
+  // nuevo (nunca con elección o estrategia pendientes). La visita queda en
+  // causal.consultant y el evento va a la pantalla, no al resumen del cierre.
+  const consultantEvents: GameEvent[] = [];
+  const visit = createConsultantVisit(state);
+  if (visit) {
+    state = visit.state;
+    consultantEvents.push(visit.event);
+  }
+
   // 10. Espejo, derrotas, advertencias, metas e historial.
   state = syncLegacy(state);
   state = addWarningNotifications(state);
@@ -282,5 +293,5 @@ export function processEndTurn(gameState: GameState): TurnResult {
     causalTurn: record.turn,
   };
 
-  return { state, summary, triggeredEvents };
+  return { state, summary, triggeredEvents: [...triggeredEvents, ...consultantEvents] };
 }

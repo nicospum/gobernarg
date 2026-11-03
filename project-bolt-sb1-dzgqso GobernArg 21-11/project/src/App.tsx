@@ -14,6 +14,7 @@ import { ElectoralPanel } from './components/board/ElectoralPanel';
 import { StatusFooter } from './components/board/StatusFooter';
 import { DefeatAlerts } from './components/board/StatusStrip';
 import { EventModal } from './components/EventModal';
+import { ConsultantModal } from './components/ConsultantModal';
 import { CountryPanel } from './components/CountryPanel';
 import { clearSavedGame, loadGame, saveGame, rehydrate, type SavedGame } from './lib/savegame';
 import { SaveControls } from './components/SaveControls';
@@ -31,6 +32,8 @@ import { markGameStart } from './lib/playtest';
 import type { ElectionResults, TurnSummary, MidtermStrategy } from './types/game';
 import type { ActorId } from './data/causal';
 import type { GameEvent } from './systems/events/types';
+import { isConsultantEvent } from './engine/consultant';
+import { consultantReply, isConsultantChoice } from './data/consultor';
 import {
   getInitialGameState,
   createNewGame,
@@ -206,6 +209,8 @@ function App() {
     lastProcessedEventRef.current = currentEvent.id;
 
     setGameState(prev => applyEventChoice(prev, currentEvent, choiceId));
+    // Gastón contesta al toque; los efectos de la opción los aplica el motor.
+    if (isConsultantEvent(currentEvent) && isConsultantChoice(choiceId)) toast(consultantReply(choiceId));
     setPendingEvents(prev => {
       const remaining = prev.slice(1);
       if (remaining.length === 0) lastProcessedEventRef.current = null;
@@ -451,14 +456,19 @@ function App() {
       )}
 
       {currentEvent && !showMidtermStrategy && !gameState.pendingElection && (
-        <EventModal
-          event={currentEvent}
-          onChoice={handleEventChoice}
-          onClose={() => {
-            lastProcessedEventRef.current = null;
-            setPendingEvents(prev => prev.slice(1));
-          }}
-        />
+        isConsultantEvent(currentEvent) ? (
+          // Gastón Barenboim: modal propio (retrato y dato de las encuestas); se responde sí o sí.
+          <ConsultantModal key={currentEvent.id} event={currentEvent} gameState={gameState} onChoice={handleEventChoice} />
+        ) : (
+          <EventModal
+            event={currentEvent}
+            onChoice={handleEventChoice}
+            onClose={() => {
+              lastProcessedEventRef.current = null;
+              setPendingEvents(prev => prev.slice(1));
+            }}
+          />
+        )
       )}
 
       {gameState.pendingElection && (
