@@ -60,12 +60,16 @@ function playTurn(state: GameState, answer: Answer): { state: GameState; events:
   return { state, events };
 }
 
-/** Cierra el primer turno: en el 2 llega la visita anticipada de las legislativas. */
+/** Cierra turnos hasta la visita anticipada de las legislativas (turno 3 en Light). */
 function firstVisit(calendar?: CalendarId) {
-  const result = processEndTurn(game(calendar));
-  const event = result.triggeredEvents.find(isConsultantEvent);
-  if (!event) throw new Error('sin visita en el turno 2');
-  return { state: result.state, event };
+  let state = game(calendar);
+  for (let n = 0; n < 4; n++) {
+    const result = processEndTurn(state);
+    state = result.state;
+    const event = result.triggeredEvents.find(isConsultantEvent);
+    if (event) return { state, event };
+  }
+  throw new Error('sin visita anticipada');
 }
 
 /** Intención de voto del mismo estado sin el bono del consultor. */
@@ -89,8 +93,8 @@ describe('calendario de visitas', () => {
   it('turnos de visita por calendario e ids de evento', () => {
     const turns = (calendar: CalendarId) =>
       (['legislativas', 'presidenciales'] as const).flatMap(e => (['anticipado', 'ultimo_momento'] as const).map(t => consultantVisitTurn(calendar, e, t)));
-    expect(turns('light-12')).toEqual([2, 4, 8, 10]);
-    expect(turns('legacy-16')).toEqual([2, 5, 10, 13]);
+    expect(turns('light-12')).toEqual([3, 5, 9, 11]);
+    expect(turns('legacy-16')).toEqual([5, 7, 13, 15]);
     expect(consultantEventId('presidenciales', 'ultimo_momento')).toBe('consultor_presidenciales_ultimo_momento');
     expect(parseConsultantEventId('consultor_presidenciales_ultimo_momento')).toEqual({ election: 'presidenciales', timing: 'ultimo_momento' });
     expect(parseConsultantEventId('consultor_otra_cosa')).toBeNull();
@@ -98,8 +102,8 @@ describe('calendario de visitas', () => {
   });
 
   it.each([
-    ['light-12', [2, 4, 8, 10]],
-    ['legacy-16', [2, 5, 10, 13]],
+    ['light-12', [3, 5, 9, 11]],
+    ['legacy-16', [5, 7, 13, 15]],
   ] as const)('con instinto aparece cuatro veces por mandato en %s y se repite en el segundo mandato', (calendar, turns) => {
     vi.spyOn(Math, 'random').mockReturnValue(0.999);
     const { turnsPerMandate, totalTurns } = calendarFor(calendar);
@@ -136,16 +140,16 @@ describe('calendario de visitas', () => {
       seen.push(...played.events.map(e => e.id));
     }
     expect(seen).toEqual(['consultor_legislativas_anticipado', 'consultor_presidenciales_anticipado']);
-    expect(pendingConsultantVisit({ ...state.causal, turn: 10 })).toBeNull();
-    expect(pendingConsultantVisit({ ...state.causal, turn: 4 })).toBeNull();
+    expect(pendingConsultantVisit({ ...state.causal, turn: 11 })).toBeNull();
+    expect(pendingConsultantVisit({ ...state.causal, turn: 5 })).toBeNull();
   });
 
   it('sin visita anticipada (partida de antes) igual aparece a último momento, y nunca fuera de sus turnos', () => {
     const causal = game().causal;
     expect(causal.consultant).toBeUndefined();
-    expect(pendingConsultantVisit({ ...causal, turn: 4 })).toEqual({ election: 'legislativas', timing: 'ultimo_momento' });
-    expect(pendingConsultantVisit({ ...causal, turn: 10 })).toEqual({ election: 'presidenciales', timing: 'ultimo_momento' });
-    for (const turn of [1, 3, 5, 6, 7, 9, 11, 12]) expect(pendingConsultantVisit({ ...causal, turn }), String(turn)).toBeNull();
+    expect(pendingConsultantVisit({ ...causal, turn: 5 })).toEqual({ election: 'legislativas', timing: 'ultimo_momento' });
+    expect(pendingConsultantVisit({ ...causal, turn: 11 })).toEqual({ election: 'presidenciales', timing: 'ultimo_momento' });
+    for (const turn of [1, 2, 4, 6, 7, 8, 10, 12]) expect(pendingConsultantVisit({ ...causal, turn }), String(turn)).toBeNull();
   });
 });
 
@@ -206,7 +210,7 @@ describe('las tres respuestas', () => {
     expect(event.choices?.map(c => c.id)).toEqual(['encuestador', 'redes', 'instinto']);
     expect(eventChoiceEffects(event, 'encuestador')).toEqual([]);
     const visit = activeConsultantVisit(state.causal, event)!;
-    expect(visit).toMatchObject({ election: 'legislativas', timing: 'anticipado', turn: 2, mandateStart: 1, fee: 150, choice: null, ivDelta: 0 });
+    expect(visit).toMatchObject({ election: 'legislativas', timing: 'anticipado', turn: 3, mandateStart: 1, fee: 150, choice: null, ivDelta: 0 });
     expect(visit.policy).not.toBeNull();
     const policy = visit.policy!;
     expect(state.selectedActions).toEqual([]);
@@ -215,7 +219,7 @@ describe('las tres respuestas', () => {
     expect(after.causal.caja).toBeCloseTo(state.causal.caja - 150, 8);
     expect(after.causal.immediateCosts).toBeCloseTo(state.causal.immediateCosts + 150, 8);
     expect(after.budget).toBe(Math.round(after.causal.caja));
-    expect(after.causal.consultant).toMatchObject({ bonusIv: 4, bonusUntil: 6, lockedPolicy: policy, lockedTurn: 2 });
+    expect(after.causal.consultant).toMatchObject({ bonusIv: 4, bonusUntil: 6, lockedPolicy: policy, lockedTurn: 3 });
     expect(after.causal.consultant!.visits[0]).toMatchObject({ choice: 'encuestador', ivDelta: 4 });
     expect(after.causal.political.iv).toBeCloseTo(clamp(ivWithoutBonus(after) + 4), 6);
     expect(after.votingIntention).toBeCloseTo(Math.round(after.causal.political.iv * 10) / 10, 6);
@@ -230,7 +234,7 @@ describe('las tres respuestas', () => {
 
     // Al cerrar el turno la medida se ejecuta, el honorario entra al resultado fiscal y la fijación caduca sola.
     const closed = processEndTurn(after).state;
-    expect(closed.causal.executions.some(e => e.actionId === policy && e.turn === 2)).toBe(true);
+    expect(closed.causal.executions.some(e => e.actionId === policy && e.turn === 3)).toBe(true);
     expect(closed.causal.records[closed.causal.records.length - 1].fiscal.costoAcciones).toBeGreaterThanOrEqual(150);
     expect(isLockedPolicy(closed.causal, policy)).toBe(false);
     expect(toggleActionSelection({ ...closed, selectedActions: [policy], actions: closed.actions - pa }, policy).selectedActions).toEqual([]);
@@ -262,7 +266,7 @@ describe('las tres respuestas', () => {
       ids.push(...played.events.map(e => e.id));
     }
     expect(ids).toEqual(['consultor_legislativas_ultimo_momento']);
-    expect(s.causal.consultant!.visits[1]).toMatchObject({ election: 'legislativas', timing: 'ultimo_momento', turn: 4, fee: 350, choice: 'instinto' });
+    expect(s.causal.consultant!.visits[1]).toMatchObject({ election: 'legislativas', timing: 'ultimo_momento', turn: 5, fee: 350, choice: 'instinto' });
 
     let r = redes;
     const none: string[] = [];
@@ -284,10 +288,10 @@ describe('las tres respuestas', () => {
     expect(deltas('presidenciales')).toEqual([6, -6, 0, 3, -3, 0]);
 
     vi.spyOn(Math, 'random').mockReturnValue(0.999);
-    // Hasta el turno 8 siguiendo el instinto; la visita anticipada de presidenciales queda sin responder.
+    // Hasta el turno 9 siguiendo el instinto; la visita anticipada de presidenciales queda sin responder.
     let state = game();
     let event: GameEvent | undefined;
-    for (let n = 0; n < 7 && !event; n++) {
+    for (let n = 0; n < 9 && !event; n++) {
       const result = processEndTurn(prepare(state));
       state = result.state;
       const found = result.triggeredEvents.find(isConsultantEvent);
@@ -296,7 +300,7 @@ describe('las tres respuestas', () => {
       else state = applyEventChoice(state, found, 'instinto');
     }
     expect(event?.id).toBe('consultor_presidenciales_anticipado');
-    expect(activeConsultantVisit(state.causal, event!)).toMatchObject({ election: 'presidenciales', timing: 'anticipado', turn: 8, fee: 225 });
+    expect(activeConsultantVisit(state.causal, event!)).toMatchObject({ election: 'presidenciales', timing: 'anticipado', turn: 9, fee: 225 });
     const base = ivWithoutBonus(state);
     const yes = applyEventChoice(state, event!, 'encuestador');
     expect(yes.causal.caja).toBeCloseTo(state.causal.caja - 225, 8);
@@ -307,7 +311,7 @@ describe('las tres respuestas', () => {
     expect(no.causal.consultant).toMatchObject({ bonusIv: -6, bonusUntil: 12 });
     expect(no.causal.political.iv).toBeCloseTo(clamp(base - 6), 6);
 
-    // Instinto: vuelve en el 10 a 525 y con ±3.
+    // Instinto: vuelve en el 11 a 525 y con ±3.
     let s = applyEventChoice(state, event!, 'instinto');
     let late: GameEvent | undefined;
     for (let n = 0; n < 2; n++) {
@@ -316,7 +320,7 @@ describe('las tres respuestas', () => {
       late = result.triggeredEvents.find(isConsultantEvent) ?? late;
     }
     expect(late?.id).toBe('consultor_presidenciales_ultimo_momento');
-    expect(activeConsultantVisit(s.causal, late!)).toMatchObject({ turn: 10, fee: 525, choice: null });
+    expect(activeConsultantVisit(s.causal, late!)).toMatchObject({ turn: 11, fee: 525, choice: null });
     const b = ivWithoutBonus(s);
     const lateYes = applyEventChoice(s, late!, 'encuestador');
     expect(lateYes.causal.caja).toBeCloseTo(s.causal.caja - 525, 8);
@@ -332,10 +336,10 @@ describe('el bono en la elección', () => {
       vi.spyOn(Math, 'random').mockReturnValue(0.999);
       let state = game();
       let afterElection: GameState | null = null;
-      for (let n = 1; n <= 7; n++) {
+      for (let n = 1; n <= 8; n++) {
         state = playTurn(state, 'instinto').state;
-        // Después de la última visita de las legislativas (turno 4), el bono queda como se pide.
-        if (n === 3) state = { ...state, causal: { ...state.causal, consultant: { ...state.causal.consultant!, bonusIv: bonus } } };
+        // Después de la última visita de las legislativas (turno 5), el bono queda como se pide.
+        if (n === 4) state = { ...state, causal: { ...state.causal, consultant: { ...state.causal.consultant!, bonusIv: bonus } } };
         if (n === 6) afterElection = state;
       }
       vi.restoreAllMocks();
@@ -355,12 +359,12 @@ describe('el bono en la elección', () => {
     expect(r6.iv).toBeCloseTo(clamp(computeIv(r6.apro, r6.estr, r6.otros) + 4), 6);
     expect(r7.iv).toBeCloseTo(clamp(computeIv(r7.apro, r7.estr, r7.otros)), 6);
     const p7 = boosted.afterNext.causal.political;
-    expect(boosted.afterNext.causal.turn).toBe(8);
+    expect(boosted.afterNext.causal.turn).toBe(9);
     expect(p7.iv).toBeCloseTo(clamp(computeIv(p7.apro, p7.estr, p7.otros)), 6);
-    // En el 8 llega la anticipada de presidenciales: la elección nueva arranca con bono 0 hasta su cierre.
+    // En el 9 llega la anticipada de presidenciales: la elección nueva arranca con bono 0 hasta su cierre.
     expect(boosted.afterNext.causal.consultant).toMatchObject({ bonusIv: 0, bonusUntil: 12 });
     const visits = boosted.afterNext.causal.consultant!.visits;
-    expect(visits[visits.length - 1]).toMatchObject({ election: 'presidenciales', timing: 'anticipado', turn: 8, choice: 'instinto' });
+    expect(visits[visits.length - 1]).toMatchObject({ election: 'presidenciales', timing: 'anticipado', turn: 9, choice: 'instinto' });
   });
 });
 

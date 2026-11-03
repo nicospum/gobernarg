@@ -53,9 +53,11 @@ import { addNotification } from './engineShared';
  * el primer turno del último año.
  */
 export function consultantVisitTurn(source: CalendarSource, election: ConsultantElection, timing: ConsultantTiming): number {
-  const { periodsPerYear, midtermTurn } = calendarFor(source);
-  if (election === 'legislativas') return timing === 'anticipado' ? 2 : periodsPerYear + 1;
-  return timing === 'anticipado' ? midtermTurn + 2 : 3 * periodsPerYear + 1;
+  // Decisión del dueño del juego: tres turnos antes de cada elección (anticipada) y uno antes (último momento).
+  // Light (12 turnos): 3 y 5 para las legislativas, 9 y 11 para las presidenciales. Histórico (16): 5 y 7, 13 y 15.
+  const { midtermTurn, turnsPerMandate } = calendarFor(source);
+  const electionTurn = election === 'legislativas' ? midtermTurn : turnsPerMandate;
+  return timing === 'anticipado' ? electionTurn - 3 : electionTurn - 1;
 }
 
 /** Cierre absoluto de la elección: hasta ahí rige el bono de voto. */

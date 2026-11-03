@@ -104,7 +104,7 @@ Las partidas históricas anteriores (sin estado de crisis) siguen con sus reglas
 
 ## 3. Gastón Barenboim, consultor político
 
-- Visita como evento con su retrato (pixel art), en todos los escenarios, por cada elección del mandato: **anticipada** (turno 2 del mandato para las legislativas; dos turnos después de las legislativas para las presidenciales) y, solo si en la anticipada seguiste tu instinto, **a último momento** (primer turno del año electoral). Nunca es obligatorio.
+- Visita como evento con su retrato (pixel art), en todos los escenarios, por cada elección del mandato: **anticipada** (tres turnos antes de la elección: turno 3 para las legislativas y 9 para las presidenciales en el calendario de 12; 5 y 13 en el histórico de 16) y, solo si en la anticipada seguiste tu instinto, **a último momento** (un turno antes: 5 y 11; 7 y 15 en el histórico). Nunca es obligatorio.
 - Siempre trae el dato de las encuestas: el sector con votos al que no le venís tirando la soga y la medida concreta que lo mueve (distinta de lo que hiciste en los últimos turnos).
 - Tres opciones: **"Lo que diga el encuestador, se hace"** (pagás el honorario; esa medida queda agendada y fijada en el turno), **"No le doy vuelo, me fijo qué dicen en las redes"** (gratis) y **"Sigo mi instinto"** (nada cambia).
 - Intención de voto hasta la elección (legislativas): encuestador anticipado +4 · redes anticipado −4 · encuestador a último momento +2 · redes a último momento −2 · instinto 0. **Presidenciales: todo ×1,5.** Honorario: anticipado $150 M, último momento $350 M (×1,5 en presidenciales). Nada de esto se explica en el juego.

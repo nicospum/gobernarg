@@ -25,13 +25,17 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-/** Cierra el primer turno: en el 2 llega la visita anticipada de las legislativas. */
+/** Cierra turnos hasta la visita anticipada de las legislativas (turno 3). */
 function visitState() {
   vi.spyOn(Math, 'random').mockReturnValue(0.999);
-  const result = processEndTurn(createNewGame({ archetype: 'politico', governorName: 'Ana', seed: 3, scenarioId: 'pais_en_calma' }));
-  const event = result.triggeredEvents.find(isConsultantEvent);
-  if (!event) throw new Error('sin visita en el turno 2');
-  return { state: result.state, event };
+  let state = createNewGame({ archetype: 'politico', governorName: 'Ana', seed: 3, scenarioId: 'pais_en_calma' });
+  for (let n = 0; n < 4; n++) {
+    const result = processEndTurn(state);
+    state = result.state;
+    const event = result.triggeredEvents.find(isConsultantEvent);
+    if (event) return { state, event };
+  }
+  throw new Error('sin visita anticipada');
 }
 
 describe('visita de Gastón Barenboim', () => {
