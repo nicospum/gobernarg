@@ -42,14 +42,14 @@ Hechos documentados (fuentes al final), separados de las interpretaciones y de l
 | Actividad (ACTV) | 35 | 37 | PIB −4,4 %, desocupación 18,3 % / recesión 1989 |
 | Bolsillo (PODA) | 35 | 24 | pobreza 38,3 % / pobreza en aumento y salarios licuados |
 | Inversión y crédito (INVC) | 24 | 22 | sin crédito |
-| Divisas (EXTE) | 20 | 16 | corrida / BCRA sin reservas |
+| Divisas (EXTE) | 20 | 18 | corrida / BCRA sin reservas |
 | Solvencia (SOLV) | 15 | 12 | riesgo país extremo / moratoria (se recalcula cada cierre) |
 | Protección social (PSOC) | 33 | 30 | |
 | Seguridad (SEGU) | 38 | 38 | |
 | Instituciones (INST) | 40 | 42 | |
 | Conflictividad (CONF, subir empeora) | 60 | 70 | calle caliente / saqueos |
-| Caja, gasto corriente, deuda (unidades internas) | 450, 820, 6.000 | 250, 850, 5.000 | caja vacía; deuda alta |
-| Recaudación (multiplicador) | 0,9 | 0,85 | recesión / Olivera-Tanzi (además el motor descuenta por inflación) |
+| Caja, gasto corriente, deuda (unidades internas) | 450, 780, 6.000 | 250, 800, 5.000 | caja vacía; deuda alta. Corralito: déficit de unos 180 por trimestre con los intereses (default o rescate para cerrarlo); Hiper: unos 140, que baja al caer la inflación |
+| Recaudación (multiplicador) | 0,95 | 0,92 | recesión / Olivera-Tanzi (además el motor descuenta por inflación) |
 | Expectativas (desanclaje, oculto) | 2 | 30 | la convertibilidad ancla / sin ancla |
 | Congreso (bancas) e imagen | −4, 25 | −6, 22 | derrota de octubre / gobierno saliente |
 | Relaciones | finanzas −10, sindicatos −10, org. sociales −12, oposición −10, gobernadores −8 | finanzas −10, sindicatos −5, industria −5, org. sociales −5, oposición +5 | |
@@ -60,7 +60,7 @@ Hechos documentados (fuentes al final), separados de las interpretaciones y de l
 Una subronda ≈ 3 a 4 semanas. Aplica: efectos inmediatos de la medida elegida; dinámica propia; humor de los actores a la mitad de la velocidad trimestral. Lo diferido queda en la agenda trimestral.
 
 - Corralito, por semana: retiros libres → liquidez −14, divisas −4 (con convertibilidad) y crédito −2; retiros limitados → liquidez −3, conflicto +3, actividad −1,5, bolsillo −1; reprogramados → liquidez +6, conflicto +2. Liquidez ≤ 10 → colapso bancario (una vez). Divisas < 10 con convertibilidad → salida forzada del régimen. Calle: conflicto +2 (+2 si protección social < 35; 0 con estado de sitio) y la calle se cansa (un tercio del decaimiento trimestral). Protección social −1.
-- Hiper, por mes: precios +3 + 0,05 × (desanclaje − 20) − 0,04 × (divisas − 16) (−2 con congelamiento, −3 con moneda nueva o dolarización); bolsillo −2 (−0,5 con congelamiento); actividad −1,5; protección social −1; divisas −1,5. Calle: conflicto +3 (+1 si protección social ≥ 35: −2; 0 con estado de sitio) y decaimiento parcial. La aceleración (cambio de precios del mes) sube el desanclaje si es positiva.
+- Hiper, por mes: precios +3 + 0,05 × (desanclaje − 20) − 0,04 × (divisas − 16) (−2 con congelamiento, −3 con moneda nueva o dolarización); bolsillo −2 (−0,5 con congelamiento); actividad −1,5; protección social −1; divisas −1 (−0,5 con moneda nueva o dolarización). En el techo del índice (100) la aceleración es la presión que seguiría empujando, así el techo no esconde una hiper que sigue. Calle: conflicto +3 (+1 si protección social ≥ 35: −2; 0 con estado de sitio) y decaimiento parcial. La aceleración (cambio de precios del mes) sube el desanclaje si es positiva.
 - Cada medida tomada da un impulso en sí (gobernabilidad +4 por dos cierres, imagen +2) y mueve la liquidez bancaria en el Corralito (limitar +6, reprogramar +18, liberar −8, rescate +10, dolarizar +8, pesificar −4, devaluar −3, cuasimonedas +3).
 
 ### 3.3 Derrotas y plazos
@@ -72,7 +72,7 @@ Una subronda ≈ 3 a 4 semanas. Aplica: efectos inmediatos de la medida elegida;
 
 Catálogo completo con efectos y apuestas en `project/src/data/causal/crisisActions.ts`. Reglas: costo cero en caja y acciones; una por turno o subronda; las de una sola vez no se repiten; los cambios de régimen son permanentes; se vuelve a verificar la disponibilidad al cerrar; la apuesta se resuelve con dos filas condicionales evaluadas al aplicar (premio si se cumple, castigo si no). Medidas inciertas (renegociar la deuda, rescate del FMI) se sortean con el generador de la partida: la probabilidad sube con solvencia, relación con finanzas, cuentas ordenadas y gestión diplomática; nunca es un rescate garantizado.
 
-Condiciones de apuesta (se eligieron para que sean alcanzables con buen juego desde el piso de la crisis, no gratis): corralito (salir del corralito en 3 trimestres), corralón (precios < 60 y divisas ≥ 25), liberar depósitos (divisas ≥ 25), devaluar (precios < 55), dolarizar (cuentas sin déficit), pesificar (crédito ≥ 15 y precios < 60), default (deuda renegociada en 6 trimestres), cuasimonedas (precios < 45 y déficit chico), estado de sitio (protección social ≥ 35 o asistencia reciente), rescate (déficit chico a los 4 trimestres), apertura (divisas ≥ 30 y crédito ≥ 15), reforma constitucional (aprobación ≥ 30), congelamiento (déficit ≤ 150 a los 2 trimestres), moneda nueva (déficit ≤ 100 y divisas ≥ 20), shock fiscal (precios < 70), vender reservas (desanclaje < 20 y déficit ≤ 150), devaluación de shock (divisas ≥ 25 y precios < 85), emergencia alimentaria (precios < 85), transición (precios < 80), privatizar todo (crédito ≥ 20 e instituciones ≥ 40).
+Condiciones de apuesta (se eligieron para que sean alcanzables con buen juego desde el piso de la crisis, no gratis): corralito (salir del corralito en 3 trimestres), corralón (precios < 60 y divisas ≥ 25), liberar depósitos (divisas ≥ 25), devaluar (precios < 55), dolarizar (déficit ≤ 120), pesificar (crédito ≥ 15 y precios < 60), default (deuda renegociada en 6 trimestres), cuasimonedas (precios < 55 y déficit ≤ 150), estado de sitio (protección social ≥ 35 o asistencia reciente), rescate (déficit ≤ 100 a los 4 trimestres), apertura (divisas ≥ 25 y crédito ≥ 15), reforma constitucional (aprobación ≥ 30), congelamiento (déficit ≤ 200 a los 2 trimestres), moneda nueva (reservas ≥ 12 para tomarla; déficit ≤ 150 y divisas ≥ 18 a los 3), shock fiscal (ancla inmediata de precios; precios < 80 a los 3), vender reservas (desanclaje < 25 y déficit ≤ 250), devaluación de shock (divisas ≥ 25 y precios < 85), emergencia alimentaria (precios < 85), transición (precios < 80), privatizar todo (crédito ≥ 20 e instituciones ≥ 40). Con la economía dolarizada los precios convergen a la inflación del dólar (ancla 18), no hay emisión ni política monetaria, y la caja en rojo se paga con atraso de sueldos.
 
 ### 3.5 Catálogo regular en los históricos
 
@@ -82,18 +82,23 @@ Siguen 28: emisión, tasas, cepo y liberar cepo, control de precios, ajuste del 
 
 Corralito: contener la corrida (bancos estables), pagos esenciales al día (caja positiva), bancos en pie y depósitos libres, deuda al día o renegociada, precios bajo control (≤ 50), la calle se calma (conflictividad ≤ 45). Hiper: frenar la aceleración (precios ≤ 85), estabilizar (≤ 60), ingresos básicos (protección social ≥ 35 y bolsillo ≥ 30), transición acordada, una moneda que se sostiene, deuda renegociada. Son metas de legado: no deciden la victoria (la decide la elección, como siempre) y un éxito de escenario no inventa reelecciones en el progreso.
 
-## 5. Trayectorias observadas (bots)
+## 5. Resultados del playtest con bots
 
-Se completa con `npm run playtest:historicos` (informe en `_analisis_gobernarg/playtest/HISTORICOS.md`). Trayectorias cortas observadas a mano con la semilla 7 durante la calibración (`closeCrisisRound` y `closeTurn` directos, sin eventos ni reuniones):
+`npm run playtest:historicos` (20 semillas por celda, informe completo con trayectorias de muestra en `_analisis_gobernarg/playtest/HISTORICOS.md`). Son hipótesis de diseño medidas con bots, no una prueba de diversión. Medición del 2026-11-03 sobre la calibración de este documento:
 
-- Corralito, inacción: la corrida vacía los bancos (liquidez 40 → 26 → 12 → 0), colapso bancario y salida forzada de la convertibilidad en la tercera semana; después, caja en rojo, emisión forzada y gobernabilidad bajo 15 en el sexto trimestre.
-- Corralito, corralito + devaluar + pesificar y después cepo, asistencia, tasas, retenciones y liberar depósitos: cuatro apuestas salen bien; actividad 35 → 48, crédito 24 → 43, divisas 20 → 40 al sexto trimestre; la caja sigue en rojo porque no se suspendieron los pagos de la deuda (intereses de 300 por trimestre): la decisión de default o rescate es parte del buen juego.
-- Corralito, dolarizar + rescate + apertura total sin bajar el gasto a tiempo: el rescate sale bien pero la dolarización y la apertura explotan (déficit y desindustrialización); gobernabilidad bajo 15 al sexto trimestre.
-- Hiper, inacción: precios 96 → 100 acelerando; hiperinflación en el segundo mes.
-- Hiper, congelamiento + emergencia alimentaria + transición: sale de la emergencia con precios en 69, gobernabilidad 78 y aprobación en alza; sin un ancla fiscal (shock o privatización) el déficit obliga a emitir y el congelamiento y la moneda nueva explotan.
-- Hiper, shock + privatización total + apertura: la caja se ordena y los precios bajan a 56 con la moneda nueva; la apertura sobre el ajuste destruye la actividad y el bolsillo y la gobernabilidad cae.
+| Escenario | Bot | Supera la emergencia | Reelecto | Derrotas | Apuestas bien |
+|---|---|---|---|---|---|
+| Corralito | Inacción | 100 % | 0 % | juicio político (T5-T9) | — |
+| Corralito | Ortodoxo (dolarizar, rescate, ley de emergencia, hambre contenida, apertura solo con actividad) | 100 % | 0 % (llega a la elección en el 50 %) | juicio político 10 | 54 % |
+| Corralito | Heterodoxo (corralito, devaluar, liberar, default, alimentos, pesificar) | 100 % | 95 % | hiper en el 2.º mandato 4 | 93 % |
+| Corralito | Adaptable de crisis | 100 % | 0 % (llega en el 35 %) | juicio político 13 | 46 % |
+| Hiper | Inacción | 0 % | 0 % | hiperinflación en el 2.º mes | — |
+| Hiper | Ortodoxo (shock, moneda nueva, privatizar, hambre contenida) | 100 % | 0 % (llega al 100 %) | — | 66 % |
+| Hiper | Heterodoxo (congelamiento, alimentos, transición, reservas, moneda nueva) | 100 % | 0 % | hiperinflación (sin ancla fiscal) | 70 % |
+| Hiper | Adaptable de crisis | 100 % | 100 % | — | 73 % |
+| Hiper | Adaptable común | 100 % | 75 % | juicio político 1 | 93 % |
 
-Conclusión provisoria de la calibración: la inacción pierde; cada escenario tiene al menos una secuencia que supera la emergencia con margen; las combinaciones "todo ajuste" o "todo gasto" explotan por donde se esperaba. Falta la medición sistemática con bots y semillas.
+Lectura: la inacción pierde siempre; en cada escenario hay al menos una secuencia bien jugada que gana con margen (heterodoxa en 2001; moneda nueva más congelamiento, alimentos y transición en 1989); los paquetes que ignoran el hambre, apilan recesión o no ponen un ancla fiscal superan la emergencia pero no ganan. Las apuestas se ganan entre el 46 % y el 93 % según la habilidad del bot. Queda abierto que el paquete ortodoxo puro no llegue a la reelección: compite pero no convence (intención de voto final 13-18 %).
 
 ## 6. Compatibilidad de guardados
 
@@ -101,8 +106,7 @@ Las partidas históricas anteriores (sin `causal.crisis`) siguen con sus reglas:
 
 ## 7. Pendientes
 
-- Medición sistemática con bots (informe HISTORICOS.md) y segunda pasada de calibración con esos números.
-- Recorrido en navegador de las tres subrondas de cada escenario a 1440 y 390 px.
+- Una tercera pasada de calibración si el juego con personas muestra que el paquete ortodoxo no puede competir en la reelección.
 - Enlazar una fuente primaria para la moratoria de 1988.
 - Opcional: generalizar algunas medidas (ley de emergencia, estado de sitio) a otros escenarios con condiciones propias.
 
